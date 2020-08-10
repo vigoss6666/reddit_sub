@@ -27,7 +27,6 @@ return(
 <Header text = {"Enable Location"}/>
 <Text> You will need to enable location in order </Text>
 <Text style = {{alignSelf: 'center',}}> to use Friends Help Friends</Text>
-
 </View>
 <View style = {{flex:0.3}}>
 <TouchableOpacity 

@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View,Button } from 'react-native';
+import { StyleSheet, Text, View,Button, AsyncStorage } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Name from './Authentication/Screens/Name';
@@ -12,8 +12,37 @@ import Feet from './Authentication/Screens/Feet';
 import Inches from './Authentication/Screens/Inches'; 
 import EnableLocation from './Authentication/Screens/EnableLocation'; 
 import Tell from './Authentication/Screens/Tell'; 
+import Email from './Authentication/Screens/Email'; 
+import VerifyCode from './Authentication/Screens/VerifyCode';
+import Password from './Authentication/Screens/Password';
 
 
+import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks';
+import ApolloClient from 'apollo-boost';
+import { ApolloProvider } from 'react-apollo';
+const localhost: string = 'http://192.168.1.23:3000/graphql';
+import { gql } from 'apollo-boost'; 
+
+async function getId(){
+   const result = await AsyncStorage.getItem('_id')
+   return result; 
+}
+
+const client = new ApolloClient({ 
+  uri: localhost, 
+  request: async (operation) => {
+    operation.setContext({
+      headers: {
+        username: await getId() || "not defined" 
+      }
+    })
+  }
+});
+const REGISTER_USER = gql`
+ mutation namer {
+    registerUser
+ }
+` 
 
 
 
@@ -38,10 +67,19 @@ function SideScreen(){
 
 
 export default function App() {
+  async function namer(){
+    const result =  await client.mutate({mutation:REGISTER_USER})   
+    AsyncStorage.setItem('_id', result.data.registerUser); 
+    console.log(await AsyncStorage.getItem('_id'))
+
+  }
+  namer()
+  
   return (
+     <ApolloProvider client={client}>
       <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={Tell} />
+        <Stack.Screen name="Home" component={Password} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={SideScreen}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -52,13 +90,12 @@ export default function App() {
         <Stack.Screen name="Inches" component={Inches}/>
         <Stack.Screen name="EnableLocation" component={EnableLocation}/>
         <Stack.Screen name="Tell" component={Tell}/>
-        
-
-        
-
-        
+        <Stack.Screen name="Email" component={Email}/>
+        <Stack.Screen name="VerifyCode" component={VerifyCode}/>
+        <Stack.Screen name="Password" component={Password}/>
       </Stack.Navigator>
     </NavigationContainer>
+     </ApolloProvider>
   );
 }
 
