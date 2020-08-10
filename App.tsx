@@ -16,6 +16,9 @@ import Email from './Authentication/Screens/Email';
 import VerifyCode from './Authentication/Screens/VerifyCode';
 import Password from './Authentication/Screens/Password';
 import Posted from './Authentication/Screens/Posted';
+import ProfileHidden from './Authentication/Screens/ProfileHidden';
+
+
 
 
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks';
@@ -80,7 +83,7 @@ export default function App() {
      <ApolloProvider client={client}>
       <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={Posted} />
+        <Stack.Screen name="Home" component={ProfileHidden} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={SideScreen}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -95,6 +98,7 @@ export default function App() {
         <Stack.Screen name="VerifyCode" component={VerifyCode}/>
         <Stack.Screen name="Password" component={Password}/>
         <Stack.Screen name="Posted" component={Posted}/>
+        <Stack.Screen name="ProfileHidden" component={ProfileHidden}/>
       </Stack.Navigator>
     </NavigationContainer>
      </ApolloProvider>
