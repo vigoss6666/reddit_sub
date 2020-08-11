@@ -24,14 +24,16 @@ interface ContinueProps {
 disabled?:boolean
 backgroundColor?:string  
 onPress?:any   
+text?:any
 }
 
 export const Continue:FunctionComponent<ContinueProps>  = (props) => {
+     const texter = props.text ? props.text : "Continue"
      return (
           <TouchableOpacity
           onPress = {() => props.onPress()}
           style = {{height:50, width:200, borderRadius:25,borderWidth:1, justifyContent:"center", alignItems:"center",backgroundColor:props.backgroundColor }} disabled = {props.disabled} >
-           <Text>Continue</Text>     
+           <Text>{texter} </Text>     
           </TouchableOpacity>
      )
 }

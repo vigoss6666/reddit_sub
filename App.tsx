@@ -17,6 +17,15 @@ import VerifyCode from './Authentication/Screens/VerifyCode';
 import Password from './Authentication/Screens/Password';
 import Posted from './Authentication/Screens/Posted';
 import ProfileHidden from './Authentication/Screens/ProfileHidden';
+import Phone from './Authentication/Screens/Phone';
+import CountryCodes from './Authentication/Screens/CountryCodes';
+import Intro from './Authentication/Screens/Intro';
+import Intro2 from './Authentication/Screens/Intro2';
+import Intro3 from './Authentication/Screens/Intro3';
+import Intro4 from './Authentication/Screens/Intro4'; 
+
+
+
 
 
 
@@ -83,9 +92,9 @@ export default function App() {
      <ApolloProvider client={client}>
       <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={ProfileHidden} />
+        <Stack.Screen name="Home" component={Intro} />
         <Stack.Screen name="Side" component={SideScreen}/>
-        <Stack.Screen name="Name" component={SideScreen}/>
+        <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
         <Stack.Screen name="Gender" component={Gender}/>
         <Stack.Screen name="GenderPreference" component={GenderPreference}/>
@@ -99,6 +108,14 @@ export default function App() {
         <Stack.Screen name="Password" component={Password}/>
         <Stack.Screen name="Posted" component={Posted}/>
         <Stack.Screen name="ProfileHidden" component={ProfileHidden}/>
+        <Stack.Screen name="Phone" component={Phone}/>
+        <Stack.Screen name="CountryCodes" component={CountryCodes}/>
+        <Stack.Screen name="Intro" component={Intro}/>
+        <Stack.Screen name="Intro2" component={Intro2}/>
+        <Stack.Screen name="Intro3" component={Intro3}/>
+        <Stack.Screen name="Intro4" component={Intro4}/>
+        
+        
       </Stack.Navigator>
     </NavigationContainer>
      </ApolloProvider>
