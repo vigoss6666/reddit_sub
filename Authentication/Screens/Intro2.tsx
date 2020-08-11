@@ -3,6 +3,7 @@ import {Dimensions, View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollVie
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Continue } from '../../src/common/Common';
 export default function Intro2({navigation}){
+    const index = 2; 
     return(
         <View style = {{flex:1, justifyContent:'center', alignItems:'center',backgroundColor:'#ffffff'}}>
         <View style = {{flex:0.2}}>
