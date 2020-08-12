@@ -64,7 +64,7 @@ export default function Intro({navigation}){
           <TouchableOpacity style = {[styles.paginationWrapper1,{backgroundColor:"black",height:50, width:200, borderRadius:25, borderWidth:1}]}
           onPress = {() => {navigation.navigate('Name')}}
           >
-              <Text style = {{color:"white", fontWeight:"600"}}>Next</Text>
+              <Text style = {{color:"white", fontWeight:"600"}}>Get Started</Text>
           </TouchableOpacity>
           
           <View style={styles.paginationWrapper}>

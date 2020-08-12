@@ -23,6 +23,10 @@ import Intro from './Authentication/Screens/Intro';
 import Intro2 from './Authentication/Screens/Intro2';
 import Intro3 from './Authentication/Screens/Intro3';
 import Intro4 from './Authentication/Screens/Intro4'; 
+import VerifyEmail from './Authentication/Screens/VerifyEmail'; 
+import EmailVerified from './Authentication/Screens/EmailVerified';
+
+
 
 
 
@@ -34,6 +38,7 @@ import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
 const localhost: string = 'http://192.168.1.23:3000/graphql';
+const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 import { gql } from 'apollo-boost'; 
 
 async function getId(){
@@ -56,7 +61,11 @@ const REGISTER_USER = gql`
     registerUser
  }
 ` 
-
+const GET_HELLO = gql`
+ query {
+    getHello1
+ }
+`; 
 
 
 const Stack = createStackNavigator();
@@ -80,11 +89,17 @@ function SideScreen(){
 
 
 export default function App() {
+ 
   async function namer(){
-    const result =  await client.mutate({mutation:REGISTER_USER})   
-    AsyncStorage.setItem('_id', result.data.registerUser); 
-    console.log(await AsyncStorage.getItem('_id'))
-
+    const _id = await AsyncStorage.getItem("_id"); 
+    if(_id){
+      return; 
+    }
+    const result =  await client.mutate({mutation:REGISTER_USER})
+    console.log(result)   
+    AsyncStorage.setItem('_id', result.data.registerUser);
+    console.log( await AsyncStorage.getItem('_id')) 
+    
   }
   namer()
   
@@ -92,7 +107,7 @@ export default function App() {
      <ApolloProvider client={client}>
       <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={Intro} />
+        <Stack.Screen name="Home" component={Password} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -114,6 +129,10 @@ export default function App() {
         <Stack.Screen name="Intro2" component={Intro2}/>
         <Stack.Screen name="Intro3" component={Intro3}/>
         <Stack.Screen name="Intro4" component={Intro4}/>
+        <Stack.Screen name="VerifyEmail" component={VerifyEmail}/>
+        <Stack.Screen name="EmailVerified" component={EmailVerified}/>
+        
+
         
         
       </Stack.Navigator>
