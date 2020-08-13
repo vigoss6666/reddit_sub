@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Bu
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Header, Continue} from '../../src/common/Common'; 
 import { gql } from 'apollo-boost';
+import { getMaxListeners } from 'cluster';
 
  
 const REGISTER_EMAIL = gql`
@@ -14,11 +15,13 @@ const REGISTER_EMAIL = gql`
 
 
 export default function Email({navigation}){
-const [verifyEmail, {data}] = useMutation(REGISTER_EMAIL);     
-const [Email, setEmail] = useState();     
+  const [Email, setEmail] = useState();
+  const [verifyEmail, {data}] = useMutation(REGISTER_EMAIL);     
+     
 const _handleEmail = () => {
  const hello = "zaheeryakub@gmail.com";     
- verifyEmail({variables:{email1:"zaheeryakub@gmail.com"}});     
+ verifyEmail({variables:{email1:Email}});     
+ navigation.navigate('VerifyEmail')
 }
 return(
 <View style = {{flex:1, }}>   
@@ -39,7 +42,7 @@ style = {{fontSize:35,borderBottomWidth:1, borderColor:"black",width:Dimensions.
   ></TextInput>
 </View>
 <View style = {{flex:0.3,justifyContent:"center", alignItems:"center"}}>
- <Continue  onPress = {() => {verifyEmail(), navigation.navigate('VerifyEmail')}}/>    
+ <Continue  onPress = {() => {_handleEmail() }}/>    
 </View>
 </View>
 )

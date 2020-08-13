@@ -13,7 +13,7 @@ export default function EmailVerified({navigation}){
         </View>
         <View style = {{flex:0.3, justifyContent:"center", alignItems:"center"}}>
         <TouchableOpacity style = {{borderWidth:1,  borderRadius:25, backgroundColor:"black", width:100, padding:30}}
-        onPress = {() => {navigation.navigate('Birthday')}}
+        onPress = {() => {navigation.navigate('Password')}}
         >
             <Text style = {{color:"white", fontWeight:"600"}}>Done</Text>
         </TouchableOpacity>

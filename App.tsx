@@ -49,7 +49,7 @@ async function getId(){
 }
 
 const client = new ApolloClient({ 
-  uri: production, 
+  uri: localhost, 
   request: async (operation) => {
     operation.setContext({
       headers: {
@@ -109,7 +109,7 @@ export default function App() {
      <ApolloProvider client={client}>
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:false}}>
-        <Stack.Screen name="Home" component={Email} />
+        <Stack.Screen name="Home" component={Intro} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>

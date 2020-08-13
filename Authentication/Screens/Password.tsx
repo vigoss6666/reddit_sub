@@ -59,7 +59,7 @@ style = {{fontSize:15, borderBottomWidth:1, borderColor:"black",width:Dimensions
 
 </View>
 <View style = {{flex:0.3,justifyContent:"center", alignItems:"center"}}>
- <Continue  onPress = {() => verifyEmail()} disabled = {disable} backgroundColor = {color}/>    
+ <Continue  onPress = {() => verifyEmail()} disabled = {disable} backgroundColor = {color} onPress = {() => {navigation.navigate('Birthday')}}/>    
 </View>
 </View>
 )

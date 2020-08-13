@@ -48,11 +48,12 @@ export default function VerifyEmail({navigation}){
     value,
     setValue,
   });
+  let error = false; 
   if(data){
        if(data.verifyEmailCode){
             navigation.navigate('EmailVerified')
        }
-       console.log("the code didnt match")
+       error = true; 
    
        
   }
@@ -60,7 +61,7 @@ export default function VerifyEmail({navigation}){
       resendEmail(); 
  }
  const _handleVerification = () => {
-     verifyCode()  
+     verifyCode({variables:{code:parseInt(value)}});   
   }
 return(
 <View style = {{flex:1, justifyContent:'center', alignItems:'center'}}>
@@ -75,7 +76,7 @@ return(
         ref={ref}
         {...props}
         value={value}
-        onChangeText={setValue}
+        onChangeText={(text) => {setValue(text)}}
         cellCount={CELL_COUNT}
         rootStyle={styles.codeFieldRoot}
         keyboardType="number-pad"
@@ -89,6 +90,7 @@ return(
           </Text>
         )}
       />
+      {error ? <Text style = {{alignSelf:'center'}}>Code did not match</Text>:null }
 </View>
 <View style = {{flex:0.3,justifyContent:"center",alignItems:"center"}}>
 
