@@ -92,11 +92,11 @@ return(
 </View>
 <View style = {{flex:0.3,justifyContent:"center",alignItems:"center"}}>
 
-<TouchableOpacity onPress = {() => {_handleVerification()}}>
-    <Text>Press me</Text>
+<TouchableOpacity onPress = {() => {_handleVerification()}} style = {{height:30, width:200,borderWidth:1,justifyContent:"center", alignItems:"center",backgroundColor:'black'}}>
+    <Text style = {{color:'white', fontWeight:'600'}}>Verify</Text>
 </TouchableOpacity>
 <TouchableOpacity onPress = {() => {_handleResend()}}>
-<Text style = {{marginTop:10}}>Resend Email</Text>
+<Text style = {{marginTop:10,}}>Resend Email</Text>
 </TouchableOpacity>
 </View>
 </View>

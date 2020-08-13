@@ -25,7 +25,8 @@ import Intro3 from './Authentication/Screens/Intro3';
 import Intro4 from './Authentication/Screens/Intro4'; 
 import VerifyEmail from './Authentication/Screens/VerifyEmail'; 
 import EmailVerified from './Authentication/Screens/EmailVerified';
-
+import VerifyPhone from './Authentication/Screens/VerifyPhone'; 
+import PhoneSuccess from './Authentication/Screens/PhoneSuccess'; 
 
 
 
@@ -41,13 +42,14 @@ const localhost: string = 'http://192.168.1.23:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 import { gql } from 'apollo-boost'; 
 
+
 async function getId(){
    const result = await AsyncStorage.getItem('_id')
    return result; 
 }
 
 const client = new ApolloClient({ 
-  uri: localhost, 
+  uri: production, 
   request: async (operation) => {
     operation.setContext({
       headers: {
@@ -106,8 +108,8 @@ export default function App() {
   return (
      <ApolloProvider client={client}>
       <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={Password} />
+      <Stack.Navigator screenOptions = {{headerShown:false}}>
+        <Stack.Screen name="Home" component={Email} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -131,6 +133,8 @@ export default function App() {
         <Stack.Screen name="Intro4" component={Intro4}/>
         <Stack.Screen name="VerifyEmail" component={VerifyEmail}/>
         <Stack.Screen name="EmailVerified" component={EmailVerified}/>
+        <Stack.Screen name="VerifyPhone" component={VerifyPhone}/>
+        <Stack.Screen name="PhoneSuccess" component={PhoneSuccess}/>
         
 
         

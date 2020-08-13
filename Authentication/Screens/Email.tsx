@@ -6,7 +6,7 @@ import { gql } from 'apollo-boost';
 
  
 const REGISTER_EMAIL = gql`
- mutation email($email1:String! = "zaheeryakub@gmail.com"){
+ mutation email($email1:String!){
        email(email1:$email1)
  }
 `; 
@@ -18,10 +18,10 @@ const [verifyEmail, {data}] = useMutation(REGISTER_EMAIL);
 const [Email, setEmail] = useState();     
 const _handleEmail = () => {
  const hello = "zaheeryakub@gmail.com";     
- verifyEmail({variables:{email:"zaheeryakub@gmail.com"}});     
+ verifyEmail({variables:{email1:"zaheeryakub@gmail.com"}});     
 }
 return(
-<View style = {{flex:1, }}>
+<View style = {{flex:1, }}>   
 <View style = {{flex:0.2}}>
 
 </View>

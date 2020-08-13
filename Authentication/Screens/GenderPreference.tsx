@@ -58,7 +58,7 @@ onPress = {() => {setWoman(true), setMan(false)}}
 <View style = {{flex:0.3}}>
 <View style = {{marginLeft:30, width:Dimensions.get('window').width - 60, borderWidth:0.3, marginTop:20}}/>
 <View style = {{justifyContent:"center", alignItems:"center", marginTop:30}}>
-<Continue />
+<Continue onPress = {() => {navigation.navigate('Height')}}/>
 </View>
 </View>
 </View>

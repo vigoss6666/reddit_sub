@@ -50,7 +50,7 @@ onPress = {() => {setWoman(true), setMan(false)}}
 <View  style = {{borderBottomWidth:0.5, width:Dimensions.get('window').width - 60,marginTop:20}}/>
 </View>
 <View style = {{flex:0.3, justifyContent:"center", alignItems:"center"}}>
- <Continue disabled = {gateGuard} backgroundColor = {gateColor}/>    
+ <Continue disabled = {gateGuard} backgroundColor = {gateColor} onPress = {() => {navigation.navigate('GenderPreference')}}/>    
 </View>
 </View>
 )

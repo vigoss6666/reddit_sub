@@ -52,7 +52,7 @@ return(
 
 </View>
 <View style = {{flex:0.3,justifyContent:"center", alignItems:"center"}}>
-<Continue backgroundColor = {"green"}/>
+<Continue backgroundColor = {"green"} onPress = {() => {navigation.navigate('Posted')}}/>
 </View>
 </View>
 )

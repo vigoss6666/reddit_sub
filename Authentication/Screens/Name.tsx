@@ -62,7 +62,10 @@ return(
 
 <View style = {{flex:1,  justifyContent:"center", alignItems:"center"}}>
  <View>
- <TouchableOpacity style = {{height:50, width:200, borderRadius:25,borderWidth:1, justifyContent:"center", alignItems:"center",backgroundColor:color }} disabled = {openGate} >
+ <TouchableOpacity 
+ style = {{height:50, width:200, borderRadius:25,borderWidth:1, justifyContent:"center", alignItems:"center",backgroundColor:color }} disabled = {openGate} 
+ onPress = {() => {navigation.navigate('Phone')}}
+ >
            <Text>Continue</Text>     
           </TouchableOpacity>
  </View>

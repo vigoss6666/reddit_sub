@@ -15,10 +15,15 @@ return(
 <Text style = {{fontWeight:"600"}}>Find out when you get a match or message</Text>
 </View>
 <View style = {{flex:0.3}}>
-<TouchableOpacity style = {{borderWidth:1,padding:20,backgroundColor:"black"}}>
+<TouchableOpacity style = {{borderWidth:1,padding:20,backgroundColor:"black"}}
+onPress = {() => {navigation.navigate('EnableLocation')}}
+>
     <Text style = {{color:"white", fontWeight:"600"}}>I Want to be Notified</Text>
 </TouchableOpacity>
-<TouchableOpacity style = {{padding:20,justifyContent:"center",alignItems:'center'}}>
+<TouchableOpacity 
+style = {{padding:20,justifyContent:"center",alignItems:'center'}}
+onPress = {() => {navigation.navigate('EnableLocation')}}
+>
     <Text style = {{ fontWeight:"600"}}>Not now</Text>
 </TouchableOpacity>
 

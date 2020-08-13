@@ -46,7 +46,7 @@ return(
     <Text style = {{alignSelf:'center'}}>Your age will be public</Text>
 </View>
 <View style = {{flex:0.3, justifyContent:"center", alignItems:"center"}}>
- <Continue />    
+ <Continue onPress = {() => {navigation.navigate('Gender')}} />    
 </View>
 </View>
 )

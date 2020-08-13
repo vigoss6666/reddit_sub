@@ -15,6 +15,7 @@ const handleLocation = async () => {
       }
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
+      navigation.navigate('ProfileHidden')
       
 }    
 return(

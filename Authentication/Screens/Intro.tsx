@@ -36,26 +36,26 @@ export default function Intro({navigation}){
             }}
           >
             <View style={{ width, height,backgroundColor:"#ffffff" }}>
-              <Image source={require('/Users/zaidshaikh/fhfclient/assets/Intro1.png')} style={styles.imageStyle} />
+              <Image source={{uri:'https://storage.googleapis.com/nemesis-157710.appspot.com/Intro1.png'}} style={styles.imageStyle} />
               
             </View>
             <View style={{ width, height,backgroundColor:"#ffffff" }}>
               <Image
-                source={require('/Users/zaidshaikh/fhfclient/assets/Intro2.png')}
+                source={{uri:'https://storage.googleapis.com/nemesis-157710.appspot.com/Intro2.png'}}
                 style={styles.imageStyle}
               />
               
             </View>
             <View style={{ width, height,backgroundColor:"#ffffff" }}>
               <Image
-                source={require('/Users/zaidshaikh/fhfclient/assets/Intro3.png')}
+                source={{uri:'https://storage.googleapis.com/nemesis-157710.appspot.com/Intro3.png'}}
                 style={styles.imageStyle}
               />
               
             </View>
             <View style={{ width, height,backgroundColor:"#ffffff" }}>
               <Image
-                source={require('/Users/zaidshaikh/fhfclient/assets/slide1.png')}
+                source={{uri:'https://storage.googleapis.com/nemesis-157710.appspot.com/slide1.png'}}
                 style={styles.imageStyle}
               />
             </View>
