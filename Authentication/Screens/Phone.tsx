@@ -13,9 +13,21 @@ mutation namer($phoneNumber:Float!){
 
 
 
-export default function Phone({navigation}){
+export default function Phone({navigation,route}){
     // const dial_code = React.useRef(navigation.getParam('dial_code')).current; 
     // const country = React.useRef(navigation.getParam('code')).current;
+    let dial_code = "+675"; 
+    let code = 'VN'; 
+
+    if(route.params){
+     if(route.params.code){
+          dial_code = route.params.dial_code;  
+     }
+     if(route.params.code){
+          code = route.params.code; 
+     }
+}
+
     const [registerPhone, {data}] = useMutation(REGISTER_PHONE); 
     const [phone, setPhone] = useState(); 
     if(data){
@@ -40,10 +52,10 @@ export default function Phone({navigation}){
                 onPress = {() => {navigation.navigate('CountryCodes')}}
                 >
                 <Text style = {{fontSize:20}}>
-                { "US"} 
+                { code} 
                 </Text>
                 <Text style = {{fontSize:20}}>
-                 { "+1"}   
+                 { dial_code}   
                 </Text>
                 <AntDesign name = "caretdown" color = "grey" size = {15}/>
                 </TouchableOpacity>
