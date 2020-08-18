@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView,Dimensions} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView,Dimensions, KeyboardAvoidingView, Platform} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Header, Continue} from '../../src/common/Common'; 
 import { gql } from 'apollo-boost';
@@ -24,6 +24,7 @@ const _handleEmail = () => {
  navigation.navigate('VerifyEmail')
 }
 return(
+  <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
 <View style = {{flex:1, }}>   
 <View style = {{flex:0.2}}>
 
@@ -45,5 +46,6 @@ style = {{fontSize:35,borderBottomWidth:1, borderColor:"black",width:Dimensions.
  <Continue  onPress = {() => {_handleEmail() }}/>    
 </View>
 </View>
+</KeyboardAvoidingView>
 )
 }

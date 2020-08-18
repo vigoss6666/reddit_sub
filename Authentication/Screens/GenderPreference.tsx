@@ -29,7 +29,7 @@ return(
 <View>
 <View style = {{flexDirection:"row", justifyContent:"space-around",marginTop:40 }}>
 <TouchableOpacity 
-style = {{width:100, height:100, justifyContent:"center", alignItems:"center", backgroundColor:manWidthColor, borderRadius:"50"}}
+style = {{width:100, height:100, justifyContent:"center", alignItems:"center", backgroundColor:manWidthColor, borderRadius:50}}
 onPress = {() => {setMan(true), setWoman(false), setBoth(false)}}
 >
 <TouchableOpacity style = {{height:80, width:80, borderRadius:40,  borderWidth:0.3,justifyContent:"center", alignItems:"center",backgroundColor:"black"}}

@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, KeyboardAvoidingView, Platform} from 'react-native';
 import {Header,Continue} from '../../src/common/Common'; 
 import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
 
@@ -43,6 +43,7 @@ export default function Name({navigation}){
         return <Text>App is loading</Text>;
       }    
 return(
+<KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
 <View style = {{flex:1,}}>
 <View style = {{flex:0.4}}>
 </View>
@@ -72,5 +73,6 @@ return(
 </View>
 
 </View>
+</KeyboardAvoidingView>  
 )
 }

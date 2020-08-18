@@ -27,11 +27,12 @@ import VerifyEmail from './Authentication/Screens/VerifyEmail';
 import EmailVerified from './Authentication/Screens/EmailVerified';
 import VerifyPhone from './Authentication/Screens/VerifyPhone'; 
 import PhoneSuccess from './Authentication/Screens/PhoneSuccess'; 
-
-
-
-
-
+import LoadContacts from './Authentication/Screens/LoadContacts'; 
+import Try from './Authentication/Screens/Try'; 
+import Contacts from './Authentication/Screens/Contacts'; 
+import ContactsSex from './Authentication/Screens/ContactsSex'; 
+import ContactsMenu from './Authentication/Screens/ContactsMenu'; 
+import ContactsAge from './Authentication/Screens/ContactsAge'; 
 
 
 
@@ -109,7 +110,7 @@ export default function App() {
      <ApolloProvider client={client}>
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:false}}>
-        <Stack.Screen name="Home" component={GenderPreference} />
+        <Stack.Screen name="Home" component={Contacts} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -135,10 +136,7 @@ export default function App() {
         <Stack.Screen name="EmailVerified" component={EmailVerified}/>
         <Stack.Screen name="VerifyPhone" component={VerifyPhone}/>
         <Stack.Screen name="PhoneSuccess" component={PhoneSuccess}/>
-        
-
-        
-        
+        <Stack.Screen name="LoadContacts" component={PhoneSuccess}/>
       </Stack.Navigator>
     </NavigationContainer>
      </ApolloProvider>

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "fhfclient",
-    "slug": "fhfclient",
+    "name": "friends_help_friends",
+    "slug": "friends_help_friends",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

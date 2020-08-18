@@ -1,7 +1,9 @@
-import * as React from 'react';
+import  React, {useState,useRef,useEffect} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback,Dimensions, SafeAreaView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {AntDesign} from '@expo/vector-icons'; 
+import { SearchBar } from 'react-native-elements';
+import SearchInput, { createFilter } from 'react-native-search-filter';
 
 
 
@@ -23,10 +25,20 @@ function Item({dial_code,name,navigation,code}){
 
 
 export default function CountryCodes({navigation}){
+     const KEYS_TO_FILTERS = ['name'];
+     const [search, setSearch] = useState(''); 
+     const filteredEmails = country.filter(createFilter(search, KEYS_TO_FILTERS))
      return (
                 <SafeAreaView> 
+                      <SearchBar
+          round
+          searchIcon={{ size: 24 }}
+          onChangeText={text => setSearch(text)}
+          placeholder="Type Here..."
+          value={search}
+        />
                <FlatList 
-               data = {country}
+               data = {filteredEmails}
                renderItem = {({item}) => 
                <Item dial_code = {item.dial_code} name = {item.name} navigation = {navigation} code = {item.code}/>}
                keyExtractor = {item => item.name}
