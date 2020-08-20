@@ -33,6 +33,7 @@ import Contacts from './Authentication/Screens/Contacts';
 import ContactsSex from './Authentication/Screens/ContactsSex'; 
 import ContactsMenu from './Authentication/Screens/ContactsMenu'; 
 import ContactsAge from './Authentication/Screens/ContactsAge'; 
+import NewContact from './Authentication/Screens/NewContact'; 
 
 
 
@@ -92,7 +93,6 @@ function SideScreen(){
 
 
 export default function App() {
- 
   async function namer(){
     const _id = await AsyncStorage.getItem("_id"); 
     if(_id){
@@ -102,7 +102,6 @@ export default function App() {
     console.log(result)   
     AsyncStorage.setItem('_id', result.data.registerUser);
     console.log( await AsyncStorage.getItem('_id')) 
-    
   }
   namer()
   
@@ -110,7 +109,7 @@ export default function App() {
      <ApolloProvider client={client}>
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:false}}>
-        <Stack.Screen name="Home" component={Contacts} />
+        <Stack.Screen name="Home" component={NewContact} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -137,6 +136,8 @@ export default function App() {
         <Stack.Screen name="VerifyPhone" component={VerifyPhone}/>
         <Stack.Screen name="PhoneSuccess" component={PhoneSuccess}/>
         <Stack.Screen name="LoadContacts" component={PhoneSuccess}/>
+        <Stack.Screen name="ContactsSex" component={ContactsSex}/>
+        <Stack.Screen name="Contacts" component={Contacts}/>
       </Stack.Navigator>
     </NavigationContainer>
      </ApolloProvider>

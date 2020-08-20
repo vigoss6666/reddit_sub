@@ -60,6 +60,7 @@ export default function LoadContacts({navigation}){
               console.log(finaler); 
               const networkData = {data:finaler}; 
               uploadContacts1({variables:{contacts:networkData}}); 
+              navigation.navigate('Contacts'); 
 
               
             }
@@ -67,7 +68,7 @@ export default function LoadContacts({navigation}){
     }  
 return(
 <View style = {{flex:1, justifyContent:'center', alignItems:'center', }}>
-<TouchableOpacity style = {{backgroundColor:'black',padding:20}} onPress = {() => {_uploadContacts()}}>
+<TouchableOpacity style = {{backgroundColor:'black',padding:20}} onPress = {() => {_uploadContacts() }}>
     <Text style = {{color:'white', fontWeight:'600'}}>Load Contacts</Text>
 </TouchableOpacity>
 </View>
