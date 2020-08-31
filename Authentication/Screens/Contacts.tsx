@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, KeyboardAvoidingView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import { Divider,Header,Text, SearchBar,Avatar,Icon,Button,CheckBox} from 'react-native-elements';
@@ -54,7 +54,7 @@ const addServerDataWrapper = (text) => {
 
 const sendToServer = () => {
    const result = serverData.map(val => (
-      {firstname:val.firstname, name:val.name, identification:val.identification}
+      {firstname:val.firstname, name:val.name, identification:val.identification,_id:val.identification}
    ))
    addDating({variables:{datingPoolList:{data:result}}}); 
 }
@@ -97,6 +97,10 @@ if(data){
     
     
     return(
+      <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={{flex:1}}
+    >
         <View style = {{flex:1, }}>
         <View style = {{flex:0.2}}>
                         
@@ -131,21 +135,20 @@ if(data){
                   <View style = {{alignItems:'center', justifyContent:'center', marginRight:10}}>
                      <Icon name = {"check"} iconStyle = {{opacity:indexer.includes(val.name) ? 1:0}}/> 
                   </View>
-                  
-                
               </TouchableOpacity>
             )
           })}
         </ScrollView>        
         </View>
         <View style = {{flex:0.2,}}>
-            <Text style = {{alignSelf:'center', marginBottom:20, color:'black', fontWeight:"600"}}>{indexer.length} Friends selected</Text>
+            <Text style = {{alignSelf:'center', marginBottom:20, color:'black', fontWeight:"600", marginTop:10}}>{indexer.length} Friends selected</Text>
             <Button buttonStyle = {{backgroundColor:'black'}} title = {"Done"} containerStyle = {{marginLeft:20, marginRight:20}} disabledStyle = {{backgroundColor:'grey', }} disabled = {indexer.length > 0 ? false:true} onPress = {() => {sendToServer(), navigation.navigate('ContactsSex')}}>
                 
             </Button>
                
         </View>
         </View>
+        </KeyboardAvoidingView>
         )
 }
 if(loading){

@@ -32,7 +32,9 @@ export default function LoadContacts({navigation}){
             ]
         }
     ]}
+    let length = useRef().current; 
     const [uploadContacts1, {data}] = useMutation(UPLOAD_CONTACTS, {variables:demoData}); 
+    
     const _uploadContacts = async () => {
         
     
@@ -57,10 +59,10 @@ export default function LoadContacts({navigation}){
                        })
                    }
               })
-              console.log(finaler); 
+              
               const networkData = {data:finaler}; 
               uploadContacts1({variables:{contacts:networkData}}); 
-              navigation.navigate('Contacts'); 
+              navigation.navigate('ContactLoadSuccess'); 
 
               
             }

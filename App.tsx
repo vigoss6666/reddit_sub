@@ -34,6 +34,7 @@ import ContactsSex from './Authentication/Screens/ContactsSex';
 import ContactsMenu from './Authentication/Screens/ContactsMenu'; 
 import ContactsAge from './Authentication/Screens/ContactsAge'; 
 import NewContact from './Authentication/Screens/NewContact'; 
+import ContactLoadSuccess from './Authentication/Screens/ContactLoadSuccess';
 
 
 
@@ -65,9 +66,18 @@ const REGISTER_USER = gql`
     registerUser
  }
 ` 
+
+//getDatingPool: DatingPoolObjectList!
 const GET_HELLO = gql`
  query {
-    getHello1
+   
+    getDatingPool {
+       data {
+          _id 
+          firstname 
+          name 
+       }
+    }
  }
 `; 
 
@@ -94,7 +104,7 @@ function SideScreen(){
 
 export default function App() {
   async function namer(){
-    const _id = await AsyncStorage.getItem("_id"); 
+    const _id = await AsyncStorage.getItem("_id");
     if(_id){
       return; 
     }
@@ -108,8 +118,8 @@ export default function App() {
   return (
      <ApolloProvider client={client}>
       <NavigationContainer>
-      <Stack.Navigator screenOptions = {{headerShown:false}}>
-        <Stack.Screen name="Home" component={NewContact} />
+      <Stack.Navigator screenOptions = {{headerShown:true}}>
+        <Stack.Screen name="Home" component={LoadContacts} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -137,7 +147,10 @@ export default function App() {
         <Stack.Screen name="PhoneSuccess" component={PhoneSuccess}/>
         <Stack.Screen name="LoadContacts" component={PhoneSuccess}/>
         <Stack.Screen name="ContactsSex" component={ContactsSex}/>
+        <Stack.Screen name="ContactsAge" component={ContactsAge}/>
         <Stack.Screen name="Contacts" component={Contacts}/>
+        <Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess}/>
+        <Stack.Screen name="NewContact" component={NewContact}/>
       </Stack.Navigator>
     </NavigationContainer>
      </ApolloProvider>
