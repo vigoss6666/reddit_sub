@@ -1,5 +1,5 @@
-import  React, {useState,useLayoutEffect,useRef} from 'react';
-import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, TouchableHighlightBase,UIManager, findNodeHandle} from 'react-native';
+import  React, {useState,useLayoutEffect,useRef, useEffect} from 'react';
+import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, TouchableHighlightBase,UIManager, findNodeHandle,InteractionManager} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Text} from 'react-native-elements'; 
 import * as Progress from 'react-native-progress';
@@ -44,7 +44,16 @@ const data = [
 
 
 export default function Playgame() {
-  const users = ['zaid', 'huraira', 'nihal', 'hafsa', 'aafreen', 'zaheer'];
+  const users = ['David', 'Amy', 'Arthur', 'Mark', 'Kevin', 'Eric'];
+  const [interaction, setInteraction] = useState(); 
+  useEffect(() => {
+    InteractionManager.runAfterInteractions(() => {
+      setInteraction(true); 
+    });
+    return () => {
+      
+    }
+  }, [])
   function randomNoRepeats(arr) {
     var copy = arr.slice(0);
     return function() {
@@ -83,7 +92,7 @@ export default function Playgame() {
       Animated.timing(fadeOpac, {
         toValue: 0,
         useNativeDriver:false,
-        duration: 10
+        duration: 1
       }),
       Animated.timing(fadeOpac, {
         useNativeDriver:false,
@@ -111,25 +120,26 @@ export default function Playgame() {
 
   const questions = [
     {dimension:'creativity', question:'Most likely to make a guitar out of office supplies'}, 
-    {dimension:'status', question:'Most like would travel by a private plane'},
-    {dimension:'honest', question:'will keep his word no matter what'},
-    {dimension:'narcissicstic', question:'will look in the mirror ten times a day'},
-    {dimension:'sociopath', question:'will stock your facebook profile'},
+    {dimension:'charisma', question:`Would influence others by developing mutual liking
+    and respect`},
+    {dimension:'looks', question:'Who is better Looking'},
+    {dimension:'narcissicstic', question:'Will look in the mirror ten times a day?'},
+    {dimension:'sociopath', question:'Will stock your facebook profile?'},
+    {dimension:'wealthy', question:'Would ask for a loan in bad times?'}, 
+    {dimension:'status', question:'Most likely to travel by a private placne?'},
+    {dimension:'honest', question:'Will keep his word no matter what?'},
+    {dimension:'psychopath', question:'Will poison you in your sleep?'},
+    {dimension:'Humor', question:'Will make you laugh in your tough times?'},
+    {dimension:'Emphatatic', question:'Will listen to your breakup stories?'}, 
+    {dimension:'status', question:'Takes his status too seriously?'},
+    {dimension:'honest', question:'Will keep his word no matter what?'},
+    {dimension:'narcissicstic', question:'Takes a selfie every 5 mins?'},
+    {dimension:'sociopath', question:'Will stock your social Accounts?'},
     {dimension:'creativity', question:'Most likely to make a guitar out of office supplies'}, 
-    {dimension:'status', question:'Most like would travel by a private plane'},
-    {dimension:'honest', question:'will keep his word no matter what'},
-    {dimension:'narcissicstic', question:'will look in the mirror ten times a day'},
-    {dimension:'sociopath', question:'will stock your facebook profile'},
-    {dimension:'creativity', question:'Most likely to make a guitar out of office supplies'}, 
-    {dimension:'status', question:'Most like would travel by a private plane'},
-    {dimension:'honest', question:'will keep his word no matter what'},
-    {dimension:'narcissicstic', question:'will look in the mirror ten times a day'},
-    {dimension:'sociopath', question:'will stock your facebook profile'},
-    {dimension:'creativity', question:'Most likely to make a guitar out of office supplies'}, 
-    {dimension:'status', question:'Most like would travel by a private plane'},
-    {dimension:'honest', question:'will keep his word no matter what'},
-    {dimension:'narcissicstic', question:'will look in the mirror ten times a day'},
-    {dimension:'sociopath', question:'will stock your facebook profile'},
+    {dimension:'status', question:'Most like would travel by a private plane?'},
+    {dimension:'honest', question:'Will keep his word no matter what?'},
+    {dimension:'narcissicstic', question:'Will look in the mirror ten times a day?'},
+    {dimension:'Humor', question:'Will make you laugh on a bad day?'},
   ]
  
   const [bar, setBar] = useState(0);  
@@ -173,52 +183,58 @@ export default function Playgame() {
       
    }
   };
+      
+        return(
+          <View style = {{flex:1,}}>
+          <View style = {{flex:0.1}}>
   
-      return(
-        <View style = {{flex:1,}}>
-        <View style = {{flex:0.1}}>
-
-        </View>
-        <View 
-        style = {{flex:0.6, marginLeft:30, marginRight:30}}
-        onLayout={(event) => {
-          var {x, y, width, height,} = event.nativeEvent.layout;
+          </View>
+          <View 
+          style = {{flex:0.6, marginLeft:30, marginRight:30}}
+          onLayout={(event) => {
+            var {x, y, width, height,} = event.nativeEvent.layout;
+            
+            console.log('parenty'+y); 
+          }} 
+          > 
           
-          console.log('parenty'+y); 
-        }} 
-        > 
-        
-        <Text style = {{alignSelf:'flex-end',marginBottom:10}}> {question}/{questions.length}</Text>
-        <Progress.Bar progress={bar} width={Dimensions.get('window').width -60   } height = {20} />
-        
-        <Text h4 style = {{marginTop:30}}> {questions[question].question} </Text>
-        <View style = {{borderBottomWidth:1, borderBottomColor:'black', marginTop:30,}} />
-        <View style = {{justifyContent:'center', alignItems:'center', flexDirection:'row'}}>
-        <Animated.View
-        style = {[{justifyContent:'center', alignItems:'center',marginTop:20, borderRadius:100, borderWidth:10, marginBottom:20,height:200, width:200,flexDirection:'row', backgroundColor:valer}]}
-        ref = {gamer => Marker = gamer}  
-        >
-        <MaterialIcons name="person" size={100} color="black" />
-        
-        </Animated.View>
-        <Animated.View style = {{alignSelf:"flex-start",marginLeft:-20, marginTop:20,flexDirection:"row",alignItems:"center",opacity:fadeOpac}}>
-         <Text style = {{fontWeight:"bold"}}>+1</Text> 
-         <MaterialCommunityIcons name="lightbulb-on" size={24} color="black" />
-        </Animated.View>
-        </View> 
-        <View style = {{borderBottomWidth:1, borderBottomColor:'black'}}/>
-        
-        
-        </View>
-        <View style = {{flex:0.2, flexDirection:'row'}}>
-        <Draggable x={75} y={100} renderSize={56} renderColor='black' renderText={chooser(users)} isCircle shouldReverse onShortPressRelease={()=>alert('touched!!')} onDragRelease = {(gesture) => measure(gesture)}/>
-        <Draggable x={300} y={100} renderSize={56} renderColor='black' renderText={chooser(users)} isCircle shouldReverse onShortPressRelease={()=>alert('touched!!')} onDragRelease = {(gesture) => measure(gesture)}/>
-        </View>
-        <View style = {{flex:0.1}}>
+          <Text style = {{alignSelf:'flex-end',marginBottom:10}}> {question}/{questions.length}</Text>
+          <Progress.Bar progress={bar} width={Dimensions.get('window').width -60   } height = {20} />
           
-        </View>
-        </View>
-        )
+          <Text style = {{marginTop:30, alignSelf:"center", marginBottom:20,fontSize:15}}> {questions[question].question} </Text>
+          <View style = {{borderBottomWidth:1, borderBottomColor:'black', marginTop:30,}} />
+          <View style = {{justifyContent:'center', alignItems:'center', flexDirection:'row'}}>
+          <Animated.View
+          style = {[{justifyContent:'center', alignItems:'center',marginTop:20, borderRadius:100, borderWidth:10, marginBottom:20,height:200, width:200,flexDirection:'row', backgroundColor:valer}]}
+          ref = {gamer => Marker = gamer}  
+          >
+          <MaterialIcons name="person" size={100} color="black" />
+          
+          </Animated.View>
+          <Animated.View style = {{alignSelf:"flex-start",marginLeft:-20, marginTop:20,alignItems:"center",opacity:fadeOpac}}>
+           <View style = {{flexDirection:"row"}}>
+           <Text style = {{fontWeight:"bold"}}>+1</Text> 
+           <MaterialCommunityIcons name="lightbulb-on" size={24} color="black" />
+           </View>
+           <Text>{question > 0 ? questions[question - 1].dimension: "creativity" }</Text>
+          </Animated.View>
+          </View> 
+          <View style = {{borderBottomWidth:1, borderBottomColor:'black'}}/>
+          
+          
+          </View>
+          <View style = {{flex:0.2, flexDirection:'row'}}>
+          <Draggable x={75} y={100} renderSize={70} renderColor='black' renderText={chooser(users)} isCircle shouldReverse onShortPressRelease={()=>alert('touched!!')} onDragRelease = {(gesture) => measure(gesture)}/>
+          <Draggable x={300} y={100} renderSize={70} renderColor='black' renderText={chooser(users)} isCircle shouldReverse onShortPressRelease={()=>alert('touched!!')} onDragRelease = {(gesture) => measure(gesture)}/>
+          </View>
+          <View style = {{flex:0.1}}>
+            
+          </View>
+          </View>
+          )
+      
+      
+      
     
     
 
