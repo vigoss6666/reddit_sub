@@ -119,7 +119,7 @@ export default function App() {
      <ApolloProvider client={client}>
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}}>
-        <Stack.Screen name="Home" component={ProfilePool} />
+        <Stack.Screen name="Home" component={Playgame} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>

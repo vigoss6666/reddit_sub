@@ -55,7 +55,7 @@ export default function ProfilePool({navigation}){
     value={search}
   />
   <Text h5 style = {{alignSelf:"center",marginTop:30,fontWeight:"bold",marginBottom:30}}> Select the contacts you want to help</Text>
-   {filteredEmails.map((val,index) => (
+      {filteredEmails.map((val,index) => (
         <View key = {index.toString()} style = {{ marginLeft:30, marginRight:30}}>
         <View style = {{borderBottomWidth:1, borderBottomColor:"black", width:Dimensions.get('window').width - 60,marginBottom:10}}/>
         
@@ -70,7 +70,7 @@ export default function ProfilePool({navigation}){
         </View>
         { val.caret ? 
         <View>
-        <View style = {{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginTop:10}}>
+        <View style = {{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginTop:10,marginBottom:15}}>
          <Text style = {{fontWeight:'bold'}}> ADD TO DATING POOL </Text>
          <TouchableOpacity>
          <Entypo name="plus" size={24} color="black" />
@@ -85,8 +85,8 @@ export default function ProfilePool({navigation}){
              marginBottom:10,
              marginTop: 10,
           }}/>
-          <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between'}}>
-          <Text style = {{fontWeight:'bold'}}>INVITE TO PLAY</Text>
+          <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
+          <Text style = {{fontWeight:'bold',}}>INVITE TO PLAY</Text>
           <TouchableOpacity>
           <Entypo name="mail" size={24} color="black" />
           </TouchableOpacity>
@@ -99,10 +99,10 @@ export default function ProfilePool({navigation}){
 
 return(
 <View style = {{flex:1,}}>
-<View style = {{flex:0.2}}>
+<View style = {{flex:0.1}}>
 
 </View>
-<View style = {{flex:0.7}}>
+<View style = {{flex:0.8}}>
 <View style = {{flexDirection:"row",marginLeft:20,justifyContent:'center'}}>
 <Button title = "Contacts"  type = {"outline"} raised = {true} containerStyle = {{width:150}}>
     

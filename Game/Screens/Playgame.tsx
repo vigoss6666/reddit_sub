@@ -1,10 +1,12 @@
-import  React, {useState,useLayoutEffect} from 'react';
+import  React, {useState,useLayoutEffect,useRef} from 'react';
 import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, TouchableHighlightBase,UIManager, findNodeHandle} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Text} from 'react-native-elements'; 
 import * as Progress from 'react-native-progress';
 import { MaterialIcons } from '@expo/vector-icons';
 import Draggable from 'react-native-draggable';
+import { forScaleFromCenterAndroid } from '@react-navigation/stack/lib/typescript/src/TransitionConfigs/CardStyleInterpolators';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const data = [
     {
@@ -53,6 +55,57 @@ export default function Playgame() {
       return item;
     };
   }
+  const fadeIn = () => {
+    // Will change fadeAnim value to 1 in 5 seconds
+    
+    Animated.sequence([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        useNativeDriver:false,
+        duration: 1
+      }),
+      Animated.timing(fadeAnim, {
+        useNativeDriver:false,
+        toValue: 1,
+        duration: 100
+      }),
+      Animated.timing(fadeAnim, {
+        useNativeDriver:false,
+        toValue: 0,
+        duration: 100
+      })
+    ]).start()
+  };
+  const fadeOp = () => {
+    // Will change fadeAnim value to 1 in 5 seconds
+    
+    Animated.sequence([
+      Animated.timing(fadeOpac, {
+        toValue: 0,
+        useNativeDriver:false,
+        duration: 10
+      }),
+      Animated.timing(fadeOpac, {
+        useNativeDriver:false,
+        toValue: 1,
+        duration: 300
+      }),
+      Animated.timing(fadeOpac, {
+        useNativeDriver:false,
+        toValue: 0,
+        duration: 300
+      })
+    ]).start()
+  };
+
+  const fadeOut = () => {
+    // Will change fadeAnim value to 0 in 5 seconds
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 1000, 
+      useNativeDriver:false, 
+    }).start();
+  };
   const chooser = randomNoRepeats(users); 
   
 
@@ -85,6 +138,13 @@ export default function Playgame() {
   const [x,setX] = useState(); 
   const [y,setY] = useState(); 
   const [height, setHeight] = useState();  
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeOpac = useRef(new Animated.Value(0)).current;
+
+  const valer = fadeAnim.interpolate({
+     inputRange:[0,1],
+     outputRange:['white','green'], 
+  })
   useLayoutEffect(() => {
     UIManager.measureInWindow(findNodeHandle(Marker), (x,y,width,height) => {
       setX(x); 
@@ -99,6 +159,7 @@ export default function Playgame() {
     
    
   function measure(gesture){
+
    if(gesture.nativeEvent.pageY > y && gesture.nativeEvent.pageY < y + height && gesture.nativeEvent.pageX > x && gesture.nativeEvent.pageX < x + width){
       console.log("In drag area")
       if(question == questions.length -1){
@@ -107,6 +168,9 @@ export default function Playgame() {
       }
       setQuestion(question + 1)
       setBar(bar + 0.05)
+      fadeIn()
+      fadeOp()
+      
    }
   };
   
@@ -130,14 +194,17 @@ export default function Playgame() {
         <Text h4 style = {{marginTop:30}}> {questions[question].question} </Text>
         <View style = {{borderBottomWidth:1, borderBottomColor:'black', marginTop:30,}} />
         <View style = {{justifyContent:'center', alignItems:'center', flexDirection:'row'}}>
-        <View
-        style = {[{justifyContent:'center', alignItems:'center',marginTop:20, borderRadius:100, borderWidth:10, marginBottom:20,height:200, width:200,flexDirection:'row'}]}
+        <Animated.View
+        style = {[{justifyContent:'center', alignItems:'center',marginTop:20, borderRadius:100, borderWidth:10, marginBottom:20,height:200, width:200,flexDirection:'row', backgroundColor:valer}]}
         ref = {gamer => Marker = gamer}  
         >
         <MaterialIcons name="person" size={100} color="black" />
         
-        </View>
-        
+        </Animated.View>
+        <Animated.View style = {{alignSelf:"flex-start",marginLeft:-20, marginTop:20,flexDirection:"row",alignItems:"center",opacity:fadeOpac}}>
+         <Text style = {{fontWeight:"bold"}}>+1</Text> 
+         <MaterialCommunityIcons name="lightbulb-on" size={24} color="black" />
+        </Animated.View>
         </View> 
         <View style = {{borderBottomWidth:1, borderBottomColor:'black'}}/>
         
