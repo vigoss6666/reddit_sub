@@ -35,13 +35,13 @@ import ContactsMenu from './Authentication/Screens/ContactsMenu';
 import ContactsAge from './Authentication/Screens/ContactsAge'; 
 import NewContact from './Authentication/Screens/NewContact'; 
 import ContactLoadSuccess from './Authentication/Screens/ContactLoadSuccess';
-
+import Playgame from './Game/Screens/Playgame'; 
 
 
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
-const localhost: string = 'http://192.168.1.23:3000/graphql';
+const localhost: string = 'http://192.168.43.7:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 import { gql } from 'apollo-boost'; 
 
@@ -151,6 +151,7 @@ export default function App() {
         <Stack.Screen name="Contacts" component={Contacts}/>
         <Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess}/>
         <Stack.Screen name="NewContact" component={NewContact}/>
+        <Stack.Screen name="Playgame" component={Playgame}/>
       </Stack.Navigator>
     </NavigationContainer>
      </ApolloProvider>

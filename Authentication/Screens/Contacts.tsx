@@ -8,53 +8,54 @@ import { createFilter } from 'react-native-search-filter';
 // addDatingPool(datingPoolList: DatingPoolObjectList1!): Boolean!
 
 const ADD_DATING = gql`
-mutation namer($datingPoolList:DatingPoolObjectList1! = {data:[{name:"zaid", firstname:"zaid shaikh", identification:"1244234"},{name:"zaid", firstname:"zaid shaikh", identification:"1244234"},{name:"zaid", firstname:"zaid shaikh", identification:"1244234"},{name:"zaid", firstname:"zaid shaikh", identification:"1244234"},{name:"zaid", firstname:"zaid shaikh", identification:"1244234"}]}){
- addDatingPool(datingPoolList:$datingPoolList)  
+mutation namer($datingPoolList:DatingPoolObjectList1!){
+ addDatingPool(datingPoolList:$datingPoolList){
+    data {
+       name 
+       firstname
+       _id 
+       gender
+    }
+ }
 }
 `
 
 
 
-const DOWNLOAD_CONTACTS = gql`
-query {
-    downloadContact {
-         data {
-          name     
-          firstname
-          identification
-         }
-    }
-}
-
-`; 
+ 
 
 
-export default function Contacts({navigation}){
-const {data, loading, error} = useQuery(DOWNLOAD_CONTACTS);
-const [addDating] = useMutation(ADD_DATING); 
+export default function Contacts({navigation,route}){
+
+const [addDating, {data}] = useMutation(ADD_DATING); 
 const [indexer,setIndexer] = useState([]); 
 const [isSelected, setSelection] = useState(false);
 const KEYS_TO_FILTERS = ['name'];
 const [search, setSearch] = useState('');
 const [selectAll, setSelectAll] = useState(true);
 const [serverData, addServerData] = useState([]); 
-
+const {profiles} = route.params; 
+console.log(serverData)
+if(data){
+   navigation.navigate('ContactsSex', {profiles:data.addDatingPool.data}); 
+}
 const addServerDataWrapper = (text) => {
   
   const result = serverData.filter(val => val.name === text.name) 
   if(result.length > 0){
          const finaler = serverData.filter(val => val.name !== text.name);  
          addServerData(finaler); 
+         console.log(serverData);
          return; 
   }
-  addServerData([...serverData, text]); 
+  console.log(serverData); 
 }
 
 
 
 const sendToServer = () => {
    const result = serverData.map(val => (
-      {firstname:val.firstname, name:val.name, identification:val.identification,_id:val.identification}
+      {_id:val._id}
    ))
    addDating({variables:{datingPoolList:{data:result}}}); 
 }
@@ -79,9 +80,9 @@ const deleteArray = () => {
 
 
 
-if(data){
+
     
-    const filteredEmails = data.downloadContact.data.filter(createFilter(search, KEYS_TO_FILTERS))
+    const filteredEmails = profiles.filter(createFilter(search, KEYS_TO_FILTERS))
     const addAll = () => {
      const result = filteredEmails.map(val => {
           return val.name
@@ -125,7 +126,7 @@ if(data){
             return (
               <TouchableOpacity key={index} 
               style = {{borderWidth:1, height:50,flexDirection:"row",  justifyContent:'space-between', marginLeft:20, marginRight:20, borderLeftWidth:0, borderRightWidth:0,}}
-              onPress = {() => { addArray(val.name), addServerDataWrapper(val)  }}
+              onPress = {() => { addArray(val.name), addServerData([val,...serverData, ]), addServerDataWrapper(val)  }}
               >
                 
                   <View style = {{flexDirection:'row', alignItems:'center'}}>
@@ -142,7 +143,7 @@ if(data){
         </View>
         <View style = {{flex:0.2,}}>
             <Text style = {{alignSelf:'center', marginBottom:20, color:'black', fontWeight:"600", marginTop:10}}>{indexer.length} Friends selected</Text>
-            <Button buttonStyle = {{backgroundColor:'black'}} title = {"Done"} containerStyle = {{marginLeft:20, marginRight:20}} disabledStyle = {{backgroundColor:'grey', }} disabled = {indexer.length > 0 ? false:true} onPress = {() => {sendToServer(), navigation.navigate('ContactsSex')}}>
+            <Button buttonStyle = {{backgroundColor:'black'}} title = {"Done"} containerStyle = {{marginLeft:20, marginRight:20}} disabledStyle = {{backgroundColor:'grey', }} disabled = {indexer.length > 0 ? false:true} onPress = {() => {sendToServer()}}>
                 
             </Button>
                
@@ -150,17 +151,6 @@ if(data){
         </View>
         </KeyboardAvoidingView>
         )
-}
-if(loading){
-    return (<View style = {{flex:1, justifyContent:'center', alignItems:'center'}}>
-        <Text>Loading</Text>
-        </View> )
-}
-if(error){
-    return <View style = {{flex:1, justifyContent:'center', alignItems:'center'}}>
-        <Text>Loading</Text>
-        </View>  
-}
 
 }
 const styles = StyleSheet.create({

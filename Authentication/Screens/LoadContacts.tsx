@@ -4,9 +4,14 @@ import { useMutation,useQuery } from '@apollo/react-hooks';
 
 const UPLOAD_CONTACTS = gql`
  mutation namer($contacts:Contact1!){
-      uploadContacts(contacts:$contacts)
- }
-
+      uploadContacts(contacts:$contacts){
+          data {
+               name
+               firstname
+               _id
+          }
+      }
+  }
 `; 
 
 
@@ -19,8 +24,6 @@ export default function LoadContacts({navigation}){
             firstname:"zaid", 
             name:"zaid shaikh", 
             identification:"123456", 
-            
-            
             phoneNumbers:[
                 {
                     label:"something", 
@@ -33,11 +36,13 @@ export default function LoadContacts({navigation}){
         }
     ]}
     let length = useRef().current; 
-    const [uploadContacts1, {data}] = useMutation(UPLOAD_CONTACTS, {variables:demoData}); 
-    
-    const _uploadContacts = async () => {
+    const [uploadContacts1, {data}] = useMutation(UPLOAD_CONTACTS); 
+    if(data){
         
-    
+        navigation.navigate('ContactLoadSuccess',{profiles:data.uploadContacts.data});
+           
+    }
+    const _uploadContacts = async () => {
         const { status } = await Contacts.requestPermissionsAsync(); 
         if (status === 'granted') {
             const { data } = await Contacts.getContactsAsync({
@@ -54,7 +59,7 @@ export default function LoadContacts({navigation}){
                             return {
                                id:val.id, 
                                digits:val1.digits, 
-                               number:val1.number 
+                               number:val1.number
                            }
                        })
                    }
@@ -62,7 +67,9 @@ export default function LoadContacts({navigation}){
               
               const networkData = {data:finaler}; 
               uploadContacts1({variables:{contacts:networkData}}); 
-              navigation.navigate('ContactLoadSuccess'); 
+              
+              
+               
 
               
             }

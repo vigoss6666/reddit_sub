@@ -21,9 +21,12 @@ query {
 
 
 export default function ContactLoadSuccess({navigation,route}){
-    const {data, loading, error} = useQuery(DOWNLOAD_CONTACTS);
-    if(data){
-        console.log(data)
+    
+    const {profiles} = route.params; 
+    console.log("contact success"); 
+     
+    
+        
         return(
             <View style = {{flex:1, }}>
             <View style = {{flex:0.3}}>
@@ -34,7 +37,7 @@ export default function ContactLoadSuccess({navigation,route}){
             <View style = {{    flexDirection:'row', justifyContent:'center',  alignItems:'center', marginBottom:30}}>
             <MaterialIcons name="account-circle" size={60} color="black" />
             
-                <Text h3 style = {{fontWeight:"bold"}}> {data.downloadContact.data.length} </Text>
+                <Text h3 style = {{fontWeight:"bold"}}> {profiles.length} </Text>
             
             </View>
             <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:20, marginBottom:20,borderColor:"grey"}}/>
@@ -42,7 +45,7 @@ export default function ContactLoadSuccess({navigation,route}){
             Contacts Loaded!
             </Text>
             <Text style = {{alignSelf:'center'}}>
-                Awesome {data.downloadContact.data.length} contacts loaded
+                Awesome {profiles.length} contacts loaded
             </Text>
             <Text style = {{alignSelf:'center', marginBottom:30}}>
                 Happy Matchmaking!
@@ -50,17 +53,11 @@ export default function ContactLoadSuccess({navigation,route}){
             <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:20, marginBottom:20,borderColor:"grey"}}/>
             </View>
             <View style = {{flex:0.2}}>
-            <Button title = "Start Matchmaking" containerStyle = {{marginLeft:30, marginRight:30, backgroundColor:'black'}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {navigation.navigate('Contacts')}}/>
+            <Button title = "Start Matchmaking" containerStyle = {{marginLeft:30, marginRight:30, backgroundColor:'black'}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {navigation.navigate('Contacts', {profiles})}}/>
             </View>
             </View>
             )               
-    }  
+    
  
- if(loading){
-      return (
-          <View style = {{justifyContent:'center', alignItems:'center', flex:1}}>
-                <Text>Loading</Text>
-          </View>
-      )
- }
+ 
 }
