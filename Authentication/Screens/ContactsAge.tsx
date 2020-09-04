@@ -8,20 +8,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
 import { Button } from 'react-native-elements';
 
-const GET_DATING_POOL = gql`
-query {
-   getDatingPool {
-      data {
-        firstname
-        name
-        _id
-      }
-      
-      
-   }
-}
 
-`;
 
 
 
@@ -32,15 +19,14 @@ query {
 export default function ContactsAge({navigation}){
 const data1 = [{ fullname:"zaid",min:15,max:19}, {fullname:"zaheer",min:20,max:24}, {fullname:"nihal",ageRange:{min:25, max:29}},{fullname:"nihal",ageRange:{min:30, max:34}}]
 const [selectedValue, setSelectedValue] = useState("java");
-const {data, loading, error} = useQuery(GET_DATING_POOL); 
 const ageRange = [{min:15,max:19},{min:20,max:24},{min:25, max:29}, {min:30, max:34}, {min:35, max:39}, {min:40, max:44}, {min:45, max:49}]
 const [visible, setVisible] = useState(false);
 const [country,selectCountry] = useState(['15'])
 const toggleOverlay = () => {
     setVisible(!visible);
   };
+const data = [{name:"zaid", fullname:"shaikh"}]
 
-if(data){
     return(
         <View style = {{flex:1, }}>
         <View style = {{flex:0.1}}>
@@ -98,12 +84,8 @@ if(data){
         </View>
         </View>
         )    
-}
-if(loading){
-     return <View style = {{flex:1, justifyContent:'center', alignItems:'center'}}>
-            <Text>Loading</Text>
-     </View>
-}
+
+
 
 
 

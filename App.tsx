@@ -36,7 +36,7 @@ import ContactsAge from './Authentication/Screens/ContactsAge';
 import NewContact from './Authentication/Screens/NewContact'; 
 import ContactLoadSuccess from './Authentication/Screens/ContactLoadSuccess';
 import Playgame from './Game/Screens/Playgame'; 
-
+import ProfilePool from './Authentication/Screens/ProfilePool'; 
 
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
@@ -119,7 +119,7 @@ export default function App() {
      <ApolloProvider client={client}>
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}}>
-        <Stack.Screen name="Home" component={LoadContacts} />
+        <Stack.Screen name="Home" component={ProfilePool} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>

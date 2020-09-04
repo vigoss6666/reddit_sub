@@ -9,11 +9,27 @@ import { Ionicons } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import SwitchSelector from "react-native-switch-selector";
 import {Button} from 'react-native-elements'; 
+import { gql } from 'apollo-boost';
+
+// addNewContact(userInput: UserInput1!): Boolean!
+
+const ADD_NEW_CONTACT = gql`
+ mutation namer($userInput: UserInput1!){
+      addNewContact(userInput:$userInput)
+ }
+`
+
+
+
+
+
 export default function NewContact({navigation}){
+ const data1 = {name:"zaid shaikh", firstname:"zaid", countryCode:"+1", gender: "male", orientation:"male",minAge:24, maxAge:24,inches:"11", feet:"5", addToDatingPool:'yes', number:"2103888163"}   
+ const [addNewContact, {data}] = useMutation(ADD_NEW_CONTACT); 
  const [selectedValue, setSelectedValue] = useState("java");
- const [country,selectCountry] = useState(['15'])
- const [feet,selectFeet] = useState(['5'])
- const [inches,setInches] = useState(['5'])
+ const [age,selectAge] = useState()
+ const [feet,selectFeet] = useState()
+ const [inches,setInches] = useState()
  const options = [
     { label: "yes", value: "yes" },
     { label: "No", value: "no" },
@@ -24,10 +40,28 @@ const [lastname,setLastname] = useState();
 const [number,setNumber] = useState();
 const [gender,setGender] = useState(); 
 const [orientation, setOrientation] = useState(); 
-const [age, setAge] = useState(); 
 const [height, setHeight] = useState(); 
 const [addDatingPool, setAddDatingPool] = useState(); 
 const [countryCode, setCountryCode] = useState(); 
+
+if(data){
+     console.log(data); 
+}
+
+console.log(firstname)
+console.log(lastname)
+console.log(number)
+console.log(gender)
+console.log(orientation)
+console.log(age)
+console.log(height)
+console.log(addDatingPool)
+console.log(feet)
+console.log(inches)
+
+const _sendToServer = () => {
+ addNewContact({variables:{userInput:data1}});      
+}
 
 const _uploadContact = () => {
      const serverData = {firstname, lastname,number,gender, orientation,age,height,addDatingPool}; 
@@ -133,13 +167,13 @@ return(
 <Text style = {{fontWeight:'bold'}}>Age </Text>
 <DropDownPicker
     items={[
-        {label: '15 - 19 years', value: {min:15,max:19}, },
-        {label: '20 - 24 years', value: {min:20,max:24} },
-        {label: '25 - 29 years', value: {min:25,max:29} },
-        {label: '30 - 34 years', value: {min:30,max:34} },
-        {label: '35 - 39 years', value: {min:35,max:39}, },
-        {label: '40 - 44 years', value: {min:40,max:44}, },
-        {label: '45 - 49 years', value: {min:45,max:49}, },
+        {label: '15 - 19 years', value: {minAge:15,maxAge:19}, },
+        {label: '20 - 24 years', value: {minAge:20,maxAge:24} },
+        {label: '25 - 29 years', value: {minAge:25,maxAge:29} },
+        {label: '30 - 34 years', value: {minAge:30,maxAge:34} },
+        {label: '35 - 39 years', value: {minAge:35,maxAge:39}, },
+        {label: '40 - 44 years', value: {minAge:40,maxAge:44}, },
+        {label: '45 - 49 years', value: {minAge:45,maxAge:49}, },
     ]}
     placeholder = {"20 - 24 years "}
     containerStyle={{height: 40,width:200,zIndex:100}}
@@ -149,7 +183,7 @@ return(
         zIndex:100
     }}
     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-    onChangeItem={item => selectCountry(
+    onChangeItem={item => selectAge(
         item.value
     )}
 />
@@ -231,7 +265,9 @@ return(
 </ScrollView>
 </View>
 <View style = {{flex:0.2}}>
- <Button title = {"save"} containerStyle = {{marginLeft:30, marginRight:30,marginTop:100,backgroundColor:'black'}}>
+ <Button 
+ onPress = {() => {_sendToServer()}}
+ title = {"save"} containerStyle = {{marginLeft:30, marginRight:30,marginTop:100,backgroundColor:'black'}}>
 
  </Button>
 </View>
