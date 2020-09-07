@@ -118,7 +118,7 @@ const _sendToServer = () => {
                       <Text>{val.fullname || val.firstname}</Text>
                       </View>
                       <View style = {{alignItems:'center', justifyContent:'space-between', marginRight:10, flexDirection:'row',flex:0.2}}>
-                         <TouchableOpacity onPress = {() => {addMale(val)}} style = {{}} > 
+                         <TouchableOpacity onPress = {() => {addMale(val)}} style = {{}}> 
                          <FontAwesome name="male" size={34} color={val.gender == 'male' ? 'green':'black' || val.gender} />
                          </TouchableOpacity>
                          <TouchableOpacity onPress = {() => {addFemale(val)}}>

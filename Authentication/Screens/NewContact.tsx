@@ -11,6 +11,7 @@ import SwitchSelector from "react-native-switch-selector";
 import {Button} from 'react-native-elements'; 
 import { gql } from 'apollo-boost';
 import { Platform } from 'react-native';
+import {GET_DATING_POOL,GET_CONTACT_POOL} from './ProfilePool'; 
 
 // addNewContact(userInput: UserInput1!): Boolean!
 
@@ -81,7 +82,9 @@ const _sendToServer = () => {
      feet:feet, 
      addToDatingPool:addDatingPool
  }   
- addNewContact({variables:{userInput:serverObject}});      
+ addNewContact({variables:{userInput:serverObject},refetchQueries:[{query:GET_DATING_POOL}, {query:GET_CONTACT_POOL}]});
+ 
+//  navigation.goBack();       
 }
 
 const _uploadContact = () => {
