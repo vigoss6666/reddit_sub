@@ -42,7 +42,7 @@ import ProfilePool from './Authentication/Screens/ProfilePool';
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
-const localhost: string = 'http://192.168.1.15:3000/graphql';
+const localhost: string = 'http://192.168.43.7:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 import { gql } from 'apollo-boost'; 
 
@@ -53,7 +53,7 @@ async function getId(){
 }
 
 const client = new ApolloClient({ 
-  uri: localhost, 
+  uri: production, 
   request: async (operation) => {
     operation.setContext({
       headers: {

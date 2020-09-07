@@ -1,5 +1,10 @@
 import  React, {useState,useRef,useEffect,FunctionComponent} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import {Button, Icon} from 'react-native-elements'; 
+import { Entypo } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 export interface HeaderProps {
 text:string,    
 style?:any 
@@ -38,7 +43,29 @@ export const Continue:FunctionComponent<ContinueProps>  = (props) => {
           </TouchableOpacity>
      )
 }
-
+export const HeaderBar = (props) => {
+     const [selected, setSelected] = useState(); 
+     return (
+          <View style = {{flex:1,flexDirection:"row",marginLeft:10, marginRight:10,marginTop:10, marginBottom:10}}>
+          <TouchableOpacity style = {{flex:0.5,  }} >
+          <Entypo name="controller-play" size={40} color  = {props.page == "PlayGame" ? 'yellow':'grey'} />    
+          </TouchableOpacity>
+          <TouchableOpacity style = {{flex:0.5}}>
+          <Entypo name="bell" size={40} color="grey" />
+          </TouchableOpacity>
+          <TouchableOpacity style = {{flex:0.5}} onPress = {() => props.navigation.navigate('ProfilePool')}>
+          <Ionicons name="ios-people" size={40} color={props.page == "Friends" ? 'yellow':'grey'} />   
+          </TouchableOpacity>
+          <TouchableOpacity style = {{flex:0.5}}>
+          <Entypo name="chat" size={40} color="grey" />  
+          </TouchableOpacity>
+          <TouchableOpacity style = {{flex:0.5}}>
+          <MaterialIcons name="account-circle" size={40} color="grey" />          
+          </TouchableOpacity>
+    
+          </View> 
+     ) 
+}
 
 
 

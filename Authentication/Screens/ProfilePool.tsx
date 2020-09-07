@@ -12,6 +12,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {HeaderBar} from '../../src/common/Common';
 const contactList = [{name:"zaid shaikh", firstname:"zaid", _id:'123'},{name:"david", firstname:"zaid", _id:'1234'}];
 const friendsList = [{}];
 
@@ -97,12 +98,12 @@ const useFetchContactPool = (navigation) => {
            return (
                <View style = {{flex:1}}>
            <View style = {{flex:0.4}}>
-          <View style = {{flexDirection:"row",alignItems:"center", justifyContent:"space-around"}}>         
-         <Text h4 style = {{alignSelf:'center',  marginTop:30, fontWeight:'bold', marginBottom:20 }}>
+          <View style = {{flexDirection:"row",alignItems:"center", justifyContent:"center"}}>         
+         <Text  style = {{alignSelf:'center',  marginTop:30, fontWeight:'bold', marginBottom:20, fontSize:17 }}>
              Click to View a Contact
          </Text>
-         <TouchableOpacity style = {{alignItems:"center"}} onPress = {() => navigation.navigate('NewContact', {refetch})}>
-         <AntDesign name="pluscircle" size={30} color="black" />
+         <TouchableOpacity style = {{alignItems:"center", marginLeft:20,justifyContent:'center'}} onPress = {() => navigation.navigate('NewContact', {refetch})}>
+         <AntDesign name="pluscircle" size={25} color="black" />
          </TouchableOpacity>
          </View>
          <SearchBar
@@ -125,7 +126,7 @@ const useFetchContactPool = (navigation) => {
              <View style = {{flexDirection:"row", justifyContent:'space-between'}}>
              <View style = {{flexDirection:"row", alignItems:"center"}}>
              <MaterialIcons name="account-circle" size={24} color="black" />
-             <Text style = {{marginLeft:10}}>{val.name || val.firstname}</Text>
+             <Text style = {{marginLeft:10, marginBottom:5, fontWeight:"bold"}}>{val.name || val.firstname}</Text>
              </View>
              {   
                   val.caret ? 
@@ -236,7 +237,7 @@ const useFetchDatingPool = () => {
                return (
                     <View style = {{flex:1}}>
                     <View style = {{flex:0.4}}>      
-              <Text h4 style = {{alignSelf:'center',  marginTop:30, fontWeight:'bold', marginBottom:20 }}>
+              <Text style = {{alignSelf:'center',  marginTop:30, fontWeight:'bold', marginBottom:20, fontSize:17 }}>
                   Click to View a friends Profile
               </Text>
               <SearchBar
@@ -248,7 +249,7 @@ const useFetchDatingPool = () => {
               placeholder="search"
               value={search}
             />
-            <Text h5 style = {{alignSelf:"center",marginTop:30,fontWeight:"bold",marginBottom:30}}> Select the contacts you want to help</Text>
+            <Text h5 style = {{alignSelf:"center",marginTop:30,fontWeight:"bold",marginBottom:30}}> {data.getDatingPoolList.data.length} friends in your friends list </Text>
             </View>
             <View style = {{flex:0.5}}>
             <ScrollView style = {{marginBottom:30}}>    
@@ -259,7 +260,7 @@ const useFetchDatingPool = () => {
                   <View style = {{flexDirection:"row", justifyContent:'space-between'}}>
                   <View style = {{flexDirection:"row", alignItems:"center"}}>
                   <MaterialIcons name="account-circle" size={24} color="black" />
-                  <Text style = {{marginLeft:10}}>{val.name || val.firstname}</Text>
+                  <Text style = {{marginLeft:10,marginBottom:10,fontWeight:"bold"}}>{val.name || val.firstname}{"\n"} 0 votes by 0 friends</Text>
                   </View>
                   {   
                        val.caret ? 
@@ -408,7 +409,7 @@ const contact = useFetchContactPool(navigation);
 return(
 <View style = {{flex:1,}}>
 <View style = {{flex:0.1}}>
-
+<HeaderBar page = {"Friends"} navigation = {navigation}/> 
 </View>
 <View style = {{flex:0.90}}>
 <View style = {{flexDirection:"row",marginLeft:20,justifyContent:'center'}}>

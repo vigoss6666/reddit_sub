@@ -7,6 +7,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import Draggable from 'react-native-draggable';
 import { forScaleFromCenterAndroid } from '@react-navigation/stack/lib/typescript/src/TransitionConfigs/CardStyleInterpolators';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {HeaderBar} from '../../src/common/Common';
 
 const data = [
     {
@@ -43,7 +44,7 @@ const data = [
 ]
 
 
-export default function Playgame() {
+export default function Playgame({navigation}) {
   const users = ['David', 'Amy', 'Arthur', 'Mark', 'Kevin', 'Eric'];
   const [interaction, setInteraction] = useState(); 
   useEffect(() => {
@@ -166,6 +167,9 @@ export default function Playgame() {
       
     };
   }, [x,y,width,height])
+  useEffect(() => {
+     setQuestion(0);
+  },[])
     
    
   function measure(gesture){
@@ -173,7 +177,7 @@ export default function Playgame() {
    if(gesture.nativeEvent.pageY > y && gesture.nativeEvent.pageY < y + height && gesture.nativeEvent.pageX > x && gesture.nativeEvent.pageX < x + width){
       console.log("In drag area")
       if(question == questions.length -1){
-        setQuestion(0);
+        navigation.navigate('Play20'); 
         return;  
       }
       setQuestion(question + 1)
@@ -187,7 +191,7 @@ export default function Playgame() {
         return(
           <View style = {{flex:1,}}>
           <View style = {{flex:0.1}}>
-  
+          
           </View>
           <View 
           style = {{flex:0.6, marginLeft:30, marginRight:30}}

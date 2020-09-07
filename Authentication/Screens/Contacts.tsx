@@ -76,6 +76,7 @@ const addArray = (text) => {
 }
 const deleteArray = () => {
     setIndexer([]); 
+    addServerData([]); 
 }
 
 
@@ -87,7 +88,12 @@ const deleteArray = () => {
      const result = filteredEmails.map(val => {
           return val.name
      })
-     setIndexer(result);      
+     setIndexer(result);
+     const newServerData = filteredEmails.map(val1 => {
+        return {_id:val1._id}; 
+     })
+     addServerData(newServerData); 
+
     }
     const selectAllTemplate = selectAll ? <TouchableOpacity style = {{marginRight:20, marginLeft:10,marginBottom:10}} onPress = {() => {addAll(), setSelectAll(false)}}>
 <Text style = {{alignSelf:'flex-end', fontWeight:"600"}}>Select all</Text>
@@ -141,7 +147,7 @@ const deleteArray = () => {
           })}
         </ScrollView>        
         </View>
-        <View style = {{flex:0.2,}}>
+        <View style = {{flex:0.2,marginTop:20}}>
             <Text style = {{alignSelf:'center', marginBottom:20, color:'black', fontWeight:"600", marginTop:10}}>{indexer.length} Friends selected</Text>
             <Button buttonStyle = {{backgroundColor:'black'}} title = {"Done"} containerStyle = {{marginLeft:20, marginRight:20}} disabledStyle = {{backgroundColor:'grey', }} disabled = {indexer.length > 0 ? false:true} onPress = {() => {sendToServer()}}>
                 

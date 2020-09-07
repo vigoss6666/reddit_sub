@@ -15,7 +15,9 @@ return(
 </Image>
 </View>
 <View style = {{flex:0.2, justifyContent:"center", }}>
-<Button title = "Play again" containerStyle = {{marginLeft:30, marginRight:30}} buttonStyle = {{backgroundColor:"black"}} icon={
+<Button 
+
+title = "Play again" containerStyle = {{marginLeft:30, marginRight:30}} buttonStyle = {{backgroundColor:"black"}} icon={
     <Icon
       name="rowing"
       size={15}

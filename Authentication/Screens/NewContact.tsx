@@ -83,6 +83,7 @@ const _sendToServer = () => {
      addToDatingPool:addDatingPool
  }   
  addNewContact({variables:{userInput:serverObject},refetchQueries:[{query:GET_DATING_POOL}, {query:GET_CONTACT_POOL}]});
+ navigation.navigate('ProfilePool')
  
 //  navigation.goBack();       
 }
