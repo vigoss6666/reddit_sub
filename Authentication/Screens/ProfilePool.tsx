@@ -344,14 +344,14 @@ const useFetchDatingPool = () => {
                     <DropDownPicker
     items={[
         
-        {label: '15 to 19 years', value: {minAge:15, maxAge:19}},
-        {label: '20 to 24 years', value: {minAge:20, maxAge:24}},
-        {label: '25 to 29 years', value: {minAge:25, maxAge:29}},
-        {label: '30 to 34 years', value: {minAge:30, maxAge:34}},
-        {label: '35 to 39 years', value: {minAge:35, maxAge:39}},
-        {label: '40 to 44 years', value: {minAge:40, maxAge:44}},
-        {label: '45 to 49 years', value: {minAge:45, maxAge:49}},
-        {label: '50 to 54 years', value: {minAge:50, maxAge:54}},
+        {label: '15 to 19 years', value: {minAge:15, maxAge:19}, selected:val.minAge == 15 && val.maxAge == 19 ? true : false},
+        {label: '20 to 24 years', value: {minAge:20, maxAge:24}, selected:val.minAge == 20 && val.maxAge == 24 ? true : false},
+        {label: '25 to 29 years', value: {minAge:25, maxAge:29}, selected:val.minAge == 25 && val.maxAge == 29 ? true : false},
+        {label: '30 to 34 years', value: {minAge:30, maxAge:34}, selected:val.minAge == 30 && val.maxAge == 34 ? true : false},
+        {label: '35 to 39 years', value: {minAge:35, maxAge:39}, selected:val.minAge == 35 && val.maxAge == 39 ? true : false},
+        {label: '40 to 44 years', value: {minAge:40, maxAge:44},selected:val.minAge == 40 && val.maxAge == 44 ? true : false}, 
+        {label: '45 to 49 years', value: {minAge:45, maxAge:49},selected:val.minAge == 45 && val.maxAge == 49 ? true : false},
+        {label: '50 to 54 years', value: {minAge:50, maxAge:54}, selected:val.minAge == 50 && val.maxAge == 54 ? true : false},
 
       ]}
     onPress = {() => {console.log("pressed")}}
