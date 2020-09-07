@@ -42,7 +42,7 @@ import ProfilePool from './Authentication/Screens/ProfilePool';
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
-const localhost: string = 'http://192.168.43.7:3000/graphql';
+const localhost: string = 'http://192.168.1.15:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 import { gql } from 'apollo-boost'; 
 
@@ -120,7 +120,7 @@ export default function App() {
      <ApolloProvider client={client}>
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}}>
-        <Stack.Screen name="Home" component={Play20} />
+        <Stack.Screen name="Home" component={LoadContacts} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -154,6 +154,7 @@ export default function App() {
         <Stack.Screen name="NewContact" component={NewContact}/>
         <Stack.Screen name="Playgame" component={Playgame}/>
         <Stack.Screen name="Play20" component={Play20}/>
+        <Stack.Screen name="ProfilePool" component={ProfilePool}/>
       </Stack.Navigator>
     </NavigationContainer>
      </ApolloProvider>

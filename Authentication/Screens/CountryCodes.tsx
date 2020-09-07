@@ -14,7 +14,7 @@ function Item({dial_code,name,navigation,code}){
      return (
           <TouchableOpacity 
           style = {{flex:1,flexDirection:"row",justifyContent:"space-between",padding:20}}
-          onPress = {() => { navigation.navigate('Phone', {dial_code, name,code})}}
+          onPress = {() => { navigation.navigate('NewContact',{dial_code, name,code})}}
           >
               <Text style = {{fontSize:20}}>{name}</Text>
                <Text style = {{fontSize:20}}>{dial_code} </Text>

@@ -50,6 +50,7 @@ export default function LoadContacts({navigation}){
             });
             if (data.length > 0) {
               const contact = data;
+              console.log(contact); 
               const finaler = contact.map(val => {
                    return {
                        name:val.name, 

@@ -10,6 +10,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import SwitchSelector from "react-native-switch-selector";
 import {Button} from 'react-native-elements'; 
 import { gql } from 'apollo-boost';
+import { Platform } from 'react-native';
 
 // addNewContact(userInput: UserInput1!): Boolean!
 
@@ -23,11 +24,13 @@ const ADD_NEW_CONTACT = gql`
 
 
 
-export default function NewContact({navigation}){
+export default function NewContact({navigation,route}){
+      
+ 
  const data1 = {name:"zaid shaikh", firstname:"zaid", countryCode:"+1", gender: "male", orientation:"male",minAge:24, maxAge:24,inches:"11", feet:"5", addToDatingPool:'yes', number:"2103888163"}   
- const [addNewContact, {data}] = useMutation(ADD_NEW_CONTACT); 
+ const [addNewContact, {data}] = useMutation(ADD_NEW_CONTACT);
  const [selectedValue, setSelectedValue] = useState("java");
- const [age,selectAge] = useState()
+ const [age,selectAge] = useState({minAge:null, maxAge:null})
  const [feet,selectFeet] = useState()
  const [inches,setInches] = useState()
  const options = [
@@ -35,39 +38,62 @@ export default function NewContact({navigation}){
     { label: "No", value: "no" },
     
   ];
+const [dial_code, setDialCode] = useState("+1");   
 const [firstname,setFirstname] = useState();   
 const [lastname,setLastname] = useState();
 const [number,setNumber] = useState();
+const [digits,setDigits] = useState();
 const [gender,setGender] = useState(); 
 const [orientation, setOrientation] = useState(); 
 const [height, setHeight] = useState(); 
 const [addDatingPool, setAddDatingPool] = useState(); 
-const [countryCode, setCountryCode] = useState(); 
+const [countryCode, setCountryCode] = useState('US'); 
 
 if(data){
      console.log(data); 
 }
-
+console.log(countryCode); 
+console.log(digits)
 console.log(firstname)
 console.log(lastname)
 console.log(number)
 console.log(gender)
 console.log(orientation)
-console.log(age)
+console.log(age.maxAge)
 console.log(height)
 console.log(addDatingPool)
 console.log(feet)
 console.log(inches)
+console.log(digits); 
+
 
 const _sendToServer = () => {
- addNewContact({variables:{userInput:data1}});      
+ const serverObject = {
+     countryCode:route.params ? route.params.code : "US", 
+     digits:digits, 
+     name:firstname+lastname, 
+     firstname:firstname, 
+     gender:gender, 
+     orientation:orientation,
+     minAge:age.minAge, 
+     maxAge:age.maxAge,
+     inches:inches, 
+     feet:feet, 
+     addToDatingPool:addDatingPool
+ }   
+ addNewContact({variables:{userInput:serverObject}});      
 }
 
 const _uploadContact = () => {
      const serverData = {firstname, lastname,number,gender, orientation,age,height,addDatingPool}; 
 
 }
-
+const _checkDisable = () => {
+     if(firstname && lastname && digits && gender && age && orientation){
+          return false; 
+     }
+     return true; 
+}
 return(
  <View style = {{flex:1}}>  
  <View style = {{flex:0.1}}>
@@ -86,12 +112,13 @@ return(
 <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:30, marginBottom:30}}/>
 <View style = {{flexDirection:'row',justifyContent:'space-around',alignItems:'center',marginBottom:30}}>
 <Text style = {{fontWeight:"bold"}}>FIRSTNAME</Text>
-<TextInput style = {{borderWidth:3,width:200}} onChangeText = {(text) => setFirstname(text)}></TextInput>
+
+<TextInput style = {{borderWidth:3,width:200, padding:10}} onChangeText = {(text) => setFirstname(text)} autoCorrect = {false} autoCapitalize = {'none'}></TextInput>
 
 </View>
 <View style = {{flexDirection:'row',justifyContent:'space-around',alignItems:'center', marginBottom:30}}>
 <Text style = {{fontWeight:"bold"}}>LASTNAME </Text>
-<TextInput style = {{borderWidth:3,width:200}} onChangeText = {(text) => setLastname(text)}></TextInput>
+<TextInput style = {{borderWidth:3,width:200,padding:10}} onChangeText = {(text) => setLastname(text)} autoCorrect = {false} autoCapitalize = {'none'}></TextInput>
 </View>
 <View style={{
     borderStyle: 'dotted',
@@ -105,9 +132,10 @@ return(
 <Text style = {{marginRight:20,padding:10,fontWeight:'bold'}}>
   Mobile  
 </Text>
-<TouchableOpacity style = {{flexDirection:'row', marginRight:20, }}>
+<TouchableOpacity style = {{flexDirection:'row', marginRight:20,  }} onPress = {() => navigation.navigate('CountryCodes')}>
     <Text style = {{borderWidth:2,padding:10,}}>
-        US +1
+         {route.params ? route.params.code : "US" }
+           {route.params ? route.params.dial_code : "+1"}
     </Text>
     <View style = {{borderWidth:2,padding:10}}>
     <FontAwesome5 name="caret-down" size={24} color="black" />
@@ -115,7 +143,7 @@ return(
 
 
 </TouchableOpacity>
-<TextInput style = {{width:'40%', borderWidth:1, marginRight:20,height:'100%'}} onChangeText = {(text) => setNumber(text)}>
+<TextInput style = {{width:'40%', borderWidth:1, marginRight:20,height:'100%',padding:10}} onChangeText = {(text) => setDigits(text)} keyboardType = {"numeric"}>
 
 </TextInput>
 </View>
@@ -163,7 +191,7 @@ return(
   }}>
   
 </View>
-<View style = {{flexDirection:'row', marginLeft:30, justifyContent:'space-between', alignItems:'center',marginBottom:30}}>
+<View style = {{flexDirection:'row', marginLeft:30, justifyContent:'space-between', alignItems:'center',marginBottom:30, zIndex:1000}}>
 <Text style = {{fontWeight:'bold'}}>Age </Text>
 <DropDownPicker
     items={[
@@ -197,7 +225,7 @@ return(
   }}>
   
 </View>
-<View style = {{flexDirection:'row', marginLeft:30, justifyContent:'space-between', alignItems:'center',marginBottom:30}}>
+<View style = {{flexDirection:'row', marginLeft:30, justifyContent:'space-between', alignItems:'center',marginBottom:30, zIndex:500}}>
 <Text style = {{fontWeight:'bold'}}>Height (optional) </Text>
 <View style = {{flexDirection:'row',}}>
 <DropDownPicker
@@ -255,7 +283,7 @@ return(
 <SwitchSelector
   options={options}
   initial={0}
-  onPress={value => console.log(`Call onPress with value: ${value}`)}
+  onPress={value => setAddDatingPool(value)}
   style = {{width:100}}
 />
 </View>
@@ -267,7 +295,10 @@ return(
 <View style = {{flex:0.2}}>
  <Button 
  onPress = {() => {_sendToServer()}}
- title = {"save"} containerStyle = {{marginLeft:30, marginRight:30,marginTop:100,backgroundColor:'black'}}>
+ title = {"save"} containerStyle = {{marginLeft:30, marginRight:30,marginTop:100,backgroundColor:'black'}}
+ disabled = {_checkDisable() }
+ buttonStyle = {{backgroundColor:"black"}}
+ >
 
  </Button>
 </View>
