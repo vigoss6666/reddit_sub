@@ -1,9 +1,11 @@
 import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Ionicons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
 import {Header,Continue} from '../../src/common/Common'; 
+import {Button} from 'react-native-elements'; 
+import { mutateSettings } from '../../networking';
 export default function GenderPreference({navigation}){
 const [man,setMan] = useState(false);
 const [woman, setWoman] = useState(false);
@@ -15,19 +17,32 @@ const gateColor = man || woman || both ? "green" : "white";
 const gateGuard = man || woman || both ? false: true; 
 
 
+const _sendToServer = () => {
+     if(man){
+         mutateSettings({genderPreference:"man"}) 
+     }
+     else if(woman){
+         mutateSettings({genderPreference:"woman"})
+     }
+     else if(both){
+         mutateSettings({genderPreference:"everyone"})
+     }
+}
+
 return(
 <View style = {{flex:1,}}>
 <View style = {{flex:0.1}}> 
      
 </View>
-<View style = {{flex:0.5}}>
+<View style = {{flex:0.7}}>
 <View style = {{justifyContent:"center", alignItems:"center"}}>
 <Header text = {"Im looking for....."}/>
-<Text style = {{fontWeight:"700"}}>Who do you want to be matched with?</Text>
+<Text style = {{fontWeight:"700", marginTop:10, marginBottom:10}}>Who do you want to be matched with?</Text>
 </View>
 <View style = {{marginLeft:30, width:Dimensions.get('window').width - 60, borderWidth:0.3, marginTop:20}}/>
 <View>
 <View style = {{flexDirection:"row", justifyContent:"space-around",marginTop:40 }}>
+<View>
 <TouchableOpacity 
 style = {{width:100, height:100, justifyContent:"center", alignItems:"center", backgroundColor:manWidthColor, borderRadius:50}}
 onPress = {() => {setMan(true), setWoman(false), setBoth(false)}}
@@ -38,6 +53,9 @@ onPress = {() => {setMan(true), setWoman(false)}}
 <Ionicons name="ios-man" size={60} color="white" />
 </TouchableOpacity>
 </TouchableOpacity>
+<Text style = {{alignSelf:"center", fontWeight:"700", marginTop:5}}>Man</Text>
+</View>
+<View>
 <TouchableOpacity 
 style = {{width:100, height:100, justifyContent:"center", alignItems:"center", backgroundColor:womanWidthColor, borderRadius:"50"}}
 onPress = {() => {setWoman(true), setMan(false), setBoth(false)}}
@@ -48,6 +66,10 @@ onPress = {() => {setWoman(true), setMan(false), setBoth(false)}}
 <Ionicons name="ios-woman" size={60} color="white" />
 </TouchableOpacity>
 </TouchableOpacity>
+<Text style = {{alignSelf:"center", fontWeight:"700", marginTop:5}}>Woman</Text>
+</View>
+
+
 </View>
 <TouchableOpacity style = {{justifyContent:'center', alignItems:'center'}} onPress = {() => {setWoman(true), setMan(false), setBoth(false)}}>
 <TouchableOpacity 
@@ -60,17 +82,27 @@ onPress = {() => {setWoman(false), setMan(false), setBoth(true)}}
 <Ionicons name="ios-people" size={60} color="white" />
 </TouchableOpacity>
 </TouchableOpacity>
+<Text style = {{marginTop:10, fontWeight:"bold"}}>EveryOne</Text>
 </TouchableOpacity>
-
+<View style = {{marginLeft:30, width:Dimensions.get('window').width - 60, borderWidth:0.3,marginTop:30 }}/>
 </View>
 <View>
 </View>
 </View>
 
-<View style = {{flex:0.3}}>
-<View style = {{marginLeft:30, width:Dimensions.get('window').width - 60, borderWidth:0.3, marginTop:20}}/>
-<View style = {{justifyContent:"center", alignItems:"center", marginTop:30}}>
-<Continue onPress = {() => {navigation.navigate('Height')}} backgroundColor = {gateColor} disabled = {gateGuard}/>
+<View style = {{flex:0.2, }}>
+
+<View style = {{ }}>
+{/* <Continue onPress = {() => {navigation.navigate('Height')}} backgroundColor = {gateColor} disabled = {gateGuard}/> */}
+<Button
+  title="Continue"
+  type="outline"
+  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
+  titleStyle = {{color:"white", fontWeight:"700"}}
+  disabledStyle = {{backgroundColor:"grey",}}
+  disabled = {gateGuard}
+  onPress = {() => {_sendToServer(), navigation.navigate('Height')}}
+/>
 </View>
 </View>
 </View>

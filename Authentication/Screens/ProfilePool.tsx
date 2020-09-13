@@ -6,8 +6,6 @@ import { createFilter } from 'react-native-search-filter';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-
- 
 import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
@@ -15,7 +13,19 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import {HeaderBar} from '../../src/common/Common';
 const contactList = [{name:"zaid shaikh", firstname:"zaid", _id:'123'},{name:"david", firstname:"zaid", _id:'1234'}];
 const friendsList = [{}];
+import * as Contacts from 'expo-contacts';
 
+const UPLOAD_CONTACTS = gql`
+ mutation namer($contacts:Contact1!){
+      uploadContacts(contacts:$contacts){
+          data {
+               name
+               firstname
+               _id
+          }
+      }
+  }
+`;
 
 export const GET_CONTACT_POOL = gql`
 query {
@@ -401,9 +411,43 @@ const useFetchDatingPool = () => {
 
 
 export default function ProfilePool({navigation}){
-const [selected, setSelected] = useState(); 
+const [uploadContacts1, {data}] = useMutation(UPLOAD_CONTACTS);
+const [namer, setNamer] = useState(1); 
+const [selected, setSelected] = useState('friends'); 
 const dating = useFetchDatingPool(); 
 const contact = useFetchContactPool(navigation);
+const _uploadContacts = async () => {
+     const { status } = await Contacts.requestPermissionsAsync(); 
+     if (status === 'granted') {
+         const { data } = await Contacts.getContactsAsync({
+           fields: [Contacts.Fields.PhoneNumbers],
+         });
+         if (data.length > 0) {
+           const contact = data;
+           console.log(contact); 
+           const finaler = contact.map(val => {
+                return {
+                    name:val.name, 
+                    id:val.id, 
+                    firstname:val.firstName, 
+                    phoneNumbers:val.phoneNumbers.map(val1 => {
+                         return {
+                            id:val.id, 
+                            digits:val1.digits, 
+                            number:val1.number
+                        }
+                    })
+                }
+           })
+           
+           const networkData = {data:finaler}; 
+           uploadContacts1({variables:{contacts:networkData}}); 
+           }
+       }
+ }
+ useEffect(() => {
+    _uploadContacts()      
+ }, [namer])
 
 
 return(
@@ -413,19 +457,20 @@ return(
 </View>
 <View style = {{flex:0.90}}>
 <View style = {{flexDirection:"row",marginLeft:20,justifyContent:'center'}}>
-<Button title = "Contacts"  type = {"outline"} raised = {true} containerStyle = {{width:150, backgroundColor:"blue"}}
-onPress = {() => setSelected('contacts')}
-buttonStyle = {{backgroundColor:selected == "contacts" ? "#a8b8e3":"white", color:"white"}}
-titleStyle = {{color:selected == "contacts" ? "white":"black", fontWeight:"bold"}}
->
-    
-</Button>
+
 <Button title = "Friends" type = {"outline"} raised = {true} containerStyle = {{width:150}}
 onPress = {() => setSelected("friends")}
 buttonStyle = {{backgroundColor:selected == "friends" ? "#a8b8e3":"white", color:"white"}}
 titleStyle = {{color:selected == "friends" ? "white":"black", fontWeight:"bold"}}
 >
 
+</Button>
+<Button title = "Contacts"  type = {"outline"} raised = {true} containerStyle = {{width:150, backgroundColor:"blue"}}
+onPress = {() => setSelected('contacts')}
+buttonStyle = {{backgroundColor:selected == "contacts" ? "#a8b8e3":"white", color:"white"}}
+titleStyle = {{color:selected == "contacts" ? "white":"black", fontWeight:"bold"}}
+>
+    
 </Button>
 
 </View>

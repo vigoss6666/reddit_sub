@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Bu
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Header, Continue } from '../../src/common/Common';
 import RNPasswordStrengthMeter from 'react-native-password-strength-meter';
+import { mutateSettings} from '../../networking'; 
 export default function Password({navigation}){
     const [password, setPassword] = useState("");
     const [retype, setretype] = useState(""); 
@@ -52,6 +53,7 @@ return(
 {shortErrorTemplate}        
 <TextInput 
 style = {{fontSize:15, borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60,  marginTop:30, marginLeft:10 }} placeholder = {"Retype password"} onChangeText = {async (text) => {await setretype(text), _handlePasswordCheck()} } autoCorrect = {false} autoCapitalize = {"none"}
+secureTextEntry = {true}
 
 >
 </TextInput> 
@@ -60,7 +62,7 @@ style = {{fontSize:15, borderBottomWidth:1, borderColor:"black",width:Dimensions
 
 </View>
 <View style = {{flex:0.3,justifyContent:"center", alignItems:"center"}}>
- <Continue  onPress = {() => verifyEmail()} disabled = {disable} backgroundColor = {color} onPress = {() => {navigation.navigate('Birthday')}}/>    
+ <Continue   disabled = {disable} backgroundColor = {color} onPress = {() => {mutateSettings({password:password}),navigation.navigate('Birthday')}}/>    
 </View>
 </View>
 </KeyboardAvoidingView>

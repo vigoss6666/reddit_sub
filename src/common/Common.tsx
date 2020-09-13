@@ -54,15 +54,14 @@ export const HeaderBar = (props) => {
           <Entypo name="bell" size={40} color="grey" />
           </TouchableOpacity>
           <TouchableOpacity style = {{flex:0.5}} onPress = {() => props.navigation.navigate('ProfilePool')}>
-          <Ionicons name="ios-people" size={40} color={props.page == "Friends" ? 'yellow':'grey'} />   
+          <Ionicons name="ios-people" size={props.page == "Friends" ? 55:40} color={props.page == "Friends" ? 'yellow':'grey'} />   
           </TouchableOpacity>
           <TouchableOpacity style = {{flex:0.5}}>
           <Entypo name="chat" size={40} color="grey" />  
           </TouchableOpacity>
-          <TouchableOpacity style = {{flex:0.5}}>
-          <MaterialIcons name="account-circle" size={40} color="grey" />          
+          <TouchableOpacity style = {{flex:0.5,}} onPress = {() => props.navigation.navigate('SettingsHome')}>
+          <MaterialIcons name="account-circle" size={props.page == "SettingsHome" ? 55:40} color={props.page == "SettingsHome" ? 'yellow':'grey'} />          
           </TouchableOpacity>
-    
           </View> 
      ) 
 }

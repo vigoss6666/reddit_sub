@@ -199,15 +199,15 @@ return(
 <Text style = {{fontWeight:'bold'}}>Age </Text>
 <DropDownPicker
     items={[
-        {label: '15 - 19 years', value: {minAge:15,maxAge:19}, },
-        {label: '20 - 24 years', value: {minAge:20,maxAge:24} },
-        {label: '25 - 29 years', value: {minAge:25,maxAge:29} },
-        {label: '30 - 34 years', value: {minAge:30,maxAge:34} },
-        {label: '35 - 39 years', value: {minAge:35,maxAge:39}, },
-        {label: '40 - 44 years', value: {minAge:40,maxAge:44}, },
-        {label: '45 - 49 years', value: {minAge:45,maxAge:49}, },
+        {label: '15 - 20 years', value: {minAge:15,maxAge:20}, },
+        {label: '20 - 25 years', value: {minAge:20,maxAge:25} },
+        {label: '25 - 30 years', value: {minAge:25,maxAge:30} },
+        {label: '30 - 35 years', value: {minAge:30,maxAge:35} },
+        {label: '35 - 40 years', value: {minAge:35,maxAge:40}, },
+        {label: '40 - 45 years', value: {minAge:40,maxAge:45}, },
+        {label: '45 - 50 years', value: {minAge:45,maxAge:50}, },
     ]}
-    placeholder = {"20 - 24 years "}
+    placeholder = {"20 - 25 years "}
     containerStyle={{height: 40,width:200,zIndex:100}}
     style={{backgroundColor: '#fafafa',zIndex:100}}
     itemStyle={{
@@ -283,15 +283,9 @@ return(
 </View>
 <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:30, marginBottom:30}} zIndex = {100}/>
 <View  style = {{flexDirection:'row', alignItems:'center',justifyContent:'space-between',marginLeft:30, marginRight:30,marginBottom:30,}} zIndex = {1}>
-<Text style = {{ fontWeight:'bold'}}>ADD TO DATING POOL </Text>
-<SwitchSelector
-  options={options}
-  initial={0}
-  onPress={value => setAddDatingPool(value)}
-  style = {{width:100}}
-/>
+
 </View>
-<View style = {{borderBottomWidth:3, marginLeft:30, marginRight:30, marginBottom:30}}/>
+
 </View>
 </View>
 </ScrollView>

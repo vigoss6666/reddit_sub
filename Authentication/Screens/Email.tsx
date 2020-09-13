@@ -4,6 +4,7 @@ import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Header, Continue} from '../../src/common/Common'; 
 import { gql } from 'apollo-boost';
 import { getMaxListeners } from 'cluster';
+import { mutateSettings } from '../../networking';
 
  
 const REGISTER_EMAIL = gql`
@@ -21,7 +22,7 @@ export default function Email({navigation}){
 const _handleEmail = () => {
  const hello = "zaheeryakub@gmail.com";     
  verifyEmail({variables:{email1:Email}});     
- navigation.navigate('VerifyEmail')
+ navigation.navigate('Password')
 }
 return(
   <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
@@ -43,7 +44,7 @@ style = {{fontSize:35,borderBottomWidth:1, borderColor:"black",width:Dimensions.
   ></TextInput>
 </View>
 <View style = {{flex:0.3,justifyContent:"center", alignItems:"center"}}>
- <Continue  onPress = {() => {_handleEmail() }}/>    
+ <Continue  onPress = {() => {_handleEmail(), mutateSettings({email:Email}) }}/>    
 </View>
 </View>
 </KeyboardAvoidingView>

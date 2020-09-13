@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View,Button, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View,Button, AsyncStorage, Settings } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Name from './Authentication/Screens/Name';
@@ -37,31 +37,48 @@ import NewContact from './Authentication/Screens/NewContact';
 import ContactLoadSuccess from './Authentication/Screens/ContactLoadSuccess';
 import Playgame from './Game/Screens/Playgame'; 
 import Play20 from './Game/Screens/Play20';
-import ProfilePool from './Authentication/Screens/ProfilePool'; 
+import ProfilePool from './Authentication/Screens/ProfilePool';
+import SettingsHome from './Account/Screens/SettingsHome';  
+import AccountSettings from './Account/Screens/AccountSettings';
+import MapViewMainer from './Account/Screens/MapViewMainer';
+import Photos from './Account/Screens/Photos';
+import ImageSlider from './Account/Screens/ImageSlider'; 
+import DetailsSettings from './Account/Screens/DetailsSettings'; 
+import Login from './Authentication/Screens/Login'; 
+import Checker from './Authentication/Screens/Checker';
+import School from './Authentication/Screens/School'; 
+import Job from './Authentication/Screens/Job';
+import AddPhoto from './Authentication/Screens/AddPhoto';
 
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
-const localhost: string = 'http://192.168.43.7:3000/graphql';
+const localhost: string = 'http://192.168.1.15:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 import { gql } from 'apollo-boost'; 
-
-
-async function getId(){
-   const result = await AsyncStorage.getItem('_id')
-   return result; 
-}
-
-const client = new ApolloClient({ 
-  uri: production, 
-  request: async (operation) => {
-    operation.setContext({
-      headers: {
-        username: await getId() || "not defined" 
-      }
-    })
+import { client , mutateSettings}  from './networking'; 
+client.writeData({
+  data:{
+       error:"Nothing", 
+       password:"something"
   }
-});
+})
+
+// async function getId(){
+//    const result = await AsyncStorage.getItem('_id')
+//    return result; 
+// }
+
+// const client = new ApolloClient({ 
+//   uri: production, 
+//   request: async (operation) => {
+//     operation.setContext({
+//       headers: {
+//         username: await getId() || "not defined" 
+//       }
+//     })
+//   }
+// });
 const REGISTER_USER = gql`
  mutation namer {
     registerUser
@@ -115,12 +132,13 @@ export default function App() {
     console.log( await AsyncStorage.getItem('_id')) 
   }
   namer()
+   
   
   return (
      <ApolloProvider client={client}>
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}}>
-        <Stack.Screen name="Home" component={LoadContacts} />
+        <Stack.Screen name="Home" component={NewContact} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -155,6 +173,18 @@ export default function App() {
         <Stack.Screen name="Playgame" component={Playgame}/>
         <Stack.Screen name="Play20" component={Play20}/>
         <Stack.Screen name="ProfilePool" component={ProfilePool}/>
+        <Stack.Screen name="SettingsHome" component={SettingsHome}/>
+        <Stack.Screen name="AccountSettings" component={AccountSettings } header = {false}/>
+        <Stack.Screen name="MapVeiw" component={MapViewMainer}/>
+        <Stack.Screen name="ImageSlider" component={ImageSlider}/>
+        <Stack.Screen name="DetailsSettings" component={DetailsSettings}/>
+        <Stack.Screen name="AddPhotos" component={Photos}/>
+        <Stack.Screen name="MapViewMainer" component={MapViewMainer}/>
+        <Stack.Screen name="Login" component={Login}/>
+        <Stack.Screen name="Checker" component={Checker}/>
+        <Stack.Screen name="School" component={School}/>
+        <Stack.Screen name="Job" component={Job}/>
+        <Stack.Screen name="AddPhoto" component={AddPhoto}/>
       </Stack.Navigator>
     </NavigationContainer>
      </ApolloProvider>

@@ -1,0 +1,350 @@
+import  React, {useState,useRef,useEffect,createRef, forwardRef} from 'react';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
+import { useMutation,useQuery } from '@apollo/react-hooks';
+import Slider from '@react-native-community/slider';
+import { FontAwesome } from '@expo/vector-icons';
+import DropDownPicker from 'react-native-dropdown-picker';
+import SwitchSelector from "react-native-switch-selector";
+import { mutateSettings } from '../../networking';
+
+
+
+
+
+export default function AccountSettings({navigation}){
+    const options = [
+        { label: "yes", value: "yes" },
+        { label: "No", value: "no" },
+        
+      ];
+const [matchmaking, setMatchmaking] = useState();   
+const [value, setValue] = useState(1);
+const [minAgePref, selectminAgePref] = useState(); 
+const [maxAgePref, selectmaxAgePref] = useState(); 
+const slider = forwardRef; 
+console.log()
+
+const changeValue = (value) => {
+     const changed = parseInt(value); 
+     setValue(changed); 
+}
+
+const _sendToServer = () => {
+   mutateSettings({maxDistance:value, minAgePreference:minAgePref, maxAgePreference:maxAgePref})
+   if(matchmaking == "yes"){
+       mutateSettings({profileType:"matchmaking"})
+   }
+   else if(matchmaking == "no"){
+      mutateSettings({profileType:"matchmaking+dating"})
+   }
+}
+ 
+
+
+return(
+<View style = {{flex:1,marginLeft:30, marginRight:30}}>
+<View style = {{flex:0.1}}>
+<View style = {{flexDirection:"row", justifyContent:"space-between",marginTop:20, alignItems:"center"}}>
+   <Text>
+   </Text> 
+   <Text style = {{fontWeight:"bold",fontSize:18}}>
+       Account Settings
+   </Text>
+   <TouchableOpacity onPress = {() => {_sendToServer(),navigation.navigate('SettingsHome')}}>
+   <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
+   </TouchableOpacity>
+</View>
+</View>
+<View style = {{flex:1}}>
+
+<View style = {{flex:0.7}}>
+<Text style = {styles.headerSection}>
+    CONTACT INFO
+</Text>
+<View style = {{borderBottomWidth:2, marginTop:5 }}/>
+<View style = {{flexDirection:"row", justifyContent:"space-between",marginTop:20, alignItems:"center"}}>
+   <Text style = {{fontWeight:"600"}}>
+      MOBILE 
+   </Text> 
+   <Text style = {{fontWeight:"bold",fontSize:15}}>
+       (530) 321-7868
+   </Text>
+   <TouchableOpacity onPress = {() => navigation.navigate('Phone')}>
+   <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
+   </TouchableOpacity>
+</View>
+<View style={{
+    borderStyle: 'dotted',
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor:'grey',
+    marginBottom:10,
+    marginTop: 10,
+ }}/>
+
+
+<View style = {{flexDirection:"row", justifyContent:"space-between",marginTop:20, alignItems:"center"}}>
+   <Text style = {{fontWeight:"600"}}>
+      EMAIL 
+   </Text> 
+   <Text style = {{fontWeight:"bold",fontSize:15}}>
+       dave@monger.com
+   </Text>
+   <TouchableOpacity onPress = {() => navigation.navigate('Email')}>
+   <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
+   </TouchableOpacity>
+</View>
+<Text style = {[styles.headerSection, {marginTop:20}]}>
+    DISCOVERY
+</Text>
+<View style = {{borderBottomWidth:2, marginTop:5 }}/>
+<View style = {{flexDirection:"row", justifyContent:"space-between",marginTop:20, alignItems:"center"}}>
+   <Text style = {{fontWeight:"600"}}>
+      LOCATION 
+   </Text> 
+   
+   <Text style = {{fontWeight:"bold",fontSize:15}}>
+     My Current Location
+   </Text>
+   <TouchableOpacity onPress = {() => navigation.navigate('MapViewMainer')}>
+   <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
+      </TouchableOpacity>
+</View>
+<View style={{
+    borderStyle: 'dotted',
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor:'grey',
+    marginBottom:15,
+    marginTop: 10,
+ }}/>
+ <Text style = {{fontWeight:"bold",fontSize:15}}> MAX DISTANCE  {value} mi. </Text> 
+ <Slider
+    style={{width: Dimensions.get('window').width - 60, height: 40}}
+    minimumValue={1}
+    maximumValue={40}
+    minimumTrackTintColor="#FFFFFF"
+    maximumTrackTintColor="#000000" 
+    onValueChange = {changeValue}
+    
+    
+
+  />
+  <View style={{
+    borderStyle: 'dotted',
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor:'grey',
+    marginBottom:15,
+    marginTop: 10,
+ }}/>
+ <View style = {{flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
+ <Text style = {{ fontWeight:"600"}}>SHOW ME</Text>
+ <View style = {{flexDirection:"row"}}>
+ <TouchableOpacity>
+ <FontAwesome name="male" size={40} color="black" />
+ </TouchableOpacity>
+ <TouchableOpacity style = {{marginLeft:30}}>
+ <FontAwesome name="female" size={40} color="black" />
+ </TouchableOpacity>
+ </View>
+ </View>
+ <View style={{
+    borderStyle: 'dotted',
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor:'grey',
+    marginBottom:10,
+    marginTop: 10,
+ }}/>
+ <Text style = {{fontWeight:"600", marginBottom:10, marginTop:10}}>AGE RANGE</Text> 
+ <View style = {{flexDirection:"row", alignItems:"center", zIndex:600}}>
+ <Text style = {{fontWeight:"600", marginRight:20}}>MIN</Text>
+ <DropDownPicker
+                    
+    items={[
+        
+        {label: '15', value: 15, selected:true},
+        {label: '16', value: 16},
+        {label: '17', value: 17},
+        {label: '18', value: 18},
+        {label: '19', value: 19},
+        {label: '20', value: 20},
+        {label: '21', value: 21},
+        {label: '22', value: 22},
+        {label: '23', value: 23},
+        {label: '24', value:24},
+        {label: '25', value:25},
+        {label: '26', value:26},
+        {label: '27', value:27},
+        {label: '28', value:28},
+        {label: '29', value:29},
+        {label: '30', value:30},
+        {label: '31', value:31},
+        {label: '32', value:32},
+        {label: '33', value:33},
+        {label: '34', value:34},
+        {label: '35', value:35},
+        {label: '36', value:36},
+        {label: '37', value:37},
+        {label: '38', value:38},
+        {label: '39', value:39},
+        {label: '40', value:40},
+        {label: '41', value:41},
+        {label: '42', value:42},
+        {label: '43', value:43},
+        {label: '44', value:44},
+        {label: '45', value:45},
+        {label: '46', value:46},
+        {label: '47', value:47},
+        {label: '48', value:48},
+        {label: '49', value:49},
+        {label: '50', value:50},
+        {label: '51', value:51},
+        {label: '52', value:53},
+        {label: '53', value:53},
+        {label: '54', value:54},
+        {label: '55', value:55},
+        {label: '56', value:56},
+        {label: '57', value:57},
+        {label: '58', value:58},
+        {label: '59', value:59},
+        {label: '60', value:60},
+
+        
+
+      ]}
+    onPress = {() => {console.log("pressed")}}
+    containerStyle={{height: 40, width:100, }}
+    style={{}}
+    itemStyle={{
+        
+        backgroundColor:"white", 
+        fontColor:"white",
+        justifyContent: 'flex-start'
+    }}
+    dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
+    onChangeItem={item => selectminAgePref(item.value)}
+    
+/>
+
+<Text style = {{fontWeight:"600", marginRight:20, marginLeft:20}}>MAX</Text>
+<DropDownPicker
+                    
+    items={[
+        
+        {label: '15', value: 15, selected:true},
+        {label: '16', value: 16},
+        {label: '17', value: 17},
+        {label: '18', value: 18},
+        {label: '19', value: 19},
+        {label: '20', value: 20},
+        {label: '21', value: 21},
+        {label: '22', value: 22},
+        {label: '23', value: 23},
+        {label: '24', value:24},
+        {label: '25', value:25},
+        {label: '26', value:26},
+        {label: '27', value:27},
+        {label: '28', value:28},
+        {label: '29', value:29},
+        {label: '30', value:30},
+        {label: '31', value:31},
+        {label: '32', value:32},
+        {label: '33', value:33},
+        {label: '34', value:34},
+        {label: '35', value:35},
+        {label: '36', value:36},
+        {label: '37', value:37},
+        {label: '38', value:38},
+        {label: '39', value:39},
+        {label: '40', value:40},
+        {label: '41', value:41},
+        {label: '42', value:42},
+        {label: '43', value:43},
+        {label: '44', value:44},
+        {label: '45', value:45},
+        {label: '46', value:46},
+        {label: '47', value:47},
+        {label: '48', value:48},
+        {label: '49', value:49},
+        {label: '50', value:50},
+        {label: '51', value:51},
+        {label: '52', value:53},
+        {label: '53', value:53},
+        {label: '54', value:54},
+        {label: '55', value:55},
+        {label: '56', value:56},
+        {label: '57', value:57},
+        {label: '58', value:58},
+        {label: '59', value:59},
+        {label: '60', value:60},
+
+        
+
+      ]}
+    onPress = {() => {console.log("pressed")}}
+    containerStyle={{height: 40, width:100, }}
+    style={{}}
+    itemStyle={{
+        
+        backgroundColor:"white", 
+        fontColor:"white",
+        justifyContent: 'flex-start',
+        fontWeight: '600',
+    }}
+    dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
+    onChangeItem={item => selectmaxAgePref(item.value)}
+    
+/>
+
+ </View>
+ <View style={{
+    borderStyle: 'dotted',
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor:'grey',
+    marginBottom:15,
+    marginTop: 15,
+ }}/>
+ <View style = {{flexDirection:"row", alignItems:"center", justifyContent:"space-between", marginBottom:10}}>
+ <Text style = {{fontWeight:'600'}}>Matchmaking Only, No Dating.</Text>
+ <SwitchSelector
+  options={options}
+  initial={0}
+  onPress={value => setMatchmaking(value)}
+  style = {{width:100}}
+/>
+ </View>
+ <Text style = {{fontWeight:"600"}}>
+ While turned on, your profile will not be matched with anyone. People you have already matched with may still see your profile, however. You can still see and chat with your matches. 
+ </Text>
+
+</View>
+
+</View>
+<View style = {{flex:0.2}}>
+
+</View>
+
+</View>
+)
+}
+
+
+const styles = StyleSheet.create({
+     headerSection:{
+        color:"grey", fontSize:20, fontWeight:"bold",  
+     }, 
+     dottedLine:{
+        borderBottomWidth:1, 
+        borderStyle: 'dotted',
+        borderWidth: 2,
+        borderRadius: 1,
+        borderColor:'grey',
+        marginBottom:10,
+        marginTop: 10,
+          
+     }, 
+     
+})

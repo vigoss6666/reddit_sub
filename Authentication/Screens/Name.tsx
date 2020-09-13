@@ -1,7 +1,9 @@
 import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, KeyboardAvoidingView, Platform} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, KeyboardAvoidingView, Platform} from 'react-native';
 import {Header,Continue} from '../../src/common/Common'; 
 import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
+import { mutateSettings} from '../../networking';
+import {Button} from 'react-native-elements'; 
 
 export default function Name({navigation}){
    const [firstName, setFirstName] = useState(""); 
@@ -53,22 +55,31 @@ return(
 
 </TextInput>
 <Text style = {{alignSelf:"flex-start", marginLeft:30,marginTop:10, fontFamily: 'Roboto_400Regular'}}>This is how it will appear to others</Text>
-<TextInput style = {{fontSize:35,borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:40 }} placeholder = {"FirstName"} onChange = {async (text) => {await handleFirstNameChange(text)}} autoCorrect = {false} value = {firstName}>
+<TextInput style = {{fontSize:35,borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:40 }} placeholder = {"First Name"} onChange = {async (text) => {await handleFirstNameChange(text)}} autoCorrect = {false} value = {firstName}>
 
 
 </TextInput>
-<TextInput style = {{fontSize:35, borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} placeholder = {"LastName"} onChange = {async (text) => {await handleLastNameChange(text)} } autoCorrect = {false} value = {lastName}></TextInput>
+<TextInput style = {{fontSize:35, borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} placeholder = {"Last Name"} onChange = {async (text) => {await handleLastNameChange(text)} } autoCorrect = {false} value = {lastName}></TextInput>
 <TextInput style = {{borderBottomWidth:0.3, borderColor:"grey",opacity:0.5, width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} ></TextInput>
 </View>
 
-<View style = {{flex:1,  justifyContent:"center", alignItems:"center"}}>
+<View style = {{flex:0.6,}}>
  <View>
- <TouchableOpacity 
+ {/* <TouchableOpacity 
  style = {{height:50, width:200, borderRadius:25,borderWidth:1, justifyContent:"center", alignItems:"center",backgroundColor:color }} disabled = {openGate} 
- onPress = {() => {navigation.navigate('Phone')}}
+ onPress = {() => {navigation.navigate('Phone'), mutateSettings({firstname:firstName, lastname:lastName})}}
  >
            <Text>Continue</Text>     
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+   <Button
+  title="Continue"
+  type="outline"
+  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
+  disabled = {openGate}
+  titleStyle = {{color:"white", fontWeight:"700"}}
+  disabledStyle = {{backgroundColor:"grey",}}
+  onPress = {() => {navigation.navigate('Birthday'), mutateSettings({firstname:firstName, lastname:lastName})}}
+/>       
  </View>
 </View>
 

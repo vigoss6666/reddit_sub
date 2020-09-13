@@ -1,8 +1,9 @@
 import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Ionicons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
+import { Button } from 'react-native-elements'; 
 import {Header,Continue} from '../../src/common/Common'; 
 export default function Gender({navigation}){
 
@@ -21,8 +22,8 @@ return(
 <View style = {{flex:0.2}}>
      
 </View>
-<View style = {{flex:0.5, marginLeft:30}}>
-<Header text = {"I am a...."}/>
+<View style = {{flex:0.5, marginLeft:50, marginRight:50}}>
+<Header text = {"I identify as a...."}/>
 <View  style = {{borderBottomWidth:0.5, width:Dimensions.get('window').width - 60,marginTop:20}}/>
 <View style = {{flexDirection:"row", justifyContent:"space-around",marginTop:40 }}>
 <TouchableOpacity 
@@ -33,7 +34,9 @@ onPress = {() => {setMan(true), setWoman(false)}}
 onPress = {() => {setMan(true), setWoman(false)}}
 >
 <Ionicons name="ios-man" size={60} color="white" />
+
 </TouchableOpacity>
+
 </TouchableOpacity>
 <TouchableOpacity 
 style = {{width:100, height:100, justifyContent:"center", alignItems:"center", backgroundColor:womanWidthColor, borderRadius:50}}
@@ -46,10 +49,23 @@ onPress = {() => {setWoman(true), setMan(false)}}
 </TouchableOpacity>
 </TouchableOpacity>
 </View>
+<View style = {{flexDirection:"row", justifyContent:"space-between", marginLeft:60, marginRight:50, marginTop:10}}>
+<Text style = {{fontWeight:"700"}}>Man</Text>
+<Text style = {{fontWeight:"700"}}>Woman</Text>
+</View>
 <View  style = {{borderBottomWidth:0.5, width:Dimensions.get('window').width - 60,marginTop:20}}/>
 </View>
-<View style = {{flex:0.3, justifyContent:"center", alignItems:"center"}}>
- <Continue disabled = {gateGuard} backgroundColor = {gateColor} onPress = {() => {navigation.navigate('GenderPreference')}}/>    
+<View style = {{flex:0.3, justifyContent:"center", }}>
+ {/* <Continue disabled = {gateGuard} backgroundColor = {gateColor} onPress = {() => {navigation.navigate('GenderPreference')}}/>     */}
+ <Button
+  title="Continue"
+  type="outline"
+  containerStyle = {{backgroundColor:"black",marginLeft:50, marginRight:50}}
+  titleStyle = {{color:"white", fontWeight:"700"}}
+  disabledStyle = {{backgroundColor:"grey",}}
+  disabled = {gateGuard}
+  onPress = {() => {navigation.navigate('GenderPreference')}}
+/>
 </View>
 </View>
 )

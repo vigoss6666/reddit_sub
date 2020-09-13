@@ -74,21 +74,21 @@ useEffect(() => {
                     <Text>{val.name || val.firstname}</Text>
                     </View>
                     <DropDownPicker
-    items={[
-        
-        {label: '15 to 19 years', value: {minAge:15, maxAge:19}},
-        {label: '20 to 24 years', value: {minAge:20, maxAge:24}},
-        {label: '25 to 29 years', value: {minAge:25, maxAge:29}},
-        {label: '30 to 34 years', value: {minAge:30, maxAge:34}},
-        {label: '35 to 39 years', value: {minAge:35, maxAge:39}},
-        {label: '40 to 44 years', value: {minAge:40, maxAge:44}},
-        {label: '45 to 49 years', value: {minAge:45, maxAge:49}},
-        {label: '50 to 54 years', value: {minAge:50, maxAge:54}},
-
-      ]}
+                    items={[
+                        {label: '15 - 20 years', value: {minAge:15,maxAge:20}, },
+                        {label: '20 - 25 years', value: {minAge:20,maxAge:25} },
+                        {label: '25 - 30 years', value: {minAge:25,maxAge:30} },
+                        {label: '30 - 35 years', value: {minAge:30,maxAge:35} },
+                        {label: '35 - 40 years', value: {minAge:35,maxAge:40}, },
+                        {label: '40 - 45 years', value: {minAge:40,maxAge:45}, },
+                        {label: '45 - 50 years', value: {minAge:45,maxAge:50}, },
+                    ]}
+                    
+    
     onPress = {() => {console.log("pressed")}}
     onOpen = {() => {zIndexSetter(val,index)}}
     containerStyle={{height: 40, width:200, }}
+    placeholder = {"20 - 25 years"}
     style={{}}
     itemStyle={{
         

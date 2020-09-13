@@ -1,6 +1,7 @@
 import  React, {useState,useRef,useEffect} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
+import {mutateSettings} from '../../networking'; 
 
 const UPLOAD_CONTACTS = gql`
  mutation namer($contacts:Contact1!){
@@ -19,6 +20,7 @@ const UPLOAD_CONTACTS = gql`
 import * as Contacts from 'expo-contacts';
 import { gql } from 'apollo-boost';
 export default function LoadContacts({navigation}){
+    
     const demoData = {data:[
         {
             firstname:"zaid", 
@@ -36,6 +38,7 @@ export default function LoadContacts({navigation}){
         }
     ]}
     let length = useRef().current; 
+
     const [uploadContacts1, {data}] = useMutation(UPLOAD_CONTACTS); 
     if(data){
         
