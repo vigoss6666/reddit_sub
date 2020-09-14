@@ -69,7 +69,7 @@ return(
    <Text style = {{fontWeight:"bold",fontSize:15}}>
        (530) 321-7868
    </Text>
-   <TouchableOpacity onPress = {() => navigation.navigate('Phone')}>
+   <TouchableOpacity onPress = {() => navigation.navigate('Phone', {page:"AccountSettings"})}>
    <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
    </TouchableOpacity>
 </View>
@@ -90,7 +90,7 @@ return(
    <Text style = {{fontWeight:"bold",fontSize:15}}>
        dave@monger.com
    </Text>
-   <TouchableOpacity onPress = {() => navigation.navigate('Email')}>
+   <TouchableOpacity onPress = {() => navigation.navigate('Email',{page:'AccountSettings'})}>
    <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
    </TouchableOpacity>
 </View>
@@ -140,14 +140,11 @@ return(
  }}/>
  <View style = {{flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
  <Text style = {{ fontWeight:"600"}}>SHOW ME</Text>
- <View style = {{flexDirection:"row"}}>
- <TouchableOpacity>
- <FontAwesome name="male" size={40} color="black" />
+ <FontAwesome name="male" size={30} color="black" />
+ <TouchableOpacity onPress = {() => navigation.navigate('GenderPreference', {page:"AccountSettings"})}>
+ <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
  </TouchableOpacity>
- <TouchableOpacity style = {{marginLeft:30}}>
- <FontAwesome name="female" size={40} color="black" />
- </TouchableOpacity>
- </View>
+ 
  </View>
  <View style={{
     borderStyle: 'dotted',

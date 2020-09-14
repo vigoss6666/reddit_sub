@@ -6,7 +6,14 @@ import { Entypo } from '@expo/vector-icons';
 import {Header,Continue} from '../../src/common/Common'; 
 import {Button} from 'react-native-elements'; 
 import { mutateSettings } from '../../networking';
-export default function GenderPreference({navigation}){
+
+
+
+
+
+
+export default function GenderPreference({navigation,route}){
+const {page} = route.params;     
 const [man,setMan] = useState(false);
 const [woman, setWoman] = useState(false);
 const [both, setBoth] = useState(false); 
@@ -16,7 +23,14 @@ const bothWidthColor = both ? "yellow":"black";
 const gateColor = man || woman || both ? "green" : "white"; 
 const gateGuard = man || woman || both ? false: true; 
 
+const _handlePage = () => {
+     if(page == "AccountSettings"){
+          navigation.navigate("AccountSettings")
+          return; 
+     }
+     navigation.navigate('Height')
 
+}
 const _sendToServer = () => {
      if(man){
          mutateSettings({genderPreference:"man"}) 
@@ -101,7 +115,7 @@ onPress = {() => {setWoman(false), setMan(false), setBoth(true)}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   disabled = {gateGuard}
-  onPress = {() => {_sendToServer(), navigation.navigate('Height')}}
+  onPress = {() => {_sendToServer(), _handlePage()}}
 />
 </View>
 </View>

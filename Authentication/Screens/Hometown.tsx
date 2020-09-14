@@ -3,37 +3,44 @@ import { Dimensions,View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollVie
 import {Button} from 'react-native-elements'; 
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Header } from '../../src/common/Common';
-import { MaterialIcons } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
-export default function School({navigation}){
-    const [Email, setEmail] = useState();
-        
+import { mutateSettings } from '../../networking'; 
+import {GET_DETAILS} from '../../Account/Screens/DetailsSettings'; 
+
+
+export default function Hometown({navigation, route}){
+    const {page} = route.params; 
+    const [job, setJob] = useState();
+    
+    const _handlePage = () => {
+       if(page == "DetailsSettings"){
+         navigation.navigate("DetailsSettings"); 
+         return
+       }
+       navigation.navigate('Posted')
        
-  const _handleEmail = () => {
-   const hello = "zaheeryakub@gmail.com";     
-   
-   navigation.navigate('Password')
-  }
+    } 
+       
+  
     return(
       <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
       <View style = {{flex:1, }}>   
       <View style = {{flex:0.2}}>
-      <TouchableOpacity onPress = {() => { navigation.navigate('School')}}>
+      <TouchableOpacity onPress = {() => _handlePage()}>
       <Text style = {{marginTop:20, alignSelf:"flex-end", marginRight:30, color:"orange", fontWeight:"bold"}}>Skip</Text>   
       </TouchableOpacity>
       </View>
       <View style = {{flex:0.5, marginLeft:30}}>
-      <Text style = {{fontWeight:"bold", fontSize:23, alignSelf:"center", marginLeft:-20 }}> Upload your photo</Text>
+      <Text style = {{fontWeight:"bold", fontSize:23, }}> What's your Hometown?</Text>
       <View style = {{borderBottomWidth:1, width:Dimensions.get('window').width - 60, marginTop:10}}/> 
-      <View style = {{justifyContent:"center", alignItems:"center", marginTop:60, marginLeft:-30}}>
-      <MaterialIcons name="account-circle" size={120} color="black" />
-      </View>
-      <View style = {{flexDirection:"row", justifyContent:"center"}}>
-      <TouchableOpacity onPress = {() => navigation.navigate('AddPhotos', {page:"AddPhoto"})} style = {{flexDirection:"row", alignItems:"center"}}>
-      <Text style = {{ fontWeight:"bold", marginLeft:-30, marginRight:5}}>Change Photo</Text>
-      <FontAwesome name="caret-down" size={24} color="black" />
-      </TouchableOpacity>
-      </View>
+      <TextInput 
+      style = {{fontSize:35,borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60,
+        marginTop:40 }}
+         placeholder = {"Ex: Leon valley, TX"}  
+         autoCorrect = {false}
+         autoCapitalize = {"none"}
+         value = {job}
+         onChangeText = {(text) => { setJob(text)}}
+        ></TextInput>
         <View style = {{borderBottomWidth:1, width:Dimensions.get('window').width - 60, marginTop:40, borderBottomColor:"grey"}}/> 
       </View>
       <View style = {{flex:0.3,justifyContent:"center", }}>
@@ -45,7 +52,7 @@ export default function School({navigation}){
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   disabled = {false}
-  onPress = {() => { navigation.navigate('School')}}
+  onPress = {() => { mutateSettings({job:job}, [{query:GET_DETAILS}]) , _handlePage()}}
 />
       </View>
       </View>

@@ -16,8 +16,10 @@ mutation namer($phoneNumber:Float!){
 export default function Phone({navigation,route}){
     // const dial_code = React.useRef(navigation.getParam('dial_code')).current; 
     // const country = React.useRef(navigation.getParam('code')).current;
-    let dial_code = "+675"; 
-    let code = 'VN'; 
+    const {page} = route.params; 
+    console.log("page on main phone"+page)
+    let dial_code = "+1"; 
+    let code = 'US'; 
 
     if(route.params){
      if(route.params.code){
@@ -45,11 +47,18 @@ export default function Phone({navigation,route}){
     } 
      return (
           <View style = {{flex:1,padding:30}}>
-               <Text style = {{marginTop:50,fontSize:40,marginBottom:50}}> Phone Number </Text>
+               <View style = {{flex:0.1}}>
+               </View>     
+               <View style = {{flex:0.7}}>
+               <Text style = {{marginTop:50,fontSize:40,fontWeight:"bold"}}> My Number Is... </Text>
+               <Text style = {{marginTop:30,alignSelf:"center",textAlign:"center", marginBottom:20}}> When you tap "continue," we will send a text with verification code. Message and data rates may apply. </Text>
+               <View style = {{borderBottomWidth:1, marginBottom:20}}>
+
+               </View>
                <View style = {{flexDirection:"row",}}>
                 <TouchableOpacity 
                 style = {{borderBottomWidth:1,borderColor:"black",flexDirection:"row",justifyContent:"space-between", alignItems:"center",flex:1,padding:10}}
-                onPress = {() => {navigation.navigate('CountryCodes')}}
+                onPress = {() => {navigation.navigate('CountryCodes', {page:"Phone"})}}
                 >
                 <Text style = {{fontSize:20}}>
                 { code} 
@@ -62,13 +71,15 @@ export default function Phone({navigation,route}){
                 <View style = {{flex:0.3}}></View>
                 <TextInput style = {{flex:2,borderBottomColor:"black",borderBottomWidth:1}} onChangeText = {(text) => {validator(text), setPhone(text)}}></TextInput>
                </View>
-               <Text style = {{marginTop:30,alignSelf:"center",textAlign:"center"}}> When you Tap continue, Friends help Friends will send a text with verification code.</Text>
+               </View>
+                 <View style = {{flex:0.2}}>
                    <TouchableOpacity 
                    style = {{width:300,backgroundColor:clicker.color, alignSelf:"center",height:40,justifyContent:"center",alignItems:"center",borderRadius:30,marginTop:40}} disabled = {clicker.disabled}
-                   onPress = {() => {registerPhone({variables:{phoneNumber:parseInt(phone)}}), navigation.navigate('VerifyPhone')}}
+                   onPress = {() => {registerPhone({variables:{phoneNumber:parseInt(phone)}}), navigation.navigate('VerifyPhone', {page:page})}}
                    >
                        <Text style = {{textAlign:"center",color:"white",fontWeight:"500",fontSize:20}}> Continue</Text>
                    </TouchableOpacity>
+                   </View>
           </View>
      )
 }

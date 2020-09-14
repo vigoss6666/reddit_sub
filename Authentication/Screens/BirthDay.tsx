@@ -6,10 +6,22 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { mutateSettings } from '../../networking';
 import {Button} from 'react-native-elements'; 
 
-export default function BirthDay({navigation}){
+export default function BirthDay({navigation, route}){
+  const {page} = route.params; 
+
   const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
+
+
+  const _handlePage = () => {
+     if(page == "DetailsSettings"){
+        navigation.navigate("DetailsSettings"); 
+        return; 
+     }
+     navigation.navigate('Gender')
+     
+  }
 
   const onChange = (event, selectedDate) => {
     
@@ -69,7 +81,7 @@ return(
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  onPress = {() => {_sendToServer(), navigation.navigate('Gender')}}
+  onPress = {() => {_sendToServer(), _handlePage() }}
 />
 </View>
 </View>

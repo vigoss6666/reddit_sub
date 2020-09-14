@@ -7,8 +7,16 @@ import { mutateSettings } from '../../networking';
 import {GET_DETAILS} from '../../Account/Screens/DetailsSettings'; 
 
 
-export default function Job({navigation}){
+export default function Job({navigation, route}){
     const [job, setJob] = useState();
+    const {page} = route.params; 
+    const _handlePage = () => {
+       if(page == "DetailsSettings"){
+          navigation.navigate("DetailsSettings")
+          return; 
+       }
+       navigation.navigate('Hometown')
+    }
         
        
   
@@ -16,7 +24,7 @@ export default function Job({navigation}){
       <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
       <View style = {{flex:1, }}>   
       <View style = {{flex:0.2}}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress = {() => _handlePage()}>
       <Text style = {{marginTop:20, alignSelf:"flex-end", marginRight:30, color:"orange", fontWeight:"bold"}}>Skip</Text>   
       </TouchableOpacity>
       </View>
@@ -43,7 +51,7 @@ export default function Job({navigation}){
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   disabled = {false}
-  onPress = {() => { mutateSettings({job:job}, [{query:GET_DETAILS}]) , navigation.navigate('Height')}}
+  onPress = {() => { mutateSettings({job:job}, [{query:GET_DETAILS}]) , _handlePage() }}
 />
       </View>
       </View>

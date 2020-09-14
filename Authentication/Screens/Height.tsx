@@ -1,16 +1,30 @@
 import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Header, Continue} from '../../src/common/Common'; 
 import { AntDesign } from '@expo/vector-icons';
+import {Button} from 'react-native-elements'; 
 import DropDownPicker from 'react-native-dropdown-picker';
+import {mutateSettings} from '../../networking'; 
 export default function Height({navigation,route}){
-     
+    const { page } = route.params;  
 
      let [feet, setFeet] = useState(); 
      let [inches, setInches] = useState(); 
-      
 
+const _sendToServer = () => {
+    mutateSettings({feet, inches},[]);  
+}     
+      
+const _handleNavigation = () => {
+     if(page == "DetailsSettings"){
+          navigation.navigate("DetailsSettings")
+          return; 
+          
+     }
+     navigation.navigate('AddPhoto')
+
+}
 
 return(
 <View style = {{flex:1,}}>
@@ -61,7 +75,7 @@ return(
                         justifyContent: 'flex-start'
                     }}
                     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-                    onChangeItem={item => setFeet(item)}
+                    onChangeItem={item => setFeet(item.value)}
                     
                 />
  {/* <TouchableOpacity 
@@ -117,7 +131,7 @@ return(
                     activeLabelStyle = {{fontSize:30}}
                     activeItemStyle = {{fontSize:30}}
                     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-                    onChangeItem={item => setInches(item)}
+                    onChangeItem={item => setInches(item.value)}
                     
                 />
 
@@ -126,8 +140,16 @@ return(
 <Text style = {{marginBottom:20,marginLeft:17, marginTop:10, color:"grey", fontWeight:"bold"}}>Your height will be verified</Text>
 <View style = {{borderBottomWidth:2, width:Dimensions.get('window').width - 60, marginTop:20}}/>
 </View>
-<View style = {{flex:0.3,justifyContent:"center", alignItems:"center"}}>
-<Continue backgroundColor = {"green"} onPress = {() => {navigation.navigate('Posted')}}/>
+<View style = {{flex:0.3,justifyContent:"center", }}>
+{/* <Continue backgroundColor = {"green"} onPress = {() => {navigation.navigate('Posted')}}/> */}
+<Button
+  title="Continue"
+  type="outline"
+  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
+  titleStyle = {{color:"white", fontWeight:"700"}}
+  disabledStyle = {{backgroundColor:"grey",}}
+  onPress = {() => {_sendToServer(),_handleNavigation() }}
+/>
 </View>
 </View>
 )

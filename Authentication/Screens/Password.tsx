@@ -1,9 +1,10 @@
 import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, KeyboardAvoidingView, Platform} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, KeyboardAvoidingView, Platform} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Header, Continue } from '../../src/common/Common';
 import RNPasswordStrengthMeter from 'react-native-password-strength-meter';
 import { mutateSettings} from '../../networking'; 
+import {Button} from 'react-native-elements'; 
 export default function Password({navigation}){
     const [password, setPassword] = useState("");
     const [retype, setretype] = useState(""); 
@@ -61,8 +62,17 @@ secureTextEntry = {true}
       
 
 </View>
-<View style = {{flex:0.3,justifyContent:"center", alignItems:"center"}}>
- <Continue   disabled = {disable} backgroundColor = {color} onPress = {() => {mutateSettings({password:password}),navigation.navigate('Birthday')}}/>    
+<View style = {{flex:0.3,justifyContent:"center", }}>
+ {/* <Continue   disabled = {disable} backgroundColor = {color} onPress = {() => {mutateSettings({password:password}),navigation.navigate('Birthday')}}/>     */}
+ <Button
+  title="Continue"
+  type="outline"
+  disabled = {disable}
+  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
+  titleStyle = {{color:"white", fontWeight:"700"}}
+  disabledStyle = {{backgroundColor:"grey",}}
+  onPress = {() => {mutateSettings({password:password},[]), navigation.navigate('LoadContacts')}}
+/>
 </View>
 </View>
 </KeyboardAvoidingView>

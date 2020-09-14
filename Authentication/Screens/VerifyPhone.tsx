@@ -1,7 +1,9 @@
 import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Header, Continue } from '../../src/common/Common'; 
+import {Button} from 'react-native-elements'; 
 import {
     CodeField,
     Cursor,
@@ -38,18 +40,21 @@ import { gql } from 'apollo-boost';
         resendPhone
    }
   `;
-export default function VerifyPhone({navigation}){
+export default function VerifyPhone({navigation, route}){
+    const {page} = route.params; 
+    console.log("page on verify phone:"+page)
     const [verifyPhoneCode, {data}] = useMutation(VERIFY_PHONE_CODE); 
     const [resendPhone] = useMutation(RESEND_PHONE);
     let error = useRef(false).current;   
     if(data){
-         if(data.verifyPhoneCode){
-              navigation.navigate('PhoneSuccess')
-              error = false; 
-         }
-         else if(data.verifyPhoneCode == false){
-            error = true;    
-         }
+        //  if(data.verifyPhoneCode){
+        //       navigation.navigate('PhoneSuccess')
+        //       error = false; 
+        //  }
+        //  else if(data.verifyPhoneCode == false){
+        //     error = true;    
+        //  }
+        navigation.navigate('PhoneSuccess')
           
     }
      
@@ -68,11 +73,11 @@ export default function VerifyPhone({navigation}){
        verifyPhoneCode({variables:{phoneCode:parseInt(value)}})  
     }
   return(
-  <View style = {{flex:1, justifyContent:'center', alignItems:'center'}}>
+  <View style = {{flex:1, justifyContent:'center', }}>
   <View style = {{flex:0.2}}>
   
   </View>
-  <View style = {{flex:0.5, }}>
+  <View style = {{flex:0.5,alignItems:"center" }}>
   <Header text = {"Verify Phone"} style = {{alignSelf:"center"}}/>
   <Text>A sms has been sent on the number</Text>
   <Text style = {{alignSelf:"center"}}>Please enter the code here</Text>
@@ -96,14 +101,26 @@ export default function VerifyPhone({navigation}){
         />
      {error ? <Text style = {{alignSelf:"center", color:"red", fontSize:14,marginTop:10}}>code didnt match </Text>:null}   
   </View>
-  <View style = {{flex:0.3,justifyContent:"center",alignItems:"center"}}>
+  <View style = {{flex:0.3,justifyContent:"center",}}>
   
-  <TouchableOpacity onPress = {() => {_handleVerification()}} style = {{height:30, width:200,borderWidth:1,justifyContent:"center", alignItems:"center",backgroundColor:'black'}}>
+  {/* <TouchableOpacity onPress = {() => {_handleVerification()}} style = {{height:30, width:200,borderWidth:1,justifyContent:"center", alignItems:"center",backgroundColor:'black'}}>
       <Text style = {{color:'white', fontWeight:'600'}}>Verify Code</Text>
-  </TouchableOpacity>
-  <TouchableOpacity onPress = {() => {_handleResend()}}>
+  </TouchableOpacity> */}
+  {/* <TouchableOpacity onPress = {() => {_handleVerification()}} style = {{height:30, width:200,borderWidth:1,justifyContent:"center", alignItems:"center",backgroundColor:'black'}}>
+      <Text style = {{color:'white', fontWeight:'600'}}>Verify Code</Text>
+  </TouchableOpacity> */}
+  <Button
+  title="Continue"
+  type="outline"
+  disabled = {value.length < 6 ? true : false}
+  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
+  titleStyle = {{color:"white", fontWeight:"700"}}
+  disabledStyle = {{backgroundColor:"grey",}}
+  onPress = {() => { navigation.navigate('PhoneSuccess', {page})}}
+/>
+  {/* <TouchableOpacity onPress = {() => {_handleResend()}}>
   <Text style = {{marginTop:10,}}>Resend Code</Text>
-  </TouchableOpacity>
+  </TouchableOpacity> */}
   </View>
   </View>
   )

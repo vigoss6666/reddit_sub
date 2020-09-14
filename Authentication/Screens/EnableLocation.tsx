@@ -15,7 +15,7 @@ const handleLocation = async () => {
       }
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
-      navigation.navigate('ProfileHidden')
+      navigation.navigate('Email')
       
 }    
 return(
@@ -38,7 +38,7 @@ style = {{borderWidth:1, padding:20, backgroundColor:'black' }}>
 </TouchableOpacity>
 <TouchableOpacity 
 style = {{justifyContent:"center", alignItems:"center", marginTop:20, flexDirection:'row'}}
-onPress = {() => {navigation.navigate('Tell')}}
+onPress = {() => {navigation.navigate('LoadContacts')}}
 >
     <Text>Tell me More</Text>
     <AntDesign name="caretdown" size={10} color="black" />

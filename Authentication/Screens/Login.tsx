@@ -97,7 +97,7 @@ return(
   <View style = {{flexDirection:"row", justifyContent:"center", marginTop:10}}> 
   <Text>NEW HERE ?</Text>
   <TouchableOpacity 
-  onPress = {() => {navigation.navigate('Name')}}
+  onPress = {() => {navigation.navigate('Intro')}}
   >
       <Text>SIGN UP</Text>
   </TouchableOpacity>

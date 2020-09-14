@@ -49,11 +49,13 @@ import Checker from './Authentication/Screens/Checker';
 import School from './Authentication/Screens/School'; 
 import Job from './Authentication/Screens/Job';
 import AddPhoto from './Authentication/Screens/AddPhoto';
+import Hometown from './Authentication/Screens/Hometown';
+
 
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
-const localhost: string = 'http://192.168.1.15:3000/graphql';
+const localhost: string = 'http://192.168.43.7:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 import { gql } from 'apollo-boost'; 
 import { client , mutateSettings}  from './networking'; 
@@ -138,7 +140,7 @@ export default function App() {
      <ApolloProvider client={client}>
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}}>
-        <Stack.Screen name="Home" component={NewContact} />
+        <Stack.Screen name="Home" component={DetailsSettings} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -164,7 +166,7 @@ export default function App() {
         <Stack.Screen name="EmailVerified" component={EmailVerified}/>
         <Stack.Screen name="VerifyPhone" component={VerifyPhone}/>
         <Stack.Screen name="PhoneSuccess" component={PhoneSuccess}/>
-        <Stack.Screen name="LoadContacts" component={PhoneSuccess}/>
+        <Stack.Screen name="LoadContacts" component={LoadContacts}/>
         <Stack.Screen name="ContactsSex" component={ContactsSex}/>
         <Stack.Screen name="ContactsAge" component={ContactsAge}/>
         <Stack.Screen name="Contacts" component={Contacts}/>
@@ -184,6 +186,7 @@ export default function App() {
         <Stack.Screen name="Checker" component={Checker}/>
         <Stack.Screen name="School" component={School}/>
         <Stack.Screen name="Job" component={Job}/>
+        <Stack.Screen name="Hometown" component={Hometown}/>
         <Stack.Screen name="AddPhoto" component={AddPhoto}/>
       </Stack.Navigator>
     </NavigationContainer>

@@ -9,9 +9,10 @@ import gql from 'graphql-tag';
 
 
 
+
 // deletePhoto(photo: String!): Boolean!
 const DELETE_PHOTO = gql`
- mutation namer($photo:String1){
+ mutation namer($photo:String!){
     deletePhoto(photo:photo)
  }
 `
@@ -21,19 +22,12 @@ const GET_PHOTOS = gql`
     getPhotos
  }
 `
-export default function Photos({navigation}){
+export default function Photos({navigation, route }){
+    const {page} = route.params; 
     const [photoExample, setExample] = useState(); 
-    const deletePhoto = useMutation(DELETE_PHOTO); 
-    const {data, loading, error} = useQuery(GET_PHOTOS); 
-    const arr = Array(12).map(val => null); 
-
-    if(data){
-       data.getPhotos.map(val => {
-          arr.unshift(val); 
-          arr.pop()
-       })
-       
-    }
+     const [deletePhoto] = useMutation(DELETE_PHOTO); 
+    // const {data, loading, error,} = useQuery(GET_PHOTOS); 
+    const letter = [null,null,null,null,null,null,null,null,null,null,null,null];
     const [photos, setPhotos] = useState([
       null, 
       null, 
@@ -48,8 +42,32 @@ export default function Photos({navigation}){
       null, 
       null,
     ])
+    // if(data){
+    //     data.getPhotos.map((val) => {
+    //         photos.pop(); 
+    //         photos.unshift(val); 
+    //     })
 
-    const [namer, setNamer] = useState([]); 
+    // } 
+
+  let joker = [
+    null, 
+    null, 
+    null, 
+    null, 
+    null, 
+    null,     
+    null, 
+    null, 
+    null, 
+    null, 
+    null, 
+    null,
+  ]
+  const keys = ["apple", "banana", "mango", "cheery", "gobhi", "lemon", "chocolate", "vanilla", "juice", "bruce", "viagra", "vigoss"]
+        
+
+    const [namer, setNamer] = useState(); 
      async function getId(){
       const result = await AsyncStorage.getItem('_id')
       return result; 
@@ -60,11 +78,10 @@ export default function Photos({navigation}){
         key = result; 
     }, [photos,namer])
     const setPhotosFunc = (uri) => {
-         photos.pop()
-         setPhotos([uri,...photos])
-         uploadImage(uri, "key"); 
-         
-         //setPhotos(photos); 
+         const arr = photos.concat(); 
+         arr.pop()
+         setPhotos([uri, ...arr, ]);
+         uploadImage(uri, 'responder');
     }     
     let openImagePickerAsync = async () => {
         let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
@@ -81,19 +98,33 @@ export default function Photos({navigation}){
         
         
       }
- const template = arr.map((ages, index) => {
+      const _deletePhoto = (uri:any) => {
+        const arr = photos.concat(); 
+        const index = arr.indexOf(uri); 
+        arr.splice(index,1,)
+        arr.push(null); 
+        setPhotos(arr); 
+        deletePhoto({variables:{photo:uri}}); 
+          
+      }
+ const template = photos.map((ages, index) => {
      
    if(ages){
-     return <View key = {index.toString()} >
+     return <View key = {index.toString()} style = {{flexDirection:"row"}}>
        
-       <Image source = {{uri:ages}} style = {{height:60, width:60, marginRight:10}} key = {index.toString()}/>
-       
+       <Image source = {{uri:ages}} style = {{height:60, width:60, marginRight:10, }} key = {index.toString()}/>
+       <TouchableOpacity 
+       style = {{alignItems:"flex-end", justifyContent:"flex-end", marginLeft:-20}}
+       onPress = {() => _deletePhoto(ages)}
+       >
+       <Entypo name="circle-with-cross" size={24} color="red" />
+       </TouchableOpacity>
        </View>
    } 
    
 
-return <View style = {{marginRight:10}}>
-<FontAwesome name="photo" size={57} color="black" key = {index.toString()}/>
+return <View style = {{marginRight:10}} key = {keys[index]}>
+<FontAwesome name="photo" size={57} color="black" />
 </View>
 
 })  
@@ -122,7 +153,7 @@ return(
    <Text style = {{fontWeight:"bold",fontSize:18}}>
        Photos
    </Text>
-   <TouchableOpacity>
+   <TouchableOpacity onPress = {() => navigation.navigate(page)}>
    <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
    </TouchableOpacity>
 </View>

@@ -20,7 +20,14 @@ export default function Intro({navigation}){
     };
   
     const { currentPage: pageIndex } = sliderState;
-  
+
+    const firstImage = 'https://storage.googleapis.com/nemesis-157710.appspot.com/Intro1.png'; 
+    const secondImage = 'https://storage.googleapis.com/nemesis-157710.appspot.com/Intro2.png';
+    const thirdImage = 'https://storage.googleapis.com/nemesis-157710.appspot.com/Intro3.png'; 
+    const fourthImage = 'https://storage.googleapis.com/nemesis-157710.appspot.com/slide1.png'; 
+
+
+   
     return (
       <>
         <StatusBar barStyle="dark-content" />
@@ -41,7 +48,7 @@ export default function Intro({navigation}){
             </View>
             <View style={{ width, height,backgroundColor:"#ffffff" }}>
               <Image
-                source={{uri:'https://storage.googleapis.com/nemesis-157710.appspot.com/Intro2.png'}}
+                source={{uri:fourthImage}}
                 style={styles.imageStyle}
               />
               
@@ -55,14 +62,14 @@ export default function Intro({navigation}){
             </View>
             <View style={{ width, height,backgroundColor:"#ffffff" }}>
               <Image
-                source={{uri:'https://storage.googleapis.com/nemesis-157710.appspot.com/slide1.png'}}
+                source={{uri:secondImage}}
                 style={styles.imageStyle}
               />
             </View>
             
           </ScrollView>
           <TouchableOpacity style = {[styles.paginationWrapper1,{backgroundColor:"black",height:50, width:200, borderRadius:25, borderWidth:1}]}
-          onPress = {() => {navigation.navigate('Name')}}
+          onPress = {() => {navigation.navigate('Phone', {page:'Intro'})}}
           >
               <Text style = {{color:"white", fontWeight:"600"}}>Get Started</Text>
           </TouchableOpacity>
