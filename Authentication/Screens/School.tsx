@@ -3,7 +3,7 @@ import { Dimensions,View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollVie
 import {Button} from 'react-native-elements'; 
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Header } from '../../src/common/Common';
-export default function School({navigation}){
+export default function School({navigation,route}){
     const [Email, setEmail] = useState();
         
        
@@ -43,7 +43,7 @@ export default function School({navigation}){
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   disabled = {false}
-  onPress = {() => { navigation.navigate('Job')}}
+  onPress = {() => { navigation.navigate('Job', {page:"something"})}}
 />
       </View>
       </View>

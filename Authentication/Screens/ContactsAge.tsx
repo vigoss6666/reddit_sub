@@ -8,6 +8,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
 import { Button } from 'react-native-elements';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { MaterialIcons } from '@expo/vector-icons';
 
 //addAgeList(userInputList: userInputList1!): Boolean!
 const ADD_USER_AGE = gql`
@@ -60,7 +61,7 @@ useEffect(() => {
         <Text h4 style = {{alignSelf:'center', fontWeight:'600'}}>
             Tell us about your friends
         </Text>
-        <Text h4 style = {{alignSelf:'center', fontWeight:'600'}}>
+        <Text h6 style = {{alignSelf:'center', fontWeight:'600'}}>
             Confirm the age of each friend
         </Text>
         </View>
@@ -70,7 +71,7 @@ useEffect(() => {
            profiles.map((val,index) => {
                 return <View  onPress = {toggleOverlay} style = {{flexDirection: 'row',borderWidth:1, justifyContent:'space-between',marginRight:20, borderRightWidth:0, borderLeftWidth:0, marginLeft:20, height:100, alignItems:'center', zIndex:val.zIndex}} key = {index.toString()}>
                     <View style = {{flexDirection:'row',alignItems:'center',}}>
-                     
+                    <MaterialIcons name="account-circle" size={24} color="black" />
                     <Text>{val.name || val.firstname}</Text>
                     </View>
                     <DropDownPicker

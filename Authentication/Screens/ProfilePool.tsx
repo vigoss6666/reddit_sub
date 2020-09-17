@@ -127,7 +127,7 @@ const useFetchContactPool = (navigation) => {
        />
        <Text h5 style = {{alignSelf:"center",marginTop:30,fontWeight:"bold",marginBottom:30}}> Select the contacts you want to help</Text>
        </View>
-            <View style = {{flex:0.5}}>   
+            <View style = {{flex:0.6}}>   
             <ScrollView style = {{marginBottom:30}}>    
            {filteredEmails.map((val,index) => (
              <View key = {index.toString()} style = {{ marginLeft:30, marginRight:30}}>
@@ -171,9 +171,7 @@ const useFetchContactPool = (navigation) => {
         ))}
        </ScrollView> 
        </View>
-       <View style = {{flex:0.1}}>
-
-       </View>
+       
        </View>
        
      )
@@ -246,7 +244,7 @@ const useFetchDatingPool = () => {
           
                return (
                     <View style = {{flex:1}}>
-                    <View style = {{flex:0.4}}>      
+                    <View style = {{flex:0.3}}>      
               <Text style = {{alignSelf:'center',  marginTop:30, fontWeight:'bold', marginBottom:20, fontSize:17 }}>
                   Click to View a friends Profile
               </Text>
@@ -261,8 +259,8 @@ const useFetchDatingPool = () => {
             />
             <Text h5 style = {{alignSelf:"center",marginTop:30,fontWeight:"bold",marginBottom:30}}> {data.getDatingPoolList.data.length} friends in your friends list </Text>
             </View>
-            <View style = {{flex:0.5}}>
-            <ScrollView style = {{marginBottom:30}}>    
+            <View style = {{flex:0.7}}>
+            <ScrollView style = {{flex:1,marginBottom:20}}>    
                 {filteredEmails.map((val,index) => (
                   <View key = {index.toString()} style = {{ marginLeft:30, marginRight:30}}>
                   <View style = {{borderBottomWidth:1, borderBottomColor:"black", width:Dimensions.get('window').width - 60,marginBottom:10}}/>
@@ -394,9 +392,7 @@ const useFetchDatingPool = () => {
              ))}
              </ScrollView>
              </View>
-             <View style = {{flex:0.1}}>
-
-             </View>
+             
             </View>)
         }
         if(loading){
@@ -455,7 +451,7 @@ return(
 <View style = {{flex:0.1}}>
 <HeaderBar page = {"Friends"} navigation = {navigation}/> 
 </View>
-<View style = {{flex:0.90}}>
+<View style = {{flex:0.9}}>
 <View style = {{flexDirection:"row",marginLeft:20,justifyContent:'center'}}>
 
 <Button title = "Friends" type = {"outline"} raised = {true} containerStyle = {{width:150}}
@@ -476,9 +472,7 @@ titleStyle = {{color:selected == "contacts" ? "white":"black", fontWeight:"bold"
 </View>
 {selected == 'contacts'?  contact : dating}
 </View>
-<View style = {{flex:0.10}}>
 
-</View>
 </View>
 )
 }

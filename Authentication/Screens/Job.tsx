@@ -15,7 +15,7 @@ export default function Job({navigation, route}){
           navigation.navigate("DetailsSettings")
           return; 
        }
-       navigation.navigate('Hometown')
+       navigation.navigate('Hometown', {page:"something"})
     }
         
        

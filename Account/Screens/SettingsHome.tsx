@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView,Navigator} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {HeaderBar} from '../../src/common/Common'; 
 import { Feather } from '@expo/vector-icons';
@@ -21,13 +21,13 @@ return(
 <MaterialIcons name="account-circle" size={200} color="black" />
 </TouchableOpacity>
 <Text style = {{fontWeight:"bold", fontSize:30}}>
-David Boctor
+Zaid Shaikh
 </Text>
 <Text style = {{fontWeight:"bold", fontSize:15}}>
-    44 years Old
+    27 years old
 </Text>
 <Text style = {{fontWeight:"bold", fontSize:15}}>
-    Chico, CA
+    Mumbai, Maharashtra
 </Text>
 </View>
 <View style = {{flexDirection:"row",justifyContent:"space-around"}}>
@@ -46,7 +46,7 @@ onPress = {() => navigation.navigate('DetailsSettings')}
 </TouchableOpacity>
 </View>
 <TouchableOpacity style = {{justifyContent:"center", alignItems:"center", marginTop:30}}
-onPress = {() => navigation.navigate('AddPhotos')}
+onPress = {() => navigation.navigate('AddPhotos', {page:"SettingsHome"})}
 >
 <View style = {{flexDirection:"row"}}>
 <Entypo name="camera" size={50} color="orange" />

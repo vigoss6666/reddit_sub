@@ -19,7 +19,7 @@ export default function BirthDay({navigation, route}){
         navigation.navigate("DetailsSettings"); 
         return; 
      }
-     navigation.navigate('Gender')
+     navigation.navigate('Gender', {page:"something"})
      
   }
 

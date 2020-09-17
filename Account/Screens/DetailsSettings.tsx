@@ -12,6 +12,7 @@ export const GET_DETAILS = gql`
        feet
        gender
        job
+       hometown
 
     }
  }
@@ -27,7 +28,7 @@ if(data){
    return(
       <View style = {{flex:1, marginLeft:30, marginRight:30}}>
       <View style = {{flex:0.2, marginTop:20}}>
-      <View style = {{flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
+      <View style = {{flexDirection:"row", justifyContent:"space-between", alignItems:"center", marginTop:60}}>
       <Text>
       
       </Text>
@@ -53,8 +54,8 @@ if(data){
       <Text style = {{fontWeight:"600"}}>
           SEX
       </Text>
-      <FontAwesome name="male" size={24} color="black" />
-      <TouchableOpacity onPerss= {() => navigation.navigate('BirthDay', {page:"DetailsSettings"})}>
+      {data.getSettingsMutation.gender == "male" ? <FontAwesome name="male" size={30} color="black" />:<FontAwesome name="female" size={30} color="black" />}
+      <TouchableOpacity onPress= {() => navigation.navigate('Gender', {page:"DetailsSettings"})}>
       <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text> 
       </TouchableOpacity>
       
@@ -93,7 +94,7 @@ if(data){
          </Text> 
          
          <Text style = {{fontWeight:"bold",fontSize:20}}>
-           {data.getSettingsMutation.feet} {data.getSettingsMutation.inches} 
+           {data.getSettingsMutation.feet}' {data.getSettingsMutation.inches}" 
          </Text>
          <TouchableOpacity onPress = {() => navigation.navigate('Height', {page:"DetailsSettings"})}>
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
@@ -113,8 +114,8 @@ if(data){
             HOME TOWN
          </Text> 
          
-         <Text style = {{fontWeight:"bold",fontSize:12}}>
-           WEST HOLLYWOOD
+         <Text style = {{fontWeight:"bold",fontSize:20}}>
+         {data.getSettingsMutation.hometown}
          </Text>
          <TouchableOpacity onPress = {() => navigation.navigate('Hometown',{page:"DetailsSettings"})}>
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
@@ -133,7 +134,7 @@ if(data){
             JOB
          </Text> 
           
-         <Text style = {{fontWeight:"bold",fontSize:12}}>
+         <Text style = {{fontWeight:"bold",fontSize:15}}>
            {data.getSettingsMutation.job} 
          </Text>
          <TouchableOpacity onPress = {() => navigation.navigate('Job', {page:"DetailsSettings"})}>

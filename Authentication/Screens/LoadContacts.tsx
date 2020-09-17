@@ -42,9 +42,12 @@ export default function LoadContacts({navigation}){
     const [uploadContacts1, {data}] = useMutation(UPLOAD_CONTACTS); 
     if(data){
         
-        navigation.navigate('ContactLoadSuccess',{profiles:data.uploadContacts.data});
+        navigation.navigate('Loader',{profiles:data.uploadContacts.data});
            
     }
+    useEffect(() => {
+        _uploadContacts()
+    }, [])
     const _uploadContacts = async () => {
         const { status } = await Contacts.requestPermissionsAsync(); 
         if (status === 'granted') {
@@ -81,9 +84,9 @@ export default function LoadContacts({navigation}){
     }  
 return(
 <View style = {{flex:1, justifyContent:'center', alignItems:'center', }}>
-<TouchableOpacity style = {{backgroundColor:'black',padding:20}} onPress = {() => {_uploadContacts() }}>
+{/* <TouchableOpacity style = {{backgroundColor:'black',padding:20}} onPress = {() => {_uploadContacts() }}>
     <Text style = {{color:'white', fontWeight:'600'}}>Load Contacts</Text>
-</TouchableOpacity>
+</TouchableOpacity> */}
 </View>
 )
 }

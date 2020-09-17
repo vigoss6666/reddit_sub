@@ -5,7 +5,31 @@ import { Ionicons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
 import { Button } from 'react-native-elements'; 
 import {Header,Continue} from '../../src/common/Common'; 
-export default function Gender({navigation}){
+import { mutateSettings } from '../../networking';
+import { GET_DETAILS } from '../../Account/Screens/DetailsSettings';
+
+export default function Gender({navigation, route}){
+
+const {page} = route.params;   
+
+const _handlePage = () => {
+ if(page == "DetailsSettings"){
+    
+    navigation.navigate("DetailsSettings")
+    return; 
+ }
+ navigation.navigate('GenderPreference', {page:"something"})
+
+}
+const _handleServer = () => {
+   if(man){
+      mutateSettings({gender:"male"}, [{query:GET_DETAILS}])
+      
+   }
+   else if(woman){
+    mutateSettings({gender:"female"}, [{query:GET_DETAILS}]) 
+   }
+}
 
 
 const [man,setMan] = useState(false);
@@ -64,7 +88,7 @@ onPress = {() => {setWoman(true), setMan(false)}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   disabled = {gateGuard}
-  onPress = {() => {navigation.navigate('GenderPreference')}}
+  onPress = {() => {_handleServer(),_handlePage()}}
 />
 </View>
 </View>

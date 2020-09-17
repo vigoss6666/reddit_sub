@@ -138,8 +138,8 @@ return(
 </Text>
 <TouchableOpacity style = {{flexDirection:'row', marginRight:20,  }} onPress = {() => navigation.navigate('CountryCodes')}>
     <Text style = {{borderWidth:2,padding:10,}}>
-         {route.params ? route.params.code : "US" }
-           {route.params ? route.params.dial_code : "+1"}
+         {route.params ? "US" : "US" }
+           {route.params ? "+1" : "+1"}
     </Text>
     <View style = {{borderWidth:2,padding:10}}>
     <FontAwesome5 name="caret-down" size={24} color="black" />

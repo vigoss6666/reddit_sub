@@ -15,7 +15,7 @@ const handleLocation = async () => {
       }
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
-      navigation.navigate('Email')
+      navigation.navigate('Email', {page:"something"})
       
 }    
 return(

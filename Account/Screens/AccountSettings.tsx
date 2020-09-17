@@ -6,22 +6,41 @@ import { FontAwesome } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import SwitchSelector from "react-native-switch-selector";
 import { mutateSettings } from '../../networking';
+import { gql } from 'apollo-boost';
 
+export const GET_DETAILS = gql`
+ query {
+    getSettingsMutation{
+       inches 
+       feet
+       gender
+       job
+       hometown
+
+    }
+ }
+
+`
 
 
 
 
 export default function AccountSettings({navigation}){
+ const [matchmaking, setMatchmaking] = useState();   
+const [value, setValue] = useState(1);
+const [minAgePref, selectminAgePref] = useState(); 
+const [maxAgePref, selectmaxAgePref] = useState(); 
+const slider = forwardRef; 
+   const {data, loading, error} = useQuery(GET_DETAILS);
+   if(data){
+
+   }
     const options = [
         { label: "yes", value: "yes" },
         { label: "No", value: "no" },
         
       ];
-const [matchmaking, setMatchmaking] = useState();   
-const [value, setValue] = useState(1);
-const [minAgePref, selectminAgePref] = useState(); 
-const [maxAgePref, selectmaxAgePref] = useState(); 
-const slider = forwardRef; 
+
 console.log()
 
 const changeValue = (value) => {
@@ -43,8 +62,8 @@ const _sendToServer = () => {
 
 return(
 <View style = {{flex:1,marginLeft:30, marginRight:30}}>
-<View style = {{flex:0.1}}>
-<View style = {{flexDirection:"row", justifyContent:"space-between",marginTop:20, alignItems:"center"}}>
+<View style = {{flex:0.2}}>
+<View style = {{flexDirection:"row", justifyContent:"space-between",marginTop:60, alignItems:"center"}}>
    <Text>
    </Text> 
    <Text style = {{fontWeight:"bold",fontSize:18}}>
@@ -55,9 +74,9 @@ return(
    </TouchableOpacity>
 </View>
 </View>
-<View style = {{flex:1}}>
-
 <View style = {{flex:0.7}}>
+
+<View style = {{}}>
 <Text style = {styles.headerSection}>
     CONTACT INFO
 </Text>

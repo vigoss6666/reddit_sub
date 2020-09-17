@@ -6,6 +6,7 @@ import { AntDesign } from '@expo/vector-icons';
 import {Button} from 'react-native-elements'; 
 import DropDownPicker from 'react-native-dropdown-picker';
 import {mutateSettings} from '../../networking'; 
+import {GET_DETAILS} from '../../Account/Screens/DetailsSettings'; 
 export default function Height({navigation,route}){
     const { page } = route.params;  
 
@@ -13,7 +14,7 @@ export default function Height({navigation,route}){
      let [inches, setInches] = useState(); 
 
 const _sendToServer = () => {
-    mutateSettings({feet, inches},[]);  
+    mutateSettings({feet, inches},[{query:GET_DETAILS}]);  
 }     
       
 const _handleNavigation = () => {
@@ -22,7 +23,7 @@ const _handleNavigation = () => {
           return; 
           
      }
-     navigation.navigate('AddPhoto')
+     navigation.navigate('AddPhoto', {page:"something"})
 
 }
 

@@ -52,7 +52,7 @@ export default function Hometown({navigation, route}){
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   disabled = {false}
-  onPress = {() => { mutateSettings({job:job}, [{query:GET_DETAILS}]) , _handlePage()}}
+  onPress = {() => { mutateSettings({hometown:job}, [{query:GET_DETAILS}]) , _handlePage()}}
 />
       </View>
       </View>

@@ -78,7 +78,7 @@ return(
   disabled = {openGate}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  onPress = {() => {navigation.navigate('Birthday'), mutateSettings({firstname:firstName, lastname:lastName})}}
+  onPress = {() => {navigation.navigate('Birthday', {page:"something"}), mutateSettings({firstname:firstName, lastname:lastName})}}
 />       
  </View>
 </View>

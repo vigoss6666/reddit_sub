@@ -147,7 +147,7 @@ const row3 = <View style = {{flexDirection:"row", flexWrap:'wrap'}}>
 return(
 <View style = {{flex:1,marginLeft:30, marginRight:30}}>
 <View style = {{flex:0.2}}> 
-<View style = {{flexDirection:"row", justifyContent:"space-between",marginTop:20, alignItems:"center"}}>
+<View style = {{flexDirection:"row", justifyContent:"space-between",marginTop:60, alignItems:"center", }}>
    <Text>
    </Text> 
    <Text style = {{fontWeight:"bold",fontSize:18}}>

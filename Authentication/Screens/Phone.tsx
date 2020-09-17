@@ -1,8 +1,9 @@
 import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { AntDesign } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
+import {Button} from 'react-native-elements'; 
 
 const REGISTER_PHONE = gql`
 mutation namer($phoneNumber:Float!){
@@ -73,12 +74,21 @@ export default function Phone({navigation,route}){
                </View>
                </View>
                  <View style = {{flex:0.2}}>
-                   <TouchableOpacity 
+                   {/* <TouchableOpacity 
                    style = {{width:300,backgroundColor:clicker.color, alignSelf:"center",height:40,justifyContent:"center",alignItems:"center",borderRadius:30,marginTop:40}} disabled = {clicker.disabled}
                    onPress = {() => {registerPhone({variables:{phoneNumber:parseInt(phone)}}), navigation.navigate('VerifyPhone', {page:page})}}
                    >
                        <Text style = {{textAlign:"center",color:"white",fontWeight:"500",fontSize:20}}> Continue</Text>
-                   </TouchableOpacity>
+                   </TouchableOpacity> */}
+                   <Button
+  title="Continue"
+  type="outline"
+  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
+  titleStyle = {{color:"white", fontWeight:"700"}}
+  disabled = {clicker.disabled}
+  disabledStyle = {{backgroundColor:"grey",}}
+  onPress = {() => {navigation.navigate('VerifyPhone', {page:page}) }}
+/>
                    </View>
           </View>
      )

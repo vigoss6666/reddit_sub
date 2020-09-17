@@ -28,7 +28,7 @@ const _handlePage = () => {
           navigation.navigate("AccountSettings")
           return; 
      }
-     navigation.navigate('Height')
+     navigation.navigate('Height',{page:"something"})
 
 }
 const _sendToServer = () => {
