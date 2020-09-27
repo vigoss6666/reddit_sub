@@ -51,6 +51,12 @@ import Job from './Authentication/Screens/Job';
 import AddPhoto from './Authentication/Screens/AddPhoto';
 import Hometown from './Authentication/Screens/Hometown';
 import Loader from './Authentication/Screens/Loader';
+import Trophy from './Trophy/src/screens/Trophy'; 
+import GameHomepage from './Game/Screens/GameHomepage'; 
+import Matchmake from './Game/Screens/Matchmake'; 
+import MatchView from './Game/Screens/MatchView';
+import Endorsement from './Endorsement/Screens/Endorsements'; 
+
 
 
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks';
@@ -60,6 +66,7 @@ const localhost: string = 'http://192.168.43.7:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 import { gql } from 'apollo-boost'; 
 import { client , mutateSettings}  from './networking'; 
+
 client.writeData({
   data:{
        error:"Nothing", 
@@ -104,6 +111,7 @@ const GET_HELLO = gql`
 
 
 const Stack = createStackNavigator();
+
 function HomeScreen({navigation}){
    return (
    <View style = {{justifyContent:"center", alignItems:"center",flex:1,backgroundColor:"white"}}>
@@ -141,7 +149,7 @@ export default function App() {
      <ApolloProvider client={client}>
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}}>
-        <Stack.Screen name="Home" component={SettingsHome} />
+        <Stack.Screen name="Home" component={Matchmake} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -176,8 +184,8 @@ export default function App() {
         <Stack.Screen name="Playgame" component={Playgame}/>
         <Stack.Screen name="Play20" component={Play20}/>
         <Stack.Screen name="ProfilePool" component={ProfilePool}/>
-        <Stack.Screen name="SettingsHome" component={SettingsHome} options />
-        <Stack.Screen name="AccountSettings" component={AccountSettings  } options = {{headerShown:false}}  />
+        <Stack.Screen name="SettingsHome" component={SettingsHome} options = {{headerTitle:"Gamer"}} />
+        <Stack.Screen name="AccountSettings" component={AccountSettings  } options = {{headerShown:true, headerTitle:"SOmething", headerRight:() => <Button title = {"Press me"} onPress = {() => alert('Hello woeld')}>Hello world</Button>}}   />
         <Stack.Screen name="MapVeiw" component={MapViewMainer}/>
         <Stack.Screen name="ImageSlider" component={ImageSlider}/>
         <Stack.Screen name="DetailsSettings" component={DetailsSettings} options = {{headerShown:false}} />
@@ -190,6 +198,12 @@ export default function App() {
         <Stack.Screen name="Hometown" component={Hometown}/>
         <Stack.Screen name="AddPhoto" component={AddPhoto}/>
         <Stack.Screen name="Loader" component={Loader}/>
+        <Stack.Screen name="Trophy" component={Trophy}/>
+        <Stack.Screen name="GameHomepage" component={GameHomepage}/>
+        <Stack.Screen name="Matchmake" component={Matchmake}/>
+        <Stack.Screen name="MatchView" component={MatchView}/>
+        <Stack.Screen name="Endorsement" component={Endorsement}/>
+        
       </Stack.Navigator>
     </NavigationContainer>
      </ApolloProvider>

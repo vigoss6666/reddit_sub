@@ -5,6 +5,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Entypo, AntDesign } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { uploadImage } from '../../networking'; 
+
+
 import gql from 'graphql-tag';
 
 
@@ -23,9 +25,11 @@ const GET_PHOTOS = gql`
  }
 `
 export default function Photos({navigation, route }){
+    const [camera,setCamera] = useState(); 
     const {page} = route.params; 
     const [photoExample, setExample] = useState(); 
-     const [deletePhoto] = useMutation(DELETE_PHOTO); 
+    const [profilePic,setProfilePic] = useState(); 
+    const [deletePhoto] = useMutation(DELETE_PHOTO); 
     // const {data, loading, error,} = useQuery(GET_PHOTOS); 
     const letter = [null,null,null,null,null,null,null,null,null,null,null,null];
     const [photos, setPhotos] = useState([
@@ -35,12 +39,6 @@ export default function Photos({navigation, route }){
       null, 
       null, 
       null,     
-      null, 
-      null, 
-      null, 
-      null, 
-      null, 
-      null,
     ])
     // if(data){
     //     data.getPhotos.map((val) => {
@@ -65,7 +63,11 @@ export default function Photos({navigation, route }){
     null,
   ]
   const keys = ["apple", "banana", "mango", "cheery", "gobhi", "lemon", "chocolate", "vanilla", "juice", "bruce", "viagra", "vigoss"]
-        
+  
+  
+  
+   
+         
 
     const [namer, setNamer] = useState(); 
      async function getId(){
@@ -79,8 +81,13 @@ export default function Photos({navigation, route }){
     }, [photos,namer])
     const setPhotosFunc = (uri) => {
          const arr = photos.concat(); 
-         arr.pop()
-         setPhotos([uri, ...arr, ]);
+         const imageLength = arr.filter(val => val != null); 
+         if(imageLength.length < 1 && !profilePic){
+            setProfilePic(uri); 
+         }
+         
+         arr[imageLength.length] = uri; 
+         setPhotos([ ...arr, ]);
          uploadImage(uri, 'responder');
     }     
     let openImagePickerAsync = async () => {
@@ -104,21 +111,37 @@ export default function Photos({navigation, route }){
         arr.splice(index,1,)
         arr.push(null); 
         setPhotos(arr); 
-        deletePhoto({variables:{photo:uri}}); 
+        //deletePhoto({variables:{photo:uri}}); 
           
       }
+ const profileTemplate = profilePic ? 
+ <TouchableOpacity onPress = {() => setCamera(true)} style = {{justifyContent:"center", alignItems:"center"}}><Image source = {{uri:profilePic}} style = {{height:80, width:80, borderRadius:40}}></Image></TouchableOpacity>:<TouchableOpacity 
+ style = {{flexDirection:"row", justifyContent:"center"}}
+ >
+ 
+ <Entypo name="camera" size={80} color="pink" />
+ <View style = {{alignSelf:"flex-end", marginLeft:-10}}>
+ <AntDesign name="pluscircle" size={30} color="red" />
+ </View>
+ </TouchableOpacity>     
  const template = photos.map((ages, index) => {
      
    if(ages){
+
      return <View key = {index.toString()} style = {{flexDirection:"row"}}>
        
        <Image source = {{uri:ages}} style = {{height:60, width:60, marginRight:10, }} key = {index.toString()}/>
-       <TouchableOpacity 
+       {camera ? <TouchableOpacity 
+       style = {{alignItems:"flex-end", justifyContent:"flex-end", marginLeft:-20}}
+       onPress = {() => {setCamera(false), setProfilePic(ages)}}
+       >
+       <AntDesign name="pluscircle" size={24} color="black" />
+       </TouchableOpacity>:<TouchableOpacity 
        style = {{alignItems:"flex-end", justifyContent:"flex-end", marginLeft:-20}}
        onPress = {() => _deletePhoto(ages)}
        >
        <Entypo name="circle-with-cross" size={24} color="red" />
-       </TouchableOpacity>
+       </TouchableOpacity>   }
        </View>
    } 
    
@@ -128,13 +151,20 @@ return <View style = {{marginRight:10}} key = {keys[index]}>
 </View>
 
 })  
+
+const marker = <TouchableOpacity style = {{marginRight:15}} onPress = {() => openImagePickerAsync()}> 
+<AntDesign name="pluscircle" size={40} color="red" />
+
+</TouchableOpacity>
+const image = photos.filter(val => val != null); 
+template[image.length] = marker; 
+
+
 const row1 = <View style = {{ flexDirection:"row", flexWrap:'no-wrap', marginBottom:15, alignItems: 'center',}}>
-    {[template[0], template[1], template[2], template[3]]
-    
-    }
+    {[template[0], template[1], template[2]]}
     </View>
 const row2 = <View style = {{flexDirection:"row", flexWrap:'wrap', marginBottom:15}}>
-{[template[4], template[5], template[6], template[7]]
+{[template[3], template[4], template[5]]
 
 }
 </View>    
@@ -160,17 +190,7 @@ return(
 </View>
 <View style = {{flex:0.6}}>
 
-<TouchableOpacity 
-style = {{flexDirection:"row", justifyContent:"center"}}
-onPress = {() => openImagePickerAsync()}
-
->
-
-<Entypo name="camera" size={80} color="pink" />
-<View style = {{alignSelf:"flex-end", marginLeft:-10}}>
-<AntDesign name="pluscircle" size={30} color="red" />
-</View>
-</TouchableOpacity>
+{profileTemplate}
 <Text style = {{alignSelf:"center", fontStyle:'italic', fontWeight:"600", marginTop:30}}>Add Multiple Photos to increase your chances </Text>
 <View style = {{borderBottomWidth:2, marginTop:30}}>
 
@@ -180,8 +200,7 @@ onPress = {() => openImagePickerAsync()}
 
 {
     [row1,
-    row2,
-    row3]
+    row2]
     
 }
 </View>

@@ -5,6 +5,7 @@ import { Entypo } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 export interface HeaderProps {
 text:string,    
 style?:any 
@@ -51,7 +52,7 @@ export const HeaderBar = (props) => {
           <Entypo name="controller-play" size={40} color  = {props.page == "PlayGame" ? 'yellow':'grey'} />    
           </TouchableOpacity>
           <TouchableOpacity style = {{flex:0.5}}>
-          <Entypo name="bell" size={40} color="grey" />
+          <FontAwesome name="trophy" size={40} color="grey" />
           </TouchableOpacity>
           <TouchableOpacity style = {{flex:0.5}} onPress = {() => props.navigation.navigate('ProfilePool')}>
           <Ionicons name="ios-people" size={props.page == "Friends" ? 55:40} color={props.page == "Friends" ? 'yellow':'grey'} />   

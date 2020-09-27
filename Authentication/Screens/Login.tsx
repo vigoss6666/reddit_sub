@@ -42,16 +42,19 @@ if(data){
 
 
 const _sendToServer = async () => {
-     const serverObject = {email, password}; 
+     console.log("called")
+     const serverObject = {email}; 
      login({variables:{userInput:serverObject},
       update:((cache, {data}) => {
             if(data.login.error){
-                setError("Username or password is Incorrect")
+                console.log("error")
+                setError("Phone number didnt match")
                 return; 
             }
             else if(data.login.error == false){
+                 console.log(data)
                  AsyncStorage.setItem('_id', data.login._id)
-                 navigation.navigate('SettingsHome')
+                 navigation.navigate('Endorsement')
             }
            
           
@@ -72,20 +75,14 @@ return(
  {title} 
 </Text>
 <Input
-   placeholder="Email"
-   leftIcon={{ type: 'materialIcons', name: 'email', color:'red' }}
+   placeholder="PhoneNumber"
+   leftIcon={{ type: 'materialIcons', name: 'phone', color:'red' }}
    autoCapitalize = {'none'}
    autoCorrect = {false}
    onChangeText={value => setEmail(value)}
   />
-  <Input
-   autoCapitalize = {'none'}
-   autoCorrect = {false} 
-   placeholder="Password"
-   leftIcon={{ type: 'antdesign', name: 'eye', color:'red',  }}
-   onChangeText={value => setPassword(value)}
-   errorMessage = {error}
-  />
+  <Text style = {{color:"red",}}>{error}</Text>
+  
   <TouchableOpacity 
   style = {{backgroundColor:'red', justifyContent:'center', alignItems:"center", height:50, borderRadius:50}}
   onPress = {() => {_sendToServer()}}

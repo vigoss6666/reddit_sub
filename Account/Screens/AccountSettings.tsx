@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect,createRef, forwardRef} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, NavigatorIOS} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import Slider from '@react-native-community/slider';
 import { FontAwesome } from '@expo/vector-icons';
