@@ -16,7 +16,7 @@ return(
 </View>
 <View style = {{flex:0.2, justifyContent:"center", }}>
 <Button 
-
+onPress = {() => navigation.navigate('Playgame')}
 title = "Play again" containerStyle = {{marginLeft:30, marginRight:30}} buttonStyle = {{backgroundColor:"black"}} icon={
     <Icon
       name="rowing"

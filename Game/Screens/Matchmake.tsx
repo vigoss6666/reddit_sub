@@ -11,7 +11,6 @@ import ListTemplate from '../../src/common/ListTemplate';
 
 
 
-
 export default function Matchmake({navigation}){
 const [currentIndex, setCurrentIndex] = useState(0); 
 const [childPage, setChildPage] = useState(-200);  
@@ -33,6 +32,7 @@ const data = [{
 	 name:"Zaid shaikh", 
 	 _id:"something", 
 	 data:[
+
 	{
 		"creativity": "7.2",
 		"name": "Richard",
@@ -1441,7 +1441,7 @@ const data = [{
 		"goodHearted": "8.2",
 		"intelligent": "1.6",
 		"firstname": "Quamar",
-		"compatibilityScore": "4.2"
+		"compatibilityScore": "10"
 	},
 	{
 		"creativity": "3.1",
@@ -1456,7 +1456,7 @@ const data = [{
 		"goodHearted": "8.5",
 		"intelligent": "1.4",
 		"firstname": "Reese",
-		"compatibilityScore": "8.5"
+		"compatibilityScore": "10"
 	},
 	{
 		"creativity": "8.1",
@@ -1471,7 +1471,7 @@ const data = [{
 		"goodHearted": "3.9",
 		"intelligent": "4.0",
 		"firstname": "Lester",
-		"compatibilityScore": "4.4"
+		"compatibilityScore": "10"
 	},
 	{
 		"creativity": "4.9",
@@ -1486,7 +1486,7 @@ const data = [{
 		"goodHearted": "3.2",
 		"intelligent": "2.2",
 		"firstname": "Uriel",
-		"compatibilityScore": "9.4"
+		"compatibilityScore": "10"
 	},
 	{
 		"creativity": "5.5",
@@ -1501,7 +1501,7 @@ const data = [{
 		"goodHearted": "7.0",
 		"intelligent": "6.8",
 		"firstname": "Ethan",
-		"compatibilityScore": "4.7"
+		"compatibilityScore": "10"
 	},
 	{
 		"creativity": "4.9",
@@ -1516,7 +1516,7 @@ const data = [{
 		"goodHearted": "9.2",
 		"intelligent": "6.8",
 		"firstname": "Holmes",
-		"compatibilityScore": "3.5"
+		"compatibilityScore": "10"
 	},
 	{
 		"creativity": "1.7",
@@ -1531,7 +1531,7 @@ const data = [{
 		"goodHearted": "2.6",
 		"intelligent": "4.2",
 		"firstname": "Akeem",
-		"compatibilityScore": "1.7"
+		"compatibilityScore": "10"
 	}
 ]}, 
 {
@@ -4562,48 +4562,95 @@ const refinedData = filtering.map(val => {
 		
 		</View>
 			))
-		
-	
-
 })
- 
+const transform = filtering.map(val => {
+  return {
+   title:val, 
+   data:data[0].data.filter(val1 => val1.compatibilityScore == val)
+  }
+})
+console.log(transform)
+
 const DATA = [
     {
-      title: "Main dishes",
-      data: [["Pizza"], ["Burger"], ["Risotto"]]
+      title: "1.1",
+      data: [
+				{
+				"creativity": "1.1",
+				"name": "Yardley",
+				"_id": "F9E1A2AE-80F8-5B4F-B661-7289C01C5BA2",
+				"antiSocial": "6.1",
+				"narcissistic": "2.7",
+				"charismatic": "3.1",
+				"goodLooking": "9.2",
+				"wealthy": "5.7",
+				"funny": "8.4",
+				"goodHearted": "2.6",
+				"intelligent": "4.2",
+				"firstname": "Akeem",
+				"compatibilityScore": "1.7"
+			}, 
+		{
+				"creativity": "1.1",
+				"name": "Yardley",
+				"_id": "F9E1A2AE-80F8-5B4F-B661-7289C01C5BA2",
+				"antiSocial": "6.1",
+				"narcissistic": "2.7",
+				"charismatic": "3.1",
+				"goodLooking": "9.2",
+				"wealthy": "5.7",
+				"funny": "8.4",
+				"goodHearted": "2.6",
+				"intelligent": "4.2",
+				"firstname": "Akeem",
+				"compatibilityScore": "1.7"
+			},
+			
+		
+		]
     },
     {
-      title: "Sides",
-      data: [["French Fries"], ["Onion Rings"], ["Fried Shrimps"]]
+      title: "1.2",
+      data: [	{
+				"creativity": "1.7",
+				"name": "Yardley",
+				"_id": "F9E1A2AE-80F8-5B4F-B661-7289C01C5BA2",
+				"antiSocial": "6.1",
+				"narcissistic": "2.7",
+				"charismatic": "3.1",
+				"goodLooking": "9.2",
+				"wealthy": "5.7",
+				"funny": "8.4",
+				"goodHearted": "2.6",
+				"intelligent": "4.2",
+				"firstname": "Akeem",
+				"compatibilityScore": "1.7"
+			},]
     },
-    {
-      title: "Drinks",
-      data: [["Water"], ["Coke"], ["Beer"]]
-    },
-    {
-      title: "Desserts",
-      data: [["Cheese Cake"], ["Ice Cream"]]
-    }
+    
   ];
 
-  
-	const Item = ({ title }) => (
-		<View style = {{flexDirection:"row", flexWrap:'wrap'}}>
-	{
-		 data[0].data.map(val => {
-			  if(val.compatibilityScore == "1.1"){
-					 
-					 return <View> 
-		
-					 <MaterialIcons name="account-circle" size={24} color="black" />
-					 </View>
-				}
-		 })
-	}
-	</View>
-	);
+const renderItem = ({section, index}) => {
+	
+	if (index !== 0) return null;
+	return  <View>
+		 <FlatList
+		 data = {section.data}
+		 renderItem = {({item}) => <Item item = {item}/>} 
+		 numColumns = {8}
+		 keyExtractor={(item, index) => item + index}
+		 />
 
-return( <View style = {{flex:1}}>
+		 
+	 </View>
+}
+
+function Item({item}){
+	  
+	 return <MaterialIcons name="account-circle" size={40} color="black" />
+}
+
+return( <View style = {{flex:1, marginLeft:10, marginRight:10,marginBottom:30}}>
 			 <View style = {{flex:0.2}}>
        <Slider names = {['zaid', "huraira", "sameer"]} setCurrentIndexParent = {setCurrentIndexWrapper}/>
 			 </View>	
@@ -4611,13 +4658,14 @@ return( <View style = {{flex:1}}>
 	{/* <ListTemplate list = {data[currentIndex].data} navigation = {navigation}/> */}
 	<View >
 	<SectionList
-      sections={data}
+      sections={transform}
       keyExtractor={(item, index) => item + index}
-      renderItem={({ item }) => <Item compa={item.compatibilityScore} />}
+			renderItem={renderItem}
+			
       renderSectionHeader={({ section: { title } }) => (
         <Text style={styles.header}>{title}</Text>
       )}
-    />	
+    />
 	
 	</View>
 	
@@ -4648,7 +4696,10 @@ const styles = StyleSheet.create({
     },
     header: {
       fontSize: 32,
-      backgroundColor: "#fff"
+			backgroundColor: "#fff", 
+			marginTop:10,
+			marginBottom:10
+			
     },
     title: {
       fontSize: 24

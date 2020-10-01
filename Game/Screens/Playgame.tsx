@@ -8,6 +8,29 @@ import Draggable from 'react-native-draggable';
 import { forScaleFromCenterAndroid } from '@react-navigation/stack/lib/typescript/src/TransitionConfigs/CardStyleInterpolators';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {HeaderBar} from '../../src/common/Common';
+import { gql } from 'apollo-boost';
+
+
+//setPoints(setPoints: setPoints1!): Boolean!
+const SET_POINTS = gql`
+mutation namer($setPoints:setPoints1!){
+  setPoints(setPoints:$setPoints)
+}
+`
+//getDatingPoolList: userReturnList!
+const GET_DATING_POOL = gql`
+ query {
+    getDatingPoolList {
+       data {
+          firstname
+          _id
+       }
+    }
+ }
+`
+
+
+
 
 const data = [
     {
@@ -45,15 +68,22 @@ const data = [
 
 
 export default function Playgame({navigation}) {
-  const users = ['David', 'Amy', 'Arthur', 'Mark', 'Kevin', 'Eric'];
+  let users = ['David', 'Amy', 'Arthur', 'Mark', 'Kevin', 'Eric'];
+  const [setPoints, ] = useMutation(SET_POINTS); 
+  const {data,loading,error} = useQuery(GET_DATING_POOL); 
+  if(data){
+    const result = data.getDatingPoolList.data.map(val => val.firstname); 
+    users = result; 
+  }
   const [interaction, setInteraction] = useState(); 
   useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       setInteraction(true); 
     });
     return () => {
-      
+      setQuestion(0) 
     }
+    
   }, [])
   function randomNoRepeats(arr) {
     var copy = arr.slice(0);
@@ -151,12 +181,16 @@ export default function Playgame({navigation}) {
   const [height, setHeight] = useState();  
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const fadeOpac = useRef(new Animated.Value(0)).current;
+  console.log(x); 
+  console.log(y); 
+  console.log(width); 
+  console.log(height)
 
   const valer = fadeAnim.interpolate({
      inputRange:[0,1],
      outputRange:['white','green'], 
   })
-  useLayoutEffect(() => {
+  useEffect(() => {
     UIManager.measureInWindow(findNodeHandle(Marker), (x,y,width,height) => {
       setX(x); 
       setWidth(width); 
@@ -164,19 +198,21 @@ export default function Playgame({navigation}) {
       setHeight(height); 
    }) 
     return () => {
-      
+          
     };
   }, [x,y,width,height])
-  useEffect(() => {
-     setQuestion(0);
-  },[])
-    
+  
+  console.log(question)  
    
   function measure(gesture){
+    console.log("called")
 
    if(gesture.nativeEvent.pageY > y && gesture.nativeEvent.pageY < y + height && gesture.nativeEvent.pageX > x && gesture.nativeEvent.pageX < x + width){
+      setPoints({variables:{setPoints:{user:"zaid", dimension:"creativity"}}});
       console.log("In drag area")
       if(question == questions.length -1){
+        setQuestion(0)
+        setBar(0)
         navigation.navigate('Play20'); 
         return;  
       }
@@ -211,6 +247,15 @@ export default function Playgame({navigation}) {
           <Animated.View
           style = {[{justifyContent:'center', alignItems:'center',marginTop:20, borderRadius:100, borderWidth:10, marginBottom:20,height:200, width:200,flexDirection:'row', backgroundColor:valer}]}
           ref = {gamer => Marker = gamer}  
+          onLayout={(event) => {
+            var {x, y, width, height,} = event.nativeEvent.layout;
+            setX(x); 
+            setWidth(width); 
+            setY(y); 
+            setHeight(height);
+            
+            console.log('parenty'+y); 
+          }}
           >
           <MaterialIcons name="person" size={100} color="black" />
           
