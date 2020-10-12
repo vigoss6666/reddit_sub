@@ -54,7 +54,9 @@ import Loader from './Authentication/Screens/Loader';
 import Trophy from './Trophy/src/screens/Trophy'; 
 import GameHomepage from './Game/Screens/GameHomepage'; 
 import Matchmake from './Game/Screens/Matchmake'; 
-import MatchView from './Game/MatchView/src/screens/MatchView';
+import MatchView from './Game/Screens/MatchView'; 
+//import MatchView from './Game/MatchView/src/screens/MatchView';
+import CustomSlider from './Game/Screens/CustomSlider';
 import Endorsement from './Endorsement/Screens/Endorsements'; 
 
 
@@ -149,7 +151,7 @@ export default function App() {
      <ApolloProvider client={client}>
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}}>
-        <Stack.Screen name="Home" component={Playgame} />
+        <Stack.Screen name="Home" component={MatchView} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>

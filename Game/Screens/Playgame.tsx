@@ -1,4 +1,4 @@
-import  React, {useState,useLayoutEffect,useRef, useEffect} from 'react';
+import  React, {useState,useLayoutEffect,useRef, useEffect, forwardRef} from 'react';
 import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, TouchableHighlightBase,UIManager, findNodeHandle,InteractionManager} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Text} from 'react-native-elements'; 
@@ -69,8 +69,20 @@ const data = [
 
 export default function Playgame({navigation}) {
   let users = ['David', 'Amy', 'Arthur', 'Mark', 'Kevin', 'Eric'];
+  let dragText1 = useRef().current; 
+  let dragText2 = useRef().current;
+  let firstTextTemplate = useRef().current; 
+  let secondTextTemplate = useRef().current;
+  const [movedElement, setMovedElement] = useState(''); 
   const [setPoints, ] = useMutation(SET_POINTS); 
   const {data,loading,error} = useQuery(GET_DATING_POOL); 
+  const [dimension, setDimension] = useState(); 
+ const [, updateState] = React.useState();
+ const forceUpdate = React.useCallback(() => updateState({}), []);
+ 
+  
+  
+
   if(data){
     const result = data.getDatingPoolList.data.map(val => val.firstname); 
     users = result; 
@@ -80,12 +92,12 @@ export default function Playgame({navigation}) {
     InteractionManager.runAfterInteractions(() => {
       setInteraction(true); 
     });
+    
     return () => {
       setQuestion(0) 
     }
-    
   }, [])
-  function randomNoRepeats(arr) {
+  function randomNoRepeats(arr,) {
     var copy = arr.slice(0);
     return function() {
       if (copy.length < 1) { copy = arr.slice(0); }
@@ -146,7 +158,47 @@ export default function Playgame({navigation}) {
       useNativeDriver:false, 
     }).start();
   };
-  const chooser = randomNoRepeats(users); 
+  const setFirstText = () => {
+    const chooser = randomNoRepeats(users);
+    const firstText = chooser();
+    firstTextTemplate = firstText; 
+    
+     
+
+    if(data){
+      const result =  data.getDatingPoolList.data.filter(val => val.firstname == firstText);
+      dragText1 = result[0] || {}; 
+    }
+    return firstText; 
+
+  }
+  const setSecondText = () => {
+    const chooser = randomNoRepeats(users);
+    
+    const secondText = chooser(); 
+    if(data){
+      const result =  data.getDatingPoolList.data.filter(val => val.firstname == secondText);
+      dragText2 = result[0] || {};  
+    }
+    if(secondText == firstTextTemplate){
+       
+       return chooser()
+    }
+    return secondText; 
+  }
+  
+const _sendToServer = () => {
+   if(movedElement == "first"){
+    
+    setPoints({variables:{setPoints:{user:dragText1._id, dimension:questions[question].dimension}}})
+    
+  }
+   else if (movedElement == "second"){
+    
+    setPoints({variables:{setPoints:{user:dragText2._id, dimension:questions[question].dimension}}})
+  }
+}
+   
   
 
   const questions = [
@@ -178,37 +230,43 @@ export default function Playgame({navigation}) {
   const [width,setWidth] = useState();
   const [x,setX] = useState(); 
   const [y,setY] = useState(); 
+  const [updated, setUpdated] = useState(false); 
   const [height, setHeight] = useState();  
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const fadeOpac = useRef(new Animated.Value(0)).current;
-  console.log(x); 
-  console.log(y); 
-  console.log(width); 
-  console.log(height)
-
+  console.log(dragText1)
+  console.log(dragText2)
+  console.log(updated)
+  
+  
+  navigation.addListener('didFocus', () => setUpdated(true))
   const valer = fadeAnim.interpolate({
      inputRange:[0,1],
      outputRange:['white','green'], 
   })
-  useEffect(() => {
+  useLayoutEffect(() => {
     UIManager.measureInWindow(findNodeHandle(Marker), (x,y,width,height) => {
       setX(x); 
       setWidth(width); 
       setY(y); 
       setHeight(height); 
    }) 
+   
     return () => {
           
     };
-  }, [x,y,width,height])
+  }, [])
   
-  console.log(question)  
    
+  console.log("value of y is :" +y); 
+  console.log("value of x is :" +x);
   function measure(gesture){
     console.log("called")
-
+     
+    
    if(gesture.nativeEvent.pageY > y && gesture.nativeEvent.pageY < y + height && gesture.nativeEvent.pageX > x && gesture.nativeEvent.pageX < x + width){
-      setPoints({variables:{setPoints:{user:"zaid", dimension:"creativity"}}});
+      //setPoints({variables:{setPoints:{user:"zaid", dimension:"creativity"}}});
+      _sendToServer()
       console.log("In drag area")
       if(question == questions.length -1){
         setQuestion(0)
@@ -234,7 +292,7 @@ export default function Playgame({navigation}) {
           onLayout={(event) => {
             var {x, y, width, height,} = event.nativeEvent.layout;
             
-            console.log('parenty'+y); 
+            
           }} 
           > 
           
@@ -247,15 +305,14 @@ export default function Playgame({navigation}) {
           <Animated.View
           style = {[{justifyContent:'center', alignItems:'center',marginTop:20, borderRadius:100, borderWidth:10, marginBottom:20,height:200, width:200,flexDirection:'row', backgroundColor:valer}]}
           ref = {gamer => Marker = gamer}  
-          onLayout={(event) => {
-            var {x, y, width, height,} = event.nativeEvent.layout;
-            setX(x); 
-            setWidth(width); 
-            setY(y); 
-            setHeight(height);
+          // onLayout={(event) => {
+          //   var {x, y, width, height,} = event.nativeEvent.layout;
+          //   setX(x); 
+          //   setWidth(width); 
+          //   setY(y); 
+          //   setHeight(height);
             
-            console.log('parenty'+y); 
-          }}
+          // }}
           >
           <MaterialIcons name="person" size={100} color="black" />
           
@@ -273,8 +330,8 @@ export default function Playgame({navigation}) {
           
           </View>
           <View style = {{flex:0.2, flexDirection:'row'}}>
-          <Draggable x={75} y={100} renderSize={70} renderColor='black' renderText={chooser(users)} isCircle shouldReverse onShortPressRelease={()=>alert('touched!!')} onDragRelease = {(gesture) => measure(gesture)}/>
-          <Draggable x={300} y={100} renderSize={70} renderColor='black' renderText={chooser(users)} isCircle shouldReverse onShortPressRelease={()=>alert('touched!!')} onDragRelease = {(gesture) => measure(gesture)}/>
+          <Draggable x={75} y={100} renderSize={70} renderColor='black' renderText={ setFirstText()} isCircle shouldReverse onShortPressRelease={()=>alert('touched!!')} onDragRelease = {(gesture) => measure(gesture)} onPressIn = {() => setMovedElement("first")}/>
+          <Draggable x={300} y={100} renderSize={70} renderColor='black' renderText={setSecondText()} isCircle shouldReverse onShortPressRelease={()=>alert('touched!!')} onDragRelease = {(gesture) => measure(gesture)} onPressIn = {() => setMovedElement("second")}/>
           </View>
           <View style = {{flex:0.1}}>
             

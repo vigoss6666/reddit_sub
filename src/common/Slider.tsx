@@ -4,7 +4,7 @@ import { useMutation,useQuery } from '@apollo/react-hooks';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import {Continue} from '../../src/common/Common'; 
 import { MaterialIcons } from '@expo/vector-icons';
-export default function Intro({navigation,names,setCurrentIndexParent}){
+export default function Slider({navigation,names,setCurrentIndexParent}){
     const [sliderState, setSliderState] = useState({ currentPage: 0 });
     const { width, height } = Dimensions.get('window');
   
@@ -12,7 +12,7 @@ export default function Intro({navigation,names,setCurrentIndexParent}){
       const { currentPage } = sliderState;
       const { x } = event.nativeEvent.contentOffset;
       
-      const indexOfNextScreen = Math.floor(x / width -200);
+      const indexOfNextScreen = Math.floor(x / width );
        if (indexOfNextScreen !== currentPage) {
         setCurrentIndexParent(sliderState.currentPage)
     
@@ -38,11 +38,9 @@ export default function Intro({navigation,names,setCurrentIndexParent}){
     
     const sliderTemplate = names.map(val => (
         <View style={{ width,  height, }} key = {val}>
-        <View style = {{justifyContent:"center", alignItems:"center", marginTop:20}}>
+        <View style = {{ alignItems:"center", marginTop:20}}>
         <MaterialIcons name="account-circle" size={75} color="black" />
         <Text style = {{fontWeight:"bold"}}>{ val }</Text>
-        <View style = {{borderBottomWidth:2, width:350, marginTop:10, borderBottomColor:"grey"}}/>
-        
         </View>
         </View>
     ))

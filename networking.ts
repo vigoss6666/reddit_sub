@@ -2,12 +2,21 @@
 import { StyleSheet, Text, View,Button, AsyncStorage, Settings } from 'react-native';
 import ApolloClient, { gql, InMemoryCache } from 'apollo-boost';
 
-const localhost: string = 'http://192.168.1.15:3000/graphql';
+
+const localhost: string = 'http://192.168.43.7:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 async function getId(){
     const result = await AsyncStorage.getItem('_id')
+    console.log(result)
     return result; 
  }
+ function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 export const client = new ApolloClient({ 
     uri: localhost, 
     request: async (operation) => {
@@ -17,7 +26,9 @@ export const client = new ApolloClient({
         }
       })
     },
-    cache: new InMemoryCache()
+    cache: new InMemoryCache({
+      dataIdFromObject: (o): string | null => (o.id ? `${o.__typename}-${o.id}` : uuidv4())
+    })
     
   });
 

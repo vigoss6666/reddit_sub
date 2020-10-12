@@ -1,33 +1,90 @@
 import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, SectionList, } from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, SectionList, AsyncStorage, } from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import Constants from "expo-constants";
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome, Octicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import _, { map } from 'underscore';
 import Slider from '../../src/common/Slider'; 
 import ListTemplate from '../../src/common/ListTemplate';
+import { gql } from 'apollo-boost';
+import { Foundation } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
+//getListUsers: Boolean!
+//getListUsers: getListUsersFinal!
+const GET_LIST = gql`
+ query namer($user:String! = "5f6a31b2152dd8290d641dad"){
+	  getListUsers(user:$user) {
+			 data {
+				  name
+					data {
+						 _id
+						 compatibilityScore
+						 simDimension
+						 profilePic
+						 
+					}
+			 } 
+		}
+ }
+`
 
 
 
 
 export default function Matchmake({navigation}){
-const [currentIndex, setCurrentIndex] = useState(0); 
-const [childPage, setChildPage] = useState(-200);  
-console.log(currentIndex)
-function setCurrentIndexWrapper(index:any){
-	 if(index > childPage){
-		setCurrentIndex(currentIndex + 1); 
-		setChildPage(index)
-		return; 
-	 }
-	 else if(index < childPage){ 
-		 setCurrentIndex(currentIndex - 1)
-		 setChildPage(index); 
-	 }
+const lists = useQuery(GET_LIST,); 
+const [currentIndex, setCurrentIndex] = useState(0);
+const [sliderState, setSliderState] = useState({ currentPage: 0 });
+const { width, height } = Dimensions.get('window');
+let users = [];  
+console.log(sliderState.currentPage)
+
+const sliderStateWrapper = () => {
 	 
 }
 
+const setSliderPage = (event: any) => {
+	const { currentPage } = sliderState;
+	const { x } = event.nativeEvent.contentOffset;
+	
+	const indexOfNextScreen = Math.floor(x / width);
+	if (indexOfNextScreen !== currentPage && indexOfNextScreen >= 0) {
+		setSliderState({
+			...sliderState,
+			currentPage: indexOfNextScreen,
+		});
+	}
+};
+ 
+const sliderTemplate = lists.data ? lists.data.getListUsers.data.map(val => val.name).map(val => (
+	<View style={{ width,  height, }} key = {val}>
+	<View style = {{ alignItems:"center", marginTop:20}}>
+	<MaterialIcons name="account-circle" size={75} color="black" />
+	<Text style = {{fontWeight:"bold"}}>{ val }</Text>
+	</View>
+	</View>
+)):null
+const { currentPage: pageIndex } = sliderState;
+
+
+if(lists.data){
+	
+	//users =  lists.data.getListUsers.data[sliderState.currentPage].data 
+	console.log(lists.data.getListUsers.data[0].data[10].compatibilityScore); 
+	console.log(lists.data.getListUsers.data[1].data[10].compatibilityScore)
+	
+	}
+ 
+
+
+useEffect(() => {
+	 async function gamer(){
+		  
+	 }
+	 gamer()
+})
 const data = [{
 	 name:"Zaid shaikh", 
 	 _id:"something", 
@@ -4564,12 +4621,14 @@ const refinedData = filtering.map(val => {
 			))
 })
 const transform = filtering.map(val => {
+	
   return {
    title:val, 
-   data:data[0].data.filter(val1 => val1.compatibilityScore == val)
+	 //data:data[0].data.filter(val1 => val1.compatibilityScore == val)
+	 data:lists.data ? lists.data.getListUsers.data[sliderState.currentPage].data.filter(val1 => val1.compatibilityScore == val):[]
   }
 })
-console.log(transform)
+
 
 const DATA = [
     {
@@ -4636,31 +4695,95 @@ const renderItem = ({section, index}) => {
 	return  <View>
 		 <FlatList
 		 data = {section.data}
-		 renderItem = {({item}) => <Item item = {item}/>} 
+		 renderItem = {({item,index}) => <Item item = {item} />} 
 		 numColumns = {8}
 		 keyExtractor={(item, index) => item + index}
+		 extraData = {sliderState}
 		 />
 
 		 
 	 </View>
 }
 
-function Item({item}){
-	  
-	 return <MaterialIcons name="account-circle" size={40} color="black" />
+function simTemplate(val){
+	if(val == 'intelligent'){
+		 return <Foundation name="lightbulb" size={17} color="green" />
+	}
+	if(val == 'goodHearted'){
+		return <Foundation name="heart" size={17} color="red" />
+ }
+ if(val == 'creative'){
+	return <Foundation name="lightbulb" size={17} color="orange" />
+}
+if(val == 'funny'){
+	return <AntDesign name="smile-circle" size={17} color="pink" />
+}
+if(val == 'trustworthy'){
+	return <FontAwesome name="handshake-o" size={17} color="green" />
+}
+if(val == 'wealthy'){
+	return <FontAwesome name="dollar" size={17} color="green" />
+}
+if(val == 'goodLooking'){
+	return <MaterialIcons name="looks" size={17} color="yellow" />
+}
+if(val == 'charismatic'){
+	return <FontAwesome5 name="grin-stars" size={17} color="red" />
+}
+if(val == 'narcissistic'){
+	return <Octicons name="mirror" size={17} color="maroon" />
+}
+if(val == 'antiSocial'){
+	return <MaterialCommunityIcons name="nature-people" size={17} color="purple" />
+}
 }
 
-return( <View style = {{flex:1, marginLeft:10, marginRight:10,marginBottom:30}}>
-			 <View style = {{flex:0.2}}>
-       <Slider names = {['zaid', "huraira", "sameer"]} setCurrentIndexParent = {setCurrentIndexWrapper}/>
+const imageTemplate = (item:string) => {
+	//  if(val){
+	// 	  return <Image source = {{uri:val}} style = {{height:30, width:30, borderRadius:15}}/>
+	//  }
+	 return <TouchableOpacity onPress = {() => {console.log("item is"+item),navigation.navigate('MatchView', {clientIndex:sliderState.currentPage,listItem:item})}}><MaterialIcons name="account-circle" size={40} color="black" /></TouchableOpacity> 
+}
+
+function Item({item,index}){
+	 
+	 return <View style = {{flexDirection:"row", marginLeft:5}}> 
+	 {imageTemplate(item._id)}
+	 <View style = {{position:'absolute', zIndex:100}}>
+	 {
+		  
+		simTemplate(item.simDimension)			  
+		 
+	 }
+	 
+	 </View>
+	 
+	 </View>
+}
+
+return( <View style = {{flex:1, }}>
+			 <View style = {{flex:0.15}}>
+       <ScrollView
+horizontal = {true}
+pagingEnabled = {true}
+showsHorizontalScrollIndicator={false}
+scrollEventThrottle={16}
+style = {{flex:1}}
+onScroll={(event: any) => {
+	setSliderPage(event);
+}}
+>
+{sliderTemplate}
+</ScrollView>
 			 </View>	
-	<View style = {{flex:0.8}}>
+	<View style = {{flex:0.8,marginLeft:10, marginRight:10,marginBottom:30}}>
 	{/* <ListTemplate list = {data[currentIndex].data} navigation = {navigation}/> */}
 	<View >
 	<SectionList
       sections={transform}
       keyExtractor={(item, index) => item + index}
 			renderItem={renderItem}
+			extraData = {sliderState}
 			
       renderSectionHeader={({ section: { title } }) => (
         <Text style={styles.header}>{title}</Text>
