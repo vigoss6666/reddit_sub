@@ -23,6 +23,7 @@ const GET_LIST = gql`
 						 compatibilityScore
 						 simDimension
 						 profilePic
+						 firstname
 						 
 					}
 			 } 
@@ -4738,17 +4739,18 @@ if(val == 'antiSocial'){
 }
 }
 
-const imageTemplate = (item:string) => {
+const imageTemplate = (item) => {
 	//  if(val){
 	// 	  return <Image source = {{uri:val}} style = {{height:30, width:30, borderRadius:15}}/>
 	//  }
-	 return <TouchableOpacity onPress = {() => {console.log("item is"+item),navigation.navigate('MatchView', {clientIndex:sliderState.currentPage,listItem:item})}}><MaterialIcons name="account-circle" size={40} color="black" /></TouchableOpacity> 
+	
+	 return <TouchableOpacity onPress = {() => {console.log("item firstnamne is from matchmake"+item.firstname),navigation.navigate('MatchView', {clientIndex:sliderState.currentPage,listItem:item})}}><MaterialIcons name="account-circle" size={40} color="black" /></TouchableOpacity> 
 }
 
 function Item({item,index}){
 	 
 	 return <View style = {{flexDirection:"row", marginLeft:5}}> 
-	 {imageTemplate(item._id)}
+	 {imageTemplate(item)}
 	 <View style = {{position:'absolute', zIndex:100}}>
 	 {
 		  

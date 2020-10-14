@@ -80,7 +80,17 @@ export default function Playgame({navigation}) {
  const [, updateState] = React.useState();
  const forceUpdate = React.useCallback(() => updateState({}), []);
  
-  
+  const randomNess = () => {
+     const arr = [0,1,1];
+     const randomElement = arr[Math.floor(Math.random() * arr.length)]; 
+     console.log("randomElelment is "+randomElement);
+     if(randomElement == 0){
+        navigation.navigate('NoMatch')
+        return; 
+     }
+     navigation.navigate('NoMatch')
+     console.log("go to the Endorsement page"); 
+  }
   
 
   if(data){
@@ -271,7 +281,8 @@ const _sendToServer = () => {
       if(question == questions.length -1){
         setQuestion(0)
         setBar(0)
-        navigation.navigate('Play20'); 
+        //navigation.navigate('Play20'); 
+        randomNess()
         return;  
       }
       setQuestion(question + 1)

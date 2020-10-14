@@ -3,7 +3,7 @@ import { StyleSheet, Text, View,Button, AsyncStorage, Settings } from 'react-nat
 import ApolloClient, { gql, InMemoryCache } from 'apollo-boost';
 
 
-const localhost: string = 'http://192.168.43.7:3000/graphql';
+const localhost: string = 'http://192.168.1.15:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 async function getId(){
     const result = await AsyncStorage.getItem('_id')
