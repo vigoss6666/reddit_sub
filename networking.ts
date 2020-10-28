@@ -1,6 +1,7 @@
 
 import { StyleSheet, Text, View,Button, AsyncStorage, Settings } from 'react-native';
 import ApolloClient, { gql, InMemoryCache } from 'apollo-boost';
+import {firebase} from './config'; 
 
 
 const localhost: string = 'http://192.168.1.15:3000/graphql';

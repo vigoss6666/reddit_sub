@@ -7,6 +7,7 @@ import { Button } from 'react-native-elements';
 import {Header,Continue} from '../../src/common/Common'; 
 import { mutateSettings } from '../../networking';
 import { GET_DETAILS } from '../../Account/Screens/DetailsSettings';
+import {firebase} from '../../config';
 
 export default function Gender({navigation, route}){
 
@@ -18,15 +19,27 @@ const _handlePage = () => {
     navigation.navigate("DetailsSettings")
     return; 
  }
- navigation.navigate('GenderPreference', {page:"something"})
+ navigation.navigate('SettingsHome', {page:"something"})
 
 }
 const _handleServer = () => {
    if(man){
       mutateSettings({gender:"male"}, [{query:GET_DETAILS}])
+      const currentUser = firebase.auth().currentUser; 
+   
+    const db = firebase.firestore();
+    
+    
+    db.collection('gamer').doc(currentUser.uid).set({ gender:"male"}, {merge:true}).then(val => console.log)
       
    }
    else if(woman){
+      const currentUser = firebase.auth().currentUser; 
+   
+    const db = firebase.firestore();
+    
+    
+    db.collection('gamer').doc(currentUser.uid).set({ gender:"female"}, {merge:true}).then(val => console.log)
     mutateSettings({gender:"female"}, [{query:GET_DETAILS}]) 
    }
 }

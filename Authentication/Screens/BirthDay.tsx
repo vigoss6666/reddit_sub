@@ -5,6 +5,7 @@ import {Header,Continue} from '../../src/common/Common';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { mutateSettings } from '../../networking';
 import {Button} from 'react-native-elements'; 
+import {firebase} from '../../config';
 
 export default function BirthDay({navigation, route}){
   const {page} = route.params; 
@@ -33,12 +34,18 @@ export default function BirthDay({navigation, route}){
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
   };
-  const _sendToServer = () => {
+  const _sendToServer = async () => {
     const d = new Date(date); 
     const month = d.getMonth()
     const year = d.getFullYear()
     const timeStamp =  d.getTime()
     mutateSettings({month, year, timeStamp})
+    const currentUser = firebase.auth().currentUser; 
+   
+    const db = firebase.firestore();
+    
+    
+    db.collection('gamer').doc(currentUser.uid).set({ month,year,timeStamp}, {merge:true}).then(val => console.log)
   }
 
   const showMode = (currentMode) => {

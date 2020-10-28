@@ -10,7 +10,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {HeaderBar} from '../../src/common/Common';
 import { gql } from 'apollo-boost';
 
+const SET_EVENT = gql`
+ mutation namer($event:event1! = {type:"roundCompleted"}){
+   setEvent(event:$event)
+ }
 
+`
 //setPoints(setPoints: setPoints1!): Boolean!
 const SET_POINTS = gql`
 mutation namer($setPoints:setPoints1!){
@@ -69,6 +74,7 @@ const data = [
 
 export default function Playgame({navigation}) {
   let users = ['David', 'Amy', 'Arthur', 'Mark', 'Kevin', 'Eric'];
+  const [setEvent] = useMutation(SET_EVENT);
   let dragText1 = useRef().current; 
   let dragText2 = useRef().current;
   let firstTextTemplate = useRef().current; 
@@ -81,14 +87,15 @@ export default function Playgame({navigation}) {
  const forceUpdate = React.useCallback(() => updateState({}), []);
  
   const randomNess = () => {
+     setEvent()
      const arr = [0,1,1];
      const randomElement = arr[Math.floor(Math.random() * arr.length)]; 
      console.log("randomElelment is "+randomElement);
      if(randomElement == 0){
-        navigation.navigate('NoMatch')
+        navigation.navigate('Endorsement')
         return; 
      }
-     navigation.navigate('NoMatch')
+     navigation.navigate('Endorsement')
      console.log("go to the Endorsement page"); 
   }
   
@@ -282,6 +289,7 @@ const _sendToServer = () => {
         setQuestion(0)
         setBar(0)
         //navigation.navigate('Play20'); 
+        
         randomNess()
         return;  
       }

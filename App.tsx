@@ -44,6 +44,7 @@ import MapViewMainer from './Account/Screens/MapViewMainer';
 import Photos from './Account/Screens/Photos';
 import ImageSlider from './Account/Screens/ImageSlider'; 
 import DetailsSettings from './Account/Screens/DetailsSettings'; 
+import Tester from './Account/Screens/Tester';
 import Login from './Authentication/Screens/Login'; 
 import Checker from './Authentication/Screens/Checker';
 import School from './Authentication/Screens/School'; 
@@ -59,6 +60,8 @@ import MatchView from './Game/Screens/MatchView';
 import CustomSlider from './Game/Screens/CustomSlider';
 import Endorsement from './Endorsement/Screens/Endorsements'; 
 import NoMatch from './Game/Screens/NoMatch'; 
+import Chat from './Chat/Screens/Chat'; 
+import ContextProvider from './src/provider'; 
 
 
 
@@ -69,6 +72,11 @@ const localhost: string = 'http://192.168.43.7:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 import { gql } from 'apollo-boost'; 
 import { client , mutateSettings}  from './networking'; 
+import {firebase} from './config'; 
+const currentUser = firebase.auth().currentUser; 
+    const db = firebase.firestore(); 
+    const userRef = db.collection('gamer');
+
 
 client.writeData({
   data:{
@@ -149,10 +157,11 @@ export default function App() {
    
   
   return (
-     <ApolloProvider client={client}>
-      <NavigationContainer>
-      <Stack.Navigator screenOptions = {{headerShown:true}}>
-        <Stack.Screen name="Home" component={Playgame} />
+     <ApolloProvider client={client} name = {"something"}>
+     
+      <NavigationContainer >
+      <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
+        <Stack.Screen name="Home" component={Chat} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -210,6 +219,7 @@ export default function App() {
         
       </Stack.Navigator>
     </NavigationContainer>
+    
      </ApolloProvider>
   );
 }

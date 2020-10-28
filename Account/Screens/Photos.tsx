@@ -5,6 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Entypo, AntDesign } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { uploadImage } from '../../networking'; 
+import {firebase} from '../../config'; 
 
 
 import gql from 'graphql-tag';
@@ -26,7 +27,7 @@ const GET_PHOTOS = gql`
 `
 export default function Photos({navigation, route }){
     const [camera,setCamera] = useState(); 
-    const {page} = route.params; 
+    //const {page} = route.params; 
     const [photoExample, setExample] = useState(); 
     const [profilePic,setProfilePic] = useState(); 
     const [deletePhoto] = useMutation(DELETE_PHOTO); 
@@ -98,9 +99,19 @@ export default function Photos({navigation, route }){
           return;
         }
     
-        let pickerResult = await ImagePicker.launchImageLibraryAsync();
+        let pickerResult = await ImagePicker.launchImageLibraryAsync({base64:true});
         
+        //console.log(pickerResult.base64)   
         setPhotosFunc(pickerResult.uri)
+        var storageRef = firebase.storage().ref();
+        var mountainsRef = storageRef.child('mountains.png');
+        const data = new FormData();
+        const result = pickerResult.uri.replace('file://', '');
+        //data.append('file',  {uri: result,filename :'imageName.png',type: 'image/png'});
+        mountainsRef.putString(pickerResult.base64).then(function(snapshot) {
+          console.log('Uploaded a blob or file!');
+        }); 
+
          
         
         

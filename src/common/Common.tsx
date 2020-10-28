@@ -48,11 +48,11 @@ export const HeaderBar = (props) => {
      const [selected, setSelected] = useState(); 
      return (
           <View style = {{flex:1,flexDirection:"row",marginLeft:10, marginRight:10,marginTop:10, marginBottom:10}}>
-          <TouchableOpacity style = {{flex:0.5,  }} >
-          <Entypo name="controller-play" size={40} color  = {props.page == "PlayGame" ? 'yellow':'grey'} />    
+          <TouchableOpacity style = {{flex:0.5,  }} onPress = {() => props.navigation.navigate('GameHomepage')}>
+          <Entypo name="controller-play" size={40} color  = {props.page == "GameHomepage" ? 'yellow':'grey'} />    
           </TouchableOpacity>
-          <TouchableOpacity style = {{flex:0.5}}>
-          <FontAwesome name="trophy" size={40} color="grey" />
+          <TouchableOpacity style = {{flex:0.5}} onPress = {() => props.navigation.navigate('Trophy')}>
+          <FontAwesome name="trophy" size={40} color={props.page == "trophy" ? 'yellow':'grey'} />
           </TouchableOpacity>
           <TouchableOpacity style = {{flex:0.5}} onPress = {() => props.navigation.navigate('ProfilePool')}>
           <Ionicons name="ios-people" size={props.page == "Friends" ? 55:40} color={props.page == "Friends" ? 'yellow':'grey'} />   

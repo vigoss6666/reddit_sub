@@ -4743,8 +4743,13 @@ const imageTemplate = (item) => {
 	//  if(val){
 	// 	  return <Image source = {{uri:val}} style = {{height:30, width:30, borderRadius:15}}/>
 	//  }
+	const copy = lists.data.getListUsers.data.concat();
+	copy.map(val => val.data.sort((a,b) => b.compatibilityScore - a.compatibilityScore));  
+	const mainer = copy[sliderState.currentPage].data.filter(val => val._id == item._id);
+	let index = copy[sliderState.currentPage].data.indexOf(mainer[0]);
+
 	
-	 return <TouchableOpacity onPress = {() => {console.log("item firstnamne is from matchmake"+item.firstname),navigation.navigate('MatchView', {clientIndex:sliderState.currentPage,listItem:item})}}><MaterialIcons name="account-circle" size={40} color="black" /></TouchableOpacity> 
+	 return <TouchableOpacity onPress = {() => {console.log("item firstnamne is from matchmake"+index),navigation.navigate('MatchView', {clientIndex:sliderState.currentPage,listItem:index})}}><MaterialIcons name="account-circle" size={40} color="black" /></TouchableOpacity> 
 }
 
 function Item({item,index}){

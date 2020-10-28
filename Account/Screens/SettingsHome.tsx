@@ -6,10 +6,37 @@ import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { EvilIcons } from '@expo/vector-icons';
+import {firebase} from '../../config';
 
 
 import { AntDesign } from '@expo/vector-icons';
+
+
+
+
 export default function SettingsHome({navigation}){
+    const [firstName, setFirstname] = useState(); 
+    useEffect(() => {
+        const currentUser = firebase.auth().currentUser; 
+       
+        const db = firebase.firestore();
+        var docRef = db.collection("gamer").doc(currentUser.uid);
+        console.log(currentUser.uid)
+
+docRef.get().then(function(doc) {
+    if (doc.exists) {
+        console.log("Document data:", doc.data());
+        setFirstname(doc.data().firstname)
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+    }
+}).catch(function(error) {
+    console.log("Error getting document:", error);
+});
+        
+        
+    })
 return(
 <View style = {{flex:1, marginLeft:30, marginRight:30 }}>
 <View style = {{flex:0.1}}>
@@ -21,7 +48,7 @@ return(
 <MaterialIcons name="account-circle" size={200} color="black" />
 </TouchableOpacity>
 <Text style = {{fontWeight:"bold", fontSize:30}}>
-Zaid Shaikh
+{firstName}
 </Text>
 <Text style = {{fontWeight:"bold", fontSize:15}}>
     27 years old

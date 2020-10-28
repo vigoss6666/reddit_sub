@@ -1,16 +1,53 @@
-import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, KeyboardAvoidingView, Platform} from 'react-native';
+import  React, {useState,useRef,useEffect,useContext} from 'react';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, KeyboardAvoidingView, Platform, AsyncStorage} from 'react-native';
 import {Header,Continue} from '../../src/common/Common'; 
 import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { mutateSettings} from '../../networking';
 import {Button} from 'react-native-elements'; 
+import { firebase } from '../../config';
 
-export default function Name({navigation}){
+export default function Name({navigation,name}){
    const [firstName, setFirstName] = useState(""); 
    const [lastName, setLastName] = useState("");
    const [openGate, setOpenGate] = useState(true); 
    const [color, setColor] = useState("white")
-   console.log(firstName)
+   
+   console.log(name)
+   const fire = () => {
+    const currentUser = firebase.auth().currentUser; 
+   
+    const db = firebase.firestore(); 
+    db.collection('gamer').doc(currentUser.uid).set({firstname:firstName,lastname:lastName}).then(val => console.log)
+    } 
+   
+    
+  // firebase.auth().onAuthStateChanged(function(user) {
+  //   if (user) {
+  //     // User is signed in.
+  //     var isAnonymous = user.isAnonymous;
+  //     var uid = user.uid;
+  //     const db = firebase.firestore();
+      
+  //     db.collection("gamer").doc(uid).set({
+  //       name:"jafar bhai"
+  //   })
+  //   .then(function(docRef) {
+  //       //console.log("Document written with ID: ", docRef.id);
+  //   })
+  //   .catch(function(error) {
+  //       //console.error("Error adding document: ", error);
+  //   });
+      
+  //     // ...
+  //   } else {
+  //     // User is signed out.
+  //     // ...
+  //   }
+  //   // ...
+  // });
+
+  
+
    const handleFirstNameChange = async (event) => {
     handleOpenGate()
     const {eventCount, target, text} = event.nativeEvent;
@@ -78,7 +115,7 @@ return(
   disabled = {openGate}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  onPress = {() => {navigation.navigate('Birthday', {page:"something"}), mutateSettings({firstname:firstName, lastname:lastName})}}
+  onPress = {() => {navigation.navigate('Birthday', {page:"something"}), fire(),  mutateSettings({firstname:firstName, lastname:lastName})}}
 />       
  </View>
 </View>
