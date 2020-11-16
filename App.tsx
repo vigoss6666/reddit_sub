@@ -45,6 +45,7 @@ import Photos from './Account/Screens/Photos';
 import ImageSlider from './Account/Screens/ImageSlider'; 
 import DetailsSettings from './Account/Screens/DetailsSettings'; 
 import Tester from './Account/Screens/Tester';
+import Tester1 from './Account/Screens/Tester1';
 import Login from './Authentication/Screens/Login'; 
 import Checker from './Authentication/Screens/Checker';
 import School from './Authentication/Screens/School'; 
@@ -62,6 +63,7 @@ import Endorsement from './Endorsement/Screens/Endorsements';
 import NoMatch from './Game/Screens/NoMatch'; 
 import Chat from './Chat/Screens/Chat'; 
 import ContextProvider from './src/provider'; 
+import VideoPlayer from './src/common/VideoPlayer'; 
 
 
 
@@ -71,22 +73,21 @@ import { ApolloProvider } from 'react-apollo';
 const localhost: string = 'http://192.168.43.7:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 import { gql } from 'apollo-boost'; 
-import { client , mutateSettings}  from './networking'; 
+//import { client , mutateSettings}  from './networking'; 
 import {firebase} from './config'; 
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
+import DocumentViewer from './src/common/DocumentViewer';
 const currentUser = firebase.auth().currentUser; 
     const db = firebase.firestore(); 
     const userRef = db.collection('gamer');
 
 
-client.writeData({
-  data:{
-       error:"Nothing", 
-       password:"something"
-  }
-})
+
+
+
+
 
 // async function getId(){
 //    const result = await AsyncStorage.getItem('_id')
@@ -226,25 +227,25 @@ export default function App() {
   
   //   return token;
   // }
-  async function namer(){
-    const _id = await AsyncStorage.getItem("_id");
-    if(_id){
-      return; 
-    }
-    const result =  await client.mutate({mutation:REGISTER_USER})
-    console.log(result)   
-    AsyncStorage.setItem('_id', result.data.registerUser);
-    console.log( await AsyncStorage.getItem('_id')) 
-  }
-  namer()
+  // async function namer(){
+  //   const _id = await AsyncStorage.getItem("_id");
+  //   if(_id){
+  //     return; 
+  //   }
+  //   const result =  await client.mutate({mutation:REGISTER_USER})
+  //   console.log(result)   
+  //   AsyncStorage.setItem('_id', result.data.registerUser);
+  //   console.log( await AsyncStorage.getItem('_id')) 
+  // }
+  //namer()
    
   
   return (
-     <ApolloProvider client={client} name = {"something"}>
      
-      <NavigationContainer >
+     
+      <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
-        <Stack.Screen name="Home" component={Chat} />
+        <Stack.Screen name="Home" component={Tester1} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -299,11 +300,14 @@ export default function App() {
         <Stack.Screen name="MatchView" component={MatchView}/>
         <Stack.Screen name="Endorsement" component={Endorsement}/>
         <Stack.Screen name="NoMatch" component={NoMatch}/>
+        <Stack.Screen name="Tester1" component={Tester1}/>
+        <Stack.Screen name="VideoPlayer" component={VideoPlayer}/>
+        <Stack.Screen name="DocumentViewer" component={DocumentViewer}/>
         
       </Stack.Navigator>
     </NavigationContainer>
     
-     </ApolloProvider>
+     
   );
 }
 

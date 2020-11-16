@@ -1,7 +1,7 @@
 import  React, {useState,useRef,useEffect,useCallback} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, ImageBackground, Clipboard, Dimensions} from 'react-native';
 import { useMutation,useQuery, } from '@apollo/react-hooks';
-import { GiftedChat, Bubble, InputToolbar,Send,Day, MessageImage, MessageAudioProps, MessageImageProps, Time } from 'react-native-gifted-chat'
+import { GiftedChat, Bubble, InputToolbar,Send,Day, MessageImage, MessageAudioProps, MessageImageProps, Time, MessageVideoProps, MessageText } from 'react-native-gifted-chat'
 import { firebase } from '../../config'; 
 import { Video } from 'expo-av';
 import MapView, {Marker} from 'react-native-maps';
@@ -22,6 +22,7 @@ import LottieView from 'lottie-react-native';
 import { UniqueDirectiveNamesRule } from 'graphql';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
+import {Tester1,AudioGetter,VideoMessage,DocumentGetter,ServerHeart} from '../../src/common/Common'; 
 
 
 
@@ -49,13 +50,19 @@ export default function Chat({navigation}){
     const [toolBar, selectToolbar] = useState(false);
     const [giphy,setGiphy] = useState(false);  
     const [gifs, setGifs] = useState([]);
-    const [reply, setReply] = useState({image:null, }); 
+    const [reply, setReply] = useState(false); 
     const [sender, setSender] = useState(false); 
     const [report, setReport] = useState(false); 
     const [recording, setRecording] = useState(false); 
     const myComponent = useRef();
     const [imageUri, setImageUri] = useState(); 
     const [forward,setForward] = useState(); 
+    const gifDir =  FileSystem.documentDirectory + '/imageehrjew/';
+    const gifFileUri = (gifId: string) => gifDir + `${gifId}`;
+    const userId = useRef(7).current; 
+    const [isTyping, setIsTyping] = useState(false); 
+    const token = useRef("ExponentPushToken[C3nLnqLQLcFX_p6mNTuC09]").current; 
+    
     function urlToFilename(str:string){
       var part = str.substring(
           str.lastIndexOf("%") + 1, 
@@ -78,11 +85,142 @@ export default function Chat({navigation}){
      
      return fileUri; 
    }
+   const renderMessageImage = (props:any) => {
+    const result =  tester(props.currentMessage.image);
+      if(typeof result === 'string'){
+        props.currentMessage.image = result; 
+      } 
+      if(props.currentMessage.user._id !== 7){
+        return (
+          <View style = {{flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
+                
+                <MessageImage {...props} style = {{height:200, width:200}}>
+              
+              </MessageImage>
+          <AntDesign name="hearto" size={24} color="black" />
+          </View> 
+       )  
+      }
+      return (
+               
+              <MessageImage {...props} style = {{height:200, width:200}}>
+              
+              </MessageImage>
+          )
+   }
+   const renderMessageVideo = (props:any) => {
+    const result =  tester(props.currentMessage.video);
+    console.log(result)
+  if(typeof result === 'string'){
+    console.log("result is"+result)
+    props.currentMessage.video = result; 
+  }
+     const t = firebase.firestore.Timestamp.fromDate(props.currentMessage.createdAt); 
+     const d = t.toDate().toDateString()
+     console.log(d)
+     
+    return (
+     <VideoMessage video = {props.currentMessage.video} time = {d} navigation = {navigation}/>
+    )
+   }
+   const renderMessageText = (props:any) => {
+    const  {...messageTextProps} = props; 
+    console.log(typeof messageTextProps.currentMessage.user._id)
+    if(messageTextProps.currentMessage.user._id !== userId){
+      var jobskill_query = db.collection('messages').doc(chatID).collection("messages").where('_id','==',messageTextProps.currentMessage._id);
+    jobskill_query.get().then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+        console.log(doc.data())
+        doc.ref.update({received:true});
+      });
+    });
+    }
+    
+      
+      if(messageTextProps.currentMessage.reply){
+        return (
+          <View>
+          <View style = {{backgroundColor:"green", height:30, justifyContent:"center", maxWidth:50}}>
+          <Text>{messageTextProps.currentMessage.reply.text}</Text> 
+          </View>  
+          <MessageText {...messageTextProps} />
+          </View> 
+       )  
+      }
+      if(messageTextProps.currentMessage.user._id !== userId){
+        return (
+          <View style = {{flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
+                
+          <MessageText {...messageTextProps} />
+          <ServerHeart db = {db} messageObject = {messageTextProps.currentMessage} chatID = {chatID}/>
+          </View> 
+       )  
+      }
+      return (
+         <View style = {{flexDirection:"row", alignItems:"center"}}>
+         {messageTextProps.currentMessage.like ? <AntDesign name="heart" size={24} color="red" />:null}       
+         <MessageText {...messageTextProps} />
+         </View> 
+      )
+   }
+   
+   const renderMessageAudio = (props) => {
+    return (
+      <View>
+      
+       <AudioGetter audio = {props.currentMessage.audio} />
+       </View>
+       
+    )
+ }
+  const onLongPress = (context, message) => {
+     context.actionSheet().showActionSheetWithOptions(
+      {
+        options: ['Cancel', 'Reply', 'Report', 'Delete'],
+        destructiveButtonIndex: 2,
+        cancelButtonIndex: 0,
+      },
+      buttonIndex => {
+        if (buttonIndex === 0) {
+          // cancel action
+        } else if (buttonIndex === 1) {
+          setPressed(message); 
+          setReply(true); 
+        } else if (buttonIndex === 2) {
+          context.actionSheet().showActionSheetWithOptions(
+            {
+              options: ['Made me uncomfortable', 'Abusive or threatening', 'Inappropriate content', 'Spam or scam', 'Cancel'],
+              
+              cancelButtonIndex: 4,
+            },
+            buttonIndex => {
+               if(buttonIndex === 0){
+                  _handleReport(message._id,'Made me uncomfortable' )
+               }
+               if(buttonIndex === 1){
+                _handleReport(message._id,'Abusive or threatening')
+             }
+             if(buttonIndex === 2){
+              _handleReport(message._id, 'Inappropriate content')
+             }
+             if(buttonIndex === 2){
+              _handleReport(message._id, 'Spam or Scam')
+             }
+           
+            }       
+          )      
+        }
+        else if (buttonIndex === 3) {
+          deleteMessage(message._id); 
+        }
+
+      }
+     )
+
+  }
     
     
     
-    const gifDir =  FileSystem.documentDirectory + '/imageehrjew/';
-    const gifFileUri = (gifId: string) => gifDir + `${gifId}`;
     
     
     async function ensureDirExists() {
@@ -92,10 +230,9 @@ export default function Chat({navigation}){
         await FileSystem.makeDirectoryAsync(gifDir, { intermediates: true });
       }
     }
+
      
 
-    console.log("pressed is"+pressed); 
-    console.log("forward is"+forward); 
     
      
     
@@ -145,7 +282,7 @@ export default function Chat({navigation}){
       let location = await Location.getCurrentPositionAsync({});
       console.log(location)
       const serverObject = {
-         _id:"something", 
+         _id:uuidv4(), 
          location:{latitude:location.coords.latitude, longitude:location.coords.longitude},
          createdAt:firebase.firestore.Timestamp.fromDate(new Date()),
          user:{
@@ -175,12 +312,30 @@ export default function Chat({navigation}){
       );
     };
 
-    const pickDocument = () => {
+    const pickDocument = async () => {
        
-       DocumentPicker.getDocumentAsync({
-          type:"*/*", 
+       const result = await DocumentPicker.getDocumentAsync({
+          type:"application/pdf", 
           multiple:true
        })
+       console.log(result)
+       const response = await fetch(result.uri); 
+          const blob = await response.blob(); 
+          const namer = Math.random().toString(36).substring(2);
+          const ref = firebase.storage().ref().child("images/"+ namer); 
+          await ref.put(blob)
+          const result1 = await ref.getDownloadURL(); 
+          const serverObject = {
+          _id:uuidv4(), 
+          createdAt:firebase.firestore.Timestamp.fromDate(new Date()),
+          document:result1,
+          name:result.name, 
+          size:result.size, 
+         user:{
+         _id:5
+         }   
+  }
+  db.collection('messages').doc(chatID).collection("messages").add(serverObject); 
     }
 
 
@@ -193,7 +348,8 @@ export default function Chat({navigation}){
         return;
       }
   
-      let pickerResult = await ImagePicker.launchImageLibraryAsync();
+      let pickerResult = await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.All});
+      console.log(pickerResult.type)
       if(pickerResult.type == 'image'){
         const manipResult = await ImageManipulator.manipulateAsync(
           pickerResult.uri,
@@ -216,10 +372,12 @@ export default function Chat({navigation}){
   }
   db.collection('messages').doc(chatID).collection("messages").add(serverObject); 
       }
-      if(pickerResult.type !== 'image'){
+      if(pickerResult.type == 'video'){
         const response = await fetch(pickerResult.uri); 
           const blob = await response.blob(); 
-          const ref = firebase.storage().ref().child("images/"+ "shabbir"); 
+          const namer = Math.random().toString(36).substring(2);
+          const ref = firebase.storage().ref().child("images/"+ namer); 
+          
           await ref.put(blob)
           const result1 = await ref.getDownloadURL(); 
           const serverObject = {
@@ -245,19 +403,8 @@ export default function Chat({navigation}){
          <Text style = {{color:"blue", fontWeight:"500"}}>Load Earlier</Text>
        </TouchableOpacity> 
     }
-    const renderFooter = (props) => {
-      if(forward){
-         return <View style = {{marginLeft:100}}>
-           <TouchableOpacity style = {{alignItems:"flex-end"}} onPress = {() => setForward(false)}>
-        <Entypo name="circle-with-cross" size={24} color="black" /> 
-        </TouchableOpacity>
-        <View style = {{backgroundColor:"blue",}}>
-        <Text style = {{ color:"white", fontSize:30, marginLeft:30}}>
-          {pressed.text}
-        </Text>
-        </View>
-         </View>
-      }
+    const renderFooter = () => {
+      
 
       if(toolBar){
         return <View style = {{height:200, backgroundColor:"#f7f5f5", marginLeft:10,marginRight:10, marginBottom:10, borderRadius:10, }}>
@@ -325,88 +472,27 @@ export default function Chat({navigation}){
 
       }
       if(giphy){
-        return <View style = {{height:300,}}>
-         <TouchableOpacity style = {{alignItems:"flex-end"}} onPress = {() => setGiphy(false)}>
-         <Entypo name="circle-with-cross" size={24} color="white" />
-         </TouchableOpacity> 
-         <FlatList
-        data={gifs}
-        numColumns = {2}
-        renderItem={({item}) => (
-          <Image
-            resizeMode='cover'
-            style={styles.image}
-            source={{uri: item.images.original.url}}
-          />
-        )}
-      />
+        return <View style = {{height:250, marginLeft:10}}>
+       <TouchableOpacity style = {{alignItems:"flex-end"}} onPress = {() => setGiphy(false)}>
+        <Entypo name="circle-with-cross" size={24} color="black" /> 
+        </TouchableOpacity> 
+        <Tester1 navigation = {navigation} db = {db} chatID = {chatID}/>
         </View> 
       }
-     if(reply){
-      if(pressed.image){
-        return (
-           
-           <TouchableOpacity>
-           <Image source = {{uri:pressed.image}} style = {{height:100, width:100}}/>
-           </TouchableOpacity>
-           )
-     }
-     if(0 == 1){
-       return (
-         <View style = {{  borderWidth:1, padding:5, marginLeft:100 }}>
-         {/* <Bubble
-         {...props}
-         wrapperStyle={{
-           backgroundColor:"red",  
-           right: {
-             // Here is the color change
-             backgroundColor:pressed == pressed.currentMessage.text ? '#f5e3da':'blue',
-             marginTop:20
-             
-           }
-         }}
-         textStyle={{
-           right: {
-           }
-         }}
-       
-       />   */}
-       <Text>{pressed.text}</Text>
+    if(reply){
+     return <View style = {{ flexDirection:'row', justifyContent:"space-between", alignItems:"center",}}>
+       <View style = {{flex:0.3}}>
        </View>
+       <View style = {{flexDirection:"row", flex:0.7,backgroundColor:"grey", justifyContent:"space-between", marginRight:10, borderLeftWidth:5, borderLeftColor:"yellow"}}>
        
-         
-       )
-    }
-    
-     
-     if(pressed.location){
-        return (
-         <TouchableOpacity>
-           <MapView  style = {{height:200, width:200}} 
-           region = {{latitude:pressed.location.latitude, longitude:pressed.location.longitude, latitudeDelta: 0.0922,
-             longitudeDelta: 0.0421,}} annotation = {[{latitude:pressed.location.latitude, longitude:pressed.location.longitude}]} scrollEnabled = {false} zoomEnabled = {false}>
-             <Marker coordinate = {{latitude:pressed.location.latitude, longitude:pressed.location.longitude}}/>
-           </MapView>
-           </TouchableOpacity>
-        )
-     }
-     if(pressed.video){
-       return (
-         <Video
-         source={{ uri: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
-         rate={1.0}
-         volume={1.0}
-         isMuted={false}
-         resizeMode="cover"
-         shouldPlay
-         isLooping
-         style={{ width: 200, height: 200 }}
-       />
-       )
-    }
-    
-     
-     } 
+       <Text numberOfLines = {1} style = {{fontSize:20, maxWidth:200}}>{pressed.text}</Text>
+       
+       <TouchableOpacity onPress = {() => {setReply(false), setPressed("")}} style = {{marginLeft:30,backgroundColor:"grey"}}>
+       <Entypo name="circle-with-cross" size={24} color="black" />
+       </TouchableOpacity>
+       </View> 
+     </View>
+    } 
     if(report){
        return (
           
@@ -426,15 +512,15 @@ export default function Chat({navigation}){
           <TouchableOpacity style = {{padding:20}} onPress = {() => _handleReport("Spam or scam")}>
             <Text style = {{color:"red"}}>Spam or scam</Text>
           </TouchableOpacity>
-
           </View>  
        )
-    }   
+    }
+     
       
    }
 
-   const _handleReport = (message:string) => {
-    var jobskill_query = db.collection('messages').doc(chatID).collection("messages").where('_id','==',pressed._id);
+   const _handleReport = (_id:string, message:string) => {
+    var jobskill_query = db.collection('messages').doc(chatID).collection("messages").where('_id','==',_id);
 jobskill_query.get().then(function(querySnapshot) {
   querySnapshot.forEach(function(doc) {
     console.log(doc.data())
@@ -453,89 +539,47 @@ jobskill_query.get().then(function(querySnapshot) {
         return result; 
       }
     }  
-   const renderCustomView = () => {
-      return <View>
-        <Text>Hello world</Text>
-      </View>
+   
+   const renderLocation = (location) => {
+    return (
+      <TouchableOpacity>
+        <MapView  style = {{height:200, width:200}} 
+        region = {{latitude:pressed.location.latitude, longitude:pressed.location.longitude, latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,}} annotation = {[{latitude:pressed.location.latitude, longitude:pressed.location.longitude}]} scrollEnabled = {false} zoomEnabled = {false}>
+          <Marker coordinate = {{latitude:pressed.location.latitude, longitude:pressed.location.longitude}}/>
+        </MapView>
+        </TouchableOpacity>
+     )
    }
-
     const renderBubble =  (props) => {
-      //console.log(props.currentMessage.image)
-      if(props.currentMessage.image){
-      const result =  tester(props.currentMessage.image);
-      if(typeof result === 'string'){
-        props.currentMessage.image = result; 
+      if(props.currentMessage.giphy){
+         return (
+            <View style = {{backgroundColor:'#c3f7d1', elevation:10, shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.5,
+            shadowRadius: 2,
+            marginTop:5, 
+            marginBottom:5, width:160, height:160}}>
+              <Image source = {{uri:props.currentMessage.giphy}} style = {{height:150, width:150, position:'absolute', left:5, top:5}} />
+              <Text style = {{position:'absolute', bottom:10, color:"white", right:10, fontSize:10}}>22:15</Text>
+            </View>
+         )
       } 
-         
-      
-                 
-         return (
-               
-              <MessageImage {...props} style = {{height:200, width:200}}>
-              
-              </MessageImage>
-          )
-      }
-      if(props.currentMessage.text){
-        if(props.currentMessage.reply){
-          return <View style = {{ flex:1, }}>
-          <View style = {{ }}>
-          <View style = {{alignItems:"flex-end", marginTop:20, borderRadius:100,marginBottom:1,}}>
-          <Text style = {{fontSize:24, borderRadius:20, backgroundColor:'orange', color:"grey"}}> {props.currentMessage.reply.text}</Text>
-          </View>
-          <Bubble
-          {...props}
-          wrapperStyle={{
-            backgroundColor:"red",  
-            right: {
-              // Here is the color change
-              backgroundColor:pressed == props.currentMessage.text ? '#f5e3da':'blue',
-              
-              
-            }
-          }}
-          textStyle={{
-            right: {
-            }
-          }}
-          onLongPress = {(e) => {setPressed(props.currentMessage), setReply(true)}}
-        />
-          </View>
-            
-        </View>
-        }
-        
-        
+      if(props.currentMessage.document){
         return (
-          <View style = {{ flex:1, }}>
-          <Bubble
-          {...props}
-          wrapperStyle={{
-            backgroundColor:"red",  
-            right: {
-              // Here is the color change
-              backgroundColor:pressed == props.currentMessage.text ? '#f5e3da':'blue',
-              marginTop:20
-              
-            }
-          }}
-          textStyle={{
-            right: {
-            }
-          }}
-          onLongPress = {(e) => {setPressed(props.currentMessage), setReply(true)}}
-        />  
-        </View>
-        
-          
+           <View>
+             <DocumentGetter uri = {props.currentMessage.document} name = {props.currentMessage.name} size = {props.currentMessage.size} navigation = {navigation}/>
+           </View>
         )
-     }
-     
-      
-      if(props.currentMessage.location){
+     } 
+       
+     if(props.currentMessage.location){
          return (
-          <TouchableOpacity onLongPress = {() => {setPressed(props.currentMessage), setReply(true)}}>
-            <MapView  style = {{height:200, width:200}} 
+          <TouchableOpacity 
+          style = {{height:225, width:210, backgroundColor:'#c3f7d1', marginTop:5}}
+          onLongPress = {() => {setPressed(props.currentMessage), setReply(true)}}>
+            <Text style = {{position:'absolute', bottom:2, right:2, fontSize:10, color:'black'}}>22:25</Text>
+            <MapView  style = {{height:200, width:200, position:'absolute', top:5, left:5}} 
             region = {{latitude:props.currentMessage.location.latitude, longitude:props.currentMessage.location.longitude, latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,}} annotation = {[{latitude:props.currentMessage.location.latitude, longitude:props.currentMessage.location.longitude}]} scrollEnabled = {false} zoomEnabled = {false}>
               <Marker coordinate = {{latitude:props.currentMessage.location.latitude, longitude:props.currentMessage.location.longitude}}/>
@@ -543,33 +587,20 @@ jobskill_query.get().then(function(querySnapshot) {
             </TouchableOpacity>
          )
       }
-      if(props.currentMessage.video){
-        return (
-          <Video
-          source={{ uri: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
-          rate={1.0}
-          volume={1.0}
-          isMuted={false}
-          resizeMode="cover"
-          shouldPlay
-          isLooping
-          style={{ width: 200, height: 200 }}
-        />
-        )
-     }
-      return (
-        <Bubble
-          {...props}
-          wrapperStyle={{
-            left: {
-              backgroundColor: '#f0f0f0',
-            },
-          }}
-        />
-      )
+      //   return (
+      //   <Bubble
+      //     {...props}
+      //     wrapperStyle={{
+      //       left: {
+      //         backgroundColor: 'green',
+      //       },
+      //     }}
+      //   />
+        
+      // )
       }
-      function deleteMessage(){
-        const message = db.collection('messages').doc(chatID).collection("messages").where("_id", "==", pressed._id); 
+      function deleteMessage(_id:string){
+        const message = db.collection('messages').doc(chatID).collection("messages").where("_id", "==", _id); 
         message.get().then(querySnapshot => {
            querySnapshot.forEach(doc => {
               doc.ref.delete()
@@ -613,12 +644,16 @@ jobskill_query.get().then(function(querySnapshot) {
       }
 
       const renderDay = (props) => {
-         <Day {...props}>
-
+         return <Day {...props} textStyle = {{color:"black"}} wrapperStyle = {{backgroundColor:"#d7f9fc", padding:5, opacity:0.8}}>
+          
          </Day>
+         
       }
 
-
+   
+   
+   
+       
     const createChatThread = (userID:string, user2ID:string) => {
        if(userID > user2ID){
           return userID+user2ID.toString()
@@ -628,7 +663,7 @@ jobskill_query.get().then(function(querySnapshot) {
        }
     }
     const chatID = createChatThread(user, user1); 
-    console.log(typeof chatID)
+    console.log(chatID)
 
     const db = firebase.firestore();
     useEffect(() => { 
@@ -644,6 +679,17 @@ jobskill_query.get().then(function(querySnapshot) {
      return () => {return unsubscribe()}
 }, [limit]);
 
+useEffect(() => {
+const unsubscribe = db.collection("user").doc("UJ4u7q4oHqlj3n6nrBv9").onSnapshot(doc => {
+   const result = doc.data(); 
+   setIsTyping(result.isTyping) 
+   
+}) 
+return () => {return unsubscribe()} 
+},[])
+
+
+
  const renderAccessory = () => {
     if(pressed){
       return <View style = {{backgroundColor:"grey"}}>
@@ -655,10 +701,43 @@ jobskill_query.get().then(function(querySnapshot) {
     }
     
  }
+ const onInputTextChanged = (val) => {
+    if(val.length == 0){
+      var washingtonRef = db.collection("user").doc("Pk7jX3qNPAG8acQzMmAB");
+
+// Set the "capital" field of the city 'DC'
+return washingtonRef.update({
+    isTyping: false
+})
+.then(function() {
+    console.log("Document successfully updated!");
+})
+.catch(function(error) {
+    // The document probably doesn't exist.
+    console.error("Error updating document: ", error);
+});
+     return;   
+    }
+    if(val.length > 0){
+      var washingtonRef = db.collection("user").doc("Pk7jX3qNPAG8acQzMmAB");
+      return washingtonRef.update({
+        isTyping: true
+    })
+    .then(function() {
+        console.log("Document successfully updated!");
+    })
+    .catch(function(error) {
+        // The document probably doesn't exist.
+        console.error("Error updating document: ", error);
+    });   
+       return; 
+    }
+ }
+ 
 
  const topHeader = () => {
     if(reply){
-       return <View style = {{height:35, backgroundColor:"#7f966f", flexDirection:"row"}}>
+       return <View style = {{height:35, backgroundColor:"#7f966f", flexDirection:"row", }}>
           <View style = {{flex:0.3, justifyContent:"center", alignItems:"center"}}>
           <TouchableOpacity onPress = {() => {setReply(false), setPressed(null)}}>
           <AntDesign name="back" size={24} color="white" />
@@ -702,36 +781,19 @@ jobskill_query.get().then(function(querySnapshot) {
   
   }, [])
 
-   const renderImage = (props) => {
-    async function namer(){
-    //  await ensureDirExists();
-    // const fileUri = await gifFileUri(props.currentMessage.image);
-    // const fileInfo = await FileSystem.getInfoAsync(fileUri);
-    // if (!fileInfo.exists) {
-    //   console.log("Gif isn't cached locally. Downloading...");
-    //   await FileSystem.downloadAsync(props.currentMessage.image, fileUri);
-    // }
-    return <Image source = {{uri:props.currentMessage.image}} style = {{height:100, width:100}}/>
-    }
-      if(props.currentMessage.image){
-        console.log(props.currentMessage.image)
-        
-       namer()  
-        
-      }
-
-      return <View>
-         <Text>Hello world</Text> 
-      </View>
-   }
+   
        
+   
     const onSend =  (messages = []) => {
-      if(forward){
+      if(reply){
         console.log("forward from send"+forward)
         messages[0].reply = pressed;   
      }
         console.log("forward not called")
         messages[0].createdAt = firebase.firestore.Timestamp.fromDate(new Date()),
+        messages[0].sent = true; 
+         
+        
          
         
         
@@ -741,7 +803,7 @@ jobskill_query.get().then(function(querySnapshot) {
       }
 return(
    <SafeAreaView style = {{flex:1}}>
-   {topHeader()}
+   
    
    <ImageBackground source={{uri:"https://storage.googleapis.com/nemesis-157710.appspot.com/wallpaper.jpg"}} style={{width: '100%', height: '100%'}}>
       
@@ -751,25 +813,35 @@ return(
       messages={messages}
       onSend={messages => onSend(messages)}
       renderTime = {renderTime}
-      renderMessageImage = {() => 'https://placeimg.com/140/140/any'}
+      renderMessageImage = {renderMessageImage}
+      renderMessageVideo = {renderMessageVideo}
       user={{
-        _id: 5,
+        _id: userId,
       }}
+      onInputTextChanged = {onInputTextChanged}
       
-      
-      renderBubble = {renderBubble}
+      renderChatFooter = {renderFooter}
+      renderMessageAudio = {renderMessageAudio}
+      // renderBubble = {renderBubble}
+      renderMessageText = {renderMessageText}
       listViewProps = {{backgroundImage:"https://storage.googleapis.com/nemesis-157710.appspot.com/wallpaper.jpg"}}
       onLoadEarlier = {() => setLimit(limit + 5)}
       loadEarlier = {true}
+      
       // renderActions = {() => renderAction()}
       // renderAccessory = {() => <View><Text>Hello world</Text></View>}
+      renderDay = {renderDay}
+      onLongPress = {onLongPress}
       
+
+      
+      isTyping = {isTyping}
       textInputStyle = {{fontWeight:"bold", fontStyle: 'italic',}}
       renderQuickReplies = {quickReply}
       renderActions = {renderAction}
       renderSend = {(props) => renderSend(props)}
-      renderCustomView = {renderCustomView}
-      
+      //renderCustomView = {renderCustomView}
+      scrollToBottom = {true} 
       extraData = {{pressed}}
       renderInputToolbar = {customInputToolbar}
       shouldUpdateMessage = {(props, nextProps) => {
@@ -779,11 +851,7 @@ return(
       
       
       infiniteScroll = {true}
-      
-      
-      
-      
-  /> 
+   /> 
   </ImageBackground>
   </SafeAreaView>
     
