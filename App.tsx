@@ -245,7 +245,7 @@ export default function App() {
      
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
-        <Stack.Screen name="Home" component={Tester1} />
+        <Stack.Screen name="Home" component={Chat} />
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>

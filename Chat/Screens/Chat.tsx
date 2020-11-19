@@ -22,9 +22,9 @@ import LottieView from 'lottie-react-native';
 import { UniqueDirectiveNamesRule } from 'graphql';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
-import {Tester1,AudioGetter,VideoMessage,DocumentGetter,ServerHeart} from '../../src/common/Common'; 
-
-
+import {Tester1,AudioGetter,VideoMessage,DocumentGetter,ServerHeart, AudioSetter} from '../../src/common/Common'; 
+import * as Linking from 'expo-linking';
+import { Platform } from '@unimodules/core';
 
 
 
@@ -62,6 +62,8 @@ export default function Chat({navigation}){
     const userId = useRef(7).current; 
     const [isTyping, setIsTyping] = useState(false); 
     const token = useRef("ExponentPushToken[C3nLnqLQLcFX_p6mNTuC09]").current; 
+    const selfColor = "#c3f7d1"; 
+    const otherColor = "#f0f7f7"; 
     
     function urlToFilename(str:string){
       var part = str.substring(
@@ -70,6 +72,19 @@ export default function Chat({navigation}){
       );
       
   }
+  function dateFromTimestamp(timestamp:any){
+    const date = firebase.firestore.Timestamp.fromDate(timestamp) 
+      const time = date.toMillis()
+      const d = new Date(time); 
+      const minutes = d.getMinutes();
+      const minString = minutes.toString();  
+      if(minString.length < 2){
+        return `${d.getHours()}:0${d.getMinutes()}` 
+      }
+      return `${d.getHours()}:${d.getMinutes()}`
+    }
+
+  const checkIsUser = (user) => user === userId;   
   async function tester(url:string){
     const {exists} = await FileSystem.getInfoAsync(dir) 
     if(!exists){
@@ -84,6 +99,9 @@ export default function Chat({navigation}){
     }
      
      return fileUri; 
+   }
+   const setReceived = () => {
+      
    }
    const renderMessageImage = (props:any) => {
     const result =  tester(props.currentMessage.image);
@@ -126,6 +144,7 @@ export default function Chat({navigation}){
    const renderMessageText = (props:any) => {
     const  {...messageTextProps} = props; 
     console.log(typeof messageTextProps.currentMessage.user._id)
+    console.log(checkIsUser(messageTextProps.currentMessage.user._id))
     if(messageTextProps.currentMessage.user._id !== userId){
       var jobskill_query = db.collection('messages').doc(chatID).collection("messages").where('_id','==',messageTextProps.currentMessage._id);
     jobskill_query.get().then(function(querySnapshot) {
@@ -286,7 +305,7 @@ export default function Chat({navigation}){
          location:{latitude:location.coords.latitude, longitude:location.coords.longitude},
          createdAt:firebase.firestore.Timestamp.fromDate(new Date()),
          user:{
-          _id:5
+          _id:userId
          }
       }
       db.collection('messages').doc(chatID).collection("messages").add(serverObject);
@@ -296,7 +315,7 @@ export default function Chat({navigation}){
     const customInputToolbar = props => {
       if(recording){
         return (
-        <CustomChatInput setRecording = {setRecording}/>
+        <AudioSetter setRecording = {setRecording}/>
         ) 
       }
       return (
@@ -332,7 +351,7 @@ export default function Chat({navigation}){
           name:result.name, 
           size:result.size, 
          user:{
-         _id:5
+         _id:userId
          }   
   }
   db.collection('messages').doc(chatID).collection("messages").add(serverObject); 
@@ -367,7 +386,7 @@ export default function Chat({navigation}){
           createdAt:firebase.firestore.Timestamp.fromDate(new Date()),
           image:result1,
          user:{
-         _id:5
+         _id:userId
          }   
   }
   db.collection('messages').doc(chatID).collection("messages").add(serverObject); 
@@ -385,7 +404,7 @@ export default function Chat({navigation}){
           createdAt:firebase.firestore.Timestamp.fromDate(new Date()),
           video:result1,
          user:{
-         _id:5
+         _id:userId
          }   
   }
   db.collection('messages').doc(chatID).collection("messages").add(serverObject); 
@@ -403,6 +422,13 @@ export default function Chat({navigation}){
          <Text style = {{color:"blue", fontWeight:"500"}}>Load Earlier</Text>
        </TouchableOpacity> 
     }
+    const handleLinking = (location) => {
+          console.log("called")  
+          Linking.openURL(`http://maps.apple.com/?ll=${location.latitude},${location.longitude}&spn=100`)
+       
+    }
+
+
     const renderFooter = () => {
       
 
@@ -476,7 +502,7 @@ export default function Chat({navigation}){
        <TouchableOpacity style = {{alignItems:"flex-end"}} onPress = {() => setGiphy(false)}>
         <Entypo name="circle-with-cross" size={24} color="black" /> 
         </TouchableOpacity> 
-        <Tester1 navigation = {navigation} db = {db} chatID = {chatID}/>
+        <Tester1 navigation = {navigation} db = {db} chatID = {chatID} userId = {userId}/>
         </View> 
       }
     if(reply){
@@ -552,6 +578,79 @@ jobskill_query.get().then(function(querySnapshot) {
      )
    }
     const renderBubble =  (props) => {
+      if(props.currentMessage.text){
+        if(props.currentMessage.user._id !== userId){
+          var jobskill_query = db.collection('messages').doc(chatID).collection("messages").where('_id','==',props.currentMessage._id);
+        jobskill_query.get().then(function(querySnapshot) {
+          querySnapshot.forEach(function(doc) {
+            console.log(doc.data())
+            doc.ref.update({received:true});
+          });
+        });
+        }
+        if(props.currentMessage.reply){
+          if(props.currentMessage.user._id !== userId){
+            return (
+              <View>
+              <View style = {{backgroundColor:"green", height:30,}}>
+              <Text>{props.currentMessage.reply.text}</Text>
+              </View> 
+              <View style = {{backgroundColor:"blue", height:30,}}>
+              <Text style = {{color:"white"}}>{props.currentMessage.text}</Text>
+              <Text style = {{position:'absolute', bottom:1, color:"white", right:10, fontSize:10,fontWeight:'bold'}}>{dateFromTimestamp(props.currentMessage.createdAt)}</Text>
+              </View> 
+              </View> 
+           )   
+          }
+          return (
+            <View>
+            <View style = {{backgroundColor:"green", height:30,padding:5}}>
+            <Text >{props.currentMessage.reply.text}</Text>
+            </View> 
+            <View style = {{backgroundColor:"#8191e6", height:50,justifyContent:"center", alignItems:"center"}}>
+            <Text style = {{color:"white"}}>{props.currentMessage.text}</Text>
+            <Text style = {{position:'absolute', bottom:1, color:"white", right:10, fontSize:10,fontWeight:'bold'}}>{dateFromTimestamp(props.currentMessage.createdAt)}</Text>
+            </View> 
+            </View> 
+         )  
+        }
+        if(props.currentMessage.user._id !== userId){
+          if(props.currentMessage.reply){
+            return (
+              <View>
+              <View style = {{backgroundColor:"green", height:30,}}>
+              <Text>{props.currentMessage.reply.text}</Text>
+              </View> 
+              <View style = {{backgroundColor:"blue", height:50,}}>
+              <Text style = {{color:"white"}}>{props.currentMessage.text}</Text>
+              <Text style = {{position:'absolute', bottom:1, color:"white", right:10, fontSize:10,fontWeight:'bold'}}>{dateFromTimestamp(props.currentMessage.createdAt)}</Text>
+              </View> 
+              </View> 
+           )   
+             
+          }
+          return (
+            <View style = {{flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
+                  
+            <Bubble {...props} />
+            <ServerHeart db = {db} messageObject = {props.currentMessage} chatID = {chatID}/>
+            </View> 
+         )  
+        }
+        return (
+          <View style = {{flexDirection:"row", alignItems:"center"}}>
+          {props.currentMessage.like ? <AntDesign name="heart" size={24} color="red" />:null}       
+          <Bubble {...props} />
+          
+          </View> 
+       )     
+      }
+      if(props.currentMessage.audio){
+       
+      console.log("audio called"); 
+       <AudioGetter audio = {props.currentMessage.audio} />
+       
+      }
       if(props.currentMessage.giphy){
          return (
             <View style = {{backgroundColor:'#c3f7d1', elevation:10, shadowColor: '#000',
@@ -561,31 +660,111 @@ jobskill_query.get().then(function(querySnapshot) {
             marginTop:5, 
             marginBottom:5, width:160, height:160}}>
               <Image source = {{uri:props.currentMessage.giphy}} style = {{height:150, width:150, position:'absolute', left:5, top:5}} />
-              <Text style = {{position:'absolute', bottom:10, color:"white", right:10, fontSize:10}}>22:15</Text>
+              <Text style = {{position:'absolute', bottom:10, color:"white", right:10, fontSize:10,fontWeight:'bold'}}>{dateFromTimestamp(props.currentMessage.createdAt)}</Text>
             </View>
          )
       } 
       if(props.currentMessage.document){
+        console.log(props.currentMessage.document); 
         return (
            <View>
-             <DocumentGetter uri = {props.currentMessage.document} name = {props.currentMessage.name} size = {props.currentMessage.size} navigation = {navigation}/>
+             <DocumentGetter uri = {props.currentMessage.document} name = {props.currentMessage.name} size = {props.currentMessage.size} navigation = {navigation} time = {dateFromTimestamp(props.currentMessage.createdAt)}/>
            </View>
         )
+     }
+  if(props.currentMessage.video){
+  const result =  tester(props.currentMessage.video);
+  console.log(result)
+  if(typeof result === 'string'){
+    console.log("result is"+result)
+    props.currentMessage.video = result; 
+  }
+     const t = firebase.firestore.Timestamp.fromDate(props.currentMessage.createdAt); 
+     const d = dateFromTimestamp(props.currentMessage.createdAt); 
+     console.log(d)
+     if(props.currentMessage.user._id !== userId){
+      return (
+        <View style = {{flexDirection:"row", justifyContent:"center", alignItems:"center",backgroundColor:otherColor,marginTop:10}}>
+               
+               <VideoMessage video = {props.currentMessage.video} time = {d} navigation = {navigation}/> 
+               <View style = {{marginLeft:10, marginRight:5}}>
+              <ServerHeart db = {db} messageObject = {props.currentMessage} chatID = {chatID}/>
+              </View>
+          </View> 
+      
+      ) 
+     }   
+    return (
+     <VideoMessage video = {props.currentMessage.video} time = {d} navigation = {navigation}/>
+    )  
+   }
+     if(props.currentMessage.image){
+      const result =  tester(props.currentMessage.image);
+      if(typeof result === 'string'){
+        props.currentMessage.image = result; 
+      } 
+      if(props.currentMessage.user._id !== userId){
+        return (
+          <View style = {{flexDirection:"row", justifyContent:"center", alignItems:"center",height:120,backgroundColor:otherColor,marginTop:10}}>
+               <Text style = {{position:'absolute', bottom:2, right:2, fontSize:10, color:'black'}}>{dateFromTimestamp(props.currentMessage.createdAt)}</Text> 
+                <MessageImage {...props} style = {{height:200, width:200}}> 
+
+
+
+              
+              </MessageImage>
+              <ServerHeart db = {db} messageObject = {props.currentMessage} chatID = {chatID}/>
+          </View> 
+       )  
+      }
+      return (
+              <View style = {{height:120,backgroundColor:selfColor,marginTop:10}}>       
+                <Text style = {{position:'absolute', bottom:2, right:2, fontSize:10, color:'black'}}>{dateFromTimestamp(props.currentMessage.createdAt)}</Text>
+              <MessageImage {...props} style = {{height:200, width:200}}>
+              
+              </MessageImage>
+              </View>
+          ) 
      } 
        
      if(props.currentMessage.location){
-         return (
-          <TouchableOpacity 
-          style = {{height:225, width:210, backgroundColor:'#c3f7d1', marginTop:5}}
-          onLongPress = {() => {setPressed(props.currentMessage), setReply(true)}}>
-            <Text style = {{position:'absolute', bottom:2, right:2, fontSize:10, color:'black'}}>22:25</Text>
-            <MapView  style = {{height:200, width:200, position:'absolute', top:5, left:5}} 
-            region = {{latitude:props.currentMessage.location.latitude, longitude:props.currentMessage.location.longitude, latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,}} annotation = {[{latitude:props.currentMessage.location.latitude, longitude:props.currentMessage.location.longitude}]} scrollEnabled = {false} zoomEnabled = {false}>
-              <Marker coordinate = {{latitude:props.currentMessage.location.latitude, longitude:props.currentMessage.location.longitude}}/>
-            </MapView>
-            </TouchableOpacity>
-         )
+      
+         if(props.currentMessage.user._id == userId){
+          return (
+            <TouchableOpacity 
+            style = {{height:225, width:210, backgroundColor:'#c3f7d1', marginTop:5}}
+            onPress = {() => {  handleLinking(props.currentMessage.location)}}>
+              <Text style = {{position:'absolute', bottom:2, right:2, fontSize:10, color:'black'}}>{dateFromTimestamp(props.currentMessage.createdAt)}</Text>
+              <MapView  
+              onPress = {() => {  handleLinking(props.currentMessage.location)}}
+              style = {{height:200, width:200, position:'absolute', top:5, left:5}} 
+              region = {{latitude:props.currentMessage.location.latitude, longitude:props.currentMessage.location.longitude, latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,}} annotation = {[{latitude:props.currentMessage.location.latitude, longitude:props.currentMessage.location.longitude}]} scrollEnabled = {false} zoomEnabled = {false}>
+                <Marker coordinate = {{latitude:props.currentMessage.location.latitude, longitude:props.currentMessage.location.longitude}}/>
+              </MapView>
+              </TouchableOpacity>
+           )
+         }
+         if(props.currentMessage.user._id !== userId){
+          return (
+            <TouchableOpacity 
+            
+            style = {{height:225, width:210, backgroundColor:'grey', marginTop:5}}
+            >
+              <Text style = {{position:'absolute', bottom:2, right:4, fontSize:10, color:'white'}}>{dateFromTimestamp(props.currentMessage.createdAt)}</Text>
+              <MapView  
+              onPress = {() => {  handleLinking(props.currentMessage.location)}}
+              style = {{height:200, width:200, position:'absolute', top:5, left:5}} 
+              region = {{latitude:props.currentMessage.location.latitude, longitude:props.currentMessage.location.longitude, latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,}} annotation = {[{latitude:props.currentMessage.location.latitude, longitude:props.currentMessage.location.longitude}]} scrollEnabled = {false} zoomEnabled = {false}>
+                <Marker coordinate = {{latitude:props.currentMessage.location.latitude, longitude:props.currentMessage.location.longitude}}/>
+              </MapView>
+              </TouchableOpacity>
+           )
+
+         }  
+         
+         
       }
       //   return (
       //   <Bubble
@@ -813,7 +992,7 @@ return(
       messages={messages}
       onSend={messages => onSend(messages)}
       renderTime = {renderTime}
-      renderMessageImage = {renderMessageImage}
+      //renderMessageImage = {renderMessageImage}
       renderMessageVideo = {renderMessageVideo}
       user={{
         _id: userId,
@@ -821,8 +1000,8 @@ return(
       onInputTextChanged = {onInputTextChanged}
       
       renderChatFooter = {renderFooter}
-      renderMessageAudio = {renderMessageAudio}
-      // renderBubble = {renderBubble}
+      //renderMessageAudio = {renderMessageAudio}
+      renderBubble = {renderBubble}
       renderMessageText = {renderMessageText}
       listViewProps = {{backgroundImage:"https://storage.googleapis.com/nemesis-157710.appspot.com/wallpaper.jpg"}}
       onLoadEarlier = {() => setLimit(limit + 5)}

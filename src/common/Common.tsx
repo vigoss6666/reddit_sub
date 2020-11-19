@@ -175,10 +175,10 @@ export function AudioSetter({setRecording}) {
     
   </View>      
 </View> 
-<TouchableOpacity style = {{justifyContent:"center", marginLeft:40}} onPress = {() => { stopRecording()}}>
+<TouchableOpacity style = {{justifyContent:"center", marginLeft:40}} onPress = {() => { stopRecording(), setRecording(false)}}>
 <Text style = {{color:"red", fontWeight:"bold"}}>Cancel</Text>
 </TouchableOpacity>
-<TouchableOpacity style = {{justifyContent:"center", alignItems:"center", marginRight:30}} onPress = {() => sendToServer()}>
+<TouchableOpacity style = {{justifyContent:"center", alignItems:"center", marginRight:30}} onPress = {() => {sendToServer(),stopRecording(), setRecording(false) }}>
 <Ionicons name="ios-send" size={30} color="blue" />
 </TouchableOpacity>
 
@@ -187,7 +187,7 @@ export function AudioSetter({setRecording}) {
 </View>      
  )                  
 } 
-export function Tester1({navigation,db,chatID}){
+export function Tester1({navigation,db,chatID,userId}){
      const gifDir = FileSystem.cacheDirectory + 'giphy/';
      const url = "https://firebasestorage.googleapis.com/v0/b/friends-365d0.appspot.com/o/images%2FAdd%20a%20little%20bit%20of%20body%20text%20(1)_pages-to-jpg-0001.jpg?alt=media&token=847ba2d4-72df-4656-9d88-16435c98bc53";      
      const gifFileUri = (gifId: string) => gifDir + gifId+".gif";
@@ -214,7 +214,7 @@ export function Tester1({navigation,db,chatID}){
           _id:uuidv4(), 
           createdAt:firebase.firestore.Timestamp.fromDate(new Date()), 
           user:{
-             _id:5
+             _id:userId
           },
           giphy:uri
       }
@@ -239,23 +239,16 @@ export function Tester1({navigation,db,chatID}){
          }
        }
          async function fetchGifs() {
-             const key = await AsyncStorage.getItem('gif'); 
-             if(key == 'set'){
-                  console.log("Gifs already downloaded")
-                  console.log("reading from directory"); 
-                  const urls = await FileSystem.readDirectoryAsync(gifDir); 
-                  const finalUrls = urls.map(url => ({url:gifDir + url})); 
-                  setGifs(finalUrls)
-                  return finalUrls; 
-             }
+             
              try {
                const API_KEY = 'ZXj9CoxD99LW4ULTMZ423W0TmQ3EG44e';
                const BASE_URL = 'http://api.giphy.com/v1/gifs/search';
                const resJson = await fetch(`https://api.giphy.com/v1/gifs/trending?api_key=ZXj9CoxD99LW4ULTMZ423W0TmQ3EG44e&limit=5&rating=g`);
                const res = await resJson.json();
-               const urls = res.data.map(val => val.images.original.url);
-               console.log(urls) 
-               addMultipleGifs(urls); 
+               const urls = res.data.map(val => ({url:val.images.original.url}));
+               console.log(urls)
+               setGifs(urls);  
+                
                
                
               
@@ -305,7 +298,7 @@ export function Tester1({navigation,db,chatID}){
           const [currentPosition, setCurrentPosition] = useState(0); 
           useEffect(() => {
                async function namer(){
-                await recordingInstance.current.loadAsync({uri:audio})
+                await recordingInstance.current.loadAsync({uri:"https://firebasestorage.googleapis.com/v0/b/friends-365d0.appspot.com/o/audio%2Fnamer1?alt=media&token=0551ba16-db5c-4374-8e25-817dfd2025cd"})
                 await recordingInstance.current.setOnPlaybackStatusUpdate(runner); 
                 setLoading(1); 
                }
@@ -413,7 +406,7 @@ export function Tester1({navigation,db,chatID}){
        )
     }    
 
-    export function DocumentGetter({navigation,uri, name, size}){
+    export function DocumentGetter({navigation,uri, name, size, time}){
       function formatBytes(bytes, decimals = 2) {
         if (bytes === 0) return '0 Bytes';
     
@@ -445,7 +438,7 @@ export function Tester1({navigation,db,chatID}){
            </View>
            <View style = {{flexDirection:"row", marginRight:10, marginLeft:10, marginTop:10, justifyContent:"space-between" }}>
             <Text style = {{marginRight:10}}>{formatBytes(size)} </Text>
-            <Text>22:30</Text>
+            <Text>{time}</Text>
            </View>
          </TouchableOpacity>
       )       
