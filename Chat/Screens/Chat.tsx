@@ -37,7 +37,7 @@ import { Platform } from '@unimodules/core';
   
   
 export default function Chat({navigation}){
-    const [messages, setMessages] = useState([{_id:"osmething", text:"something", createdAt:new Date(), user:{_id:1}}]);
+    const [messages, setMessages] = useState([]);
     const didMountRef = useRef(false)
     const dir = useRef(FileSystem.documentDirectory + 'lobby52342/').current;
     const [pressed, setPressed] = useState({image:null}); 
@@ -59,7 +59,9 @@ export default function Chat({navigation}){
     const [forward,setForward] = useState(); 
     const gifDir =  FileSystem.documentDirectory + '/imageehrjew/';
     const gifFileUri = (gifId: string) => gifDir + `${gifId}`;
-    const userId = useRef(7).current; 
+    const userId = useRef(5).current; 
+    const davidTyping = useRef("UJ4u7q4oHqlj3n6nrBv9").current;
+    const zaidTyping = useRef("Pk7jX3qNPAG8acQzMmAB").current; 
     const [isTyping, setIsTyping] = useState(false); 
     const token = useRef("ExponentPushToken[C3nLnqLQLcFX_p6mNTuC09]").current; 
     const selfColor = "#c3f7d1"; 
@@ -357,7 +359,9 @@ export default function Chat({navigation}){
   db.collection('messages').doc(chatID).collection("messages").add(serverObject); 
     }
 
-
+   let cameraPickerAsync = async () => {
+      
+   } 
     
     let openImagePickerAsync = async () => {
       let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
@@ -646,9 +650,12 @@ jobskill_query.get().then(function(querySnapshot) {
        )     
       }
       if(props.currentMessage.audio){
+      
+       return <View>
+        <AudioGetter audio = {props.currentMessage.audio} /> 
        
-      console.log("audio called"); 
-       <AudioGetter audio = {props.currentMessage.audio} />
+       </View>
+      
        
       }
       if(props.currentMessage.giphy){
@@ -807,7 +814,7 @@ jobskill_query.get().then(function(querySnapshot) {
            <TouchableOpacity style = {{marginLeft:10}} onPress = {() => setGiphy("true")}>
            <AntDesign name="smileo" size={18} color="black" />
            </TouchableOpacity> 
-           <TouchableOpacity>
+           <TouchableOpacity onPress = {() => navigation.navigate('Camera', {db, userId, chatID})}>
            <AntDesign name="camera" size={24} color="black" style = {{marginLeft:10}}/>
            </TouchableOpacity>
            <TouchableOpacity
@@ -859,7 +866,7 @@ jobskill_query.get().then(function(querySnapshot) {
 }, [limit]);
 
 useEffect(() => {
-const unsubscribe = db.collection("user").doc("UJ4u7q4oHqlj3n6nrBv9").onSnapshot(doc => {
+const unsubscribe = db.collection("user").doc(davidTyping).onSnapshot(doc => {
    const result = doc.data(); 
    setIsTyping(result.isTyping) 
    
@@ -882,7 +889,7 @@ return () => {return unsubscribe()}
  }
  const onInputTextChanged = (val) => {
     if(val.length == 0){
-      var washingtonRef = db.collection("user").doc("Pk7jX3qNPAG8acQzMmAB");
+      var washingtonRef = db.collection("user").doc(zaidTyping);
 
 // Set the "capital" field of the city 'DC'
 return washingtonRef.update({
@@ -949,7 +956,24 @@ return washingtonRef.update({
     return v.toString(16);
   });
 }
-        
+
+ const renderAvatar = (props) => {
+    return (
+      <Image
+      style={styles.tinyLogo}
+      source={{
+        uri: 'https://reactnative.dev/img/tiny_logo.png',
+      }}
+    />
+    )
+ } 
+const renderChatEmpty = () => {
+   return <View style = {{flex:1, justifyContent:"center", alignItems:"center", transform: [ { scaleY: -1 } ]}}>
+     <Text style = {{marginBottom:10, fontWeight:'bold'}}>You matched with Julia </Text>
+     <Text style = {{marginBottom:10}}>1 year ago </Text>
+     <Image source = {{uri:'https://i.ytimg.com/vi/qBB_QOZNEdc/maxresdefault.jpg'}} style = {{height:100, width:100, borderRadius:50}}/>
+   </View>
+}
  const onImageSend = useCallback(async () => {
   // const response = await fetch(imageUri); 
   // const blob = response.blob()
@@ -984,7 +1008,7 @@ return(
    <SafeAreaView style = {{flex:1}}>
    
    
-   <ImageBackground source={{uri:"https://storage.googleapis.com/nemesis-157710.appspot.com/wallpaper.jpg"}} style={{width: '100%', height: '100%'}}>
+   
       
   
  <GiftedChat
@@ -1000,26 +1024,28 @@ return(
       onInputTextChanged = {onInputTextChanged}
       
       renderChatFooter = {renderFooter}
-      //renderMessageAudio = {renderMessageAudio}
+      renderMessageAudio = {renderMessageAudio}
       renderBubble = {renderBubble}
       renderMessageText = {renderMessageText}
       listViewProps = {{backgroundImage:"https://storage.googleapis.com/nemesis-157710.appspot.com/wallpaper.jpg"}}
       onLoadEarlier = {() => setLimit(limit + 5)}
-      loadEarlier = {true}
+      
       
       // renderActions = {() => renderAction()}
       // renderAccessory = {() => <View><Text>Hello world</Text></View>}
       renderDay = {renderDay}
       onLongPress = {onLongPress}
+      showAvatarForEveryMessage = {true}
       
 
-      
+      renderAvatar = {renderAvatar}
       isTyping = {isTyping}
       textInputStyle = {{fontWeight:"bold", fontStyle: 'italic',}}
       renderQuickReplies = {quickReply}
       renderActions = {renderAction}
       renderSend = {(props) => renderSend(props)}
       //renderCustomView = {renderCustomView}
+      renderChatEmpty = {renderChatEmpty}
       scrollToBottom = {true} 
       extraData = {{pressed}}
       renderInputToolbar = {customInputToolbar}
@@ -1031,7 +1057,7 @@ return(
       
       infiniteScroll = {true}
    /> 
-  </ImageBackground>
+  
   </SafeAreaView>
     
 
@@ -1055,5 +1081,13 @@ const styles = StyleSheet.create({
     height: 100,
     borderWidth: 3,
     marginBottom: 5
+  },
+  logo: {
+    width: 66,
+    height: 58,
+  },
+  tinyLogo: {
+    width: 50,
+    height: 50,
   },
 });

@@ -62,6 +62,8 @@ import CustomSlider from './Game/Screens/CustomSlider';
 import Endorsement from './Endorsement/Screens/Endorsements'; 
 import NoMatch from './Game/Screens/NoMatch'; 
 import Chat from './Chat/Screens/Chat'; 
+import MatchScreen from './Chat/Screens/MatchList'; 
+import Camera from './Chat/Screens/Camera'; 
 import ContextProvider from './src/provider'; 
 import VideoPlayer from './src/common/VideoPlayer'; 
 
@@ -79,6 +81,8 @@ import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 import DocumentViewer from './src/common/DocumentViewer';
+import MatchList from './Chat/Screens/MatchList';
+ 
 const currentUser = firebase.auth().currentUser; 
     const db = firebase.firestore(); 
     const userRef = db.collection('gamer');
@@ -303,6 +307,9 @@ export default function App() {
         <Stack.Screen name="Tester1" component={Tester1}/>
         <Stack.Screen name="VideoPlayer" component={VideoPlayer}/>
         <Stack.Screen name="DocumentViewer" component={DocumentViewer}/>
+        <Stack.Screen name="Camera" component={Camera}/>
+        <Stack.Screen name="Chat" component={Chat}/>
+        <Stack.Screen name="MatchList" component={MatchList}/>
         
       </Stack.Navigator>
     </NavigationContainer>

@@ -291,6 +291,7 @@ export function Tester1({navigation,db,chatID,userId}){
      )
      }
     export function AudioGetter({audio}){
+          console.log(audio)
           const [isPlaying, setIsPlaying] = useState(false);      
           const recordingInstance = useRef(new Audio.Sound());
           const [loading, setLoading] = useState(0); 
@@ -318,8 +319,8 @@ export function Tester1({navigation,db,chatID,userId}){
           const pauseSound = () => {
              recordingInstance.current.pauseAsync()
           }
-          return (
-               <View style = {{flexDirection:"row", borderWidth:1}}>
+          return ( 
+               <View style = {{flexDirection:"row", borderWidth:1, }}>
                <View style = {{justifyContent:"center", padding:5}}>
                  {isPlaying ? 
                  <TouchableOpacity onPress = {() => {pauseSound(), setIsPlaying(!isPlaying)}}><AntDesign name="pausecircle" size={24} color="black" /></TouchableOpacity>:<TouchableOpacity onPress = {() => {playSound(), setIsPlaying(!isPlaying)}}><AntDesign name="caretright" size={24} color="black" /></TouchableOpacity>}   
@@ -335,6 +336,7 @@ export function Tester1({navigation,db,chatID,userId}){
   />
                                                                  
                </View> 
+              
           )
     }
     
@@ -471,6 +473,14 @@ export function Tester1({navigation,db,chatID,userId}){
        return (
         <View>{component}</View>
        )
+    }
+
+    export function Line({leftMargin,rightMargin}){
+       const leftMarginT = leftMargin ? leftMargin : 30; 
+       const rightMarginT = rightMargin ? rightMargin : 30; 
+       return (
+          <View style = {{marginLeft:leftMarginT, marginRight:rightMarginT, borderColor:'black', borderWidth:2}}/>
+       ) 
     }
 
  
