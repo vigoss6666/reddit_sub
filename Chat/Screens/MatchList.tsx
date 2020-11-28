@@ -1,60 +1,40 @@
 import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
+import { StatusBar,View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { MaterialIcons } from '@expo/vector-icons';
-import {Line } from '../../src/common/Common'; 
+import {Line, HeaderBar } from '../../src/common/Common'; 
+import {merge} from '../../src/common/helper'; 
+import { firebase } from '../../config';
+
 export default function MatchList({navigation}){
 const [image, setImage] = useState(false);
-const DATA = [
-  {
-  isNew:true, 
-  profilePic:'something', 
-  _id:"something"   
- }, 
- {
-    isNew:true, 
-    profilePic:'something', 
-    _id:"something"   
- },
- {
-    isNew:true, 
-    profilePic:'something', 
-    _id:"something"   
- },
- {
-    isNew:true, 
-    profilePic:'something', 
-    _id:"something"   
-   }, 
-   {
-      isNew:true, 
-      profilePic:'something', 
-      _id:"something"   
-   },
-   {
-      isNew:true, 
-      profilePic:'something', 
-      _id:"something"   
-   },
-   {
-    isNew:true, 
-    profilePic:'something', 
-    _id:"something"   
-   }, 
-   {
-      isNew:true, 
-      profilePic:'something', 
-      _id:"something"   
-   },
-   {
-      isNew:true, 
-      profilePic:'https://i.ytimg.com/vi/qBB_QOZNEdc/maxresdefault.jpg', 
-      _id:"something"   
-   },
+const [matches, setMatches] = useState(); 
+const db = firebase.firestore();
+useEffect(() => { 
+   console.log("the component was rendered")
+   const unsubscribe = db.collection("matches").doc("UJ4u7q4oHqlj3n6nrBv9").collection("users").onSnapshot(snap => {
+     const data1 = snap.docs.map(doc => doc.data())
+     
+     const result = data1.map(val => {
+       return val._id; 
+     })
+    const users = db.collection("user").where('_id','in', result).where('isNew', '==', true).onSnapshot(snap => {
+        const data = snap.docs.map(doc => doc.data())
+        const result = data.map(val => {
+            return val; 
+        })
+        
+        setMatches(merge(result,data1)); 
+    }) 
+     
+   });
+  return () => {return unsubscribe()}
+}, []);
 
 
 
-]
+
+
 
 interface chatInstance  {
     isNew:boolean, 
@@ -135,13 +115,12 @@ const DATA1 = [
 
 
 
-const Item = ({ title }) => (
-    <View>
-      {horizontalIcon}
-    </View>
-  );
+const Item = ({ title }) => {
+    console.log(title)
+   return horizontalIcon(title)
+};
 const Item1 = (obj:chatInstance) => {
-console.log(obj) 
+
 if(obj.title.profilePic){
     return verticalIconWithImage(obj.title)
 }   
@@ -151,19 +130,66 @@ return verticalIcon
 ;  
 
   const renderItem = ({ item }) => (
-    <Item title={item.title} />
+    <Item title={item.profile_pic} />
   );  
   const renderItem1 = ({ item }) => (
     <Item1 title={item} />
   );
 
+  const renderHorizontalList = ({item}) => {
+   
+   if(item.profile_pic && item.seen == false){
+       return horizontalIconWithImage(item);  
+   }
+   if(!item.profile_pic && item.seen == false){
+      return horizontalIcon(item); 
+   }  
+   if(!item.profile_pic && item.seen == true){
+      return horizontalIconWithSeen(item); 
+   }
+   if(item.profile_pic && item.seen == true){
+      return horizontalIconWithImageSeen(item);  
+   }
+}
+  const renderVerticalList = ({item}) => {
+      
+  }
+
+const setSeen = (doc) => {
+ 
+ const docRef = db.collection("matches").doc("UJ4u7q4oHqlj3n6nrBv9").collection("users"); 
+ const unsubscribe = docRef.where("_id", "==", doc._id).onSnapshot(snap => {
+   const data1 = snap.docs.map(doc => {
+      docRef.doc(doc.data()._id).update({seen:true}).then(() => console.log("updated successfully")).catch(() => console.log("update failed")) 
+   })
+})
+}
+
+const handleMatchPressed = (doc) => {
+    setSeen(doc);
+    navigation.navigate('Chat', {title:"something"});  
+}
 
 
-const horizontalIcon = image ? <Image source = {{uri:image}} style = {{height:50, width:50, borderRadius:25}}/>
-:<TouchableOpacity style = {{height:50, width:50, borderRadius:25, borderWidth:1,justifyContent:"flex-end", alignItems:"center", marginLeft:10}}>
+
+const horizontalIcon = (obj) => <TouchableOpacity 
+style = {{height:50, width:50, borderRadius:25, borderWidth:1,justifyContent:"flex-end", alignItems:"center", marginLeft:10}}
+onPress = {() => handleMatchPressed(obj)}
+>
 <MaterialIcons name="account-circle" size={50} color="black" />
 <View style = {{height:15,width:15, position:'absolute', left:-5, backgroundColor:'red', borderRadius:7.5, top:13}}/>
 </TouchableOpacity>; 
+
+const horizontalIconWithImage = (obj) => <TouchableOpacity onPress = {() => handleMatchPressed(obj)}><View style = {{height:15,width:15, position:'absolute', left:5, backgroundColor:'red', borderRadius:7.5, top:13, zIndex:200}}/><Image source = {{uri:obj.profile_pic}} style = {{height:50, width:50, borderRadius:25, marginLeft:10, marginRight:10, zIndex:100}}/></TouchableOpacity>; 
+
+const horizontalIconWithSeen = (obj) => <TouchableOpacity 
+style = {{height:50, width:50, borderRadius:25, borderWidth:1,justifyContent:"flex-end", alignItems:"center", marginLeft:10}}
+onPress = {() => handleMatchPressed(obj)}
+>
+<MaterialIcons name="account-circle" size={50} color="black" />
+</TouchableOpacity>; 
+
+const horizontalIconWithImageSeen = (obj) => <TouchableOpacity onPress = {() => handleMatchPressed(obj)}><Image source = {{uri:obj.profile_pic}} style = {{height:50, width:50, borderRadius:25, marginLeft:10, marginRight:10}}/></TouchableOpacity>;  
 
 const verticalIcon = (obj:chatInstance) => <TouchableOpacity style = {{flexDirection:"row", marginTop:10}}>
 <TouchableOpacity style = {{height:50, width:50, borderRadius:25, borderWidth:1,justifyContent:"flex-end", alignItems:"center", marginLeft:10}}>
@@ -176,9 +202,11 @@ const verticalIcon = (obj:chatInstance) => <TouchableOpacity style = {{flexDirec
 </View>
 </TouchableOpacity>
 
-const verticalIconWithImage =  (obj:chatInstance) => <TouchableOpacity style = {{flexDirection:"row", marginTop:10, marginLeft:10}}>
+const verticalIconWithImage =  (obj:chatInstance) => <TouchableOpacity 
+style = {{flexDirection:"row", marginTop:10, marginLeft:10}}
+onPress = {() => navigation.navigate('Chat', {title:obj.fullname})}
+>
 <Image source = {{uri:'https://i.ytimg.com/vi/qBB_QOZNEdc/maxresdefault.jpg'}} style = {{height:50, width:50, borderRadius:25,}}/>
-
 <View style = {{marginLeft:10, justifyContent:'center',}}>
     <Text  textBreakStrategy = {"highQuality"} style = {{fontWeight:'bold'}} >{obj.fullname}</Text>
     <Text style = {{maxWidth:Dimensions.get('window').width - 100}} numberOfLines = {1}>Is that a wad of cash or are you doiung something else</Text>
@@ -188,11 +216,13 @@ const verticalIconWithImage =  (obj:chatInstance) => <TouchableOpacity style = {
   
 
 return(
-<View style = {{flex:1}}>
+<SafeAreaView style = {{flex:1, marginTop:20}}>
 {/* 
 Matches template
 */}
+<StatusBar />
 <View>
+
 <Line />
 <View style = {{justifyContent:"center", alignItems:"center"}}>
 <Text style = {{alignSelf:"center", fontWeight:"bold", fontSize:15, marginTop:10, marginBottom:10}}>Matches</Text>
@@ -205,8 +235,8 @@ Horizontal flatlist
 
 <View>
 <FlatList
-        data={DATA}
-        renderItem={renderItem}
+        data={matches}
+        renderItem={renderHorizontalList}
         keyExtractor={item => item.id}
         horizontal = {true}
         showsHorizontalScrollIndicator = {false}
@@ -228,6 +258,6 @@ Vertical flatlist
       /> 
       
 </View>
-</View>
+</SafeAreaView>
 )
 }

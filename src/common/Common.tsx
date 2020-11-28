@@ -70,7 +70,7 @@ export const Continue:FunctionComponent<ContinueProps>  = (props) => {
 export const HeaderBar = (props) => {
      const [selected, setSelected] = useState(); 
      return (
-          <View style = {{flex:1,flexDirection:"row",marginLeft:10, marginRight:10,marginTop:10, marginBottom:10}}>
+          <SafeAreaView style = {{flexDirection:"row",marginLeft:10, marginRight:10,marginTop:10, marginBottom:10}}>
           <TouchableOpacity style = {{flex:0.5,  }} onPress = {() => props.navigation.navigate('GameHomepage')}>
           <Entypo name="controller-play" size={40} color  = {props.page == "GameHomepage" ? 'yellow':'grey'} />    
           </TouchableOpacity>
@@ -86,7 +86,7 @@ export const HeaderBar = (props) => {
           <TouchableOpacity style = {{flex:0.5,}} onPress = {() => props.navigation.navigate('SettingsHome')}>
           <MaterialIcons name="account-circle" size={props.page == "SettingsHome" ? 55:40} color={props.page == "SettingsHome" ? 'yellow':'grey'} />          
           </TouchableOpacity>
-          </View> 
+          </SafeAreaView> 
      ) 
     
 }
@@ -504,6 +504,9 @@ export function Tester1({navigation,db,chatID,userId}){
            marginBottom: 5
          },
        });
+
+
+        
 
 
 

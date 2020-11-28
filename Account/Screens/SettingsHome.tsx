@@ -40,7 +40,7 @@ docRef.get().then(function(doc) {
 return(
 <View style = {{flex:1, marginLeft:30, marginRight:30 }}>
 <View style = {{flex:0.1}}>
-<HeaderBar navigation = {navigation} page = {"SettingsHome"}/>
+
 </View>
 <View style = {{flex:0.7}}>
 <View style = {{alignItems:"center", marginBottom:100}}>

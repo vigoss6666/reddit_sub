@@ -7,7 +7,7 @@ export default function GameHomepage({navigation}){
 return(
 <View style = {{flex:1,marginLeft:20, marginRight:20, marginTop:20}}>
 <View style = {{flex:0.2}}>
-<HeaderBar page = {"GameHomepage"} navigation = {navigation}/>
+
 </View>
 <View style = {{flex:0.6, alignItems:"center", marginLeft:50, marginRight:50}}>
 <Text style = {{fontWeight:"bold", fontSize:40}}>MATCHMAKE</Text>

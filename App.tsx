@@ -1,7 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View,Button, AsyncStorage, Settings, Platform } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { AntDesign } from '@expo/vector-icons';
+import { StyleSheet, Text, View,Button, AsyncStorage, Settings, Platform, SafeAreaView } from 'react-native';
+import { NavigationContainer, BaseRouter } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Name from './Authentication/Screens/Name';
 import BirthDay from './Authentication/Screens/BirthDay';  
@@ -66,6 +69,10 @@ import MatchScreen from './Chat/Screens/MatchList';
 import Camera from './Chat/Screens/Camera'; 
 import ContextProvider from './src/provider'; 
 import VideoPlayer from './src/common/VideoPlayer'; 
+import { Feather } from '@expo/vector-icons';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
+
 
 
 
@@ -82,6 +89,7 @@ import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 import DocumentViewer from './src/common/DocumentViewer';
 import MatchList from './Chat/Screens/MatchList';
+import { FontAwesome } from '@expo/vector-icons';
  
 const currentUser = firebase.auth().currentUser; 
     const db = firebase.firestore(); 
@@ -249,7 +257,8 @@ export default function App() {
      
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
-        <Stack.Screen name="Home" component={Chat} />
+        <Stack.Screen name="Home" component={Home}  options = {{headerTitle:false}}/>
+
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -308,13 +317,45 @@ export default function App() {
         <Stack.Screen name="VideoPlayer" component={VideoPlayer}/>
         <Stack.Screen name="DocumentViewer" component={DocumentViewer}/>
         <Stack.Screen name="Camera" component={Camera}/>
-        <Stack.Screen name="Chat" component={Chat}/>
-        <Stack.Screen name="MatchList" component={MatchList}/>
+        <Stack.Screen name="Chat" component={Chat} options = {({route}) => ({headerTitle:route.params.title,   headerRight:() => <Feather name="flag" size={20} color="red" style = {{marginRight:10}}/>})} />
+        <Stack.Screen name="MatchList" component={MatchList} options = {{headerShown:false}}/>
         
       </Stack.Navigator>
     </NavigationContainer>
     
      
+  );
+}
+
+const Tab = createMaterialTopTabNavigator();
+function MyTabs() {
+  return (
+    <SafeAreaView>
+    <Tab.Navigator>
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Settings" component={Name} />
+    </Tab.Navigator>
+    </SafeAreaView>
+  );
+}
+
+const HeaderLeft = () => (
+   <View style = {{flex:1,flexDirection:"row",justifyContent:'space-between', alignItems:"stretch"}}>
+    <FontAwesome name="trophy" size={24} color="black" style = {{marginRight:10}}/>
+    <FontAwesome name="trophy" size={24} color="black" />
+   </View>
+)
+function Home() {
+  return (
+    
+    <Tab.Navigator options = {{headerShown:"none"}}>
+      <Tab.Screen name="Feed" component={MatchList} options = {{title:() => <AntDesign name="caretright" size={30} color="black" />, headerShown:"none"}}/>
+      <Tab.Screen name="Messages" component={MatchList} options = {{title:() => <AntDesign name="Trophy" size={30} color="black" />}}/>
+      <Tab.Screen name="Feed1" component={Name} options = {{title:() => <Ionicons name="ios-people" size={30} color="black" />}}/>
+      <Tab.Screen name="Matchlist" component={MatchList} options = {{title:() => <AntDesign name="wechat" size={30} color="black" />}}/>
+      <Tab.Screen name="Settings" component={SettingsHome} options = {{title:() => <MaterialIcons name="account-circle" size={30} color="black" />}}/>
+    </Tab.Navigator>
+    
   );
 }
 
