@@ -9,6 +9,7 @@ import { firebase } from '../../config';
 export default function MatchList({navigation}){
 const [image, setImage] = useState(false);
 const [matches, setMatches] = useState(); 
+const [chatList, setChatList] = useState(); 
 const db = firebase.firestore();
 useEffect(() => { 
    console.log("the component was rendered")
@@ -30,7 +31,7 @@ useEffect(() => {
    });
   return () => {return unsubscribe()}
 }, []);
-
+console.log(matches)
 
 
 
@@ -138,25 +139,30 @@ return verticalIcon
 
   const renderHorizontalList = ({item}) => {
    
-   if(item.profile_pic && item.seen == false){
+   if(item.profile_pic && item.seen == false && item.chatted == false){
        return horizontalIconWithImage(item);  
    }
-   if(!item.profile_pic && item.seen == false){
+   if(!item.profile_pic && item.seen == false && item.chatted == false){
       return horizontalIcon(item); 
    }  
-   if(!item.profile_pic && item.seen == true){
+   if(!item.profile_pic && item.seen == true && item.chatted == false){
       return horizontalIconWithSeen(item); 
    }
-   if(item.profile_pic && item.seen == true){
+   if(item.profile_pic && item.seen == true && item.chatted == false){
       return horizontalIconWithImageSeen(item);  
    }
 }
   const renderVerticalList = ({item}) => {
-      
+    if(item.chatted == true && item.profile_pic && item.chatSeen && item.lastMessage){
+        return verticalIconWithImageSeen(item)
+    }  
+    if(item.chatted == true && item.profile_pic && item.chatSeen == true && item.lastMessage){
+      return verticalIconWithImage(item)
+    }
   }
 
 const setSeen = (doc) => {
- 
+ console.log("set seen called")
  const docRef = db.collection("matches").doc("UJ4u7q4oHqlj3n6nrBv9").collection("users"); 
  const unsubscribe = docRef.where("_id", "==", doc._id).onSnapshot(snap => {
    const data1 = snap.docs.map(doc => {
@@ -164,10 +170,24 @@ const setSeen = (doc) => {
    })
 })
 }
+const setChatSeen = (doc) => {
+   console.log("set seen called")
+   const docRef = db.collection("matches").doc("UJ4u7q4oHqlj3n6nrBv9").collection("users"); 
+   const unsubscribe = docRef.where("_id", "==", doc._id).onSnapshot(snap => {
+     const data1 = snap.docs.map(doc => {
+        docRef.doc(doc.data()._id).update({chatSeen:true}).then(() => console.log("updated successfully")).catch(() => console.log("update failed")) 
+     })
+  })
+}
+
+const handleChatPressed = (doc) => {
+    setChatSeen(doc); 
+    navigation.navigate('Chat', {title:doc.fullName, backPage:'chatList', _id:doc._id}); 
+}
 
 const handleMatchPressed = (doc) => {
     setSeen(doc);
-    navigation.navigate('Chat', {title:"something"});  
+    navigation.navigate('Chat', {title:"something", backPage:'match', _id:doc._id});  
 }
 
 
@@ -193,26 +213,51 @@ const horizontalIconWithImageSeen = (obj) => <TouchableOpacity onPress = {() => 
 
 const verticalIcon = (obj:chatInstance) => <TouchableOpacity style = {{flexDirection:"row", marginTop:10}}>
 <TouchableOpacity style = {{height:50, width:50, borderRadius:25, borderWidth:1,justifyContent:"flex-end", alignItems:"center", marginLeft:10}}>
-<MaterialIcons name="account-circle" size={50} color="black" />
 <View style = {{height:15,width:15, position:'absolute', left:-5, backgroundColor:'red', borderRadius:7.5, top:13}}/>
+<MaterialIcons name="account-circle" size={50} color="black" />
 </TouchableOpacity>
 <View style = {{marginLeft:10, justifyContent:'center',}}>
     <Text  textBreakStrategy = {"highQuality"} style = {{fontWeight:'bold'}} >{obj.fullname}</Text>
-    <Text style = {{maxWidth:Dimensions.get('window').width - 100}} numberOfLines = {1}>Is that a wad of cash or are you doiung something else</Text>
+    <Text style = {{maxWidth:Dimensions.get('window').width - 100}} numberOfLines = {1}>{obj.lastMessage.text}</Text>
 </View>
 </TouchableOpacity>
+
+
+const verticalIconSeen = (obj:chatInstance) => <TouchableOpacity style = {{flexDirection:"row", marginTop:10}}>
+<TouchableOpacity style = {{height:50, width:50, borderRadius:25, borderWidth:1,justifyContent:"flex-end", alignItems:"center", marginLeft:10}}>
+<View style = {{height:15,width:15, position:'absolute', left:-5, backgroundColor:'red', borderRadius:7.5, top:13}}/>
+<MaterialIcons name="account-circle" size={50} color="black" />
+<View style = {{height:15,width:15, position:'absolute', left:-5, backgroundColor:'red', borderRadius:7.5, top:13,zIndex:100}}/>
+</TouchableOpacity>
+<View style = {{marginLeft:10, justifyContent:'center',}}>
+    <Text  textBreakStrategy = {"highQuality"} style = {{fontWeight:'bold'}} >{obj.fullname}</Text>
+    <Text style = {{maxWidth:Dimensions.get('window').width - 100}} numberOfLines = {1}>{obj.Message.text}</Text>
+</View>
+</TouchableOpacity> 
 
 const verticalIconWithImage =  (obj:chatInstance) => <TouchableOpacity 
 style = {{flexDirection:"row", marginTop:10, marginLeft:10}}
-onPress = {() => navigation.navigate('Chat', {title:obj.fullname})}
+onPress = {() => handleChatPressed(obj)}
 >
-<Image source = {{uri:'https://i.ytimg.com/vi/qBB_QOZNEdc/maxresdefault.jpg'}} style = {{height:50, width:50, borderRadius:25,}}/>
+<Image source = {{uri:obj.profile_pic}} style = {{height:50, width:50, borderRadius:25,}}/>
 <View style = {{marginLeft:10, justifyContent:'center',}}>
-    <Text  textBreakStrategy = {"highQuality"} style = {{fontWeight:'bold'}} >{obj.fullname}</Text>
-    <Text style = {{maxWidth:Dimensions.get('window').width - 100}} numberOfLines = {1}>Is that a wad of cash or are you doiung something else</Text>
+    <Text  textBreakStrategy = {"highQuality"} style = {{fontWeight:'bold'}} >{obj.fullName}</Text>
+    <Text style = {{maxWidth:Dimensions.get('window').width - 100}} numberOfLines = {1}>{obj.lastMessage.text}</Text>
 </View>
 </TouchableOpacity>
 
+const verticalIconWithImageSeen = (obj:chatInstance) => <TouchableOpacity 
+style = {{flexDirection:"row", marginTop:10, marginLeft:10}}
+onPress = {() => handleChatPressed(obj)}
+>
+<View style = {{height:15,width:15, position:'absolute', left:-5, backgroundColor:'red', borderRadius:7.5, top:13, zIndex:100}}/>
+<Image source = {{uri:obj.profile_pic}} style = {{height:50, width:50, borderRadius:25,}}/>
+<View style = {{marginLeft:10, justifyContent:'center',}}>
+    <Text  textBreakStrategy = {"highQuality"} style = {{fontWeight:'bold'}} >{obj.fullName}</Text>
+    <Text style = {{maxWidth:Dimensions.get('window').width - 100}} numberOfLines = {1}>{obj.lastMessage.text}</Text>
+</View>
+</TouchableOpacity>
+ 
   
 
 return(
@@ -249,8 +294,8 @@ Vertical flatlist
 */}
 <View>
  <FlatList
-        data={DATA1}
-        renderItem={renderItem1}
+        data={matches}
+        renderItem={renderVerticalList}
         keyExtractor={item => item.id}
         
         showsHorizontalScrollIndicator = {false}

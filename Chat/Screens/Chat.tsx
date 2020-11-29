@@ -38,6 +38,8 @@ import { Platform } from '@unimodules/core';
   
 export default function Chat({navigation, route}){
     const [messages, setMessages] = useState([]);
+    const {backPage} = route.params; 
+    const {_id} = route.params; 
     const didMountRef = useRef(false)
     const dir = useRef(FileSystem.documentDirectory + 'lobby52342/').current;
     const [pressed, setPressed] = useState({image:null}); 
@@ -73,7 +75,6 @@ export default function Chat({navigation, route}){
           str.lastIndexOf("%") + 1, 
           str.lastIndexOf("?")
       );
-      
   }
   function dateFromTimestamp(timestamp:any){
     const date = firebase.firestore.Timestamp.fromDate(timestamp) 
@@ -129,6 +130,38 @@ export default function Chat({navigation, route}){
               </MessageImage>
           )
    }
+   const setChatted = () => {
+    console.log("set seen called")
+    const docRef = db.collection("matches").doc("UJ4u7q4oHqlj3n6nrBv9").collection("users"); 
+    const unsubscribe = docRef.where("_id", "==", _id).onSnapshot(snap => {
+      const data1 = snap.docs.map(doc => {
+         docRef.doc(doc.data()._id).update({chatted:true}).then(() => console.log("updated successfully")).catch(() => console.log("update failed")) 
+      })
+   })
+   } 
+  const setLastMessage = (messageObj) => {
+    const docRef = db.collection("matches").doc("UJ4u7q4oHqlj3n6nrBv9").collection("users"); 
+    const unsubscribe = docRef.where("_id", "==", _id).onSnapshot(snap => {
+      const data1 = snap.docs.map(doc => {
+         docRef.doc(doc.data()._id).update({lastMessage:messageObj}).then(() => console.log("updated successfully")).catch(() => console.log("update failed")) 
+      })
+   })
+  }
+  const setLastChatOtherUser = (messageObj) => {
+    const docRef = db.collection("matches").doc(_id).collection("users"); 
+    const unsubscribe = docRef.where("_id", "==", "UJ4u7q4oHqlj3n6nrBv9").onSnapshot(snap => {
+      const data1 = snap.docs.map(doc => {
+         docRef.doc(doc.data()._id).update({lastMessage:messageObj}).then(() => console.log("updated successfully")).catch(() => console.log("update failed")) 
+      })
+   }) 
+  }
+  const handleChatted = () => {
+     if(backPage == 'match'){
+        setChatted(); 
+        return;  
+     }
+  } 
+
    const renderMessageVideo = (props:any) => {
     const result =  tester(props.currentMessage.video);
     console.log(result)
@@ -989,6 +1022,9 @@ const renderChatEmpty = () => {
        
    
     const onSend =  (messages = []) => {
+      handleChatted();
+      setLastMessage(messages[0]) 
+      //setLastChatOtherUser(messages[0]);
       if(reply){
         console.log("forward from send"+forward)
         messages[0].reply = pressed;   

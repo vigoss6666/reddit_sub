@@ -166,6 +166,23 @@ Notifications.setNotificationHandler({
 });
 export default function App() {
   const [expoPushToken, setExpoPushToken] = useState('');
+  const db = firebase.firestore();
+  const [chatNotify,setChatNotify] = useState(true); 
+  useEffect(() => {
+    const unsubscribe = db.collection("matches").doc("UJ4u7q4oHqlj3n6nrBv9").collection("users").onSnapshot(snap => {
+      const data1 = snap.docs.map(doc => doc.data())
+      
+      const result = data1.map(val => {
+        
+        if(val.seen == false){
+           setChatNotify(false); 
+        }
+       
+      })
+    });
+
+  },[])
+
   console.log(expoPushToken);
   const [notification, setNotification] = useState(false);
   console.log(notification);
@@ -257,7 +274,7 @@ export default function App() {
      
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
-        <Stack.Screen name="Home" component={Home}  options = {{headerTitle:false}}/>
+        <Stack.Screen name="Home" children={() => <Home chatter = {chatNotify}/>}  options = {{headerTitle:false}}/>
 
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
@@ -345,15 +362,67 @@ const HeaderLeft = () => (
     <FontAwesome name="trophy" size={24} color="black" />
    </View>
 )
-function Home() {
+function Home(props){
+  console.log("chatty is "+props.chatter)
   return (
     
-    <Tab.Navigator options = {{headerShown:"none"}}>
-      <Tab.Screen name="Feed" component={MatchList} options = {{title:() => <AntDesign name="caretright" size={30} color="black" />, headerShown:"none"}}/>
-      <Tab.Screen name="Messages" component={MatchList} options = {{title:() => <AntDesign name="Trophy" size={30} color="black" />}}/>
-      <Tab.Screen name="Feed1" component={Name} options = {{title:() => <Ionicons name="ios-people" size={30} color="black" />}}/>
-      <Tab.Screen name="Matchlist" component={MatchList} options = {{title:() => <AntDesign name="wechat" size={30} color="black" />}}/>
-      <Tab.Screen name="Settings" component={SettingsHome} options = {{title:() => <MaterialIcons name="account-circle" size={30} color="black" />}}/>
+    <Tab.Navigator options = {{headerShown:"none"}}
+      tabBarOptions={{
+      activeTintColor: 'tomato',
+      inactiveTintColor: 'gray',
+    }}
+    screenOptions={({ route }) => ({
+      title: ({ focused, color, size }) => {
+        if(route.name === 'Matchlist'){
+          console.log(route.params); 
+          if(focused) {
+            if(props.chatter == false){
+              return (
+                <View>
+               <View style = {{height:10,width:10, position:'absolute', left:-5, backgroundColor:'red', borderRadius:5,zIndex:100}}/>
+               <AntDesign name="wechat" size={24} color="black" />
+               </View> 
+               );
+            }
+              return (
+              <View>
+              <AntDesign name="wechat" size={24} color="black" />
+             </View> 
+             );     
+               
+          }
+          if(props.chatter == false){
+            return (
+              <View>
+             <View style = {{height:10,width:10, position:'absolute', left:-5, backgroundColor:'red', borderRadius:5,zIndex:100}}/>
+             <AntDesign name="wechat" size={24} color="black" />
+             </View> 
+             );
+          }
+            return (
+            <View>
+            <AntDesign name="wechat" size={24} color="black" />
+           </View> 
+           ); 
+          
+          
+        }      
+        if(route.name === 'Feed'){
+          if(focused) {
+            return <AntDesign name="stepbackward" size={24} color="yellow" />;   
+          } 
+          return <AntDesign name="stepbackward" size={24} color="black" />;
+        }
+        
+      },
+    })}
+    
+    >
+      <Tab.Screen name="Feed" component={MatchList}  />
+      <Tab.Screen name="Messages" component={MatchList} />
+      <Tab.Screen name="Feed1" component={Name} />
+      <Tab.Screen name="Matchlist" component={MatchList}  /> 
+      <Tab.Screen name="Settings" component={SettingsHome} />
     </Tab.Navigator>
     
   );
