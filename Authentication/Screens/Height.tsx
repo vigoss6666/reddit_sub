@@ -1,12 +1,14 @@
 import  React, {useState,useRef,useEffect} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
-import { useMutation,useQuery } from '@apollo/react-hooks';
+
 import {Header, Continue} from '../../src/common/Common'; 
 import { AntDesign } from '@expo/vector-icons';
 import {Button} from 'react-native-elements'; 
 import DropDownPicker from 'react-native-dropdown-picker';
-import {mutateSettings} from '../../networking'; 
+ 
 import {GET_DETAILS} from '../../Account/Screens/DetailsSettings'; 
+import {firebase} from '../../config'; 
+
 export default function Height({navigation,route}){
     const { page } = route.params;  
 
@@ -14,7 +16,10 @@ export default function Height({navigation,route}){
      let [inches, setInches] = useState(); 
 
 const _sendToServer = () => {
-    mutateSettings({feet, inches},[{query:GET_DETAILS}]);  
+ 
+    const currentUser = firebase.auth().currentUser; 
+    const db = firebase.firestore();    
+    db.collection('user').doc(currentUser.uid).set({ feet , inches}, {merge:true}).then(val => console.log)
 }     
       
 const _handleNavigation = () => {

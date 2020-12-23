@@ -15,36 +15,14 @@ export default function Name({navigation,name}){
    console.log(name)
    const fire = () => {
     const currentUser = firebase.auth().currentUser; 
-   
+    console.log("uid is"+currentUser.uid)
+    
     const db = firebase.firestore(); 
-    db.collection('gamer').doc(currentUser.uid).set({firstname:firstName,lastname:lastName}).then(val => console.log)
+    db.collection('user').doc(currentUser.uid).set({firstname:firstName,lastname:lastName}).then(val => console.log)
     } 
    
     
-  // firebase.auth().onAuthStateChanged(function(user) {
-  //   if (user) {
-  //     // User is signed in.
-  //     var isAnonymous = user.isAnonymous;
-  //     var uid = user.uid;
-  //     const db = firebase.firestore();
-      
-  //     db.collection("gamer").doc(uid).set({
-  //       name:"jafar bhai"
-  //   })
-  //   .then(function(docRef) {
-  //       //console.log("Document written with ID: ", docRef.id);
-  //   })
-  //   .catch(function(error) {
-  //       //console.error("Error adding document: ", error);
-  //   });
-      
-  //     // ...
-  //   } else {
-  //     // User is signed out.
-  //     // ...
-  //   }
-  //   // ...
-  // });
+  
 
   
 
@@ -87,7 +65,7 @@ return(
 <View style = {{flex:0.4}}>
 </View>
 <View style = {{flex:1}}>
-<Header text = "My name is...." style = {{justifyContent:"center", alignItems: 'flex-start',marginLeft:30}}/>
+<Header text = "My name is....." style = {{justifyContent:"center", alignItems: 'flex-start',marginLeft:30}}/>
 <TextInput style = {{borderBottomWidth:0.5,opacity:0.3, borderColor:"grey",width:Dimensions.get('window').width -60, marginLeft:30 }}>
 
 </TextInput>

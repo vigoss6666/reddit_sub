@@ -10,7 +10,6 @@ export default function Intro4({navigation}){
         
         </View>
         <View style = {{flex:0.5}}>
-        <Image style = {{height:300, width:Dimensions.get('window').width, resizeMode:"contain"}} source = {require('/Users/zaidshaikh/fhfclient/assets/slide1.png')}></Image>
         </View>
         <View style = {{flex:0.3}}>
         <Continue text = {"Next"} onPress = {() => {navigation.navigate('Name')}}/>

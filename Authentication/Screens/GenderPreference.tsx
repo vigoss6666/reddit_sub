@@ -6,7 +6,7 @@ import { Entypo } from '@expo/vector-icons';
 import {Header,Continue} from '../../src/common/Common'; 
 import {Button} from 'react-native-elements'; 
 import { mutateSettings } from '../../networking';
-
+import {firebase} from '../../config';
 
 
 
@@ -33,13 +33,21 @@ const _handlePage = () => {
 }
 const _sendToServer = () => {
      if(man){
-         mutateSettings({genderPreference:"man"}) 
+    const currentUser = firebase.auth().currentUser; 
+    const db = firebase.firestore();
+    db.collection('user').doc(currentUser.uid).set({ genderPreference:"male"}, {merge:true}).then(val => console.log)
      }
      else if(woman){
-         mutateSettings({genderPreference:"woman"})
+         
+    const currentUser = firebase.auth().currentUser; 
+    const db = firebase.firestore();
+    db.collection('user').doc(currentUser.uid).set({ genderPreference:"female"}, {merge:true}).then(val => console.log)
      }
      else if(both){
-         mutateSettings({genderPreference:"everyone"})
+
+    const currentUser = firebase.auth().currentUser; 
+    const db = firebase.firestore();
+    db.collection('user').doc(currentUser.uid).set({ genderPreference:"both"}, {merge:true}).then(val => console.log)
      }
 }
 

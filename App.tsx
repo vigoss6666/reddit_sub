@@ -71,7 +71,7 @@ import ContextProvider from './src/provider';
 import VideoPlayer from './src/common/VideoPlayer'; 
 import { Feather } from '@expo/vector-icons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-
+import FrontPage from './Authentication/Screens/Frontpage'; 
 
 
 
@@ -274,7 +274,7 @@ export default function App() {
      
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
-        <Stack.Screen name="Home" children={() => <Home chatter = {chatNotify}/>}  options = {{headerTitle:false}}/>
+        <Stack.Screen name="Home" component={Name}  options = {{headerTitle:false}}/>
 
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
