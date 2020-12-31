@@ -6,7 +6,9 @@ import { gql } from 'apollo-boost';
 import { getMaxListeners } from 'cluster';
 import { mutateSettings } from '../../networking';
 import {Button} from 'react-native-elements'; 
- 
+import { firebase } from '../../config'; 
+const db = firebase.firestore();  
+
 const REGISTER_EMAIL = gql`
  mutation email($email1:String!){
        email(email1:$email1)
@@ -26,7 +28,11 @@ function ValidateEmail(mail)
 export default function Email({navigation, route}){
   const {page} = route.params; 
   const [Email, setEmail] = useState();
-  const [verifyEmail, {data}] = useMutation(REGISTER_EMAIL);     
+
+
+  const _sendToServer = () => {
+     db.collection('user').doc('trialUser').set({email:Email}, {merge:true}).then(() => console.log('added')).catch(() => console.log('not updated'))
+  }
   const _handlePage = () => {
     if(page == "AccountSettings"){
        navigation.navigate('AccountSettings'); 
@@ -68,7 +74,7 @@ style = {{fontSize:35,borderBottomWidth:1, borderColor:"black",width:Dimensions.
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  onPress = {() => { _handlePage()}}
+  onPress = {() => { _handlePage(), _sendToServer()}}
 />
 </View>
 </View>

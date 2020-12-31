@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Bu
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { FontAwesome } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
+import { firebase } from '../../config'; 
 
 //getSettingsMutation: AccountSettingsMutation!
 export const GET_DETAILS = gql`
@@ -16,14 +17,23 @@ export const GET_DETAILS = gql`
 
     }
  }
-
 `
 
 
 
 
 export default function DetailsSettings({navigation}){
-const {data, loading, error} = useQuery(GET_DETAILS);    
+//const {data, loading, error} = useQuery(GET_DETAILS);    
+const [data, setData] = useState(1); 
+const [serverData, setServerData] = useState({}); 
+const db = firebase.firestore(); 
+useEffect(() => {
+db.collection('user').doc('trialUser').onSnapshot((doc) => {
+   console.log(doc.data().gender)
+     setServerData(doc.data()); 
+})
+},[data])
+
 if(data){
    return(
       <View style = {{flex:1, marginLeft:30, marginRight:30}}>
@@ -54,7 +64,8 @@ if(data){
       <Text style = {{fontWeight:"600"}}>
           SEX
       </Text>
-      {data.getSettingsMutation.gender == "male" ? <FontAwesome name="male" size={30} color="black" />:<FontAwesome name="female" size={30} color="black" />}
+      {serverData.gender == "male" ? <FontAwesome name="male" size={30} color="black" />:<FontAwesome name="female" size={30} color="black" />}
+      
       <TouchableOpacity onPress= {() => navigation.navigate('Gender', {page:"DetailsSettings"})}>
       <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text> 
       </TouchableOpacity>
@@ -94,7 +105,7 @@ if(data){
          </Text> 
          
          <Text style = {{fontWeight:"bold",fontSize:20}}>
-           {data.getSettingsMutation.feet}' {data.getSettingsMutation.inches}" 
+           {serverData.feet}' {serverData.inches}"
          </Text>
          <TouchableOpacity onPress = {() => navigation.navigate('Height', {page:"DetailsSettings"})}>
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
@@ -115,7 +126,7 @@ if(data){
          </Text> 
          
          <Text style = {{fontWeight:"bold",fontSize:20}}>
-         {data.getSettingsMutation.hometown}
+         {serverData.hometown}
          </Text>
          <TouchableOpacity onPress = {() => navigation.navigate('Hometown',{page:"DetailsSettings"})}>
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
@@ -135,7 +146,7 @@ if(data){
          </Text> 
           
          <Text style = {{fontWeight:"bold",fontSize:15}}>
-           {data.getSettingsMutation.job} 
+           {serverData.job} 
          </Text>
          <TouchableOpacity onPress = {() => navigation.navigate('Job', {page:"DetailsSettings"})}>
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
@@ -156,12 +167,6 @@ if(data){
       )
    
 }
-if(loading){
-   return (
-      <View style = {{flex:1, justifyContent:"center", alignItems:"center"}}>
-         <Text>Loading</Text>
-      </View>
-   )
-}
+
 
 }

@@ -5,6 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import {Header, Continue} from '../../src/common/Common'; 
 import * as Location from 'expo-location';
+import {firebase} from '../../config'; 
 export default function EnableLocation({navigation}){
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState("");
@@ -14,8 +15,13 @@ const handleLocation = async () => {
         setErrorMsg('Permission to access location was denied');
       }
       let location = await Location.getCurrentPositionAsync({});
+      
       setLocation(location);
-      navigation.navigate('Email', {page:"something"})
+      const currentUser = firebase.auth().currentUser; 
+        const db = firebase.firestore();
+        console.log(currentUser.uid)
+        db.collection('user').doc(currentUser.uid).set({ latitude:location.coords.latitude, longitude:location.coords.longitude}, {merge:true}).then(val => console.log)
+        navigation.navigate('LoadContacts', {page:"something"})
       
 }    
 return(

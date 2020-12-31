@@ -2,6 +2,14 @@ import  React, {useState,useRef,useEffect} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {mutateSettings} from '../../networking'; 
+import {firebase} from '../../config'; 
+
+const db = firebase.firestore(); 
+let batch = db.batch();
+let userRef = db.collection('user');
+let phoneRef = db.collection('phoneNumbers'); 
+
+
 
 const UPLOAD_CONTACTS = gql`
  mutation namer($contacts:Contact1!){
@@ -39,12 +47,12 @@ export default function LoadContacts({navigation}){
     ]}
     let length = useRef().current; 
 
-    const [uploadContacts1, {data}] = useMutation(UPLOAD_CONTACTS); 
-    if(data){
+    //const [uploadContacts1, {data}] = useMutation(UPLOAD_CONTACTS); 
+    // if(data){
         
-        navigation.navigate('Loader',{profiles:data.uploadContacts.data});
+    //     navigation.navigate('Loader',{profiles:data.uploadContacts.data});
            
-    }
+    // }
     useEffect(() => {
         _uploadContacts()
     }, [])
@@ -54,26 +62,44 @@ export default function LoadContacts({navigation}){
             const { data } = await Contacts.getContactsAsync({
               fields: [Contacts.Fields.PhoneNumbers],
             });
+            console.log(data)
             if (data.length > 0) {
               const contact = data;
               console.log(contact); 
               const finaler = contact.map(val => {
                    return {
-                       name:val.name, 
+                       fullName:val.name, 
                        id:val.id, 
-                       firstname:val.firstName, 
+                       firstName:val.firstName, 
+                       lastName:val.lastName,
                        phoneNumbers:val.phoneNumbers.map(val1 => {
                             return {
                                id:val.id, 
-                               digits:val1.digits, 
-                               number:val1.number
+                               number:val1.digits, 
+                               formattedNumber:val1.number, 
+                               countryCode:val1.countryCode
                            }
                        })
                    }
               })
+             db.collection('user').doc('trialUser').set({contacts:finaler.length}); 
+             await finaler.map(async val => {
+                   userRef.add({fullName:val.fullName, 
+                    id:val.id, 
+                    firstName:val.firstName, 
+                    lastName:val.lastName}); 
+                  
+                  
+                   val.phoneNumbers.map(async val1 => {
+                        db.collection('phoneNumbers').add(val1); 
+                   })
+              })
+               navigation.navigate('Loader', {profiles:finaler})
+              
+              
               
               const networkData = {data:finaler}; 
-              uploadContacts1({variables:{contacts:networkData}}); 
+              //uploadContacts1({variables:{contacts:networkData}}); 
               
               
                

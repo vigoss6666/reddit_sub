@@ -90,6 +90,7 @@ import * as Permissions from 'expo-permissions';
 import DocumentViewer from './src/common/DocumentViewer';
 import MatchList from './Chat/Screens/MatchList';
 import { FontAwesome } from '@expo/vector-icons';
+import Frontpage from './Authentication/Screens/Frontpage';
  
 const currentUser = firebase.auth().currentUser; 
     const db = firebase.firestore(); 
@@ -274,7 +275,7 @@ export default function App() {
      
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
-        <Stack.Screen name="Home" component={Name}  options = {{headerTitle:false}}/>
+        <Stack.Screen name="Home" component={SettingsHome}  options = {{headerTitle:false}}/>
 
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>

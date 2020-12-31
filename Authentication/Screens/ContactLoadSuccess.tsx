@@ -4,26 +4,27 @@ import { useMutation,useQuery } from '@apollo/react-hooks';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Avatar, Badge, Icon, withBadge,Text, Button} from 'react-native-elements'
 import { gql } from 'apollo-boost';
-const DOWNLOAD_CONTACTS = gql`
-query {
-    downloadContact {
-         data {
-          name     
-          firstname
-          identification
-         }
-    }
-}
-
-`;
+import { firebase } from '../../config'; 
 
 
 
 
 export default function ContactLoadSuccess({navigation,route}){
     
+    const [contacts, setContacts] = useState(); 
+    const db = firebase.firestore(); 
+    
     const {profiles} = route.params; 
-    console.log("contact success"); 
+    useEffect(() => {
+        const subscribe = db.collection('user').doc('trialUser')
+        .onSnapshot((doc) => {
+
+             setContacts(doc.data().contacts)
+             console.log(contacts); 
+        }) 
+
+         
+    }, [contacts]) 
      
     
         
@@ -37,7 +38,7 @@ export default function ContactLoadSuccess({navigation,route}){
             <View style = {{    flexDirection:'row', justifyContent:'center',  alignItems:'center', marginBottom:30}}>
             <MaterialIcons name="account-circle" size={60} color="black" />
             
-                <Text h3 style = {{fontWeight:"bold"}}> {profiles.length} </Text>
+                <Text h3 style = {{fontWeight:"bold"}}> {contacts} </Text>
             
             </View>
             <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:20, marginBottom:20,borderColor:"grey"}}/>

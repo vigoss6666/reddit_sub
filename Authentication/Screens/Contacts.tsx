@@ -4,6 +4,7 @@ import { useMutation,useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import { Divider,Header,Text, SearchBar,Avatar,Icon,Button,CheckBox} from 'react-native-elements';
 import { createFilter } from 'react-native-search-filter';
+import { firebase } from '../../config'; 
 
 // addDatingPool(datingPoolList: DatingPoolObjectList1!): Boolean!
 
@@ -27,23 +28,26 @@ mutation namer($datingPoolList:DatingPoolObjectList1!){
 
 export default function Contacts({navigation,route}){
 
-const [addDating, {data}] = useMutation(ADD_DATING); 
+//const [addDating, {data}] = useMutation(ADD_DATING); 
+const db = firebase.firestore(); 
 const [indexer,setIndexer] = useState([]); 
 const [isSelected, setSelection] = useState(false);
-const KEYS_TO_FILTERS = ['name'];
+const KEYS_TO_FILTERS = ['fullName'];
 const [search, setSearch] = useState('');
 const [selectAll, setSelectAll] = useState(true);
 const [serverData, addServerData] = useState([]); 
 const {profiles} = route.params; 
+console.log("profile is something")
+//console.log(profiles)
 console.log(serverData)
-if(data){
-   navigation.navigate('ContactsSex', {profiles:data.addDatingPool.data}); 
-}
+// if(data){
+//    navigation.navigate('ContactsSex', {profiles:data.addDatingPool.data}); 
+// }
 const addServerDataWrapper = (text) => {
   
-  const result = serverData.filter(val => val.name === text.name) 
+  const result = serverData.filter(val => val.fullName === text.fullName) 
   if(result.length > 0){
-         const finaler = serverData.filter(val => val.name !== text.name);  
+         const finaler = serverData.filter(val => val.fullName !== text.fullName);  
          addServerData(finaler); 
          console.log(serverData);
          return; 
@@ -55,9 +59,12 @@ const addServerDataWrapper = (text) => {
 
 const sendToServer = () => {
    const result = serverData.map(val => (
-      {_id:val._id}
+      {_id:val.id}
    ))
-   addDating({variables:{datingPoolList:{data:result}}}); 
+   console.log("result is")
+   console.log(result)
+   //addDating({variables:{datingPoolList:{data:result}}}); 
+   db.collection('user').doc('trialUser').set({datingPoolList:result}); 
 }
 
 
@@ -86,7 +93,7 @@ const deleteArray = () => {
     const filteredEmails = profiles.filter(createFilter(search, KEYS_TO_FILTERS))
     const addAll = () => {
      const result = filteredEmails.map(val => {
-          return val.name
+          return val.fullName
      })
      setIndexer(result);
      const newServerData = filteredEmails.map(val1 => {
@@ -132,15 +139,15 @@ const deleteArray = () => {
             return (
               <TouchableOpacity key={index} 
               style = {{borderWidth:1, height:50,flexDirection:"row",  justifyContent:'space-between', marginLeft:20, marginRight:20, borderLeftWidth:0, borderRightWidth:0,}}
-              onPress = {() => { addArray(val.name), addServerData([val,...serverData, ]), addServerDataWrapper(val)  }}
+              onPress = {() => { addArray(val.fullName), addServerData([val,...serverData, ]), addServerDataWrapper(val)  }}
               >
                 
                   <View style = {{flexDirection:'row', alignItems:'center'}}>
                   <Avatar rounded icon = {{name:'account-circle', color:'black'}} activeOpacity = {0.9} size = {"medium"} />  
-                  <Text>{val.name || val.firstname}</Text>
+                  <Text>{val.fullName || val.firstName}</Text>
                   </View>
                   <View style = {{alignItems:'center', justifyContent:'center', marginRight:10}}>
-                     <Icon name = {"check"} iconStyle = {{opacity:indexer.includes(val.name) ? 1:0}}/> 
+                     <Icon name = {"check"} iconStyle = {{opacity:indexer.includes(val.fullName) ? 1:0}}/> 
                   </View>
               </TouchableOpacity>
             )

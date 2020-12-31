@@ -7,7 +7,7 @@ import {Button} from 'react-native-elements';
 import DropDownPicker from 'react-native-dropdown-picker';
  
 import {GET_DETAILS} from '../../Account/Screens/DetailsSettings'; 
-import {firebase} from '../../config'; 
+import {firebase} from '../../config';
 
 export default function Height({navigation,route}){
     const { page } = route.params;  
@@ -154,7 +154,7 @@ return(
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  onPress = {() => {_sendToServer(),_handleNavigation() }}
+  onPress = {() => {_sendToServer(), _handleNavigation() }}
 />
 </View>
 </View>

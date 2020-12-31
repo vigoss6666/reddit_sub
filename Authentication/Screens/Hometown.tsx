@@ -5,12 +5,20 @@ import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Header } from '../../src/common/Common';
 import { mutateSettings } from '../../networking'; 
 import {GET_DETAILS} from '../../Account/Screens/DetailsSettings'; 
+import {firebase} from '../../config'; 
 
 
 export default function Hometown({navigation, route}){
     const {page} = route.params; 
     const [job, setJob] = useState();
-    
+    const _sendToServer = () => {
+      console.log("called")
+      const currentUser = firebase.auth().currentUser; 
+      const db = firebase.firestore();
+      console.log(currentUser.uid)
+      db.collection('user').doc(currentUser.uid).set({ hometown:job}, {merge:true}).then(val => console.log)
+    }
+
     const _handlePage = () => {
        if(page == "DetailsSettings"){
          navigation.navigate("DetailsSettings"); 
@@ -52,7 +60,7 @@ export default function Hometown({navigation, route}){
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   disabled = {false}
-  onPress = {() => { mutateSettings({hometown:job}, [{query:GET_DETAILS}]) , _handlePage()}}
+  onPress = {() => { _sendToServer() , _handlePage()}}
 />
       </View>
       </View>

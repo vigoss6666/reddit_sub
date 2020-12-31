@@ -30,7 +30,6 @@ export default function Photos({navigation, route }){
     //const {page} = route.params; 
     const [photoExample, setExample] = useState(); 
     const [profilePic,setProfilePic] = useState(); 
-    const [deletePhoto] = useMutation(DELETE_PHOTO); 
     // const {data, loading, error,} = useQuery(GET_PHOTOS); 
     const letter = [null,null,null,null,null,null,null,null,null,null,null,null];
     const [photos, setPhotos] = useState([
@@ -86,14 +85,13 @@ export default function Photos({navigation, route }){
          if(imageLength.length < 1 && !profilePic){
             setProfilePic(uri); 
          }
-         
          arr[imageLength.length] = uri; 
          setPhotos([ ...arr, ]);
          uploadImage(uri, 'responder');
     }     
     let openImagePickerAsync = async () => {
         let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
-    
+        
         if (permissionResult.granted === false) {
           alert("Permission to access camera roll is required!");
           return;

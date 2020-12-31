@@ -5,8 +5,13 @@ import Slider from '@react-native-community/slider';
 import { FontAwesome } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import SwitchSelector from "react-native-switch-selector";
-import { mutateSettings } from '../../networking';
+//import { mutateSettings } from '../../networking';
+import { firebase} from '../../config'; 
 import { gql } from 'apollo-boost';
+import { Ionicons } from '@expo/vector-icons';
+const db = firebase.firestore(); 
+
+
 
 export const GET_DETAILS = gql`
  query {
@@ -26,35 +31,80 @@ export const GET_DETAILS = gql`
 
 
 export default function AccountSettings({navigation}){
- const [matchmaking, setMatchmaking] = useState();   
+const [matchmaking, setMatchmaking] = useState();   
 const [value, setValue] = useState(1);
+const [email, setEmail] = useState();
+const [genderPreference, setGenderPreference] = useState();  
 const [minAgePref, selectminAgePref] = useState(); 
 const [maxAgePref, selectmaxAgePref] = useState(); 
 const slider = forwardRef; 
-   const {data, loading, error} = useQuery(GET_DETAILS);
-   if(data){
+   //const {data, loading, error} = useQuery(GET_DETAILS);
+   // if(data){
 
-   }
+   // }
+useEffect(() => {
+   db.collection('user').doc('trialUser').onSnapshot((doc) => {
+       setEmail(doc.data().email)
+       setGenderPreference(doc.data().genderPreference)
+       setValue(doc.data().distancePreference)
+       if(doc.data().accountType == "matchmaking"){
+         setMatchmaking("yes")
+         return   
+       }
+       if(doc.data().accountType == "both"){
+         setMatchmaking("No")
+         return   
+       }
+
+       
+   }) 
+}, [email])
+console.log(matchmaking)
+const initialValue = matchmaking == "yes" ? 0:1; 
     const options = [
         { label: "yes", value: "yes" },
         { label: "No", value: "no" },
         
       ];
 
-console.log()
 
 const changeValue = (value) => {
      const changed = parseInt(value); 
      setValue(changed); 
 }
+const handleSwitch = () => {
+  if(matchmaking == "yes"){
+   db.collection('user').doc('trialUser').set({accountType:'matchmaking'}, {merge:true}).then(() => console.log("accountTypeAdded")).catch(() => console.log("accountTypeUpdate failed"))      
+   return
+  }
+  else if(matchmaking == "No"){
+      db.collection('user').doc('trialUser').set({accountType:'both'}, {merge:true}).then(() => console.log("account type updated")).catch(() => console.log("account update failed"))
+  } 
+  
+}
+const onSlidingComplete = () => {
+    db.collection('user').doc('trialUser').set({distancePreference:value}, {merge:true}).then(() => console.log("value added")).catch(() => console.log("netwrok error"))
+}
+
+const handleGenderPreference = () => {
+    if(genderPreference == "male"){
+        return <FontAwesome name="male" size={30} color="black" /> 
+    }
+    else if(genderPreference == "female"){
+      return <FontAwesome name="female" size={30} color="black" />
+    }
+    else if(genderPreference == "both"){
+      return <Ionicons name="ios-people" size={30} color="black" />
+    }
+}
 
 const _sendToServer = () => {
-   mutateSettings({maxDistance:value, minAgePreference:minAgePref, maxAgePreference:maxAgePref})
+   //mutateSettings({maxDistance:value, minAgePreference:minAgePref, maxAgePreference:maxAgePref})
    if(matchmaking == "yes"){
-       mutateSettings({profileType:"matchmaking"})
+       //mutateSettings({profileType:"matchmaking"})
    }
    else if(matchmaking == "no"){
-      mutateSettings({profileType:"matchmaking+dating"})
+      //mutateSettings({profileType:"matchmaking+dating"})
    }
 }
  
@@ -107,7 +157,7 @@ return(
       EMAIL 
    </Text> 
    <Text style = {{fontWeight:"bold",fontSize:15}}>
-       dave@monger.com
+       {email}
    </Text>
    <TouchableOpacity onPress = {() => navigation.navigate('Email',{page:'AccountSettings'})}>
    <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
@@ -145,7 +195,8 @@ return(
     minimumTrackTintColor="#FFFFFF"
     maximumTrackTintColor="#000000" 
     onValueChange = {changeValue}
-    
+    value = {value} 
+    onSlidingComplete = {onSlidingComplete}
     
 
   />
@@ -159,7 +210,7 @@ return(
  }}/>
  <View style = {{flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
  <Text style = {{ fontWeight:"600"}}>SHOW ME</Text>
- <FontAwesome name="male" size={30} color="black" />
+ {handleGenderPreference()}
  <TouchableOpacity onPress = {() => navigation.navigate('GenderPreference', {page:"AccountSettings"})}>
  <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
  </TouchableOpacity>
@@ -327,8 +378,8 @@ return(
  <Text style = {{fontWeight:'600'}}>Matchmaking Only, No Dating.</Text>
  <SwitchSelector
   options={options}
-  initial={0}
-  onPress={value => setMatchmaking(value)}
+  initial={initialValue}
+  onPress={value => {setMatchmaking(value), handleSwitch()}}
   style = {{width:100}}
 />
  </View>

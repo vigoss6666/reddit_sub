@@ -4,8 +4,15 @@ import { useMutation,useQuery } from '@apollo/react-hooks';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {Header} from '../../src/common/Common'; 
 import {mutateSettings} from '../../networking'; 
-
+import {firebase} from '../../config'; 
 export default function Posted({navigation}){
+    const _sendToServer = () => {
+        console.log("called")
+        const currentUser = firebase.auth().currentUser; 
+        const db = firebase.firestore();
+        console.log(currentUser.uid)
+        db.collection('user').doc(currentUser.uid).set({ posted:true}, {merge:true}).then(val => console.log)
+      }    
 return(
 <View style = {{flex:1, justifyContent:'center', alignItems:'center'}}>
 <View style = {{flex:0.2}}>
@@ -18,7 +25,7 @@ return(
 </View>
 <View style = {{flex:0.3}}>
 <TouchableOpacity style = {{borderWidth:1,padding:20,backgroundColor:"black"}}
-onPress = {() => {mutateSettings({posted:true}),navigation.navigate('EnableLocation')}}
+onPress = {() => {_sendToServer(),navigation.navigate('EnableLocation')}}
 >
     <Text style = {{color:"white", fontWeight:"600"}}>I Want to be Notified</Text>
 </TouchableOpacity>

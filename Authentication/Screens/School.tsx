@@ -3,14 +3,17 @@ import { Dimensions,View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollVie
 import {Button} from 'react-native-elements'; 
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Header } from '../../src/common/Common';
+import {firebase} from '../../config'; 
 export default function School({navigation,route}){
     const [Email, setEmail] = useState();
         
        
-  const _handleEmail = () => {
-   const hello = "zaheeryakub@gmail.com";     
-   
-   navigation.navigate('Password')
+  const _sendToServer = () => {
+    console.log("called")
+    const currentUser = firebase.auth().currentUser; 
+    const db = firebase.firestore();
+    console.log(currentUser.uid)
+    db.collection('user').doc(currentUser.uid).set({ school:Email}, {merge:true}).then(val => console.log)
   }
     return(
         <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
@@ -43,7 +46,7 @@ export default function School({navigation,route}){
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   disabled = {false}
-  onPress = {() => { navigation.navigate('Job', {page:"something"})}}
+  onPress = {() => { _sendToServer(), navigation.navigate('Job', {page:"something"})}}
 />
       </View>
       </View>
