@@ -34,6 +34,7 @@ export default function AccountSettings({navigation}){
 const [matchmaking, setMatchmaking] = useState();   
 const [value, setValue] = useState(1);
 const [email, setEmail] = useState();
+
 const [genderPreference, setGenderPreference] = useState();  
 const [minAgePref, selectminAgePref] = useState(); 
 const [maxAgePref, selectmaxAgePref] = useState(); 
@@ -44,7 +45,11 @@ const slider = forwardRef;
    // }
 useEffect(() => {
    db.collection('user').doc('trialUser').onSnapshot((doc) => {
-       setEmail(doc.data().email)
+      if(doc.data().email !== undefined){
+         setEmail(doc.data().email)
+      }
+       selectminAgePref(doc.data().minAgePref)
+       selectmaxAgePref(doc.data().maxAgePref)
        setGenderPreference(doc.data().genderPreference)
        setValue(doc.data().distancePreference)
        if(doc.data().accountType == "matchmaking"){
@@ -81,6 +86,15 @@ const handleSwitch = () => {
       db.collection('user').doc('trialUser').set({accountType:'both'}, {merge:true}).then(() => console.log("account type updated")).catch(() => console.log("account update failed"))
   } 
   
+}
+const onMinChange = (value ) => {
+ db.collection('user').doc('trialUser').set({minAgePref:value}, {merge:true})
+ .then(() => console.log('min age set'))
+    
+}
+const onMaxChange = (value) => {
+   db.collection('user').doc('trialUser').set({maxAgePref:value}, {merge:true})
+   .then(() => console.log('min age set'))   
 }
 const onSlidingComplete = () => {
     db.collection('user').doc('trialUser').set({distancePreference:value}, {merge:true}).then(() => console.log("value added")).catch(() => console.log("netwrok error"))
@@ -157,7 +171,7 @@ return(
       EMAIL 
    </Text> 
    <Text style = {{fontWeight:"bold",fontSize:15}}>
-       {email}
+       {email || ""}
    </Text>
    <TouchableOpacity onPress = {() => navigation.navigate('Email',{page:'AccountSettings'})}>
    <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
@@ -228,7 +242,7 @@ return(
  <View style = {{flexDirection:"row", alignItems:"center", zIndex:600}}>
  <Text style = {{fontWeight:"600", marginRight:20}}>MIN</Text>
  <DropDownPicker
-                    
+    defaultValue = {minAgePref}                
     items={[
         
         {label: '15', value: 15, selected:true},
@@ -291,13 +305,13 @@ return(
         justifyContent: 'flex-start'
     }}
     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-    onChangeItem={item => selectminAgePref(item.value)}
+    onChangeItem={item => onMinChange(item.value)}
     
 />
 
 <Text style = {{fontWeight:"600", marginRight:20, marginLeft:20}}>MAX</Text>
 <DropDownPicker
-                    
+    defaultValue = {maxAgePref}                
     items={[
         
         {label: '15', value: 15, selected:true},
@@ -361,7 +375,7 @@ return(
         fontWeight: '600',
     }}
     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-    onChangeItem={item => selectmaxAgePref(item.value)}
+    onChangeItem={item => onMaxChange(item.value)}
     
 />
 

@@ -26,11 +26,15 @@ export default function DetailsSettings({navigation}){
 //const {data, loading, error} = useQuery(GET_DETAILS);    
 const [data, setData] = useState(1); 
 const [serverData, setServerData] = useState({}); 
+const [month, setMonth] = useState(); 
 const db = firebase.firestore(); 
 useEffect(() => {
 db.collection('user').doc('trialUser').onSnapshot((doc) => {
-   console.log(doc.data().gender)
+   //console.log(doc.data().gender)
      setServerData(doc.data()); 
+     const d = new Date(doc.data().timeStamp)
+     const month = d.toLocaleString('default', { month: 'long' }); 
+     setMonth(month); 
 })
 },[data])
 
@@ -84,8 +88,8 @@ if(data){
             BIRTHDAY 
          </Text> 
          
-         <Text style = {{fontWeight:"bold",fontSize:12}}>
-           SEPTEMBER 31, 1975 
+         <Text style = {{fontWeight:"bold",fontSize:15}}>
+          {month} {serverData.day},{serverData.year}  
          </Text>
          <TouchableOpacity onPress = {() => navigation.navigate('Birthday', {page:"DetailsSettings"})}>
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
@@ -104,7 +108,7 @@ if(data){
             HEIGHT
          </Text> 
          
-         <Text style = {{fontWeight:"bold",fontSize:20}}>
+         <Text style = {{fontWeight:"bold",fontSize:15}}>
            {serverData.feet}' {serverData.inches}"
          </Text>
          <TouchableOpacity onPress = {() => navigation.navigate('Height', {page:"DetailsSettings"})}>
@@ -125,7 +129,7 @@ if(data){
             HOME TOWN
          </Text> 
          
-         <Text style = {{fontWeight:"bold",fontSize:20}}>
+         <Text style = {{fontWeight:"bold",fontSize:15}}>
          {serverData.hometown}
          </Text>
          <TouchableOpacity onPress = {() => navigation.navigate('Hometown',{page:"DetailsSettings"})}>

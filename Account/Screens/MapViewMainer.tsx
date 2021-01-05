@@ -3,11 +3,18 @@ import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Bu
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import MapView, { Marker } from 'react-native-maps';
 import { mutateSettings } from '../../networking';
+import { firebase } from '../../config'; 
+const db = firebase.firestore(); 
 
 
 export default function MapViewMainer({navigation}){
   const [x, setX] = useState({latitude:37.768865, longitude:-122.475338});
   const [markers, setMarkers] = useState({latlng:{}});  
+  const handleServerLocation = () => {
+     db.collection('user').doc('trialUser').set({latitude:markers.latlng.latitude, longitude:markers.latlng.longitude}, {merge:true})
+     .then(() => console.log("location added"))
+     .catch(() => console.log("location update failed"))
+  }
   const window = Dimensions.get('window');
             const { width, height }  = window
             const LATITUD_DELTA = 0.0922
@@ -15,7 +22,7 @@ export default function MapViewMainer({navigation}){
             console.log(typeof markers.latlng.latitude)
 return(
 <View>
-<TouchableOpacity onPress = {() => {mutateSettings({latPreference:markers.latlng.latitude, lonPreference:markers.latlng.longitude}), navigation.navigate('AccountSettings')} }>  
+<TouchableOpacity onPress = {() => {handleServerLocation(), navigation.navigate('AccountSettings')} }>  
 <Text style = {{alignSelf:"flex-end", marginRight:10, marginTop:10, color:"orange", fontWeight:"bold"}}>Done</Text>  
 </TouchableOpacity>
 <MapView

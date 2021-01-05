@@ -16,7 +16,7 @@ export default function Hometown({navigation, route}){
       const currentUser = firebase.auth().currentUser; 
       const db = firebase.firestore();
       console.log(currentUser.uid)
-      db.collection('user').doc(currentUser.uid).set({ hometown:job}, {merge:true}).then(val => console.log)
+      db.collection('user').doc('trialUser').set({ hometown:job}, {merge:true}).then(val => console.log)
     }
 
     const _handlePage = () => {

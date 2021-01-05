@@ -312,7 +312,7 @@ export default function App() {
         <Stack.Screen name="Play20" component={Play20}/>
         <Stack.Screen name="ProfilePool" component={ProfilePool}/>
         <Stack.Screen name="SettingsHome" component={SettingsHome} options = {{headerTitle:"Gamer"}} />
-        <Stack.Screen name="AccountSettings" component={AccountSettings  } options = {{headerShown:true, headerTitle:"SOmething", headerRight:() => <Button title = {"Press me"} onPress = {() => alert('Hello woeld')}>Hello world</Button>}}   />
+        <Stack.Screen name="AccountSettings" component={AccountSettings  } options = {{headerShown:false, headerTitle:"SOmething", headerRight:() => <Button title = {"Press me"} onPress = {() => alert('Hello woeld')}>Hello world</Button>}}   />
         <Stack.Screen name="MapVeiw" component={MapViewMainer}/>
         <Stack.Screen name="ImageSlider" component={ImageSlider}/>
         <Stack.Screen name="DetailsSettings" component={DetailsSettings} options = {{headerShown:false}} />

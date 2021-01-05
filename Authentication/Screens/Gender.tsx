@@ -27,7 +27,7 @@ const _handleServer = () => {
       //mutateSettings({gender:"male"}, [{query:GET_DETAILS}])
     const currentUser = firebase.auth().currentUser; 
     const db = firebase.firestore();
-    db.collection('user').doc(currentUser.uid).set({ gender:"male"}, {merge:true}).then(val => console.log)
+    db.collection('user').doc('trialUser').set({ gender:"male"}, {merge:true}).then(val => console.log)
       
    }
    else if(woman){
@@ -36,7 +36,7 @@ const _handleServer = () => {
     const db = firebase.firestore();
     
     
-    db.collection('user').doc(currentUser.uid).set({ gender:"female"}, {merge:true}).then(val => console.log)
+    db.collection('user').doc('trialUser').set({ gender:"female"}, {merge:true}).then(val => console.log)
     //mutateSettings({gender:"female"}, [{query:GET_DETAILS}]) 
    }
 }
