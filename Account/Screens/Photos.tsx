@@ -9,6 +9,7 @@ import {firebase} from '../../config';
 
 
 import gql from 'graphql-tag';
+import SettingsHome from './SettingsHome';
 
 
 
@@ -192,7 +193,7 @@ return(
    <Text style = {{fontWeight:"bold",fontSize:18}}>
        Photos
    </Text>
-   <TouchableOpacity onPress = {() => navigation.navigate(page)}>
+   <TouchableOpacity onPress = {() => navigation.navigate(SettingsHome)}>
    <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
    </TouchableOpacity>
 </View>

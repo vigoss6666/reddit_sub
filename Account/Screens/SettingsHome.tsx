@@ -13,30 +13,58 @@ import { AntDesign } from '@expo/vector-icons';
 
 
 
-
 export default function SettingsHome({navigation}){
     const [firstName, setFirstname] = useState(); 
+    const [age, setAge] = useState(); 
+    const [state, setState] = useState(); 
+    const [subLocality, setSubLocality] = useState(); 
+    
+    const db = firebase.firestore();
+    var docRef = db.collection("user").doc('trialUser');
     useEffect(() => {
         const currentUser = firebase.auth().currentUser; 
-       
-        const db = firebase.firestore();
-        var docRef = db.collection("gamer").doc(currentUser.uid);
-        console.log(currentUser.uid)
+         
+        
+         
+    
+        var docRef = db.collection("user").doc('trialUser');
+        docRef.onSnapshot((doc) => {
+            console.log(doc.data())
+            let timestamp = doc.data().timeStamp;
+            const d = new Date(timestamp);
+            var ageDifMs = Date.now() - d.getTime();
+            var ageDate = new Date(ageDifMs);
+            const finalAge = Math.abs(ageDate.getUTCFullYear() - 1970); 
+            setAge(finalAge);
+            setSubLocality(doc.data().subLocality)
+            setState(doc.data().state); 
+             
+        },)
 
-docRef.get().then(function(doc) {
+
+        
+        
+ },[state, subLocality])
+
+useEffect(() => {
+ docRef.get().then(function(doc) {
     if (doc.exists) {
-        console.log("Document data:", doc.data());
-        setFirstname(doc.data().firstname)
+        //console.log("Document data:", doc.data());
+        
     } else {
         // doc.data() will be undefined in this case
         console.log("No such document!");
     }
 }).catch(function(error) {
     console.log("Error getting document:", error);
-});
-        
-        
-    })
+});    
+}, [state, subLocality])
+
+const _firebaseCaller = () => { 
+     const lamer = firebase.functions().httpsCallable('batman');
+     lamer().then(result => console.log(result));  
+}
+
 return(
 <View style = {{flex:1, marginLeft:30, marginRight:30 }}>
 <View style = {{flex:0.1}}>
@@ -44,17 +72,17 @@ return(
 </View>
 <View style = {{flex:0.7}}>
 <View style = {{alignItems:"center", marginBottom:100}}>
-<TouchableOpacity style = {{alignItems:"center"}}>
+<TouchableOpacity style = {{alignItems:"center"}} onPress = {() => _firebaseCaller()}>
 <MaterialIcons name="account-circle" size={200} color="black" />
 </TouchableOpacity>
 <Text style = {{fontWeight:"bold", fontSize:30}}>
 {firstName}
 </Text>
 <Text style = {{fontWeight:"bold", fontSize:15}}>
-    27 years old
+    {age} years old
 </Text>
 <Text style = {{fontWeight:"bold", fontSize:15}}>
-    Mumbai, Maharashtra
+    {subLocality},{state}
 </Text>
 </View>
 <View style = {{flexDirection:"row",justifyContent:"space-around"}}>

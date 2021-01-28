@@ -3,7 +3,6 @@ import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Fl
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { MaterialIcons } from '@expo/vector-icons';
 import {Button,Icon } from "react-native-elements"; 
-var faker = require('faker');
 import { gql } from 'apollo-boost';
 
 const GENERATE_MATCHES = gql`
@@ -22,6 +21,7 @@ const SET_EVENT = gql`
 
 `
 //getDatingPoolfake: datingPoolFake!
+
 
 
 

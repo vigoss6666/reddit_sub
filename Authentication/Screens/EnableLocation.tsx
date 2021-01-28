@@ -21,7 +21,15 @@ const handleLocation = async () => {
         const db = firebase.firestore();
         console.log(currentUser.uid)
         db.collection('user').doc(currentUser.uid).set({ latitude:location.coords.latitude, longitude:location.coords.longitude}, {merge:true}).then(val => console.log)
-        navigation.navigate('LoadContacts', {page:"something"})
+        const lamer = firebase.functions().httpsCallable('batman'); 
+        lamer({lat:location.coords.latitude, lon:location.coords.longitude})
+        .then(result => {
+              db.collection('user').doc('trialUser').set({state:result.data.state, subLocality:result.data.sublocality},{merge:true})
+             .then(() =>  console.log('add contacts data'))
+             .catch(() => console.log('some error'))
+        })
+         
+     
       
 }    
 return(

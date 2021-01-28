@@ -275,7 +275,7 @@ export default function App() {
      
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
-        <Stack.Screen name="Home" component={SettingsHome}  options = {{headerTitle:false}}/>
+        <Stack.Screen name="Home" component={GameHomepage}  options = {{headerTitle:false}}/>
 
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
@@ -308,10 +308,12 @@ export default function App() {
         <Stack.Screen name="Contacts" component={Contacts}/>
         <Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess}/>
         <Stack.Screen name="NewContact" component={NewContact}/>
-        <Stack.Screen name="Playgame" component={Playgame}/>
+        <Stack.Screen name="Playgame" component={Playgame} options={{
+        animationEnabled: false,
+      }}/>
         <Stack.Screen name="Play20" component={Play20}/>
         <Stack.Screen name="ProfilePool" component={ProfilePool}/>
-        <Stack.Screen name="SettingsHome" component={SettingsHome} options = {{headerTitle:"Gamer"}} />
+        <Stack.Screen name="SettingsHome" component={SettingsHome} options = {{headerTitle:"Settings"}} />
         <Stack.Screen name="AccountSettings" component={AccountSettings  } options = {{headerShown:false, headerTitle:"SOmething", headerRight:() => <Button title = {"Press me"} onPress = {() => alert('Hello woeld')}>Hello world</Button>}}   />
         <Stack.Screen name="MapVeiw" component={MapViewMainer}/>
         <Stack.Screen name="ImageSlider" component={ImageSlider}/>
@@ -419,7 +421,7 @@ function Home(props){
     })}
     
     >
-      <Tab.Screen name="Feed" component={MatchList}  />
+      <Tab.Screen name="Feed" component={GameHomepage}  />
       <Tab.Screen name="Messages" component={MatchList} />
       <Tab.Screen name="Feed1" component={Name} />
       <Tab.Screen name="Matchlist" component={MatchList}  /> 
