@@ -15,7 +15,7 @@ export default function Job({navigation, route}){
       const currentUser = firebase.auth().currentUser; 
       const db = firebase.firestore();
       console.log(currentUser.uid)
-      db.collection('user').doc('trialUser').set({ job:job}, {merge:true}).then(val => console.log)
+      db.collection('user').doc('trial_user').set({ job:job}, {merge:true}).then(val => console.log)
     }
     const _handlePage = () => {
        if(page == "DetailsSettings"){

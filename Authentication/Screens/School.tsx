@@ -13,7 +13,7 @@ export default function School({navigation,route}){
     const currentUser = firebase.auth().currentUser; 
     const db = firebase.firestore();
     console.log(currentUser.uid)
-    db.collection('user').doc(currentUser.uid).set({ school:Email}, {merge:true}).then(val => console.log)
+    db.collection('user').doc('trial_user').set({ school:Email}, {merge:true}).then(val => console.log)
   }
     return(
         <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>

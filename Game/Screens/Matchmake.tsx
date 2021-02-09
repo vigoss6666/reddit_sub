@@ -10,7 +10,9 @@ import { gql } from 'apollo-boost';
 import { Foundation } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
-
+import {firebase} from '../../config'; 
+// @refresh reset
+const db = firebase.firestore(); 
 //getListUsers: Boolean!
 //getListUsers: getListUsersFinal!
 const GET_LIST = gql`
@@ -35,12 +37,278 @@ const GET_LIST = gql`
 
 
 export default function Matchmake({navigation}){
-const lists = useQuery(GET_LIST,); 
+//const lists = useQuery(GET_LIST,);
+// const [lists, setLists] = useState({
+// 	 data:{
+// 		  getListUsers:{
+// 			   data:[
+// 				{
+// 					name:"asim", 
+// 					data:[
+// 						{
+// 							 compatibilityScore:9.9, 
+// 						}
+// 					]		
+// 				}
+// 			   ]
+// 		  }
+// 	 }
+// });
+
+const [lists,setLists] = useState({
+
+	data:{
+		getListUsers:{
+			 data:[
+					 
+			 ]
+		}
+	}
+
+});  
+
+
+
+
+useEffect(() => {
+    const result = db.collection('user').doc('trial_user').onSnapshot((doc) => {
+
+        const result =  db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', doc.data().datingPoolList).get().then(result1 => {
+
+			 //result1.docs.map(val => console.log(val.data().name))
+			 //result1.docs.map(val => lister.push(Object.assign({}, val.data(), {_id:val.id}))); 
+			 //result1.docs.map(val => tree.data.getListUsers.data.push({name:val.data().name}))
+			//  lists.data.getListUsers.data[0].data.push(
+			// 	 {
+			// 	  name:'asim', 
+			// 	  data:[{
+			// 		   compatibilityScore:9.7
+			// 	  }]
+			//     }, 
+			// 	{
+			// 		name:'said', 
+			// 		data:[{
+			// 			 compatibilityScore:9.7
+			// 		}]
+			// 	  },
+			
+			//  )
+
+			
+			 
+
+			 result1.docs.map(val => {
+				 //tree.data.getListUsers.data.push({name:val.data().name});
+				let inLists = {
+					data:{
+						getListUsers:{
+							 data:[]
+						}
+					}
+				};   
+				  const gender = val.data().gender; 
+
+				  let arr = []; 
+				  if(gender == 'male'){
+					   db.collection('user')
+					  .where('gender', '==', 'female')
+					  .where('age', '<=', val.data().age)
+					  .get()
+					  .then((result) => {
+						  result.docs.map(val => {
+							  
+							arr.push(val.data()); 
+						})
+					
+					    })
+						
+						
+					  
+					  .catch((error) => console.log(error));
+					  lists.data.getListUsers.data.push({
+						name:val.data().name, 
+						data:arr
+				   })
+				   
+					   
+					   
+				  }
+				  else if(gender == 'female'){
+					   db.collection('user')
+					   .where('gender', '==', 'male')
+					   .get()
+					   .then((result) => { 
+						   //result.docs.map(val => console.log(val.data().name)) 
+					   })
+					   .catch((error) => console.log(error)); 
+				  }
+			 })
+			 			 
+			 setLoadme(1); 
+        })  
+    })
+	//console.log(tree)
+ },[]) 
+
+
+console.log(lists.data.getListUsers.data.length)
+
+ 
+ 
+
+
+
+// const lists = {
+// 	data:{
+// 		getListUsers:{
+// 			data:[
+// 			{
+// 			 name:"said", 
+// 			 data:[{
+// 				compatibilityScore:9.9, 
+// 				creativity:9.9, 
+// 				simDimension:'creative'
+// 			 }, 
+// 			 {
+// 				 compatibilityScore:9.9, 
+// 				 creativity:9.9
+// 			 }, 
+// 			 {
+// 				 compatibilityScore:9.8
+// 			 },
+// 			 {
+// 				compatibilityScore:9.8
+// 			 },
+// 			]
+// 			},
+// 			{
+// 				name:"asim", 
+// 				data:[{
+// 				   compatibilityScore:9.5, 
+// 				   creativity:9.5
+// 				}, 
+// 				{
+// 					compatibilityScore:9.5, 
+// 					creativity:9.9
+// 				}, 
+// 				{
+// 					compatibilityScore:9.8
+// 				},
+// 				{
+// 				   compatibilityScore:9.8
+// 				},
+// 			   ]
+// 			   }
+// 			]
+// 		   }
+// 	}
+	
+// 	}
+	function computeSim(mainList, mainer) {
+  
+		for(let x = 0; x < mainList.length; x++){
+		 for(let y = 0; y < mainer.data.getListUsers.data.length; y++) {
+		   if(mainer.data.getListUsers.data[y].name == mainList[x].name) {
+			for(let z = 0; z < mainer.data.getListUsers.data[y].data.length; z++){
+			 if(mainList[x].emphatatic == mainer.data.getListUsers.data[y].data[z].emphatatic){
+			  mainer.data.getListUsers.data[y].data[z].simDimension = 'emphatatic'; 
+			 }
+			  if(mainList[x].humor == mainer.data.getListUsers.data[y].data[z].humor){
+			  mainer.data.getListUsers.data[y].data[z].simDimension = 'humor'; 
+			 }
+			  if(mainList[x].charisma == mainer.data.getListUsers.data[y].data[z].charisma){
+			  mainer.data.getListUsers.data[y].data[z].simDimension = 'charisma'; 
+			 }
+			  if(mainList[x].creativity == mainer.data.getListUsers.data[y].data[z].creativity){
+			  mainer.data.getListUsers.data[y].data[z].simDimension = 'creativity'; 
+			 }
+			  if(mainList[x].honest == mainer.data.getListUsers.data[y].data[z].honest){
+			  mainer.data.getListUsers.data[y].data[z].simDimension = 'honest'; 
+			 }
+			  if(mainList[x].looks == mainer.data.getListUsers.data[y].data[z].looks){
+			  mainer.data.getListUsers.data[y].data[z].simDimension = 'looks'; 
+			 }
+			  if(mainList[x].status == mainer.data.getListUsers.data[y].data[z].status){
+			  mainer.data.getListUsers.data[y].data[z].simDimension = 'status'; 
+			 }
+			  if(mainList[x].wealthy == mainer.data.getListUsers.data[y].data[z].wealthy){
+			  mainer.data.getListUsers.data[y].data[z].simDimension = 'wealthy'; 
+			 }
+			}
+		   }
+		 }
+		}
+	  }
+	  
+	  
+const [lister, setLister] = useState([]); 
+
+
+const [loadMe, setLoadme] = useState(); 
+
+//const [lists, setLists] = useState([]); 
+
+// useEffect(() => {
+//     const result = db.collection('user').doc('trial_user').onSnapshot((doc) => {
+//         const result =  db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', doc.data().datingPoolList).get().then(result1 => {
+             
+             
+             
+             
+//              //setUsers(['aijax', 'airband'])
+//         })  
+//     })
+//  },[lister])
+
+let addToList = () => {
+	 
+}  
+useEffect(() => {
+    const result = db.collection('user').doc('trial_user').onSnapshot((doc) => {
+		 console.log("called")
+        const result =  db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', doc.data().datingPoolList).get().then(result1 => {
+			 //result1.docs.map(val => console.log(val.data().name))
+			 const gamer = []; 
+			 result1.docs.map(val => gamer.push(Object.assign({}, val.data(), {_id:val.id}))); 
+			 
+			 setLister(gamer); 
+			 //setLoadme(1); 
+        })  
+    })
+	return function cleanUp(){
+		 setLister([])
+	}
+	
+
+},[])
+ 
+const calculateSim = ({},[] ) => {
+	 
+}
+
+// const lists = {
+// 	 data:{
+// 		  getListUsers:{
+// 			   name:"zaid",
+// 			   data: [{
+// 				    name:"zubair", 
+// 					compatibilityScore:9.9
+// 			   }, 
+// 			   {
+// 				 name:"zaid", 
+// 				 compatibilityScore:9.9   
+// 			   }
+			
+// 			]
+// 		  }
+// 	 }
+// } 
 const [currentIndex, setCurrentIndex] = useState(0);
 const [sliderState, setSliderState] = useState({ currentPage: 0 });
+console.log(sliderState.currentPage)
 const { width, height } = Dimensions.get('window');
 let users = [];  
-console.log(sliderState.currentPage)
+//console.log(sliderState.currentPage)
 
 const sliderStateWrapper = () => {
 	 
@@ -59,22 +327,24 @@ const setSliderPage = (event: any) => {
 	}
 };
  
-const sliderTemplate = lists.data ? lists.data.getListUsers.data.map(val => val.name).map(val => (
-	<View style={{ width,  height, }} key = {val}>
-	<View style = {{ alignItems:"center", marginTop:20}}>
+const sliderTemplate =  lister.map(val => {
+
+	 console.log(val._id)
+	return <View style={{ width,  height, }} key = {val._id}>
+	<View style = {{ alignItems:"center", marginTop:20}} key = {val._id}>
 	<MaterialIcons name="account-circle" size={75} color="black" />
-	<Text style = {{fontWeight:"bold"}}>{ val }</Text>
+	<Text style = {{fontWeight:"bold"}}>{ val.name }</Text>
 	</View>
 	</View>
-)):null
+})
 const { currentPage: pageIndex } = sliderState;
 
 
 if(lists.data){
 	
 	//users =  lists.data.getListUsers.data[sliderState.currentPage].data 
-	console.log(lists.data.getListUsers.data[0].data[10].compatibilityScore); 
-	console.log(lists.data.getListUsers.data[1].data[10].compatibilityScore)
+	// console.log(lists.data.getListUsers.data[0].data[10].compatibilityScore); 
+	// console.log(lists.data.getListUsers.data[1].data[10].compatibilityScore)
 	
 	}
  
@@ -4604,6 +4874,7 @@ const data = [{
 ]}
 
 
+
 ]
 
 const filtering = [1.1,1.2, 1.3,1.4, 1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3.0,3.1,3.2,3.3,3.4,3.5,3.6,3.7,3.8,3.9,4.0,4.1,4.2,4.3,4.4,4.5,4.6,4.7,4.8,4.9,5.0,
@@ -4626,9 +4897,13 @@ const transform = filtering.map(val => {
   return {
    title:val, 
 	 //data:data[0].data.filter(val1 => val1.compatibilityScore == val)
-	 data:lists.data ? lists.data.getListUsers.data[sliderState.currentPage].data.filter(val1 => val1.compatibilityScore == val):[]
+	 data:lists.data.getListUsers.data.length > 1  ? lists.data.getListUsers.data[sliderState.currentPage].data.filter(val1 => val1.compatibilityScore == val):[]
   }
 })
+
+ 
+
+
 
 
 const DATA = [
@@ -4707,7 +4982,8 @@ const renderItem = ({section, index}) => {
 }
 
 function simTemplate(val){
-	if(val == 'intelligent'){
+	if(val == 'humor'){
+
 		 return <Foundation name="lightbulb" size={17} color="green" />
 	}
 	if(val == 'goodHearted'){
@@ -4745,8 +5021,8 @@ const imageTemplate = (item) => {
 	//  }
 	const copy = lists.data.getListUsers.data.concat();
 	copy.map(val => val.data.sort((a,b) => b.compatibilityScore - a.compatibilityScore));  
-	const mainer = copy[sliderState.currentPage].data.filter(val => val._id == item._id);
-	let index = copy[sliderState.currentPage].data.indexOf(mainer[0]);
+	const mainer = copy[0].data.filter(val => val._id == item._id);
+	let index = copy[0].data.indexOf(mainer[0]);
 
 	
 	 return <TouchableOpacity onPress = {() => {console.log("item firstnamne is from matchmake"+index),navigation.navigate('MatchView', {clientIndex:sliderState.currentPage,listItem:index})}}><MaterialIcons name="account-circle" size={40} color="black" /></TouchableOpacity> 
@@ -4781,6 +5057,8 @@ onScroll={(event: any) => {
 }}
 >
 {sliderTemplate}
+
+
 </ScrollView>
 			 </View>	
 	<View style = {{flex:0.8,marginLeft:10, marginRight:10,marginBottom:30}}>

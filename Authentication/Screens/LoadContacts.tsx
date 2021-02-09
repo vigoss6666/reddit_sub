@@ -52,6 +52,7 @@ export default function LoadContacts({navigation}){
         
     //     navigation.navigate('Loader',{profiles:data.uploadContacts.data});
            
+
     // }
     useEffect(() => {
         _uploadContacts()
@@ -82,7 +83,7 @@ export default function LoadContacts({navigation}){
                        })
                    }
               })
-             db.collection('user').doc('trialUser').set({contacts:finaler.length}); 
+             db.collection('user').doc('trial_user').set({contacts:finaler}); 
              await finaler.map(async val => {
                    userRef.add({fullName:val.fullName, 
                     id:val.id, 

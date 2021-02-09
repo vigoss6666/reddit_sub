@@ -13,6 +13,7 @@ export default function School({navigation}){
    const hello = "zaheeryakub@gmail.com";     
    
    navigation.navigate('Password')
+   
   }
     return(
       <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>

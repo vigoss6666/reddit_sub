@@ -14,6 +14,9 @@ import {HeaderBar} from '../../src/common/Common';
 const contactList = [{name:"zaid shaikh", firstname:"zaid", _id:'123'},{name:"david", firstname:"zaid", _id:'1234'}];
 const friendsList = [{}];
 import * as Contacts from 'expo-contacts';
+import {firebase} from '../../config'; 
+const db = firebase.firestore(); 
+// @refresh reset
 
 const UPLOAD_CONTACTS = gql`
  mutation namer($contacts:Contact1!){
@@ -71,21 +74,57 @@ const ADD_DATING = gql`
 
 
 const useFetchContactPool = (navigation) => {
-     const [addDating,] = useMutation(ADD_DATING); 
-     const {data, loading, error,refetch} = useQuery(GET_CONTACT_POOL); 
+     //const [addDating,] = useMutation(ADD_DATING); 
+     //const {data, loading, error,refetch} = useQuery(GET_CONTACT_POOL); 
+     const [data,setData] = useState({
+          getContactPoolList:{
+               data:[{
+                     _id:'123', 
+                     name:"zaid", 
+                     firstName:'zaid',
+                      
+               }]
+          }
+     })
+          useEffect(() => {
+            let arr = {
+                  data:{
+                        getContactPoolList:{
+                              data:[]
+                        }
+                  }
+            };    
+            console.log("called")   
+            db.collection('user').doc('trial_user').get().then(result => {
+
+             if(result.data().contactsPool.length > 1 ){ 
+               db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', result.data().contactsPool).get().then(result1 => {
+                    const finalResult = result1.docs.map(val => Object.assign({}, {fullName:val.data().fullName}, {_id:val.id}));     
+                      
+                    data.getContactPoolList.data = finalResult
+                    setNamer(namer + 1)
+                    //setData(arr);  
+                  })
+             }
+             
+       })    
+     },[data])
      const KEYS_TO_FILTERS = ['name'];
      const [search, setSearch] = useState('');
-     const [caret, setCaret] = useState([{caret:false, _id:123}]); 
      const [namer, setNamer] = useState(1); 
      const _sendToServer = (val) => {
-           const serverObject = { _id:val._id}; 
-           addDating({variables:{userInput:serverObject}, refetchQueries:[{query:GET_DATING_POOL}]}, ); 
+           //const serverObject = { _id:val._id}; 
+           //addDating({variables:{userInput:serverObject}, refetchQueries:[{query:GET_DATING_POOL}]}, ); 
+           db.collection('user').doc('trial_user').update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(val._id)}); 
+           db.collection('user').doc('trial_user').update({contactsPool:firebase.firestore.FieldValue.arrayRemove(val._id)}); 
+           setNamer(namer + 1)
      }
  
      if(data){
           const filteredEmails = data.getContactPoolList.data.filter(createFilter(search, KEYS_TO_FILTERS))
           const _checkCaret = (val) => {
                const result = caret.filter(val1 => (
+  
                     val._id == val1._id
                ))
                return result[0].caret; 
@@ -104,7 +143,7 @@ const useFetchContactPool = (navigation) => {
               result[0].caret = false; 
               setNamer(namer + 1)
           }
-           console.log(data)
+           //console.log(data)
            return (
                <View style = {{flex:1}}>
            <View style = {{flex:0.4}}>
@@ -136,7 +175,7 @@ const useFetchContactPool = (navigation) => {
              <View style = {{flexDirection:"row", justifyContent:'space-between'}}>
              <View style = {{flexDirection:"row", alignItems:"center"}}>
              <MaterialIcons name="account-circle" size={24} color="black" />
-             <Text style = {{marginLeft:10, marginBottom:5, fontWeight:"bold"}}>{val.name || val.firstname}</Text>
+             <Text style = {{marginLeft:10, marginBottom:5, fontWeight:"bold"}}>{val.fullName || val.firstname}</Text>
              </View>
              {   
                   val.caret ? 
@@ -184,13 +223,23 @@ const useFetchContactPool = (navigation) => {
 }
 
 const useFetchDatingPool = () => {
-     const {data,loading,error} = useQuery(GET_DATING_POOL); 
-     const [removeDating] = useMutation(REMOVE_FROM_DATING); 
+     //const {data,loading,error} = useQuery(GET_DATING_POOL); 
+     //const [removeDating] = useMutation(REMOVE_FROM_DATING); 
      const [country,selectCountry] = useState(['25 to 30']); 
      const KEYS_TO_FILTERS = ['name'];
      const [search, setSearch] = useState('');
      const [caret, setCaret] = useState([{caret:false, _id:123}]); 
+
      
+     const [data, setData] = useState({
+          getDatingPoolList:{
+               data:[{
+                     _id:'something', 
+                     name:"zaid", 
+                     firstName:'zaid'
+               }]
+          }
+     })
      
      const [namer, setNamer] = useState(1)
      if(data){
@@ -203,7 +252,8 @@ const useFetchDatingPool = () => {
                return result[0].caret; 
           }
           const setCaretTrue = (val) => {
-               const result = filteredEmails.filter(val1 => (
+               console.log(val)
+               const result = data.getDatingPoolList.data.filter(val1 => (
                     val._id == val1._id
                ))
                result[0].caret = true; 
@@ -273,6 +323,7 @@ const useFetchDatingPool = () => {
                   {   
                        val.caret ? 
                   <TouchableOpacity onPress = {() => setCaretFalse(val)}><AntDesign name="caretup" size={24} color="black" /></TouchableOpacity>:<TouchableOpacity onPress = {() => setCaretTrue(val)}><AntDesign name="caretdown" size={24} color="black" /></TouchableOpacity>}
+
                   </View>
                   { val.caret ? 
                   <View>
@@ -395,11 +446,7 @@ const useFetchDatingPool = () => {
              
             </View>)
         }
-        if(loading){
-              return <View style = {{flex:1, justifyContent:"center", alignItems:"center"}}>
-                   <Text>Loading</Text> 
-              </View>
-        }
+        
      
 }
 
@@ -407,7 +454,7 @@ const useFetchDatingPool = () => {
 
 
 export default function ProfilePool({navigation}){
-const [uploadContacts1, {data}] = useMutation(UPLOAD_CONTACTS);
+//const [uploadContacts1, {data}] = useMutation(UPLOAD_CONTACTS);
 const [namer, setNamer] = useState(1); 
 const [selected, setSelected] = useState('friends'); 
 const dating = useFetchDatingPool(); 
@@ -437,13 +484,13 @@ const _uploadContacts = async () => {
            })
            
            const networkData = {data:finaler}; 
-           uploadContacts1({variables:{contacts:networkData}}); 
+           //uploadContacts1({variables:{contacts:networkData}}); 
            }
        }
  }
- useEffect(() => {
-    _uploadContacts()      
- }, [namer])
+//  useEffect(() => {
+//     _uploadContacts()      
+//  }, [namer])
 
 
 return(

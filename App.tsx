@@ -91,6 +91,7 @@ import DocumentViewer from './src/common/DocumentViewer';
 import MatchList from './Chat/Screens/MatchList';
 import { FontAwesome } from '@expo/vector-icons';
 import Frontpage from './Authentication/Screens/Frontpage';
+import { uploadImage } from 'networking';
  
 const currentUser = firebase.auth().currentUser; 
     const db = firebase.firestore(); 
@@ -275,7 +276,9 @@ export default function App() {
      
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
-        <Stack.Screen name="Home" component={GameHomepage}  options = {{headerTitle:false}}/>
+
+        <Stack.Screen name="Home" component={ProfilePool}  options = {{headerTitle:false}}/>
+
 
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>

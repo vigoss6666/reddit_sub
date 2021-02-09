@@ -11,6 +11,16 @@ import {HeaderBar} from '../../src/common/Common';
 import { gql } from 'apollo-boost';
 import {firebase} from '../../config'; 
 import { random } from 'underscore';
+import { firestore } from 'firebase';
+function create_UUID(){
+  var dt = new Date().getTime();
+  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = (dt + Math.random()*16)%16 | 0;
+      dt = Math.floor(dt/16);
+      return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+  });
+  return uuid;
+}
 
 
 
@@ -41,38 +51,38 @@ const GET_DATING_POOL = gql`
  }
 `
 const demoDatabase = [{
-  "Emphatatic": 3,
+  "Emphatatic": 1,
   "Humor": 1,
   "_id": "_id3",
-  "charisma": 10,
-  "creativity": 24,
-  "honest": 6,
-  "looks": 9,
+  "charisma": 1,
+  "creativity": 1,
+  "honest": 1,
+  "looks": 1,
   "name": "Seema",
   "narcissicstic": 7,
   "profilePic": "https://i.pinimg.com/originals/bc/cc/3a/bccc3a73573a69385ae9e9dce82a952f.jpg",
   "psychopath": 2,
   "sociopath": 6,
-  "status": 7,
-  "wealthy": 5,
+  "status": 1,
+  "wealthy": 1,
   "gender": "female", 
   "state": "california"
 }, 
 {
-  "Emphatatic": 3,
+  "Emphatatic": 1,
     "Humor": 1,
     "_id": "_id3",
-    "charisma": 10,
-    "creativity": 24,
-    "honest": 6,
-    "looks": 9,
+    "charisma": 1,
+    "creativity": 1,
+    "honest": 1,
+    "looks": 1,
     "name": "Samantha",
     "narcissicstic": 7,
     "profilePic": "https://i.pinimg.com/originals/bc/cc/3a/bccc3a73573a69385ae9e9dce82a952f.jpg",
     "psychopath": 2,
     "sociopath": 6,
-    "status": 7,
-    "wealthy": 5,
+    "status": 1,
+    "wealthy": 1,
     "gender":"female", 
     "state":"california"
 }, 
@@ -95,6 +105,7 @@ const demoDatabase = [{
     "state":"california"
 }
 ]
+
 
 
 
@@ -136,6 +147,12 @@ const demoDatabase = [{
 export default function Playgame({navigation}) {
   //let [users, setUsers] = useState(['zaid', 'zaheer']);   
   let users = useRef([]).current; 
+//   useEffect(() => {
+//     demoDatabase.map(val => {
+//        db.collection('user').doc().set(val).then(() => console.log("added")).catch(() => console.log("didnt run the transaction"))
+//     })
+//  },[])
+  
 //   //const [setEvent] = useMutation(SET_EVENT);
   let dragText1 = useRef().current; 
   let dragText2 = useRef().current;
@@ -165,7 +182,7 @@ export default function Playgame({navigation}) {
    //const mainer = mainServerUsers[Math.floor(Math.random() * mainServerUsers.length)];
    if(mainServerUsers){
    const random = Math.floor(Math.random() * mainServerUsers.length);
-   const mainer = mainServerUsers.filter(val => val.name = "asim"); 
+   const mainer = mainServerUsers.filter(val => val.name = "said"); 
    const randomElement = mainer[0];  
    console.log(randomElement)
    //console.log(randomElement)
@@ -203,6 +220,7 @@ export default function Playgame({navigation}) {
       simAttributes.push({trait:'wealthy', match:demoDatabase[x].name, element:randomElement.name }); 
      }
      if(simAttributes.length  <= 3 ){
+      console.log("No 3 attributes match");  
       simAttributes = []; 
      }
      if(simAttributes.length >= 3){
@@ -215,16 +233,23 @@ export default function Playgame({navigation}) {
    console.log("matches is"+matches.length)
    console.log(simAttributes)
    if(matches.length > 0){
+      const d = new Date(); 
       console.log("match is"+ matches[0])
       console.log(randomElement._id)
-      db.collection('user').doc(randomElement._id).set({chimp:true}, {merge:true}); 
-      
-      return matches[0]
+      const matchId = create_UUID(); 
+      db.collection('user').doc(randomElement._id).update({matches:firebase.firestore.FieldValue.arrayUnion({match:matches[0]._id, matchmaker:'trialUser', createdAt: d.getTime(), matchId})}); 
+      //db.collection('user').doc(matches[0]._id).update({matches:firebase.firestore.FieldValue.arrayUnion({match:randomElement._id, matchmaker:'trialUser', createdAt: d.getTime(), matchId})}); 
+      db.collection('matches').doc(matchId).set({client1: randomElement._id, client2: matches[0]._id, discoveredBy:'trialUser', createdAt: d.getTime()})
+      db.collection('user').doc('trial_user').update({matches:firebase.firestore.FieldValue.arrayUnion(matchId), matchDiscovered:{num:firebase.firestore.FieldValue.increment(1), matchId}}); 
+      return {user:matches[0], client:randomElement, matchId}
+
    }
-  //  else {
-  //     return "No matches found"; 
-  //  }
+   else {
+
+      return false; 
    }
+   }
+
    
 }
  
@@ -513,6 +538,11 @@ const firstTemplated = <View style = {{height:100, width:100, borderRadius:50, j
   function measure(gesture){
     
     const isMatch = suggestMatches(); 
+    console.log("isMatcch"+isMatch)
+    if(isMatch){
+       
+       navigation.navigate('Endorsement', {isMatch})
+    }
      
     //console.log(gesture)
     

@@ -15,10 +15,11 @@ export default function Name({navigation,name}){
    console.log(name)
    const fire = () => {
     const currentUser = firebase.auth().currentUser; 
-    console.log("uid is"+currentUser.uid)
+    
+
     
     const db = firebase.firestore(); 
-    db.collection('user').doc(currentUser.uid).set({firstname:firstName,lastname:lastName}).then(val => console.log)
+    db.collection('user').doc('trial_user').set({firstname:firstName,lastname:lastName}, {merge:true}).then(val => console.log)
     } 
    
     

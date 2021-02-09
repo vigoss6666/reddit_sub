@@ -19,8 +19,10 @@ const _sendToServer = () => {
  
     const currentUser = firebase.auth().currentUser; 
     const db = firebase.firestore();    
-    db.collection('user').doc('trialUser').set({ feet , inches}, {merge:true}).then(val => console.log)
+    db.collection('user').doc('trial_user').set({ feet , inches}, {merge:true}).then(val => console.log)
+
 }     
+
       
 const _handleNavigation = () => {
      if(page == "DetailsSettings"){

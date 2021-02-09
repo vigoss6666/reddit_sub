@@ -2,6 +2,8 @@ import  React, {useState,useRef,useEffect} from 'react';
 import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView,} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Text,Overlay, Avatar} from 'react-native-elements'; 
+import {arrayReplace} from '../../networking'; 
+// @refresh reset
 
 import { Icon } from 'react-native-vector-icons/Icon';
 import { AntDesign } from '@expo/vector-icons';
@@ -9,6 +11,8 @@ import { gql } from 'apollo-boost';
 import { Button } from 'react-native-elements';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { MaterialIcons } from '@expo/vector-icons';
+import { firebase } from '../../config'; 
+const db = firebase.firestore(); 
 
 //addAgeList(userInputList: userInputList1!): Boolean!
 const ADD_USER_AGE = gql`
@@ -18,25 +22,72 @@ mutation namer($userInputList:userInputList1!){
 
 `
 export default function ContactsAge({navigation,route}){
-const {profiles} = route.params;     
+    const [profiles, setProfiles] = useState([
+   
+        { 
+        _id:"3CSsXNrFkrYYCaPs4GWJ", 
+        name:"zaid shaikh", 
+     
+        firstname:"zaid"
+       }, 
+       { 
+        _id:"4qaBwvr4RTZSYbvwDgGx", 
+        name:"sameer niwas", 
+        firstname:"sameer"
+       },
+     ])     
+
 const data1 = [{ fullname:"zaid",min:15,max:19}, {fullname:"zaheer",min:20,max:24}, {zIndex:400, fullname:"nihal",ageRange:{min:25, max:29}},{fullname:"nihal",ageRange:{min:30, max:34}}]
-const [addAge, {data}] = useMutation(ADD_USER_AGE); 
+//const [addAge, {data}] = useMutation(ADD_USER_AGE); 
 const [selectedValue, setSelectedValue] = useState("java");
 const ageRange = [{min:15,max:19},{min:20,max:24},{min:25, max:29}, {min:30, max:34}, {min:35, max:39}, {min:40, max:44}, {min:45, max:49}]
 const [visible, setVisible] = useState(false);
 const [country,selectCountry] = useState([]); 
 const [namer, setNamer] = useState(0); 
 const [zIndex, setIndex] = useState(1000); 
+const [gate, checkGate] = useState(true);
+useEffect(() => {
+    if(country.length == profiles.length){
+        checkGate(false); 
+    }    
+ }, [profiles, country])
+ 
+
+
+
+//console.log(country.size)
+console.log(country.length)
+
+const updateToServer = () => {
+     const batch  = db.batch(); 
+     country.map(val => {
+          const ref = db.collection('user').doc(val._id); 
+          batch.set(ref, {minAge:val.minAge}, {merge:true}); 
+          batch.set(ref, {maxAge:val.maxAge}, {merge:true});
+          batch.set(ref, {age:parseInt((val.maxAge + val.minAge)/2)}, {merge:true});
+     })
+     batch.commit().then(() => console.log("documents have been added successfully"))
+}
+const updateCountryWrapper = (obj:any) => {
+     
+     
+     //console.log(result)
+
+}
+
+
 
 const _sendToServer = () => {
      addAge({variables:{userInputList:{data:country}}}); 
      navigation.navigate('ProfilePool'); 
+
 }
 
 const toggleOverlay = () => {
     setVisible(!visible);
   };
-console.log(country)  
+ 
+
 useEffect(() => {
      
 }, [namer])
@@ -98,7 +149,7 @@ useEffect(() => {
         justifyContent: 'flex-start'
     }}
     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-    onChangeItem={item => selectCountry([...country,{...item.value, _id:val._id}])}
+    onChangeItem={item => selectCountry(arrayReplace(country, {...item.value, _id:val._id}))}
     
 />
                     
@@ -112,7 +163,7 @@ useEffect(() => {
         </ScrollView>        
         </View>
         <View style = {{flex:0.2, justifyContent:'center',marginTop:10}}>
-         <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {_sendToServer()}}></Button>   
+         <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {updateToServer(), navigation.navigate('ProfilePool')}} disabled = {gate}></Button>   
         </View>
         </View>
         )    

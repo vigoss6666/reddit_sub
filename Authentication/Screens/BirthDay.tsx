@@ -43,9 +43,12 @@ export default function BirthDay({navigation, route}){
     const day = d.getDate(); 
     //mutateSettings({month, year, timeStamp})
     const currentUser = firebase.auth().currentUser; 
-   
+    const namer = new Date(); 
+    const age = namer.getFullYear() - year; 
+    
     const db = firebase.firestore();
-    db.collection('user').doc('trialUser').set({ month,year,timeStamp,day}, {merge:true}).then(val => console.log)
+    db.collection('user').doc('trial_user').set({ month,year,timeStamp,day, age}, {merge:true}).then(val => console.log)
+
   }
 
   const showMode = (currentMode) => {

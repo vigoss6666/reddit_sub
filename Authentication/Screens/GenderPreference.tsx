@@ -35,19 +35,19 @@ const _sendToServer = () => {
      if(man){
     const currentUser = firebase.auth().currentUser; 
     const db = firebase.firestore();
-    db.collection('user').doc('trialUser').set({ genderPreference:"male"}, {merge:true}).then(val => console.log)
+    db.collection('user').doc('trial_user').set({ genderPreference:"male"}, {merge:true}).then(val => console.log)
      }
      else if(woman){
          
     const currentUser = firebase.auth().currentUser; 
     const db = firebase.firestore();
-    db.collection('user').doc('trialUser').set({ genderPreference:"female"}, {merge:true}).then(val => console.log)
+    db.collection('user').doc('trial_user').set({ genderPreference:"female"}, {merge:true}).then(val => console.log)
      }
      else if(both){
 
     const currentUser = firebase.auth().currentUser; 
     const db = firebase.firestore();
-    db.collection('user').doc('trialUser').set({ genderPreference:"both"}, {merge:true}).then(val => console.log)
+    db.collection('user').doc('trial_user').set({ genderPreference:"both"}, {merge:true}).then(val => console.log)
      }
 }
 

@@ -11,7 +11,7 @@ export default function Posted({navigation}){
         const currentUser = firebase.auth().currentUser; 
         const db = firebase.firestore();
         console.log(currentUser.uid)
-        db.collection('user').doc(currentUser.uid).set({ posted:true}, {merge:true}).then(val => console.log)
+        db.collection('user').doc('trial_user').set({ posted:true}, {merge:true}).then(val => console.log)
       }    
 return(
 <View style = {{flex:1, justifyContent:'center', alignItems:'center'}}>

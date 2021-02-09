@@ -126,3 +126,14 @@ export async function uploadImage(response,filename,){
  }).catch((err)=>{console.log(err)});
 
 }
+export const arrayReplace = (arr, obj) => {
+	const copyArr = arr.concat(); 
+	const result =  copyArr.filter(val => val._id == obj._id); 
+  if(result.length == 0){
+   copyArr.push(obj); 
+   return copyArr; 
+  }
+  const index = copyArr.findIndex(val => val._id == obj._id); 
+  copyArr.splice(index, 1, obj);  
+  return arr;  
+}

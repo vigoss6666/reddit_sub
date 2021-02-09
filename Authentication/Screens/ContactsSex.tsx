@@ -7,6 +7,23 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
 import {Button} from 'react-native-elements'; 
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+import {firebase} from '../../config'; 
+// @refresh reset
+
+
+//rres
+
+
+interface profile {
+   _id:string; 
+   firstname?: string; 
+   name?: string; 
+
+}
+
+interface profiles {
+   data:[profile] 
+}
 
 
 // getDatingPool: Boolean!
@@ -34,23 +51,60 @@ mutation namer($userInputList:userInputList1!){
 
 export default function ContactsSex({navigation,route}){
 const data1 = [{fullname:"Zaid shaikh", identification:'something',gender:'male', _id:1},{fullname:"ALi reza", identification:'something', _id:2},{fullname:"Huraira", identification:'something', _id:3},{fullname:"Samadh Khan",identification:'something', _id:4},{fullname:"Nihal Modal",identification:'somehting',_id:5},{fullname:"Rafiq modal", identification:'something', _id:6},{fullname:"Baiju Noyan", identification:'something', _id:7},{fullname:"Bilkis baji",identification:'something', _id:8},{fullname:"Bismil",identification:'something', gender:'female', _id:9}]
-const [updateContactsGender,{data}] = useMutation(UPDATE_CONTACT_GENDER); 
+//const [updateContactsGender,{data}] = useMutation(UPDATE_CONTACT_GENDER); 
+
 const [fetchData,setFetchdata] = useState([]); 
 const [arr,addArr] = useState([]); 
 const [namer, setNamer] = useState(0); 
+const [gate, checkGate] = useState(true); 
 const [gender,addGender] = useState([]); 
-const {profiles} = route.params; 
+//const {profiles} = route.params; 
+
+
+const [profiles, setProfiles] = useState([
+
+   { 
+   _id:"3CSsXNrFkrYYCaPs4GWJ", 
+   name:"zaid shaikh", 
+
+   firstname:"zaid"
+  }, 
+  { 
+   _id:"4qaBwvr4RTZSYbvwDgGx", 
+   name:"sameer niwas", 
+   firstname:"sameer"
+  },
+]) 
 useEffect(() => {
   
 }, [namer])
 
-if(data){
-   console.log(data); 
-   navigation.navigate('ContactsAge', {profiles:data.updateContactGender.data}); 
+// if(data){
+//    console.log(data); 
+//    navigation.navigate('ContactsAge', {profiles:data.updateContactGender.data}); 
+// }
+
+
+
+
+
+const updateToServer = () => {
+
+    const db = firebase.firestore(); 
+    let batch = db.batch(); 
+    db.collection('user')
+    profiles.map(val => {
+
+      const ref = db.collection('user').doc(val._id); 
+      batch.set(ref, {gender:val.gender}, {merge:true});   
+    })
+    batch.commit().then(() => console.log('DOcument updated successfully')); 
 }
 
 const addMale = (obj => {
+   
 const data = profiles.concat(); 
+
    
    
 const result = data.filter(val => {
@@ -58,9 +112,9 @@ const result = data.filter(val => {
 })
 
 result[0].gender = "male"; 
-data.splice(0,1,result[0]); 
-setNamer(namer + 1);
-console.log(profiles) 
+
+setProfiles(data); 
+
 })
 const addFemale = (obj => {
   const data = profiles.concat(); 
@@ -71,9 +125,24 @@ const result = data.filter(val => {
 })
 
 result[0].gender = "female"; 
-data.splice(0,1,result[0]); 
-setNamer(namer + 1);  
+//data.splice(0,1,result[0]); 
+setProfiles(data); 
 })
+
+useEffect(() => {
+   profiles.map(val => {
+       
+      if(val.gender == undefined){
+          checkGate(true); 
+          return; 
+      }
+      checkGate(false); 
+      
+  })    
+}, [profiles])
+
+
+console.log("gate is"+gate)
 
 const _sendToServer = () => {
  const finaler = profiles.map(val => {
@@ -115,10 +184,12 @@ const _sendToServer = () => {
                   >
                       <View style = {{flexDirection:'row', alignItems:'center', flex:0.9}}>
                       <Avatar rounded icon = {{name:'account-circle', color:'black'}} activeOpacity = {0.8} size = {"medium"} />  
-                      <Text>{val.fullname || val.firstname}</Text>
+                      <Text>{val.name || val.firstname}</Text>
+
                       </View>
                       <View style = {{alignItems:'center', justifyContent:'space-between', marginRight:10, flexDirection:'row',flex:0.2}}>
                          <TouchableOpacity onPress = {() => {addMale(val)}} style = {{}}> 
+                         
                          <FontAwesome name="male" size={34} color={val.gender == 'male' ? 'green':'black' || val.gender} />
                          </TouchableOpacity>
                          <TouchableOpacity onPress = {() => {addFemale(val)}}>
@@ -132,7 +203,8 @@ const _sendToServer = () => {
             </ScrollView> 
     </View>
     <View style = {{flex:0.2, justifyContent:'center',marginTop:10 }}>
-    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { _sendToServer()}}></Button>   
+    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { updateToServer(), navigation.navigate('ContactsAge')}} disabled = {gate}></Button>   
+
     </View>
     </View>
     ) 

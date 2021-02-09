@@ -42,6 +42,7 @@ console.log("profile is something")
 console.log(serverData)
 // if(data){
 //    navigation.navigate('ContactsSex', {profiles:data.addDatingPool.data}); 
+
 // }
 const addServerDataWrapper = (text) => {
   
