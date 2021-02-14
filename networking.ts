@@ -2,6 +2,7 @@
 import { StyleSheet, Text, View,Button, AsyncStorage, Settings } from 'react-native';
 import ApolloClient, { gql, InMemoryCache } from 'apollo-boost';
 import {firebase} from './config'; 
+import { Foundation } from '@expo/vector-icons';
 
 
 const localhost: string = 'http://192.168.1.15:3000/graphql';
@@ -146,11 +147,12 @@ export const arrayReplace = (arr, obj) => {
   charisma:number, 
   honest:number, 
   looks:number, 
-  emphatatic:number, 
+  empathetic:number, 
   humor:number, 
   status:number, 
   wealthy:number, 
   _id:string, 
+
 }
 interface transfromReturn {
    trait:string, 
@@ -161,7 +163,7 @@ interface transfromReturn {
 
 export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
  
-  const dimensions =  ['creativity', 'charisma', 'honest', 'looks', 'emphatatic', 'humor', 'status', 'wealthy']; 
+  const dimensions =  ['creativity', 'charisma', 'honest', 'looks', 'empathetic', 'humor', 'status', 'wealthy']; 
   const mainerObj = []; 
   arr1.push(obj1);
   
@@ -170,7 +172,7 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
       return b.creativity - a.creativity;
   });
   //console.log(result)
-  const index = result.findIndex(x => x._id == 'something'); 
+  const index = result.findIndex(x => x._id == obj1._id); 
   const sub = ((arr1.length -1 ) - index); 
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'creativity', aheadOf:Math.floor(percent), votes:obj1.creativity}) 
@@ -180,7 +182,7 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
       return b.charisma - a.charisma;
   });
   //console.log(result)
-  const index = result.findIndex(x => x._id == 'something'); 
+  const index = result.findIndex(x => x._id == obj1._id); 
   const sub = ((arr1.length -1 ) - index); 
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'charisma', aheadOf:Math.floor(percent), votes:obj1.charisma}) 
@@ -190,7 +192,7 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
       return b.honest - a.honest;
   });
   //console.log(result)
-  const index = result.findIndex(x => x._id == 'something'); 
+  const index = result.findIndex(x => x._id == obj1._id); 
   const sub = ((arr1.length -1 ) - index); 
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'honest', aheadOf:Math.floor(percent), votes:obj1.honest}) 
@@ -200,25 +202,25 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
       return b.looks - a.looks;
   });
   //console.log(result)
-  const index = result.findIndex(x => x._id == 'something'); 
+  const index = result.findIndex(x => x._id == obj1._id); 
   const sub = ((arr1.length -1 ) - index); 
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'looks', aheadOf:Math.floor(percent), votes:obj1.looks}) 
   }
-  function emphatatic(){
+  function empathetic(){
   const result = arr1.sort((a, b) => {
-      return b.emphatatic - a.emphatatic;
+      return b.empathetic - a.empathetic;
   });
-  const index = result.findIndex(x => x._id == 'something'); 
+  const index = result.findIndex(x => x._id == obj1._id); 
   const sub = ((arr1.length -1 ) - index); 
   const percent = (sub/ (result.length - 1))*100;
-  mainerObj.push({ trait:'emphatatic', aheadOf:Math.floor(percent), votes:obj1.emphatatic}) 
+  mainerObj.push({ trait:'empathetic', aheadOf:Math.floor(percent), votes:obj1.empathetic}) 
   }
   function humor(){
   const result = arr1.sort((a, b) => {
       return b.humor - a.humor;
   });
-  const index = result.findIndex(x => x._id == 'something'); 
+  const index = result.findIndex(x => x._id == obj1._id); 
   const sub = ((arr1.length -1 ) - index); 
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'humor', aheadOf:Math.floor(percent), votes:obj1.humor}) 
@@ -227,7 +229,7 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
   const result = arr1.sort((a, b) => {
       return b.status - a.status;
   });
-  const index = result.findIndex(x => x._id == 'something'); 
+  const index = result.findIndex(x => x._id == obj1._id); 
   const sub = ((arr1.length -1 ) - index); 
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'status', aheadOf:Math.floor(percent), votes:obj1.status}) 
@@ -236,7 +238,7 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
   const result = arr1.sort((a, b) => {
       return b.wealthy - a.wealthy;
   });
-  const index = result.findIndex(x => x._id == 'something'); 
+  const index = result.findIndex(x => x._id == obj1._id); 
   const sub = ((arr1.length -1 ) - index); 
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'wealthy', aheadOf:Math.floor(percent), votes:obj1.wealthy}) 
@@ -245,7 +247,7 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
   charisma()
   honest()
   looks()
-  emphatatic()
+  empathetic()
   humor()
   status()
   wealthy()
@@ -256,3 +258,5 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
   return mainerObj; 
   
   }
+
+  

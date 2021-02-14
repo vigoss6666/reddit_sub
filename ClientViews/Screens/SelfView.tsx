@@ -9,11 +9,13 @@ import { MaterialIcons } from '@expo/vector-icons';
 import {Button} from 'react-native-elements';
 import Moment from 'react-moment';
 import {transformCreativity} from '../../networking'; 
+import {iconFactory} from '../../src/common/Common'; 
 
 
 import { format } from "date-fns";
 import { firebase } from '../../config'; 
 import { Octicons } from '@expo/vector-icons';
+import { el } from 'date-fns/locale';
 
 const db = firebase.firestore(); 
 
@@ -23,7 +25,6 @@ interface SelfViewProps {}
 
 function useTraits(){ 
     const [namer, setNamer] = useState(1); 
-    const [gender,setGender] = useState([]); 
 
 
 useEffect(() => {
@@ -31,13 +32,21 @@ useEffect(() => {
  db.collection('user').doc('trial_user').get().then(doc => {
       const gender = doc.data().gender; 
       const state = doc.data().state; 
+      const obj = doc.data();
+      obj._id = doc.id;  
       db.collection('user')
       .where('gender', '==', gender)
       .where('state', '==', state )
+      
+
       .get()
       .then(result => {
             const valer = []; 
             result.docs.map(val => valer.push(val.data()))
+            // console.log(valer)
+            const finaler = transformCreativity(obj, valer); 
+            setTraits(traits => finaler); 
+            setGender(gender)
             
 
 
@@ -48,55 +57,17 @@ useEffect(() => {
 },[])
 
 
-
+   interface traits  {
+      trait:string, 
+      aheadOf:number, 
+      selected?: boolean;   
+      votes:number; 
+       
+}
     
           
-    const [traits, setTraits] = useState([
-        {
-        votes:75,     
-        trait:'charisma',  
-        aheadOf:64,  
-        selected:true
-        }, 
-       {
-        votes:68, 
-        trait:'creativity', 
-        aheadOf:64,  
-       },
-       {
-        votes:68, 
-        trait:'honest', 
-        aheadOf:64,  
-       },
-       {
-        votes:68, 
-        trait:'looks', 
-        aheadOf:64,  
-       },
-       {
-        votes:68, 
-        trait:'emphatatic', 
-        aheadOf:64,  
-       },
-       {
-        votes:68, 
-        trait:'humor', 
-        aheadOf:64,  
-       },
-       {
-        votes:68, 
-        trait:'status', 
-        aheadOf:64,  
-       },
-       {
-        votes:68, 
-        trait:'wealthy', 
-        aheadOf:64,  
-       },
-       
-
-]);
-
+const [traits, setTraits] = useState<[traits] | []>([]);
+const [gender, setGender] = useState<string>(''); 
 
 const setArrow = (obj) => {
     console.log("called"); 
@@ -131,7 +102,7 @@ const traitsTemplate = traits.map((val, index) => {
         
         <View style = {{flexDirection:'row', alignItems:'center', marginTop:30, }}>
         <View style = {{flex:0.3}}>
-        <Octicons name="smiley" size={40} color="black" style = {{marginRight:20, }}/>
+        {iconFactory(val.dimension, 24)}
         </View>    
        <Text style = {{flex:0.4, fontWeight:'bold', fontSize:20}}>{val.trait.toUpperCase()}</Text>
         <View style = {{justifyContent:'flex-end',  flex:0.3, alignItems:'center'}}>
@@ -147,9 +118,9 @@ const traitsTemplate = traits.map((val, index) => {
       {val.selected ? <View style = {{ width:'100%'}}>
           <View style = {{borderRadius:2, borderWidth:2, borderStyle:'dotted', }}/>
           <View style = {{flexDirection:'row'}}> 
-          <View style = {{flexDirection:'row', marginTop:15, marginBottom:15 , flex:0.7, }}>
-
-          <FontAwesome5 name="female" size={35} color="red" />
+          
+           {gender == 'female' ? <View style = {{flexDirection:'row', marginTop:20, marginBottom:20 , flex:0.7, }}>
+           <FontAwesome5 name="female" size={35} color="red" />
           <FontAwesome5 name="female" size={35} color="red" />
           <FontAwesome5 name="female" size={35} color="red" />
           <FontAwesome5 name="female" size={35} color="red" />
@@ -158,9 +129,20 @@ const traitsTemplate = traits.map((val, index) => {
           <FontAwesome5 name="female" size={35} color="red" />
           <FontAwesome5 name="female" size={35} color="red" />
           <FontAwesome5 name="female" size={35} color="red" />
-          <FontAwesome5 name="female" size={35} color="red" />
-          </View>
-          <View style = {{flex:0.3, marginTop:15}}>
+          <FontAwesome5 name="female" size={35} color="red" /></View>: <View style = {{flexDirection:'row', marginTop:20, marginBottom:20 , flex:0.7, }}>
+           <FontAwesome5 name="male" size={35} color="red" />
+          <FontAwesome5 name="male" size={35} color="red" />
+          <FontAwesome5 name="male" size={35} color="red" />
+          <FontAwesome5 name="male" size={35} color="red" />
+          <FontAwesome5 name="male" size={35} color="red" />
+          <FontAwesome5 name="male" size={45} color="red" />
+          <FontAwesome5 name="male" size={35} color="red" />
+          <FontAwesome5 name="male" size={35} color="red" />
+          <FontAwesome5 name="male" size={35} color="red" />
+          <FontAwesome5 name="male" size={35} color="red" /></View>} 
+          
+          
+          <View style = {{flex:0.3, marginTop:20, marginBottom:15}}>
              <Text style = {{alignSelf:'center', fontWeight:'bold'}}>AHEAD OF </Text> 
              <Text style = {{alignSelf:'center', color:'red', fontWeight:'bold', fontSize:20}}>{val.aheadOf}%</Text>
              <Text style = {{alignSelf:'center', fontWeight:'bold'}}>of females</Text>
@@ -189,7 +171,7 @@ const traitsTemplate = traits.map((val, index) => {
                       <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>TOP TRAITS </Text>
                       
                       <View style = {styles.line}></View>
-                      {/* {traitsTemplate} */}
+                      {traitsTemplate}
                       
                 
                       
@@ -200,84 +182,62 @@ const traitsTemplate = traits.map((val, index) => {
 }
 
 function useVotes(){
-const data = [{
-     question:'Likely to tell a funny story most likely to give a creative solution most likely to give a creative solution', 
-     answeredBy:'David Boctor', 
-     createdAt:''
-}];     
-const [votes, setVotes] = useState([
-    {
-    question:'most likely to give a creative solution most likely to give a creative solution most likely to give a creative solution most likely to give a creative solution most likely to give a creative solution most likely to give a creative solution  ', 
-    answeredBy:'David Boctor', 
-    createdAt:firebase.firestore.Timestamp.fromDate(new Date()), 
-    dimension:'creative' 
-},
-{
-    question:'most likely to give a creative solution', 
-    answeredBy:'David Boctor', 
-    createdAt:firebase.firestore.Timestamp.fromDate(new Date()), 
-    dimension:'creative' 
-},
-{
-    question:'most likely to give a creative solution', 
-    answeredBy:'David Boctor', 
-    createdAt:firebase.firestore.Timestamp.fromDate(new Date()), 
-    dimension:'creative' 
-},
-{
-    question:'most likely to give a creative solution', 
-    answeredBy:'David Boctor', 
-    createdAt:firebase.firestore.Timestamp.fromDate(new Date()), 
-    dimension:'creative' 
-},
-{
-    question:'most likely to give a creative solution', 
-    answeredBy:'David Boctor', 
-    createdAt:firebase.firestore.Timestamp.fromDate(new Date()), 
-    dimension:'creative' 
-},
-{
-    question:'most likely to give a creative solution', 
-    answeredBy:'David Boctor', 
-    createdAt:firebase.firestore.Timestamp.fromDate(new Date()), 
-    dimension:'creative' 
-},
-{
-    question:'most likely to give a creative solution most likely to give a creative solution', 
-    answeredBy:'David Boctor', 
-    createdAt:firebase.firestore.Timestamp.fromDate(new Date()), 
-    dimension:'creative' 
-},
+ interface votes {
+     question:string; 
+     answeredBy:string; 
+     createdAt:any; 
+     dimension:string; 
+ }   
+     
+const [votes, setVotes] = useState<[votes]|[]>([]); 
+
+useEffect(() => {
+    
+    const subscribe = db.collection('user').doc('trial_user').collection('votes').get().then(result => {
+        const finaler = result.docs.map(val => val.data()); 
+        setVotes(votes => finaler); 
 
 
-]); 
-
-// useEffect(() => {
-//     console.log("namer")
-//     const subscribe = db.collection('user').doc('7b4CXge62EcpfnjUJosv').collection('traits').get().then(result => {
-//         const finaler = result.docs.map(val => val.data()); 
-//         setVotes(votes => finaler); 
-
-
-//     }); 
+    }); 
     
     
-// }, [])
+}, [])
 const votesTemplate = votes.map(val => {
-    //const time = val.createdAt.toDate(); 
+    //const time = val.createdAt.toDate();
+    const dateSec = val.createdAt.toDate(); 
+    const result = dateSec.getTime(); 
+    const d = new Date().getTime(); 
+    const elapsed = d - result; 
+    const finalDate = new Date(elapsed); 
+    function checkDater(){
+         if(finalDate.getSeconds() < 60){
+              return finalDate.getSeconds()+" seconds ago"
+         }
+         else if(finalDate.getMinutes() < 60){
+              return finalDate.getMinutes()+" minutes ago"
+         }
+         else if(finalDate.getHours() < 60){
+              return finalDate.getHours()+" hours ago"
+         }
+         return finalDate.getMonth()+" month ago"; 
+    }
+    
+    
+    // console.log(d)
+    
     return (
         <View style = {{ borderBottomWidth:3, justifyContent:'center', alignItems:'center', }}>
             <Text style = {{alignSelf:'flex-end',  marginTop:3, fontSize:12}}>
-                2 seconds ago
+                {checkDater()} 
             </Text>
             <View style = {{flexDirection:'row', alignItems:'center', marginTop:30, }}>
             <View style = {{flex:0.3}}>
-            <Octicons name="smiley" size={40} color="black" style = {{marginRight:20, }}/>
+            {iconFactory(val.dimension, 50)}
             </View>    
             <Text style = {{maxWidth:250, fontWeight:'bold', flex:0.7}}>{val.question}</Text>
             
             </View>
-            <Text style = {{alignSelf:'flex-end', fontWeight:'bold', marginBottom:5}}>- David Boctor</Text>
+            <Text style = {{alignSelf:'flex-end', fontWeight:'bold', marginBottom:5}}>{val.answeredBy}</Text>
                 
         </View>
     ) 

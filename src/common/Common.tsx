@@ -6,6 +6,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 import { Audio, Video } from 'expo-av';
 import * as Permissions from 'expo-permissions';
@@ -16,6 +17,7 @@ import Slider from '@react-native-community/slider';
 import { Feather } from '@expo/vector-icons';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Foundation } from '@expo/vector-icons';
 
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -505,7 +507,33 @@ export function Tester1({navigation,db,chatID,userId}){
          },
        });
 
-
+export function iconFactory(dimension:string, iconSize:number){
+   if(dimension == 'creativity'){
+    return <Foundation name="lightbulb" size={iconSize} color="black" />
+   }
+   if(dimension == 'charisma'){
+    return <Ionicons name="magnet-outline" size={iconSize} color="black" />
+   }
+  
+   if(dimension == 'honest'){
+    return <Ionicons name="magnet-outline" size={iconSize} color="black" />
+   }
+   if(dimension == 'looks'){
+    return <FontAwesome name="eye" size={iconSize} color="black" />
+   }
+   if(dimension == 'empathetic'){
+    return <FontAwesome5 name="hand-holding-heart" size={iconSize} color="black" />
+   }
+   if(dimension == 'humor'){
+    return <FontAwesome5 name="laugh-beam" size={iconSize} color="black" />
+   }
+   if(dimension == 'status'){
+    return <Ionicons name="ios-airplane-sharp" size={iconSize} color="black" />
+   }
+   if(dimension == 'wealthy'){
+    return <Foundation name="dollar" size={iconSize} color="black" />
+   }
+}
         
 
 
