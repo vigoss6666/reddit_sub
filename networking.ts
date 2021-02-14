@@ -11,7 +11,7 @@ async function getId(){
     console.log(result)
     return result; 
  }
- function uuidv4() {
+ export function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
@@ -137,3 +137,122 @@ export const arrayReplace = (arr, obj) => {
   copyArr.splice(index, 1, obj);  
   return arr;  
 }
+
+
+// obj1 = { dimensions}
+//arr1 = array of objects with dimensions
+ interface obj1 {
+  creativity:number, 
+  charisma:number, 
+  honest:number, 
+  looks:number, 
+  emphatatic:number, 
+  humor:number, 
+  status:number, 
+  wealthy:number, 
+  _id:string, 
+}
+interface transfromReturn {
+   trait:string, 
+   votes:number, 
+   aheadOf:number
+}
+
+
+export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
+ 
+  const dimensions =  ['creativity', 'charisma', 'honest', 'looks', 'emphatatic', 'humor', 'status', 'wealthy']; 
+  const mainerObj = []; 
+  arr1.push(obj1);
+  
+  function creativity(){
+  const result = arr1.sort((a, b) => {
+      return b.creativity - a.creativity;
+  });
+  //console.log(result)
+  const index = result.findIndex(x => x._id == 'something'); 
+  const sub = ((arr1.length -1 ) - index); 
+  const percent = (sub/ (result.length - 1))*100;
+  mainerObj.push({ trait:'creativity', aheadOf:Math.floor(percent), votes:obj1.creativity}) 
+  }
+  function charisma(){
+  const result = arr1.sort((a, b) => {
+      return b.charisma - a.charisma;
+  });
+  //console.log(result)
+  const index = result.findIndex(x => x._id == 'something'); 
+  const sub = ((arr1.length -1 ) - index); 
+  const percent = (sub/ (result.length - 1))*100;
+  mainerObj.push({ trait:'charisma', aheadOf:Math.floor(percent), votes:obj1.charisma}) 
+  }
+  function honest(){
+  const result = arr1.sort((a, b) => {
+      return b.honest - a.honest;
+  });
+  //console.log(result)
+  const index = result.findIndex(x => x._id == 'something'); 
+  const sub = ((arr1.length -1 ) - index); 
+  const percent = (sub/ (result.length - 1))*100;
+  mainerObj.push({ trait:'honest', aheadOf:Math.floor(percent), votes:obj1.honest}) 
+  }
+  function looks(){
+  const result = arr1.sort((a, b) => {
+      return b.looks - a.looks;
+  });
+  //console.log(result)
+  const index = result.findIndex(x => x._id == 'something'); 
+  const sub = ((arr1.length -1 ) - index); 
+  const percent = (sub/ (result.length - 1))*100;
+  mainerObj.push({ trait:'looks', aheadOf:Math.floor(percent), votes:obj1.looks}) 
+  }
+  function emphatatic(){
+  const result = arr1.sort((a, b) => {
+      return b.emphatatic - a.emphatatic;
+  });
+  const index = result.findIndex(x => x._id == 'something'); 
+  const sub = ((arr1.length -1 ) - index); 
+  const percent = (sub/ (result.length - 1))*100;
+  mainerObj.push({ trait:'emphatatic', aheadOf:Math.floor(percent), votes:obj1.emphatatic}) 
+  }
+  function humor(){
+  const result = arr1.sort((a, b) => {
+      return b.humor - a.humor;
+  });
+  const index = result.findIndex(x => x._id == 'something'); 
+  const sub = ((arr1.length -1 ) - index); 
+  const percent = (sub/ (result.length - 1))*100;
+  mainerObj.push({ trait:'humor', aheadOf:Math.floor(percent), votes:obj1.humor}) 
+  }
+  function status(){
+  const result = arr1.sort((a, b) => {
+      return b.status - a.status;
+  });
+  const index = result.findIndex(x => x._id == 'something'); 
+  const sub = ((arr1.length -1 ) - index); 
+  const percent = (sub/ (result.length - 1))*100;
+  mainerObj.push({ trait:'status', aheadOf:Math.floor(percent), votes:obj1.status}) 
+  }
+  function wealthy(){
+  const result = arr1.sort((a, b) => {
+      return b.wealthy - a.wealthy;
+  });
+  const index = result.findIndex(x => x._id == 'something'); 
+  const sub = ((arr1.length -1 ) - index); 
+  const percent = (sub/ (result.length - 1))*100;
+  mainerObj.push({ trait:'wealthy', aheadOf:Math.floor(percent), votes:obj1.wealthy}) 
+  }
+  creativity(); 
+  charisma()
+  honest()
+  looks()
+  emphatatic()
+  humor()
+  status()
+  wealthy()
+  
+  
+  
+  
+  return mainerObj; 
+  
+  }

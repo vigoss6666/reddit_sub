@@ -12,6 +12,9 @@ import {Button} from 'react-native-elements';
 import { gql } from 'apollo-boost';
 import { Platform } from 'react-native';
 import {GET_DATING_POOL,GET_CONTACT_POOL} from './ProfilePool'; 
+import {firebase} from '../../config'; 
+import { uuidv4} from '../../networking';  
+const db = firebase.firestore(); 
 
 // addNewContact(userInput: UserInput1!): Boolean!
 
@@ -29,7 +32,9 @@ export default function NewContact({navigation,route}){
       
  
  const data1 = {name:"zaid shaikh", firstname:"zaid", countryCode:"+1", gender: "male", orientation:"male",minAge:24, maxAge:24,inches:"11", feet:"5", addToDatingPool:'yes', number:"2103888163"}   
- const [addNewContact, {data}] = useMutation(ADD_NEW_CONTACT);
+ //const [addNewContact, {data}] = useMutation(ADD_NEW_CONTACT);
+ const data = 1; 
+
  const [selectedValue, setSelectedValue] = useState("java");
  const [age,selectAge] = useState({minAge:null, maxAge:null})
  const [feet,selectFeet] = useState()
@@ -72,7 +77,7 @@ const _sendToServer = () => {
  const serverObject = {
      countryCode:route.params ? route.params.code : "US", 
      digits:digits, 
-     name:firstname+lastname, 
+     fullName:firstname+lastname, 
      firstname:firstname, 
      gender:gender, 
      orientation:orientation,
@@ -80,9 +85,13 @@ const _sendToServer = () => {
      maxAge:age.maxAge,
      inches:inches, 
      feet:feet, 
-     addToDatingPool:addDatingPool
+     
  }   
- addNewContact({variables:{userInput:serverObject},refetchQueries:[{query:GET_DATING_POOL}, {query:GET_CONTACT_POOL}]});
+ //addNewContact({variables:{userInput:serverObject},refetchQueries:[{query:GET_DATING_POOL}, {query:GET_CONTACT_POOL}]});
+ const id = uuidv4()
+ db.collection('user').doc(id).set(serverObject).then(() => console.log("server object set correctly")); 
+ db.collection('user').doc('trial_user').update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(id)}); 
+
  navigation.navigate('ProfilePool')
  
 //  navigation.goBack();       

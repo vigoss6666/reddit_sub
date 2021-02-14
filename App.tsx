@@ -72,6 +72,9 @@ import VideoPlayer from './src/common/VideoPlayer';
 import { Feather } from '@expo/vector-icons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import FrontPage from './Authentication/Screens/Frontpage'; 
+import ClientView from './ClientViews/Screens/ClientView'; 
+import Matchee from './ClientViews/Screens/Matchee'; 
+import SelfView from './ClientViews/Screens/SelfView'; 
 
 
 
@@ -277,7 +280,8 @@ export default function App() {
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
 
-        <Stack.Screen name="Home" component={ProfilePool}  options = {{headerTitle:false}}/>
+        <Stack.Screen name="Home" component={SelfView}  options = {{headerTitle:false}}/>
+
 
 
         <Stack.Screen name="Side" component={SideScreen}/>

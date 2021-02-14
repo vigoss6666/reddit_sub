@@ -78,46 +78,61 @@ const useFetchContactPool = (navigation) => {
      //const {data, loading, error,refetch} = useQuery(GET_CONTACT_POOL); 
      const [data,setData] = useState({
           getContactPoolList:{
-               data:[{
-                     _id:'123', 
-                     name:"zaid", 
-                     firstName:'zaid',
-                      
-               }]
+               data:[]
           }
      })
+     
+     
           useEffect(() => {
-            let arr = {
-                  data:{
-                        getContactPoolList:{
-                              data:[]
-                        }
-                  }
-            };    
+            
             console.log("called")   
-            db.collection('user').doc('trial_user').get().then(result => {
+            const unSub = db.collection('user').doc('trial_user').onSnapshot((doc) => {
+                   
 
-             if(result.data().contactsPool.length > 1 ){ 
-               db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', result.data().contactsPool).get().then(result1 => {
-                    const finalResult = result1.docs.map(val => Object.assign({}, {fullName:val.data().fullName}, {_id:val.id}));     
-                      
-                    data.getContactPoolList.data = finalResult
-                    setNamer(namer + 1)
-                    //setData(arr);  
-                  })
-             }
-             
-       })    
-     },[data])
-     const KEYS_TO_FILTERS = ['name'];
+             if(doc.data().contactsPool.length >= 1 ){ 
+             console.log("length more than 1 called")     
+               
+               db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', doc.data().contactsPool).get().then((result) => {
+                
+               const finalResult = result.docs.map(val => Object.assign({}, {fullName:val.data().fullName}, {_id:val.id}))
+               setData(data => ({
+                     getContactPoolList:{
+                          data:finalResult
+
+                     }
+               }))
+               
+          })
+          }
+          if(doc.data().contactsPool.length == 0){
+               console.log("length 0 called"); 
+               data.getContactPoolList.data = []; 
+               setData(data => ({
+                   getContactPoolList:{
+                        data:[]
+                   }  
+               }))
+                
+               
+          }
+})
+ return () => unSub(); 
+               
+},[])
+
+     const KEYS_TO_FILTERS = ['fullName'];
      const [search, setSearch] = useState('');
      const [namer, setNamer] = useState(1); 
+
      const _sendToServer = (val) => {
+
            //const serverObject = { _id:val._id}; 
            //addDating({variables:{userInput:serverObject}, refetchQueries:[{query:GET_DATING_POOL}]}, ); 
-           db.collection('user').doc('trial_user').update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(val._id)}); 
-           db.collection('user').doc('trial_user').update({contactsPool:firebase.firestore.FieldValue.arrayRemove(val._id)}); 
-           setNamer(namer + 1)
+               db.collection('user').doc('trial_user').update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(val._id)}).then(() => {
+               db.collection('user').doc('trial_user').update({contactsPool:firebase.firestore.FieldValue.arrayRemove(val._id)}).then(() => setNamer(namer + 1))
+           }) 
+             
+           
      }
  
      if(data){
@@ -151,7 +166,7 @@ const useFetchContactPool = (navigation) => {
          <Text  style = {{alignSelf:'center',  marginTop:30, fontWeight:'bold', marginBottom:20, fontSize:17 }}>
              Click to View a Contact
          </Text>
-         <TouchableOpacity style = {{alignItems:"center", marginLeft:20,justifyContent:'center'}} onPress = {() => navigation.navigate('NewContact', {refetch})}>
+         <TouchableOpacity style = {{alignItems:"center", marginLeft:20,justifyContent:'center'}} onPress = {() => navigation.navigate('NewContact')}>
          <AntDesign name="pluscircle" size={25} color="black" />
          </TouchableOpacity>
          </View>
@@ -226,9 +241,61 @@ const useFetchDatingPool = () => {
      //const {data,loading,error} = useQuery(GET_DATING_POOL); 
      //const [removeDating] = useMutation(REMOVE_FROM_DATING); 
      const [country,selectCountry] = useState(['25 to 30']); 
-     const KEYS_TO_FILTERS = ['name'];
+     const KEYS_TO_FILTERS = ['fullName'];
      const [search, setSearch] = useState('');
      const [caret, setCaret] = useState([{caret:false, _id:123}]); 
+     const _sendToServer = (val) => {
+          
+          //const serverObject = { _id:val._id}; 
+          //addDating({variables:{userInput:serverObject}, refetchQueries:[{query:GET_DATING_POOL}]}, ); 
+              db.collection('user').doc('trial_user').update({contactsPool:firebase.firestore.FieldValue.arrayUnion(val._id)}).then(() => {
+              db.collection('user').doc('trial_user').update({datingPoolList:firebase.firestore.FieldValue.arrayRemove(val._id)}).then(() => setNamer(namer + 1))
+          }) 
+            
+          
+    }
+    
+     useEffect(() => {
+          let lister;
+            
+          console.log("called")   
+          const unSub = db.collection('user').doc('trial_user').onSnapshot((doc) => {
+                 
+
+           if(doc.data().datingPoolList.length >= 1 ){ 
+           console.log("length more than 1 called")     
+             
+             db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', doc.data().datingPoolList).get().then((result) => {
+              
+             const finalResult = result.docs.map(val => Object.assign({}, {fullName:val.data().fullName, gender:val.data().gender}, {_id:val.id}))
+             setData(data => ({
+                   getDatingPoolList:{
+                        data:finalResult
+                        
+                   }
+             }))
+              
+            
+             
+             
+        })
+        }
+        if(doc.data().datingPoolList.length == 0){
+             console.log("length 0 called"); 
+              
+             setData(data => ({
+                 getDatingPoolList:{
+                      data:[]
+                 }  
+             }))
+              
+             
+        }
+})
+
+return () => { unSub()}; 
+             
+},[data])
 
      
      const [data, setData] = useState({
@@ -244,7 +311,8 @@ const useFetchDatingPool = () => {
      const [namer, setNamer] = useState(1)
      if(data){
           const filteredEmails = data.getDatingPoolList.data.filter(createFilter(search, KEYS_TO_FILTERS))
-          console.log(data)
+          
+
           const _checkCaret = (val) => {
                const result = caret.filter(val1 => (
                     val._id == val1._id
@@ -267,29 +335,40 @@ const useFetchDatingPool = () => {
               setNamer(namer + 1)
           }
           const addMale = (obj => {
+                
+
                const data1 = data.getDatingPoolList.data.concat(); 
+
                   
                   
                const result = data1.filter(val => {
+                    
                    return val._id == obj._id 
+
                })
                
                result[0].gender = "male"; 
                data1.splice(0,1,result[0]); 
-               setNamer(namer + 1);
+               
+               db.collection('user').doc(obj._id).update({gender:'male'});
                 
                })
                const addFemale = (obj => {
-                    const data1 = data.getDatingPoolList.data.concat(); 
-                     
-                     
-                  const result = data1.filter(val => {
-                      return val._id == obj._id 
-                  })
+               
+
+               const data1 = data.getDatingPoolList.data.concat(); 
+
                   
-                  result[0].gender = "female"; 
-                  data1.splice(0,1,result[0]); 
-                  setNamer(namer + 1);  
+                  
+               const result = data1.filter(val => {
+                   return val._id == obj._id 
+
+               })
+               
+               result[0].gender = "female"; 
+               data1.splice(0,1,result[0]); 
+               db.collection('user').doc(obj._id).update({gender:'female'});
+               setNamer(namer + 1);
                   })    
           
                return (
@@ -318,7 +397,7 @@ const useFetchDatingPool = () => {
                   <View style = {{flexDirection:"row", justifyContent:'space-between'}}>
                   <View style = {{flexDirection:"row", alignItems:"center"}}>
                   <MaterialIcons name="account-circle" size={24} color="black" />
-                  <Text style = {{marginLeft:10,marginBottom:10,fontWeight:"bold"}}>{val.name || val.firstname}{"\n"} 0 votes by 0 friends</Text>
+                  <Text style = {{marginLeft:10,marginBottom:10,fontWeight:"bold"}}>{val.fullName || val.firstname}{"\n"} 0 votes by 0 friends</Text>
                   </View>
                   {   
                        val.caret ? 
@@ -344,7 +423,7 @@ const useFetchDatingPool = () => {
                     }}/>
                     <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
                     <Text style = {{fontWeight:'bold',}}>Remove from Dating Pool</Text>
-                    <TouchableOpacity onPress = {() => {removeDating({variables:{userInput:{_id:val._id}}, refetchQueries:[{query:GET_DATING_POOL}]})}}>
+                    <TouchableOpacity onPress = {() => {_sendToServer(val)}}>
                     <FontAwesome name="trash" size={24} color="black" />
                     </TouchableOpacity>
                     </View>
@@ -357,10 +436,11 @@ const useFetchDatingPool = () => {
                        marginTop: 10,
                     }}/>
                     <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
-                    <Text style = {{fontWeight:'bold',}}>{val.name || val.firstname}'s sex</Text>
+                    <Text style = {{fontWeight:'bold',}}>{val.fullName || val.firstname}'s sex</Text>
                     <View style = {{flexDirection:"row",justifyContent:"space-around"}}>
                     <TouchableOpacity style = {{marginRight:20}} onPress = {() => {addMale(val)}}>
                     <FontAwesome name="male" size={30} color={val.gender == 'male' ? 'green':'black'} />
+
                     </TouchableOpacity>
                     <TouchableOpacity onPress = {() => {addFemale(val)}}>  
                     <FontAwesome name="female" size={30} color={val.gender == 'female' ? 'green':'black'}  />
