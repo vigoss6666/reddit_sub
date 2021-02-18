@@ -77,10 +77,12 @@ const changeValue = (value) => {
      const changed = parseInt(value); 
      setValue(changed); 
 }
+
 const handleSwitch = () => {
   if(matchmaking == "yes"){
    db.collection('user').doc('trialUser').set({accountType:'matchmaking'}, {merge:true}).then(() => console.log("accountTypeAdded")).catch(() => console.log("accountTypeUpdate failed"))      
    return
+
   }
   else if(matchmaking == "No"){
       db.collection('user').doc('trialUser').set({accountType:'both'}, {merge:true}).then(() => console.log("account type updated")).catch(() => console.log("account update failed"))
@@ -213,6 +215,7 @@ return(
     onSlidingComplete = {onSlidingComplete}
     
 
+
   />
   <View style={{
     borderStyle: 'dotted',
@@ -240,6 +243,8 @@ return(
  }}/>
  <Text style = {{fontWeight:"600", marginBottom:10, marginTop:10}}>AGE RANGE</Text> 
  <View style = {{flexDirection:"row", alignItems:"center", zIndex:600}}>
+    
+
  <Text style = {{fontWeight:"600", marginRight:20}}>MIN</Text>
  <DropDownPicker
     defaultValue = {minAgePref}                
@@ -365,6 +370,7 @@ return(
 
       ]}
     onPress = {() => {console.log("pressed")}}
+
     containerStyle={{height: 40, width:100, }}
     style={{}}
     itemStyle={{

@@ -43,16 +43,7 @@ return(
 <Header text = {"What's your height?"}/>
 <View style = {{borderBottomWidth:2, width:Dimensions.get('window').width - 60, marginTop:20}}/>
 <View style = {{flexDirection:"row", marginTop:30, zIndex:1000}}>
- {/* <TouchableOpacity 
- style = {{flexDirection:"row",justifyContent:"center", alignItems:"center",borderWidth:1, padding:10}}
- onPress = {() => {navigation.navigate("Feet")}}
- >
-  <Text style = {{fontSize:24, marginRight:10}}>{feet}</Text>
-  <TouchableOpacity style = {{flexDirection:"column",justifyContent:"center", alignItems:"center"}}>
-  <AntDesign name="caretup" size={24} color="black" />
-  <AntDesign name="caretdown" size={24} color="black" style = {{marginTop:-15}}/>
-  </TouchableOpacity>  
- </TouchableOpacity> */}
+ 
  <DropDownPicker
                     
                     items={[

@@ -10,6 +10,7 @@ import {firebase} from '../../config';
 
 import gql from 'graphql-tag';
 import SettingsHome from './SettingsHome';
+import { pick } from 'underscore';
 
 
 
@@ -97,9 +98,9 @@ export default function Photos({navigation, route }){
           alert("Permission to access camera roll is required!");
           return;
         }
-    
+        console.log('caleed')
         let pickerResult = await ImagePicker.launchImageLibraryAsync({base64:true});
-        
+        console.log(pickerResult)
         //console.log(pickerResult.base64)   
         setPhotosFunc(pickerResult.uri)
         var storageRef = firebase.storage().ref();

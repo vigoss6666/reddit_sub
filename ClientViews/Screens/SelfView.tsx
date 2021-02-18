@@ -10,12 +10,12 @@ import {Button} from 'react-native-elements';
 import Moment from 'react-moment';
 import {transformCreativity} from '../../networking'; 
 import {iconFactory} from '../../src/common/Common'; 
+//@refresh reset
 
-
-import { format } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { firebase } from '../../config'; 
 import { Octicons } from '@expo/vector-icons';
-import { el } from 'date-fns/locale';
+
 
 const db = firebase.firestore(); 
 
@@ -102,7 +102,7 @@ const traitsTemplate = traits.map((val, index) => {
         
         <View style = {{flexDirection:'row', alignItems:'center', marginTop:30, }}>
         <View style = {{flex:0.3}}>
-        {iconFactory(val.dimension, 24)}
+        {iconFactory(val.trait, 40)}
         </View>    
        <Text style = {{flex:0.4, fontWeight:'bold', fontSize:20}}>{val.trait.toUpperCase()}</Text>
         <View style = {{justifyContent:'flex-end',  flex:0.3, alignItems:'center'}}>
@@ -145,7 +145,7 @@ const traitsTemplate = traits.map((val, index) => {
           <View style = {{flex:0.3, marginTop:20, marginBottom:15}}>
              <Text style = {{alignSelf:'center', fontWeight:'bold'}}>AHEAD OF </Text> 
              <Text style = {{alignSelf:'center', color:'red', fontWeight:'bold', fontSize:20}}>{val.aheadOf}%</Text>
-             <Text style = {{alignSelf:'center', fontWeight:'bold'}}>of females</Text>
+             <Text style = {{alignSelf:'center', fontWeight:'bold'}}>of males</Text>
           </View>    
           </View>    
 
@@ -204,23 +204,9 @@ useEffect(() => {
 }, [])
 const votesTemplate = votes.map(val => {
     //const time = val.createdAt.toDate();
-    const dateSec = val.createdAt.toDate(); 
-    const result = dateSec.getTime(); 
-    const d = new Date().getTime(); 
-    const elapsed = d - result; 
-    const finalDate = new Date(elapsed); 
-    function checkDater(){
-         if(finalDate.getSeconds() < 60){
-              return finalDate.getSeconds()+" seconds ago"
-         }
-         else if(finalDate.getMinutes() < 60){
-              return finalDate.getMinutes()+" minutes ago"
-         }
-         else if(finalDate.getHours() < 60){
-              return finalDate.getHours()+" hours ago"
-         }
-         return finalDate.getMonth()+" month ago"; 
-    }
+    
+    
+    
     
     
     // console.log(d)
@@ -228,16 +214,18 @@ const votesTemplate = votes.map(val => {
     return (
         <View style = {{ borderBottomWidth:3, justifyContent:'center', alignItems:'center', }}>
             <Text style = {{alignSelf:'flex-end',  marginTop:3, fontSize:12}}>
-                {checkDater()} 
+                {formatDistanceToNow(val.createdAt.toDate())} 
             </Text>
             <View style = {{flexDirection:'row', alignItems:'center', marginTop:30, }}>
-            <View style = {{flex:0.3}}>
+            <View style = {{flex:0.3, flexDirection:'row', alignItems:'center'}}>
             {iconFactory(val.dimension, 50)}
+            <Text style = {{marginLeft:10, fontSize:20, fontWeight:'900' }}>+1</Text>
+
             </View>    
             <Text style = {{maxWidth:250, fontWeight:'bold', flex:0.7}}>{val.question}</Text>
             
             </View>
-            <Text style = {{alignSelf:'flex-end', fontWeight:'bold', marginBottom:5}}>{val.answeredBy}</Text>
+            <Text style = {{alignSelf:'flex-end', fontWeight:'bold', marginBottom:5}}>- {val.answeredBy}</Text>
                 
         </View>
     ) 

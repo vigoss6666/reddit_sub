@@ -95,6 +95,11 @@ import MatchList from './Chat/Screens/MatchList';
 import { FontAwesome } from '@expo/vector-icons';
 import Frontpage from './Authentication/Screens/Frontpage';
 import { uploadImage } from 'networking';
+import Sort from './Game/Screens/Sort'; 
+import Filter from './Game/Screens/Filter'; 
+import BrowseSettings from './Game/Screens/BrowseSettings';
+import AttributeFilter from './Game/Screens/AttributeFilter'; 
+import SelfGame from './Game/Screens/SelfGame'; 
  
 const currentUser = firebase.auth().currentUser; 
     const db = firebase.firestore(); 
@@ -280,7 +285,7 @@ export default function App() {
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
 
-        <Stack.Screen name="Home" component={SelfView}  options = {{headerTitle:false}}/>
+        <Stack.Screen name="Home" component={SelfGame}  options = {{headerTitle:false}}/>
 
 
 
@@ -346,6 +351,8 @@ export default function App() {
         <Stack.Screen name="Camera" component={Camera}/>
         <Stack.Screen name="Chat" component={Chat} options = {({route}) => ({headerTitle:route.params.title,   headerRight:() => <Feather name="flag" size={20} color="red" style = {{marginRight:10}}/>})} />
         <Stack.Screen name="MatchList" component={MatchList} options = {{headerShown:false}}/>
+        <Stack.Screen name="AttributeFilter" component={AttributeFilter}/>
+        <Stack.Screen name="BrowseSettings" component={BrowseSettings}/>
         
       </Stack.Navigator>
     </NavigationContainer>

@@ -506,6 +506,7 @@ export function Tester1({navigation,db,chatID,userId}){
            marginBottom: 5
          },
        });
+       
 
 export function iconFactory(dimension:string, iconSize:number){
    if(dimension == 'creativity'){
@@ -531,6 +532,9 @@ export function iconFactory(dimension:string, iconSize:number){
     return <Ionicons name="ios-airplane-sharp" size={iconSize} color="black" />
    }
    if(dimension == 'wealthy'){
+    return <Foundation name="dollar" size={iconSize} color="black" />
+   }
+   if(dimension == 'narcissism'){
     return <Foundation name="dollar" size={iconSize} color="black" />
    }
 }
