@@ -152,12 +152,21 @@ export const arrayReplace = (arr, obj) => {
   status:number, 
   wealthy:number, 
   _id:string, 
+  dimension:number
 
+}
+interface objectWithDimension extends obj1 {
+  simDimension:string 
 }
 interface transfromReturn {
    trait:string, 
    votes:number, 
    aheadOf:number
+}
+
+interface section {
+  title:number, 
+  data:objectWithDimension[] 
 }
 
 
@@ -251,12 +260,76 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
   humor()
   status()
   wealthy()
-  
-  
-  
-  
   return mainerObj; 
-  
   }
+
+
+  export const computeSimDimension = (obj:obj1, arr:obj1[]):objectWithDimension[] => {
+  const dimensions =  ['creativity', 'charisma', 'honest', 'looks', 'empathetic', 'humor', 'status', 'wealthy']; 
+  const mainerObj:any = []; 
+  const result =  arr.map(val => {
+     if(val.creativity == obj.creativity){
+        return {...val, simDimension:'creativity'}
+     }
+     if(val.charisma == obj.charisma){
+      return {...val, simDimension:'charisma'}
+     }
+     if(val.empathetic == obj.empathetic){
+      return {...val, simDimension:'empathetic'}
+     }
+     if(val.humor == obj.humor){
+      return {...val, simDimension:'humor'}
+     }
+     if(val.looks == obj.looks){
+      return {...val, simDimension:'looks'}
+     }
+     if(val.status == obj.status){
+      return {...val, simDimension:'status'}
+     }
+     if(val.wealthy == obj.wealthy){
+      return {...val, simDimension:'wealthy'}
+     }
+     if(val.honest == obj.honest){
+      return {...val, simDimension:'honest'}
+     }
+  })
+  return result; 
+    
+}
+
+export const computeSectionLabel = (arr:objectWithDimension[]):section[] => { 
+  const filtering = [1.1,1.2, 1.3,1.4, 1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3.0,3.1,3.2,3.3,3.4,3.5,3.6,3.7,3.8,3.9,4.0,4.1,4.2,4.3,4.4,4.5,4.6,4.7,4.8,4.9,5.0,
+    5.1,5.2,5.3,5.4,5.5,5.6,5.7,5.8,5.9,6.0,6.1,6.2,6.3,6.4,6.5,6.6,6.7,6.8,6.9,7.0,7.1,7.2,7.3,7.4,7.5,7.5,7.6,7.7,7.8,7.9,8.0,
+    8.1,8.2,8.3,8.4,8.5,8.6,8.7,8.9,9.0,9.1,9.2,9.3,9.4,9.5,9.6,9.7,9.8,9.9,10
+   ];
+   const reverseFiltering = filtering.reverse(); 
+
+
+
+   
+   
+
+   const transform = filtering.map(val => {
+	
+    return {
+     title:val, 
+     data:arr.filter(val1 => val1.dimension == val)
+    }
+  })
+  const finalTransfrom = transform.map(val => {
+     if(val.data.length > 0){
+      return {
+         title:val.title, 
+         data:val.data
+      }
+     }
+     
+  })
+  const finaler = finalTransfrom.filter(val => val !== undefined); 
+  
+
+  return finaler; 
+
+}
 
   

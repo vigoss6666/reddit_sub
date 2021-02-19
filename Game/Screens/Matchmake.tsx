@@ -5036,7 +5036,7 @@ function Item({item,index}){
 	 <View style = {{position:'absolute', zIndex:100}}>
 	 {
 		  
-		simTemplate(item.simDimension)			  
+	simTemplate(item.simDimension)			  
 		 
 	 }
 	 

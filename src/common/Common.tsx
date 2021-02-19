@@ -510,32 +510,32 @@ export function Tester1({navigation,db,chatID,userId}){
 
 export function iconFactory(dimension:string, iconSize:number){
    if(dimension == 'creativity'){
-    return <Foundation name="lightbulb" size={iconSize} color="black" />
+    return <Foundation name="lightbulb" size={iconSize} color="blue" />
    }
    if(dimension == 'charisma'){
-    return <Ionicons name="magnet-outline" size={iconSize} color="black" />
+    return <Ionicons name="magnet-outline" size={iconSize} color="purple" />
    }
   
    if(dimension == 'honest'){
-    return <Ionicons name="magnet-outline" size={iconSize} color="black" />
+    return <Ionicons name="magnet-outline" size={iconSize} color="orange" />
    }
    if(dimension == 'looks'){
-    return <FontAwesome name="eye" size={iconSize} color="black" />
+    return <FontAwesome name="eye" size={iconSize} color="yellow" />
    }
    if(dimension == 'empathetic'){
-    return <FontAwesome5 name="hand-holding-heart" size={iconSize} color="black" />
+    return <FontAwesome5 name="hand-holding-heart" size={iconSize} color="green" />
    }
    if(dimension == 'humor'){
-    return <FontAwesome5 name="laugh-beam" size={iconSize} color="black" />
+    return <FontAwesome5 name="laugh-beam" size={iconSize} color="blue" />
    }
    if(dimension == 'status'){
-    return <Ionicons name="ios-airplane-sharp" size={iconSize} color="black" />
+    return <Ionicons name="ios-airplane-sharp" size={iconSize} color="violet" />
    }
    if(dimension == 'wealthy'){
-    return <Foundation name="dollar" size={iconSize} color="black" />
+    return <Foundation name="dollar" size={iconSize} color="orange" />
    }
    if(dimension == 'narcissism'){
-    return <Foundation name="dollar" size={iconSize} color="black" />
+    return <Foundation name="dollar" size={iconSize} color="red" />
    }
 }
         

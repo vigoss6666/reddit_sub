@@ -100,6 +100,7 @@ import Filter from './Game/Screens/Filter';
 import BrowseSettings from './Game/Screens/BrowseSettings';
 import AttributeFilter from './Game/Screens/AttributeFilter'; 
 import SelfGame from './Game/Screens/SelfGame'; 
+import SelfMatchView from './Game/Screens/SelfMatchView';
  
 const currentUser = firebase.auth().currentUser; 
     const db = firebase.firestore(); 
@@ -285,7 +286,7 @@ export default function App() {
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
 
-        <Stack.Screen name="Home" component={SelfGame}  options = {{headerTitle:false}}/>
+        <Stack.Screen name="Home" component={SelfMatchView}  options = {{headerTitle:false}}/>
 
 
 
@@ -353,6 +354,7 @@ export default function App() {
         <Stack.Screen name="MatchList" component={MatchList} options = {{headerShown:false}}/>
         <Stack.Screen name="AttributeFilter" component={AttributeFilter}/>
         <Stack.Screen name="BrowseSettings" component={BrowseSettings}/>
+        <Stack.Screen name="SelfMatchView" component={SelfMatchView}/>
         
       </Stack.Navigator>
     </NavigationContainer>
