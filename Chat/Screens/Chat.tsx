@@ -38,8 +38,8 @@ import { Platform } from '@unimodules/core';
   
 export default function Chat({navigation, route}){
     const [messages, setMessages] = useState([]);
-    const {backPage} = route.params; 
-    const {_id} = route.params; 
+    const {backPage} = route.params || 'Home'; 
+    const {_id} = route.params || 'something'; 
     const didMountRef = useRef(false)
     const dir = useRef(FileSystem.documentDirectory + 'lobby52342/').current;
     const [pressed, setPressed] = useState({image:null}); 
@@ -68,7 +68,7 @@ export default function Chat({navigation, route}){
     const token = useRef("ExponentPushToken[C3nLnqLQLcFX_p6mNTuC09]").current; 
     const selfColor = "#c3f7d1"; 
     const otherColor = "#f0f7f7";
-    const {title} = route.params;   
+    const {title} = route.params || 'something';   
     
     function urlToFilename(str:string){
       var part = str.substring(

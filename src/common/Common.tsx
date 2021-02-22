@@ -513,11 +513,11 @@ export function iconFactory(dimension:string, iconSize:number){
     return <Foundation name="lightbulb" size={iconSize} color="blue" />
    }
    if(dimension == 'charisma'){
-    return <Ionicons name="magnet-outline" size={iconSize} color="purple" />
+    return <MaterialCommunityIcons name="magnet" size={iconSize} color="orange" />
    }
   
    if(dimension == 'honest'){
-    return <Ionicons name="magnet-outline" size={iconSize} color="orange" />
+    return <FontAwesome name="balance-scale" size={iconSize} color="blue" />
    }
    if(dimension == 'looks'){
     return <FontAwesome name="eye" size={iconSize} color="yellow" />

@@ -254,7 +254,7 @@ const AttributeFilter = ({navigation, route}) => {
           <View>
               <Text style = {{fontWeight:'bold'}}>AHEAD OF</Text>
               <Text style = {{fontWeight:'bold', color:'blue'}}>93 %</Text>
-              <Text style = {{fontWeight:'bold'}} >Females</Text>
+              <Text style = {{fontWeight:'bold'}} >Males</Text>
           </View>
           </View>
           <Button title = {'Save'} containerStyle = {{marginTop:20, marginBottom:30,marginLeft:20, marginRight:20}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => navigation.navigate('BrowseSettings', {attribute:attribute, value:attValue})}/>

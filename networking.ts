@@ -292,6 +292,7 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
      if(val.honest == obj.honest){
       return {...val, simDimension:'honest'}
      }
+     return val; 
   })
   return result; 
     
