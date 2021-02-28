@@ -75,6 +75,7 @@ import FrontPage from './Authentication/Screens/Frontpage';
 import ClientView from './ClientViews/Screens/ClientView'; 
 import Matchee from './ClientViews/Screens/Matchee'; 
 import SelfView from './ClientViews/Screens/SelfView'; 
+import MatchViewLatest from './Game/Screens/MatchViewLatest'; 
 
 
 
@@ -102,6 +103,7 @@ import AttributeFilter from './Game/Screens/AttributeFilter';
 import SelfGame from './Game/Screens/SelfGame'; 
 import SelfMatchView from './Game/Screens/SelfMatchView';
 import Gamer from './Game/Screens/Try'; 
+import MatchMakeLatest from './Game/Screens/MatchMakeLatest'; 
  
 const currentUser = firebase.auth().currentUser; 
     const db = firebase.firestore(); 
@@ -281,16 +283,14 @@ export default function App() {
   //namer()
    
   
+   //const value = route.params ? route.params.value:0; 
   return (
      
      
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
 
-        <Stack.Screen name="Home" component={Gamer}  options = {{headerTitle:false}}/>
-
-
-
+        <Stack.Screen name="Home" component={MatchViewLatest} options = {{headerTitle:false}}/>
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -356,6 +356,7 @@ export default function App() {
         <Stack.Screen name="AttributeFilter" component={AttributeFilter}/>
         <Stack.Screen name="BrowseSettings" component={BrowseSettings}/>
         <Stack.Screen name="SelfMatchView" component={SelfMatchView}/>
+        <Stack.Screen name="SelfGame" component={SelfGame}/>
         
       </Stack.Navigator>
     </NavigationContainer>

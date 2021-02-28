@@ -1224,6 +1224,11 @@
   resolved "https://registry.yarnpkg.com/@firebase/firestore-types/-/firestore-types-1.9.1.tgz#2a5372b3f314901186edbfd44b898f9120cf3a48"
   integrity sha512-w3pT+RMQOORS8Tvf6wCaW8sq8hklPS4FkWSGCyo/gIbATP7pG8rvQDihN1x6D3if1jILWiZ/uPyl0eazm+MGzw==
 
+"@firebase/firestore-types@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@firebase/firestore-types/-/firestore-types-2.1.0.tgz#ad406c6fd7f0eae7ea52979f712daa0166aef665"
+  integrity sha512-jietErBWihMvJkqqEquQy5GgoEwzHnMXXC/TsVoe9FPysXm1/AeJS12taS7ZYvenAtyvL/AEJyKrRKRh4adcJQ==
+
 "@firebase/firestore@1.11.0":
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/@firebase/firestore/-/firestore-1.11.0.tgz#ed8c71fe2f586e3d2211c75a2faec798c709b86e"

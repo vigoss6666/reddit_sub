@@ -14,6 +14,7 @@ const [name, setName] = useState();
 const [surname, setSurname] = useState(); 
  useEffect(() => {
    const subscribe = db.collection('user').doc('trial_user').onSnapshot(doc => {
+       
     const name = doc.data().name; 
         const surname = doc.data().surname; 
         setName(name); 

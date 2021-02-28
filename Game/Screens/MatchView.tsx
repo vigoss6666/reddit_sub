@@ -98,11 +98,7 @@ if(data){
       
     const names = ['zaid', 'zaheer', 'jacob' ]; 
     const names1 = ['jean', 'cloudia', 'jacob']
-    // const mainer = data.getListUsers.data[clientIndex].data.filter(val => val._id == listItem._id);
-    
-    //let index = data.getListUsers.data[clientIndex].data.indexOf(mainer[0]); 
-    
-    //console.log("index is"+index); 
+     
     const user = data.getListUsers.data[sliderState1.currentPage].data[sliderState.currentPage]; 
     
      

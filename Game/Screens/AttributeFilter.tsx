@@ -6,6 +6,49 @@ import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
 import {Button} from 'react-native-elements'; 
+import {firebase} from '../../config'; 
+import { getBaseLog} from './getBaseLog'; 
+import { transformCreativity} from '../../networking'; 
+const db = firebase.firestore();
+
+// @refresh reset
+             
+function logTen(arr:serverData[]|serverData):serverDataWithDimension[] | serverDataWithDimension {
+  if(Array.isArray(arr)){
+      const result =  arr.map(val => ({
+          ...val, 
+          charisma:parseFloat(getBaseLog(5, val.charisma).toFixed(1)), 
+          dimension:parseFloat(getBaseLog(5, val.charisma+val.creativity+val.empathetic+val.honest+val.humor+val.looks+val.status+val.wealthy).toFixed(1)), 
+          creativity:parseFloat(getBaseLog(5, val.creativity).toFixed(1)),
+          honest:parseFloat(getBaseLog(5, val.honest).toFixed(1)),
+          looks:parseFloat(getBaseLog(5, val.looks).toFixed(1)),
+          empathetic:parseFloat(getBaseLog(5, val.empathetic).toFixed(1)),
+          status:parseFloat(getBaseLog(5, val.status).toFixed(1)),
+          wealthy:parseFloat(getBaseLog(5, val.wealthy).toFixed(1)),
+          humor:parseFloat(getBaseLog(5, val.humor).toFixed(1)),
+          narcissistic:parseFloat(getBaseLog(5, val.narcissistic).toFixed(1)),
+          
+          
+        }
+        
+     )) 
+     return result; 
+  }
+return {
+          ...arr,     
+          dimension:parseFloat(getBaseLog(5, arr.charisma+arr.creativity+arr.empathetic+arr.honest+arr.humor+arr.looks+arr.status+arr.wealthy).toFixed(1)), 
+          charisma:parseFloat(getBaseLog(5, arr.charisma).toFixed(1)), 
+          creativity:parseFloat(getBaseLog(5, arr.creativity).toFixed(1)),
+          honest:parseFloat(getBaseLog(5, arr.honest).toFixed(1)),
+          looks:parseFloat(getBaseLog(5, arr.looks).toFixed(1)),
+          empathetic:parseFloat(getBaseLog(5, arr.empathetic).toFixed(1)),
+          status:parseFloat(getBaseLog(5, arr.status).toFixed(1)),
+          wealthy:parseFloat(getBaseLog(5, arr.wealthy).toFixed(1)),
+          humor:parseFloat(getBaseLog(5, arr.humor).toFixed(1)), 
+          narcissistic:parseFloat(getBaseLog(5, arr.narcissistic).toFixed(1)),
+}    
+  
+}
 
 interface AttributeFilterProps {}
 function jsUcfirst(str) 
@@ -13,10 +56,113 @@ function jsUcfirst(str)
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+
+
 const AttributeFilter = ({navigation, route}) => {
-   const attribute = route.params ? route.params.attribute:'creativity';
-   const value = route.params ? route.params.value:'none'; 
-   const [attValue, setAttValue] = useState(route.params ? route.params.value:'5.5');    
+   const [attribute, setAttribute] = useState('creativity'); 
+   const [maleMatches, setMaleMatches] = useState(0); 
+   const [femaleMatches, setFemaleMatches] = useState(0); 
+   const [femaleAhead, setFemaleAhead] = useState(0); 
+   const [maleAhead, setMaleAhead] = useState(0); 
+   const [potentialMatches, setPotentialMatches] = useState(0);
+   const attriText = [
+     {
+      dimension:'creativity', 
+      text:'A creative person has the ability to invent and develop original ideas, especially in the arts. Creative activities involve the inventing and making of new kinds of things. If you use something in a creative way, you use it in a new way that produces interesting and unusual results.', 
+    }, 
+    {
+      dimension:'honest', 
+      text:'If you describe someone as honest, you mean that they always tell the truth, and do not try to deceive people or break the law.If you are honest in a particular situation, you tell the complete truth or give your sincere opinion, even if this is not very pleasant.'
+    },
+    {
+      dimension:'charisma', 
+      text:'You say that someone has charisma when they can attract, influence, and inspire people by their personal qualities.A charismatic person attracts, influences, and inspires people by their personal qualities.'
+    },
+    {
+      dimension:'humor', 
+      text:'If someone or something is humorous, they are amusing, especially in a clever or witty way.If you describe something as funny, you think it is strange, surprising, or puzzling.'
+    },
+    {
+      dimension:'looks', 
+      text:'Someone who is good-looking has an attractive face.Pleasing in appearance; beautiful or handsome.'
+    },
+    {
+      dimension:'empathetic', 
+      text:"Someone who is empathetic has the ability to share another person's feelings or emotions as if they were their own."
+    },
+    {
+      dimension:'status', 
+      text:"Your status is your social or professional position.Status is the importance and respect that someone has among the public or a particular group."
+    },
+    {
+      dimension:'wealthy', 
+      text:"Someone who is wealthy has a large amount of money, property, or valuable possessions."
+    },
+    {
+      dimension:'narcissism', 
+      text:"Narcissism is a personality trait that is generally defined as excessive self-love. Friends Help Friends uses an interactive version of the Narcissistic Personality Inventory (NPI) exam to measure its users for relative measures of the presence or absence of the personality trait based on the definition of narcissistic personality disorder found in the DSM-III. Filtering and sorting your search results using the NPI score can be useful to help find better matches if you are especially sensitive to narcissistic personalities. However, the NPI is not a diagnostic tool for Narcissistic Personality Disorder. A user's narcissism score measures subclinical or normal expressions of narcissism. So, even someone who gets the highest possible score on the NPI does not necessarily have NPD."
+    },
+
+    
+   
+    
+
+  
+  ]
+   const [attValue, setAttValue]  = useState(0);
+   useEffect(() => {
+      route.params ? setAttValue(route.params.value):null;
+      route.params ? setAttribute(route.params.attribute):null;
+      
+        
+   },[])     
+   useEffect(() => {
+      db.collection('user').doc('trial_user').get().then(doc => {
+      const user = Object.assign({}, doc.data(), {_id:doc.id})
+       db.collection('user')
+       .where('state', '==', 'california')
+       .get()
+       .then(result => {
+             const serverObjectWithId = result.docs.map(doc => Object.assign({}, doc.data(), {_id:doc.id})); 
+             const logData = logTen(serverObjectWithId);
+             const userLogged = logTen(user);
+             const male = logData.filter(val => val.gender == 'male'); 
+             const female = logData.filter(val => val.gender == 'female');  
+             console.log(attribute)
+             
+             const maleMatches = male.filter(val => val.[attribute] > attValue); 
+             
+             setMaleMatches(maleMatches.length); 
+             const femaleMatches = female.filter(val => val.[attribute] > attValue);
+             setFemaleMatches(femaleMatches.length)
+             
+             const femaleAheadFilter = transformCreativity(userLogged, female);  
+             const menAheadFilter = transformCreativity(userLogged, male); 
+
+             const currentAheadFemale = femaleAheadFilter.filter(val => val.trait == attribute); 
+             const currentAheadMale = menAheadFilter.filter(val => val.trait == attribute); 
+
+             console.log(currentAheadFemale)
+             setFemaleAhead(currentAheadFemale[0].aheadOf); 
+             setMaleAhead(currentAheadMale[0].aheadOf); 
+             
+             
+
+
+             
+
+
+       })
+  })
+}, [maleMatches, femaleMatches, attValue])
+
+  const text = attriText.map(val => {
+    if(val.dimension == attribute){
+       return <Text>
+         {val.text}
+       </Text>
+    }
+  })
   return (
     <SafeAreaView >
         <ScrollView>
@@ -36,7 +182,9 @@ const AttributeFilter = ({navigation, route}) => {
       <Text style = {{alignSelf:'center', fontSize:'30', fontWeight:'bold', marginTop:10}}>{attribute.toUpperCase()}</Text>
       <View style = {{borderBottomWidth:2, marginTop:10}}/>
       <Text style = {{fontWeight:'bold', fontSize:15, marginTop:10}}>
-      Charisma is a personal quality, evident in the way an individual communicates to others, that makes someone more influential. This power to attract attention and influence people can be embodied in the way someone speaks, what someone says, and how someone looks when communicating. 
+       {/*make the ttritex here  */}
+       {text}
+
       </Text>
       <View style = {{borderBottomWidth:2, marginTop:10}}/>
       <Text style = {{marginTop:10, fontWeight:'bold', color:'grey', fontSize:17}}>FILTER BY</Text>
@@ -162,7 +310,7 @@ const AttributeFilter = ({navigation, route}) => {
                 
                       ]}
                     
-                    defaultValue = {value}
+                    defaultValue = {attValue}
                     
                     
                     arrowStyle={{marginRight: 10, size:20}}
@@ -194,13 +342,13 @@ const AttributeFilter = ({navigation, route}) => {
        </Text>
        <View>
            <View style = {{flexDirection:'row',alignItems:'center' }}>
-               <Text style = {{marginRight:10, fontSize:18, fontWeight:'bold'}}>203</Text>
+               <Text style = {{marginRight:10, fontSize:18, fontWeight:'bold'}}>{femaleMatches}</Text>
                <FontAwesome name="female" size={30} color="red" />
                
 
            </View>
            <View style = {{flexDirection:'row',alignItems:'center', marginTop:10 }}>
-               <Text style = {{marginRight:10, fontSize:18, fontWeight:'bold'}}>203</Text>
+               <Text style = {{marginRight:10, fontSize:18, fontWeight:'bold'}}>{maleMatches}</Text>
                <FontAwesome name="male" size={30} color="blue" />
                
 
@@ -229,7 +377,7 @@ const AttributeFilter = ({navigation, route}) => {
           <FontAwesome5 name="female" size={35} color="red" /></View>
           <View>
               <Text style = {{fontWeight:'bold'}}>AHEAD OF</Text>
-              <Text style = {{fontWeight:'bold', color:'red'}}>93 %</Text>
+              <Text style = {{fontWeight:'bold', color:'red'}}>{femaleAhead} %</Text>
               <Text style = {{fontWeight:'bold'}} >Females</Text>
           </View>
           </View>
@@ -240,7 +388,7 @@ const AttributeFilter = ({navigation, route}) => {
     marginTop:20
   }}></View> 
           <View style = {{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-<View style = {{flexDirection:'row', marginTop:20, marginBottom:20 ,  }}>
+          <View style = {{flexDirection:'row', marginTop:20, marginBottom:20 ,  }}>
            
           <FontAwesome5 name="male" size={35} color="blue" />
           <FontAwesome5 name="male" size={35} color="blue" />
@@ -253,11 +401,11 @@ const AttributeFilter = ({navigation, route}) => {
           <FontAwesome5 name="male" size={35} color="blue" /></View>
           <View>
               <Text style = {{fontWeight:'bold'}}>AHEAD OF</Text>
-              <Text style = {{fontWeight:'bold', color:'blue'}}>93 %</Text>
+              <Text style = {{fontWeight:'bold', color:'blue'}}>{maleAhead} %</Text>
               <Text style = {{fontWeight:'bold'}} >Males</Text>
           </View>
           </View>
-          <Button title = {'Save'} containerStyle = {{marginTop:20, marginBottom:30,marginLeft:20, marginRight:20}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => navigation.navigate('BrowseSettings', {attribute:attribute, value:attValue})}/>
+          <Button title = {'Save'} containerStyle = {{marginTop:20, marginBottom:30,marginLeft:20, marginRight:20}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => navigation.navigate('BrowseSettings', {attribute, value:attValue})}/>
           </View> 
     </ScrollView>
     </SafeAreaView>

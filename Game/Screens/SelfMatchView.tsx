@@ -6,7 +6,8 @@ import {Button} from 'react-native-elements';
 import { iconFactory } from '../../src/common/Common';
 interface SelfMatchViewProps {}
 
-const SelfMatchView = (props: SelfMatchViewProps) => {
+const SelfMatchView = ({navigation, route}) => {
+    const {selfMatchView} = route.params;  
     const [hidden, setHidden]= useState(false);
     const { width, height } = Dimensions.get('window');
     const [sliderState, setSliderState] = useState({ currentPage: 1 });
@@ -15,6 +16,8 @@ const SelfMatchView = (props: SelfMatchViewProps) => {
        profilePic:"https://i.pinimg.com/originals/f0/a6/4e/f0a64e32194d341befecc80458707565.jpg",
        firstName:"Amy Buckthorpe"
     }); 
+    
+    console.log(selfMatchView); 
     console.log(sliderState)
     
     const data = [
@@ -71,28 +74,28 @@ const SelfMatchView = (props: SelfMatchViewProps) => {
     const textTemplate = hidden ? null: <View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('humor', 20)}
-          <Text style = {styles.scores }>Humor:  {data[sliderState.currentPage].humor}</Text>
+          <Text style = {styles.scores }>Humor:  {selfMatchView.data[sliderState.currentPage].humor}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('empathetic', 20)}
-          <Text style = {styles.scores }>Empathetic:  {user.trustWorthy}</Text>
+          <Text style = {styles.scores }>Empathetic:  {selfMatchView.data[sliderState.currentPage].empathetic}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5, marginLeft:5}}>
           {iconFactory('wealthy', 20)}
-          <Text style = {styles.scores }>Wealthy:  {user.wealthy}</Text>
+          <Text style = {styles.scores }>Wealthy:  {selfMatchView.data[sliderState.currentPage].wealthy}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('looks', 20)}
-          <Text style = {styles.scores }>Looks:  {user.goodLooking}</Text>
+          <Text style = {styles.scores }>Looks:  {selfMatchView.data[sliderState.currentPage].looks}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center",padding:5}}>
           {iconFactory('status', 20)}
-          <Text style = {styles.scores }>Status:  {data[sliderState.currentPage].status}</Text>
+          <Text style = {styles.scores }>Status:  {selfMatchView.data[sliderState.currentPage].status}</Text>
           </View>
           
           
           </View> 
-    const sliderTemplate = data.map(val => (
+    const sliderTemplate = selfMatchView.data.map(val => (
         <View style={{ width,  height,}} key = {val._id}>
         <View style = {{ alignItems:"center",}}>
         
@@ -120,7 +123,7 @@ const SelfMatchView = (props: SelfMatchViewProps) => {
           });
         }
       };
-    const headerTemplate = user.profilePic ? 
+    const headerTemplate = selfMatchView.user.profilePic ? 
     <View>
      <Text style = {{alignSelf:'center', marginBottom:10, fontWeight:'bold'}}>{user.firstName}</Text>   
     <Image source = {{uri:user.profilePic}} style = {{height:200, width:200, borderRadius:100}}/></View>:<MaterialIcons name="account-circle" size={220} color="black" />
@@ -168,15 +171,15 @@ const SelfMatchView = (props: SelfMatchViewProps) => {
             <View>
             <View style = {{flexDirection:"row", alignItems:"center",padding:5}}>
             {iconFactory('charisma', 20)}
-          <Text style = {styles.scores }>Charisma:  {data[sliderState.currentPage].charisma}</Text>
+          <Text style = {styles.scores }>Charisma:  {selfMatchView.data[sliderState.currentPage].charisma}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center",padding:5}}>
           {iconFactory('creativity', 20)}
-          <Text style = {styles.scores }>Creativity:  {data[sliderState.currentPage].creativity}</Text>
+          <Text style = {styles.scores }>Creativity:  {selfMatchView.data[sliderState.currentPage].creativity}</Text>
           </View> 
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('honest', 20)}
-          <Text style = {styles.scores }> Honest:  {data[sliderState.currentPage].honest}</Text>
+          <Text style = {styles.scores }> Honest:  {selfMatchView.data[sliderState.currentPage].honest}</Text>
           </View> 
           
                
@@ -184,7 +187,7 @@ const SelfMatchView = (props: SelfMatchViewProps) => {
             </View>
 
             <View style = {{alignItems:"center", justifyContent:"center", padding:5, marginTop:5}}>
-                <Text style = {{fontSize:30, fontWeight:"900"}}>{data[sliderState.currentPage].dimension}</Text>
+                <Text style = {{fontSize:30, fontWeight:"900"}}>{selfMatchView.data[sliderState.currentPage].dimension}</Text>
                 <Text style = {{fontSize:14, fontWeight:'bold',marginTop:5}}>Compatability Score</Text>
             </View> 
 

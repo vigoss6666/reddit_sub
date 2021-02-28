@@ -109,10 +109,9 @@ useEffect(() => {
 				  const gender = val.data().gender; 
 
 				  let arr = []; 
-				  if(gender == 'male'){
+				  if(gender == 'female'){
 					   db.collection('user')
 					  .where('gender', '==', 'female')
-					  .where('age', '<=', val.data().age)
 					  .get()
 					  .then((result) => {
 						  result.docs.map(val => {
@@ -265,7 +264,7 @@ let addToList = () => {
 }  
 useEffect(() => {
     const result = db.collection('user').doc('trial_user').onSnapshot((doc) => {
-		 console.log("called")
+		//   doc.data().datingPoolList.map(val => console.log(val._id)); 
         const result =  db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', doc.data().datingPoolList).get().then(result1 => {
 			 //result1.docs.map(val => console.log(val.data().name))
 			 const gamer = []; 
@@ -332,8 +331,8 @@ const sliderTemplate =  lister.map(val => {
 	 console.log(val._id)
 	return <View style={{ width,  height, }} key = {val._id}>
 	<View style = {{ alignItems:"center", marginTop:20}} key = {val._id}>
-	<MaterialIcons name="account-circle" size={75} color="black" />
-	<Text style = {{fontWeight:"bold"}}>{ val.name }</Text>
+	{val.profilePic ?<Image source = {{uri:val.profilePic}} style = {{height:60, width:60, borderRadius:30}}/> :<MaterialIcons name="account-circle" size={75} color="black" />}
+	<Text style = {{fontWeight:"bold", marginTop:10}}>{ val.name }</Text>
 	</View>
 	</View>
 })

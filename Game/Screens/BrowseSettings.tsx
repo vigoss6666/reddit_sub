@@ -5,12 +5,17 @@ import Slider from '@react-native-community/slider';
 import { iconFactory } from '../../src/common/Common';
 import { ScrollView } from 'react-native-gesture-handler';
 import SwitchSelector from "react-native-switch-selector";
+import {firebase} from '../../config'; 
+const db = firebase.firestore(); 
 
+
+// @refresh reset
 
 interface BrowseSettingsProps {}
 
 const BrowseSettings = ({navigation, route}) => {
 const [selected, setSelected] = useState('filter'); 
+const [potentialMatches, setPotentialMatches] = useState(0); 
 const [minAgePref, selectminAgePref] = useState(15); 
 const [maxAgePref, selectmaxAgePref] = useState(20);
 const [inches, setInches] = useState("11"); 
@@ -19,13 +24,58 @@ const [feet, setFeet ] = useState("5");
 const [matchmaking, setMatchmaking] = useState();
 const [compatibility, setCompatibility] = useState(1);
 const [distance, setDistance] = useState(); 
+const [creativity, setCreativity] = useState(0.1); 
+const [charisma, setCharisma] = useState(2.1);
+const [honest, setHonest] = useState(0.1);
+const [humor, setHumor] = useState(0.1);
+const [empathetic, setEmpathetic] = useState(0.1);
+const [looks, setLooks] = useState(0.1);
+const [wealthy, setWealthy] = useState(0.1);
+const [status, setStatus] = useState(0.1);
+
+
+
+//   if(route.params){
+
+//     if(route.params.attribute == 'creativity'){
+//        if(creativity !== route.params.attribute){
+//         setCreativity(route.params.value); 
+//        }
+       
+//     }
+//     if(route.params.attribute == 'charisma'){
+//      setCharisma(route.params.value); 
+//     }
+//  }
 
 
 
 
 
-console.log(matchmaking)
 
+const sendBack = () => {
+   const finalObject = {
+      creativity, 
+      charisma, 
+      honest, 
+      looks, 
+      empathetic, 
+      humor, 
+      status, 
+      wealthy
+   }
+   navigation.navigate('SelfGame', {finalObject}); 
+}
+
+
+
+useEffect(() => {
+  if(route.params){
+     if(route.params.attribute == 'charisma'){
+        setCharisma(route.params.value); 
+     }
+  }
+},[])
 
 const initialValue = matchmaking == true ? 0:1; 
     const options = [
@@ -56,32 +106,32 @@ const initialValue = matchmaking == true ? 0:1;
 const [traits, setTraits] = useState([
     {
      trait:'charisma', 
-     value:5.5
+     value:charisma
     }, 
     {
         trait:'creativity', 
-        value:4.3
+        value:creativity
     },
     
     {
         trait:'honest', 
-        value:9
+        value:honest
     },
     {
         trait:'looks', 
-        value:8.8
+        value:looks
     },
     {
         trait:'empathetic', 
-        value:7.7
+        value:empathetic
     },
     {
         trait:'status', 
-        value:5.3
+        value:status
     },
     {
         trait:'wealthy', 
-        value:4.5
+        value:wealthy
     },
     {
         trait:'narcissism', 
@@ -93,11 +143,7 @@ function jsUcfirst(str)
 {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
-if(route.params){
-    const result = traits.filter(val => val.trait == route.params.attribute); 
-    result[0].value = route.params.value; 
-   
- }
+
 
 const finalObject = {
      minAgePref, 
@@ -118,7 +164,7 @@ const finalObject = {
         <View style = {{flexDirection:'row', justifyContent:'space-between', marginTop:20, marginRight:20, alignItems:'center', }}>
        <Text></Text>   
        <Text style = {{fontWeight:'bold', fontSize:20}}>Browse Settings</Text> 
-       <TouchableOpacity>
+       <TouchableOpacity onPress = {() => sendBack()}>
            <Text style = {{color:'orange', fontWeight:'bold'}}>Done</Text>
        </TouchableOpacity>
       </View>
