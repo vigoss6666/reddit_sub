@@ -4,36 +4,47 @@ import { MaterialIcons, Foundation, Feather, Entypo,MaterialCommunityIcons  } fr
 import {firebase } from '../../config'; 
 import {Button} from 'react-native-elements'; 
 import {iconFactory} from '../../src/common/Common'; 
+import { client } from 'networking';
 interface MatchViewLatestProps {}
 
-const MatchViewLatest = (props: MatchViewLatestProps) => {
+const MatchViewLatest = ({navigation, route}) => {
     const {width, height} = Dimensions.get('window'); 
+    const [hidden, setHidden]= useState(false);
     
-    const [sliderState, setSliderState] = useState({ currentPage: 0 });
-    const [sliderState1, setSliderState1] = useState({ currentPage: 0 });
+    const tester = route.params.pageData; 
+    const clientIndex = route.params.clientIndex; 
+    const userIndex = route.params.userIndex; 
+    const [sliderState, setSliderState] = useState({ currentPage: clientIndex });
+    const [sliderState1, setSliderState1] = useState({ currentPage: userIndex });
+    console.log(clientIndex)
+    console.log(userIndex); 
+     
     
      
     const setSliderPage = (event: any) => {
         const { currentPage } = sliderState;
         const { x } = event.nativeEvent.contentOffset;
-
-        
         const indexOfNextScreen = Math.floor(x / width);
         if (indexOfNextScreen !== currentPage && indexOfNextScreen >= 0) {
             setSliderState({
                 ...sliderState,
                 currentPage: indexOfNextScreen,
             });
+            setSliderState1({
+                
+                currentPage: 0,
+            });
         }
     };
+
     const setSliderPage1 = (event: any) => {
         const { currentPage } = sliderState;
         const { x } = event.nativeEvent.contentOffset;
         
         const indexOfNextScreen = Math.floor(x / width);
         if (indexOfNextScreen !== currentPage && indexOfNextScreen >= 0) {
-            setSliderState({
-                ...sliderState,
+            setSliderState1({
+                ...sliderState1,
                 currentPage: indexOfNextScreen,
             });
         }
@@ -45,13 +56,37 @@ const MatchViewLatest = (props: MatchViewLatestProps) => {
             firstName:"zaid"                              
          }, 
           
-         data:[]
+         data:[
+             {
+              name:"katherine kuckoo", 
+              firstName:"Katherine"
+            }, 
+            {
+                name:"Samantha Hikkens", 
+                firstName:"Samnatha"
+            }, 
+        ]
     }, 
+    {
+        client:{
+           name:"kemal pasha", 
+           firstName:"zaid"                              
+        }, 
+         
+        data:[
+            {
+            name:"Samantha Hikkens", 
+            firstName:"Samnatha"
+            }, 
+            {
+                name:"Sujata williams", 
+                firstName:"sujatha"
+            },
     
-
-
+    ]
+   },
 ])
-    const textTemplate = 1 == 1 ? null: <View>
+    const textTemplate = hidden ? null: <View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('humor', 20)}
           <Text style = {styles.scores }>Humor:  1 </Text>
@@ -73,35 +108,32 @@ const MatchViewLatest = (props: MatchViewLatestProps) => {
           <Text style = {styles.scores }>Status:  1 </Text>
           </View>
           </View> 
-    const sliderTemplate =  pageData.map((val,index) => {
+    const sliderTemplate =  tester.map((val,index) => {
         return <View style={{ width, }} id = {val.client.id}>
         <View style = {{ alignItems:"center", marginTop:20}}>
         <Text style = {{fontWeight:"bold", marginTop:10}}>{ val.client.name }</Text>
-        {val.client.profilePic ?<Image source = {{uri:val.client.profilePic}} style = {{height:60, width:60, borderRadius:30}}/> :<MaterialIcons name="account-circle" size={150} color="orange" />}
+        {val.client.profilePic ?<Image source = {{uri:val.client.profilePic}} style = {{height:160, width:160, borderRadius:80}}/> :<MaterialIcons name="account-circle" size={150} color="orange" />}
         
         </View>
         </View>
        })
-       const sliderTemplate1 =  pageData.map((val,index) => {
-        return <View style={{ width, height:100 }} id = {val.client.id}>
+       const sliderTemplate1 =  tester[sliderState.currentPage].data.map((val,index) => {
+        return <View style={{ width, height:100 }} id = {val.id}>
         <View style = {{ alignItems:"center", }}>
-        {val.client.profilePic ?<Image source = {{uri:val.client.profilePic}} style = {{height:60, width:60, borderRadius:30}}/> :<MaterialCommunityIcons name="account-circle" size={70} color="blue" />}
-        <Text style = {{fontWeight:"bold", marginTop:10}}>{ val.client.name }</Text>
+        {val.profilePic ?<Image source = {{uri:val.profilePic}} style = {{height:60, width:60, borderRadius:30}}/> :<MaterialCommunityIcons name="account-circle" size={70} color="blue" />}
+        <Text style = {{fontWeight:"bold", marginTop:10}}>{ val.name }</Text>
         </View>
         </View>
        })
 
-       const headerTemplate = 1 == 1 ? 
-
-       <View>
-        <Text style = {{alignSelf:'center', marginBottom:10, fontWeight:'bold'}}>zaid</Text>   
-       <Image source = {{uri:"https://i.pinimg.com/originals/f0/a6/4e/f0a64e32194d341befecc80458707565.jpg"}} style = {{height:200, width:200, borderRadius:100}}/></View>:<MaterialIcons name="account-circle" size={220} color="black" />  
      return (
          <View style = {{flex:1}}>
              <View style = {{flex:0.5}}>
             <View style = {{flex:1}}>
              <ScrollView
-contentOffset = {{x:414, y:0}}
+contentOffset = {{x:414*clientIndex, y:0}}
+showsVerticalScrollIndicator={false}
+showsHorizontalScrollIndicator={false}
 style = {{zIndex:1,}} 
 horizontal = {true}
 pagingEnabled = {true}
@@ -114,13 +146,15 @@ onScroll={(event: any) => {
 </ScrollView>
 
 <ScrollView
-contentOffset = {{x:414, y:0}}
+contentOffset = {{x:414*sliderState1.currentPage, y:0}}
+showsVerticalScrollIndicator={false}
+showsHorizontalScrollIndicator={false}
 style = {{position:'absolute', top:150, left:50, zIndex:2000}} 
 horizontal = {true}
 pagingEnabled = {true}
 scrollEventThrottle={8}
 onScroll={(event: any) => {
-  setSliderPage(event);
+  setSliderPage1(event);
 }}
 >
 {sliderTemplate1}
@@ -128,9 +162,64 @@ onScroll={(event: any) => {
 
 </View>    
              </View>
-             <View style = {{flex:0.5}}>
+             <ScrollView style = {{flex:0.4,}}>
+            <View style = {{flexDirection:"row", marginTop:20,}}>
+         <TouchableOpacity onPress = {() => setHidden(!hidden)} style = {{marginLeft:30, marginBottom:10, flexDirection:"row", alignItems:"center", }}>
+         {hidden ? <Feather name="arrow-down-circle" size={40} color="pink" />:<Feather name="arrow-up-circle" size={40} color="pink" />}
+         <View style = {{borderBottomWidth:1, width:Dimensions.get('window').width - 100}}>
 
-             </View>
+         </View>
+         </TouchableOpacity>
+          
+           
+
+        </View>
+            <View style = {{flexDirection:"row", justifyContent:'space-around'}}>
+            <View>
+            <View style = {{flexDirection:"row", alignItems:"center",padding:5}}>
+            {iconFactory('charisma', 20)}
+          <Text style = {styles.scores }>Charisma:  {tester[sliderState.currentPage].data[sliderState1.currentPage].charisma}</Text>
+          </View>
+          <View style = {{flexDirection:"row", alignItems:"center",padding:5}}>
+          {iconFactory('creativity', 20)}
+          <Text style = {styles.scores }>Creativity:  {tester[sliderState.currentPage].data[sliderState1.currentPage].creativity}</Text>
+          </View> 
+          <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
+          {iconFactory('honest', 20)}
+          <Text style = {styles.scores }> Honest:  {}</Text>
+          </View> 
+          
+               
+               {textTemplate}
+            </View>
+
+            <View style = {{alignItems:"center", justifyContent:"center", padding:5, marginTop:5}}>
+                <Text style = {{fontSize:30, fontWeight:"900"}}>{}</Text>
+                <Text style = {{fontSize:14, fontWeight:'bold',marginTop:5}}>Compatability Score</Text>
+            </View> 
+
+            </View>
+            <View style={{
+    borderStyle: 'dotted',
+    borderWidth: 2,
+    borderRadius: 1,
+    borderColor:'grey',
+     marginBottom:30, 
+     marginLeft:30, 
+     marginRight:30, 
+     marginTop:15
+  }}></View>
+           <View style = {{flexDirection:"row", justifyContent:"center",alignItems:"center"}}>
+           <Feather name="alert-triangle" size={24} color="red" />
+           <Text style = {{marginLeft:5, fontWeight:'bold'}}>Narcissism: {}</Text>
+           </View>
+           <View style = {{borderBottomWidth:2, marginLeft:30, marginRight:30, borderBottomColor:"grey", marginTop:10}}>
+           </View>
+           
+           </ScrollView>
+           <View style = {{marginTop:10, marginLeft:30, marginRight:30, flex:0.1, marginBottom:15, justifyContent:"center", }}>
+           <Button title = "Generate Match" buttonStyle = {{backgroundColor:"#afd968"}} titleStyle = {{color:"black", fontWeight:'bold'}} onPress = {() => {setEvent(), navigation.navigate('GameHomepage')}}/>
+           </View>
          </View>
      )
         

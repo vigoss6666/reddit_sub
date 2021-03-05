@@ -7,10 +7,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 export default function School({navigation}){
     const [Email, setEmail] = useState();
-        
-       
-  const _handleEmail = () => {
-   const hello = "zaheeryakub@gmail.com";     
+    const _handleEmail = () => {
+    const hello = "zaheeryakub@gmail.com";     
    
    navigation.navigate('Password')
    

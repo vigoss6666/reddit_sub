@@ -4,6 +4,7 @@ import { firebase } from '../../config';
 import {MaterialIcons} from '@expo/vector-icons'; 
 import {logTen} from './logTen'; 
 import { iconFactory } from '../../src/common/Common';
+import {Entypo, Feather} from '@expo/vector-icons'; 
 import {transformCreativity, computeSimDimension, computeSectionLabel} from '../../networking'; 
 // @refresh reset
 const db = firebase.firestore(); 
@@ -90,16 +91,24 @@ const user = {
   humor:350, 
   _id:'gamer'
 }
+
 const [pageData, setPageData] = useState([]);
 const {width, height} = Dimensions.get('window'); 
 const [sliderState, setSliderState] = useState({ currentPage: 0 });
 const [filter, setFilter] = useState(route.params ? route.params.finalObject:{});
+const index = useRef().current; 
+console.log(filter); 
 const sectionData = pageData.length > 0 ? computeSectionLabel(pageData[sliderState.currentPage].data):[]
+const computeSelectedIndex = (id:string) => { 
+   const index = pageData[sliderState.currentPage].data.findIndex(val => val._id == id);  
+   return index;  
+
+}
 
 
 const renderFlatlist = ({item}) => {
    return <View key = {item.name} style = {{flexDirection:'row'}}>
-       <TouchableOpacity onPress = {() => navigation.navigate('MatchView')}>
+       <TouchableOpacity onPress = {() => {navigation.navigate('MatchViewLatest', {pageData, clientIndex:sliderState.currentPage, userIndex:computeSelectedIndex(item._id) })}}>
          <MaterialIcons name="account-circle" size={70} color="black" /></TouchableOpacity>
 
        {item.simDimension ? <View style = {{position:'absolute', top:13, right:2, zIndex:100, backgroundColor:'#393a3b', borderRadius:15, height:30, width:30, justifyContent:'center', alignItems:'center'}}>
@@ -142,8 +151,13 @@ db.collection('user').doc('trial_user').get().then(onResult => {
        const logData = logTen(serverObjectWithId);
        const userLogged = logTen(userWithId);
        const simD = computeSimDimension(userLogged, logData);
-       const filters = applyFilters(filter, simD); 
-       setPageData(pageData => [...pageData, {client:userWithId, data:filters}])
+       if(userLogged._id == 'oumCZOCPbcILPlJcf4qB'){
+        const filters = applyFilters(filter, simD); 
+        setPageData(pageData => [...pageData, {client:userWithId, data:filters}])
+        return
+       }   
+       setPageData(pageData => [...pageData, {client:userWithId, data:simD}])
+       
       })
     })
 
@@ -175,6 +189,14 @@ const sliderTemplate =  pageData.map((val,index) => {
   return (
     <View style={{flex:1}}>
       <View style = {{flex:0.2}}>
+      <View style = {{flexDirection:'row', justifyContent:'space-between',alignItems:'center', backgroundColor:'grey'}}>
+         <TouchableOpacity>
+        <Entypo name="controller-play" size={35} style = {{marginLeft:20}} />                    
+        </TouchableOpacity>   
+        <TouchableOpacity onPress = {() =>navigation.navigate('BrowseMatchSettings')}>
+        <Feather name="settings" size={30} color="black" style = {{marginRight:20, marginBottom:5, marginTop:5}}/>
+        </TouchableOpacity>
+        </View>
       <ScrollView
 horizontal = {true}
 pagingEnabled = {true}

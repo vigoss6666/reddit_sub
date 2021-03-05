@@ -29,8 +29,7 @@ interface filter extends serverData {
    feet:number, 
    distance:number
    matchMakerContact:boolean
-     
-}
+  }
 
 
 interface serverDataObjectDimension {

@@ -18,6 +18,9 @@ import { Feather } from '@expo/vector-icons';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Foundation } from '@expo/vector-icons';
+import * as Print from 'expo-print';
+
+
 
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -537,6 +540,11 @@ export function iconFactory(dimension:string, iconSize:number){
    if(dimension == 'narcissism'){
     return <Foundation name="dollar" size={iconSize} color="red" />
    }
+}
+
+
+export function userTemplate() {
+   
 }
         
 

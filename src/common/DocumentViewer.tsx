@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Bu
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { WebView } from 'react-native-webview';
 export default function DocumentViewer({navigation, route}){
-  const {uri} = route.params;    
+const {uri} = route.params;    
 return(
 <WebView source={{ uri: uri }} style={{ marginTop: 20 }}/>
 )

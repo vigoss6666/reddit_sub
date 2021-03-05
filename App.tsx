@@ -75,8 +75,9 @@ import FrontPage from './Authentication/Screens/Frontpage';
 import ClientView from './ClientViews/Screens/ClientView'; 
 import Matchee from './ClientViews/Screens/Matchee'; 
 import SelfView from './ClientViews/Screens/SelfView'; 
-import MatchViewLatest from './Game/Screens/MatchViewLatest'; 
-
+import MatchViewLatest from './Game/Screens/MatchViewLatest';
+import BrowseMatchSettings from './Game/Screens/BrowseMatchSettings';  
+import Webber from './Game/Screens/Webber'; 
 
 
 
@@ -290,7 +291,8 @@ export default function App() {
       <NavigationContainer>
       <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
 
-        <Stack.Screen name="Home" component={MatchViewLatest} options = {{headerTitle:false}}/>
+        <Stack.Screen name="Home" component={Gamer} options = {{headerTitle:false}}/>
+
         <Stack.Screen name="Side" component={SideScreen}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -357,6 +359,10 @@ export default function App() {
         <Stack.Screen name="BrowseSettings" component={BrowseSettings}/>
         <Stack.Screen name="SelfMatchView" component={SelfMatchView}/>
         <Stack.Screen name="SelfGame" component={SelfGame}/>
+        <Stack.Screen name="BrowseMatchSettings" component={BrowseMatchSettings}/>
+        <Stack.Screen name="MatchMakeLatest" component={MatchMakeLatest}/>
+        <Stack.Screen name="MatchViewLatest" component={MatchViewLatest}/>
+        <Stack.Screen name="Webber" component={Webber}/>
         
       </Stack.Navigator>
     </NavigationContainer>
