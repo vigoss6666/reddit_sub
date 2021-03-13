@@ -1,123 +1,80 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, KeyboardAvoidingView} from 'react-native';
-import { useMutation,useQuery } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
 import { Divider,Header,Text, SearchBar,Avatar,Icon,Button,CheckBox} from 'react-native-elements';
 import { createFilter } from 'react-native-search-filter';
 import { firebase } from '../../config'; 
-
-// addDatingPool(datingPoolList: DatingPoolObjectList1!): Boolean!
-
-const ADD_DATING = gql`
-mutation namer($datingPoolList:DatingPoolObjectList1!){
- addDatingPool(datingPoolList:$datingPoolList){
-    data {
-       name 
-       firstname
-       _id 
-       gender
-    }
- }
-}
-`
-
-
-
- 
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking';  
+import { MaterialIcons } from '@expo/vector-icons';
 
 
 export default function Contacts({navigation,route}){
-
-//const [addDating, {data}] = useMutation(ADD_DATING); 
+  
+const myContext = useContext(AppContext); 
+const {user, userId} = myContext;
 const db = firebase.firestore(); 
 const [indexer,setIndexer] = useState([]); 
 const [isSelected, setSelection] = useState(false);
-const KEYS_TO_FILTERS = ['fullName'];
+const KEYS_TO_FILTERS = ['name', 'firstName', 'lastName'];
 const [search, setSearch] = useState('');
 const [selectAll, setSelectAll] = useState(true);
 const [serverData, addServerData] = useState([]); 
-const {profiles} = route.params; 
-console.log("profile is something")
-//console.log(profiles)
-console.log(serverData)
-// if(data){
-//    navigation.navigate('ContactsSex', {profiles:data.addDatingPool.data}); 
+const [profiles, setProfiles] = useState([]); 
+ 
 
-// }
-const addServerDataWrapper = (text) => {
-  
-  const result = serverData.filter(val => val.fullName === text.fullName) 
-  if(result.length > 0){
-         const finaler = serverData.filter(val => val.fullName !== text.fullName);  
-         addServerData(finaler); 
-         console.log(serverData);
-         return; 
-  }
-  console.log(serverData); 
-}
+useEffect(() => {
+   async function namer(){
+    const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.contactList).get();
+    const users = onResult.docs.map(val => val.data()); 
+    const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
+    const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
+    const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker]
+    setProfiles(finalUsers); 
 
-
-
+   }
+   namer()
+   
+}, [])
 const sendToServer = () => {
-   const result = serverData.map(val => (
-      {_id:val.id}
-   ))
-   console.log("result is")
-   console.log(result)
-   //addDating({variables:{datingPoolList:{data:result}}}); 
-   db.collection('user').doc('trialUser').set({datingPoolList:result}); 
+   
+   updateUser(userId,{datingPoolList:indexer})
+   navigation.navigate('ContactsAge') 
 }
 
 
 
-const addArray = (text) => {
-    //  addDating();  
-     if(indexer.includes(text)){
-        
+const addArray = (phoneNumber:string) => {
+     if(indexer.includes(phoneNumber)){
         const copyIndex = indexer.concat();  
-        const index = copyIndex.indexOf(text);
+        const index = copyIndex.indexOf(phoneNumber);
             const result = copyIndex.splice(index, 1);
             setIndexer(copyIndex); 
             return; 
      }
-     setIndexer([...indexer, text]);
-}
-const deleteArray = () => {
-    setIndexer([]); 
-    addServerData([]); 
+     setIndexer([...indexer, phoneNumber]);
 }
 
 
+ const computeName = (obj) => {
+      if(obj.name){
+         return obj.name
+      }
+      if(obj.firstName && obj.lastName){
+         return obj.firstName+obj.lastName
+      }
+      return obj.firstName
+ }
 
 
     
     const filteredEmails = profiles.filter(createFilter(search, KEYS_TO_FILTERS))
-    const addAll = () => {
-     const result = filteredEmails.map(val => {
-          return val.fullName
-     })
-     setIndexer(result);
-     const newServerData = filteredEmails.map(val1 => {
-        return {_id:val1._id}; 
-     })
-     addServerData(newServerData); 
-
-    }
-    const selectAllTemplate = selectAll ? <TouchableOpacity style = {{marginRight:20, marginLeft:10,marginBottom:10}} onPress = {() => {addAll(), setSelectAll(false)}}>
-<Text style = {{alignSelf:'flex-end', fontWeight:"600"}}>Select all</Text>
-</TouchableOpacity>:<TouchableOpacity style = {{marginRight:20, marginLeft:10,marginBottom:10}} onPress = {() => {deleteArray(), setSelectAll(true)}}>
-              <Text style = {{alignSelf:'flex-end', fontWeight:"600"}}>Deselect all</Text>
-          </TouchableOpacity>
-    
-    
-    
-    return(
+   return(
       <KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       style={{flex:1}}
     >
         <View style = {{flex:1, }}>
-        <View style = {{flex:0.2}}>
+        <View style = {{flex:0.1}}>
                         
         </View>
         <View style = {{flex:0.2}}>
@@ -133,22 +90,24 @@ const deleteArray = () => {
           value={search}
         />
         </View>
-          <View style = {{marginTop:10,flex:0.4, marginTop:40}}>
-          {selectAllTemplate}
+          <View style = {{marginTop:10,flex:0.5, marginTop:40}}>
+          
+
           <ScrollView>
           {filteredEmails.map((val,index) => {
             return (
               <TouchableOpacity key={index} 
-              style = {{borderWidth:1, height:50,flexDirection:"row",  justifyContent:'space-between', marginLeft:20, marginRight:20, borderLeftWidth:0, borderRightWidth:0,}}
-              onPress = {() => { addArray(val.fullName), addServerData([val,...serverData, ]), addServerDataWrapper(val)  }}
+              style = {{borderWidth:1, flexDirection:"row",  justifyContent:'space-between', marginLeft:20, marginRight:20, borderLeftWidth:0, borderRightWidth:0,}}
+              onPress = {() => { addArray(val.phoneNumber)}}
               >
                 
-                  <View style = {{flexDirection:'row', alignItems:'center'}}>
-                  <Avatar rounded icon = {{name:'account-circle', color:'black'}} activeOpacity = {0.9} size = {"medium"} />  
-                  <Text>{val.fullName || val.firstName}</Text>
+                  <View style = {{flexDirection:'row', alignItems:'center', marginTop:5, marginBottom:5}}>
+                  {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:60, width:60, borderRadius:30, }}/>:<MaterialIcons name="account-circle" size={60} color="black" />}  
+                  <Text style = {{marginLeft:10, fontSize:25}}>{computeName(val)}</Text>
+                  <Text style = {{marginLeft:20}}>{val.matchMaker !== userId ? <Text style = {{fontWeight:'bold', fontSize:25}}> R </Text>:null}</Text>
                   </View>
                   <View style = {{alignItems:'center', justifyContent:'center', marginRight:10}}>
-                     <Icon name = {"check"} iconStyle = {{opacity:indexer.includes(val.fullName) ? 1:0}}/> 
+                     <Icon name = {"check"} iconStyle = {{opacity:indexer.includes(val.phoneNumber) ? 1:0}}/> 
                   </View>
               </TouchableOpacity>
             )

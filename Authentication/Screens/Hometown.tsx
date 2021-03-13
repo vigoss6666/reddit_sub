@@ -1,22 +1,20 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { Dimensions,View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, KeyboardAvoidingView, Platform} from 'react-native';
 import {Button} from 'react-native-elements'; 
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Header } from '../../src/common/Common';
-import { mutateSettings } from '../../networking'; 
-import {GET_DETAILS} from '../../Account/Screens/DetailsSettings'; 
-import {firebase} from '../../config'; 
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking';
+
 
 
 export default function Hometown({navigation, route}){
+  const myContext = useContext(AppContext); 
+  const {userId} = myContext; 
     const {page} = route.params; 
     const [job, setJob] = useState();
     const _sendToServer = () => {
-      console.log("called")
-      const currentUser = firebase.auth().currentUser; 
-      const db = firebase.firestore();
-      console.log(currentUser.uid)
-      db.collection('user').doc('trial_user').set({ hometown:job}, {merge:true}).then(val => console.log)
+      updateUser(userId, {hometown:job})
     }
 
     const _handlePage = () => {

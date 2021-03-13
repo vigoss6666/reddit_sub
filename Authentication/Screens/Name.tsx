@@ -1,29 +1,43 @@
 import  React, {useState,useRef,useEffect,useContext} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, KeyboardAvoidingView, Platform, AsyncStorage} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, KeyboardAvoidingView, Platform} from 'react-native';
 import {Header,Continue} from '../../src/common/Common'; 
 import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { mutateSettings} from '../../networking';
 import {Button} from 'react-native-elements'; 
 import { firebase } from '../../config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AppContext from '../../AppContext';
+import {updateUser} from '../../networking';  
+// @refresh reset
+const auth = firebase.auth(); 
 
-export default function Name({navigation,name}){
+export default function Name({navigation}){
+   const myContext = useContext(AppContext);   
+   const {user, userId  } = myContext; 
+   console.log(user.age)
+
+   
+   
    const [firstName, setFirstName] = useState(""); 
    const [lastName, setLastName] = useState("");
    const [openGate, setOpenGate] = useState(true); 
    const [color, setColor] = useState("white")
-   
-   console.log(name)
+   const [currentUser, setCurrentUser] = useState(); 
    const fire = () => {
-    const currentUser = firebase.auth().currentUser; 
-    
-
-    
-    const db = firebase.firestore(); 
-    db.collection('user').doc('trial_user').set({firstname:firstName,lastname:lastName}, {merge:true}).then(val => console.log)
+    updateUser(userId, {firstName, lastName}); 
+    navigation.navigate('Birthday', {page:"something"})
     } 
    
     
-  
+  useEffect(() => {
+    async function namer(){
+      const user = await AsyncStorage.getItem('user'); 
+      console.log(user); 
+    }
+    namer()
+    
+    
+  }, [])
 
   
 
@@ -81,20 +95,16 @@ return(
 
 <View style = {{flex:0.6,}}>
  <View>
- {/* <TouchableOpacity 
- style = {{height:50, width:200, borderRadius:25,borderWidth:1, justifyContent:"center", alignItems:"center",backgroundColor:color }} disabled = {openGate} 
- onPress = {() => {navigation.navigate('Phone'), mutateSettings({firstname:firstName, lastname:lastName})}}
- >
-           <Text>Continue</Text>     
-          </TouchableOpacity> */}
-   <Button
+ <Button
   title="Continue"
+
   type="outline"
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   disabled = {openGate}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  onPress = {() => {navigation.navigate('Birthday', {page:"something"}), fire(),  mutateSettings({firstname:firstName, lastname:lastName})}}
+  onPress = {() =>  fire()}
+  
 />       
  </View>
 </View>

@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, createContext } from 'react';
 import { AntDesign } from '@expo/vector-icons';
-import { StyleSheet, Text, View,Button, AsyncStorage, Settings, Platform, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View,Button, Settings, Platform, SafeAreaView } from 'react-native';
 import { NavigationContainer, BaseRouter } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Name from './Authentication/Screens/Name';
@@ -78,9 +78,6 @@ import SelfView from './ClientViews/Screens/SelfView';
 import MatchViewLatest from './Game/Screens/MatchViewLatest';
 import BrowseMatchSettings from './Game/Screens/BrowseMatchSettings';  
 import Webber from './Game/Screens/Webber'; 
-
-
-
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
@@ -105,83 +102,71 @@ import SelfGame from './Game/Screens/SelfGame';
 import SelfMatchView from './Game/Screens/SelfMatchView';
 import Gamer from './Game/Screens/Try'; 
 import MatchMakeLatest from './Game/Screens/MatchMakeLatest'; 
- 
-const currentUser = firebase.auth().currentUser; 
-    const db = firebase.firestore(); 
-    const userRef = db.collection('gamer');
-
-
-
-
-
-
-
-// async function getId(){
-//    const result = await AsyncStorage.getItem('_id')
-//    return result; 
-// }
-
-// const client = new ApolloClient({ 
-//   uri: production, 
-//   request: async (operation) => {
-//     operation.setContext({
-//       headers: {
-//         username: await getId() || "not defined" 
-//       }
-//     })
-//   }
-// });
-const REGISTER_USER = gql`
- mutation namer {
-    registerUser
- }
-` 
-
-//getDatingPool: DatingPoolObjectList!
-const GET_HELLO = gql`
- query {
-   
-    getDatingPool {
-       data {
-          _id 
-          firstname 
-          name 
-       }
-    }
- }
-`; 
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AppContext from './AppContext'; 
+const db = firebase.firestore();
 
 const Stack = createStackNavigator();
-
-function HomeScreen({navigation}){
-   return (
-   <View style = {{justifyContent:"center", alignItems:"center",flex:1,backgroundColor:"white"}}>
-     <Button title = {"Press me"} onPress  = {() => navigation.navigate("Side") }>
-
-     </Button>
-   </View>)
-}
-
-
-function SideScreen(){
-   return (
-      <View>
-        <Text>Side screen </Text>
-      </View>
-   )
-}
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
 export default function App() {
+
+  
+
   const [expoPushToken, setExpoPushToken] = useState('');
-  const db = firebase.firestore();
+  const [currentUser, setCurrentUser] = useState('+917208110384'); 
+  const [basicAuth, setBasicAuth] = useState(null); 
+  const [registeredUsers, setRegisteredUsers] = useState([]); 
+  const [user, setUser] = useState({}); 
+
+
+  useEffect(() => {
+     const subscribe = db.collection('user').doc('+917208110384').onSnapshot(doc => {
+        if(doc.exists){
+           setUser(doc.data())
+        } 
+     })
+     return () => subscribe(); 
+  }, [])
+  useEffect(() => {
+    async function namer(){
+       const user = await AsyncStorage.getItem('user');  
+       setCurrentUser(user); 
+       
+       const basicAuth = await AsyncStorage.getItem('basicAuth')
+       
+       setBasicAuth(basicAuth);  
+    }
+    namer()
+ },[])
+
+
+
+
+
+  
+  
+  const globalObject = {
+    userId:currentUser, 
+    user, 
+    registeredUsers, 
+    setRegisteredUsers, 
+    
+  }
+  
+  
+  const getUserData = async (value) => {
+    try {
+      const value = await AsyncStorage.getItem(value)
+      if(value !== null) {
+        return value; 
+      }
+    } catch(e) {
+      
+    }
+  }
+
+   
+   console.log(currentUser)
+  
   const [chatNotify,setChatNotify] = useState(true); 
   useEffect(() => {
     const unsubscribe = db.collection("matches").doc("UJ4u7q4oHqlj3n6nrBv9").collection("users").onSnapshot(snap => {
@@ -198,102 +183,28 @@ export default function App() {
 
   },[])
 
-  console.log(expoPushToken);
-  const [notification, setNotification] = useState(false);
-  console.log(notification);
-  const notificationListener = useRef();
-  const responseListener = useRef();
-  // useEffect(() => {
-  //   registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-    
 
-  //   // This listener is fired whenever a notification is received while the app is foregrounded
-  //   notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-  //     setNotification(notification);
-  //   });
 
-  //   // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
-  //   responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-  //     console.log(response);
-  //   });
 
-  //   return () => {
-  //     Notifications.removeNotificationSubscription(notificationListener);
-  //     Notifications.removeNotificationSubscription(responseListener);
-  //   };
-  // }, []);  
-  // async function sendPushNotification(expoPushToken) {
-  //   const message = {
-  //     to: expoPushToken,
-  //     sound: 'default',
-  //     title: 'Original Title',
-  //     body: 'And here is the body!',
-  //     data: { data: 'goes here' },
-  //   };
-  
-  //   await fetch('https://exp.host/--/api/v2/push/send', {
-  //     method: 'POST',
-  //     headers: {
-  //       Accept: 'application/json',
-  //       'Accept-encoding': 'gzip, deflate',
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(message),
-  //   });
-  // }
-  // async function registerForPushNotificationsAsync() {
-  //   let token;
-  //   if (Constants.isDevice) {
-  //     const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-  //     let finalStatus = existingStatus;
-  //     if (existingStatus !== 'granted') {
-  //       const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-  //       finalStatus = status;
-  //     }
-  //     if (finalStatus !== 'granted') {
-  //       alert('Failed to get push token for push notification!');
-  //       return;
-  //     }
-  //     token = (await Notifications.getExpoPushTokenAsync()).data;
-      
-  //   } else {
-  //     alert('Must use physical device for Push Notifications');
-  //   }
-  
-  //   if (Platform.OS === 'android') {
-  //     Notifications.setNotificationChannelAsync('default', {
-  //       name: 'default',
-  //       importance: Notifications.AndroidImportance.MAX,
-  //       vibrationPattern: [0, 250, 250, 250],
-  //       lightColor: '#FF231F7C',
-  //     });
-  //   }
-  
-  //   return token;
-  // }
-  // async function namer(){
-  //   const _id = await AsyncStorage.getItem("_id");
-  //   if(_id){
-  //     return; 
-  //   }
-  //   const result =  await client.mutate({mutation:REGISTER_USER})
-  //   console.log(result)   
-  //   AsyncStorage.setItem('_id', result.data.registerUser);
-  //   console.log( await AsyncStorage.getItem('_id')) 
-  // }
-  //namer()
-   
-  
-   //const value = route.params ? route.params.value:0; 
+ const checkHome = () => {
+ if(currentUser && !basicAuth){
+    return Name; 
+ }
+ if(currentUser && basicAuth){
+    return Home; 
+ }
+ if(!currentUser && !basicAuth){
+    return Intro; 
+ }
+ 
+}
+
   return (
-     
-     
+    <AppContext.Provider value={globalObject}>
       <NavigationContainer>
-      <Stack.Navigator screenOptions = {{headerShown:true}} name = {"zaid"}>
-
-        <Stack.Screen name="Home" component={Gamer} options = {{headerTitle:false}}/>
-
-        <Stack.Screen name="Side" component={SideScreen}/>
+       
+      <Stack.Navigator screenOptions = {{headerShown:true}}>
+        <Stack.Screen name="Home" component={LoadContacts} options = {{headerTitle:false}}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
         <Stack.Screen name="Gender" component={Gender}/>
@@ -320,9 +231,9 @@ export default function App() {
         <Stack.Screen name="PhoneSuccess" component={PhoneSuccess}/>
         <Stack.Screen name="LoadContacts" component={LoadContacts}/>
         <Stack.Screen name="ContactsSex" component={ContactsSex}/>
-        <Stack.Screen name="ContactsAge" component={ContactsAge}/>
-        <Stack.Screen name="Contacts" component={Contacts}/>
-        <Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess}/>
+        <Stack.Screen name="ContactsAge" component={ContactsAge} options = {{headerTitle:false, headerLeft:false}}/>
+        <Stack.Screen name="Contacts" component={Contacts} options = {{headerTitle:false, headerLeft:false}}/>
+        <Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess} options = {{headerTitle:false, headerLeft:false}}/>
         <Stack.Screen name="NewContact" component={NewContact}/>
         <Stack.Screen name="Playgame" component={Playgame} options={{
         animationEnabled: false,
@@ -342,7 +253,7 @@ export default function App() {
         <Stack.Screen name="Job" component={Job}/>
         <Stack.Screen name="Hometown" component={Hometown}/>
         <Stack.Screen name="AddPhoto" component={AddPhoto}/>
-        <Stack.Screen name="Loader" component={Loader}/>
+        <Stack.Screen name="Loader" component={Loader} options = {{headerTitle:false, headerLeft:false}}/>
         <Stack.Screen name="Trophy" component={Trophy}/>
         <Stack.Screen name="GameHomepage" component={GameHomepage}/>
         <Stack.Screen name="Matchmake" component={Matchmake}/>
@@ -363,9 +274,15 @@ export default function App() {
         <Stack.Screen name="MatchMakeLatest" component={MatchMakeLatest}/>
         <Stack.Screen name="MatchViewLatest" component={MatchViewLatest}/>
         <Stack.Screen name="Webber" component={Webber}/>
+        <Stack.Screen name="Homer" component={Home}/>
+        
+        
         
       </Stack.Navigator>
+      
     </NavigationContainer>
+    </AppContext.Provider>
+    
     
      
   );

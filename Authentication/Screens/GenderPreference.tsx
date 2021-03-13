@@ -1,4 +1,4 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,13 +6,17 @@ import { Entypo } from '@expo/vector-icons';
 import {Header,Continue} from '../../src/common/Common'; 
 import {Button} from 'react-native-elements'; 
 import { mutateSettings } from '../../networking';
-import {firebase} from '../../config';
+
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking'; 
 
 
 
 
 
 export default function GenderPreference({navigation,route}){
+const myContext = useContext(AppContext); 
+const {userId} = myContext; 
 const {page} = route.params;     
 const [man,setMan] = useState(false);
 const [woman, setWoman] = useState(false);
@@ -33,21 +37,15 @@ const _handlePage = () => {
 }
 const _sendToServer = () => {
      if(man){
-    const currentUser = firebase.auth().currentUser; 
-    const db = firebase.firestore();
-    db.collection('user').doc('trial_user').set({ genderPreference:"male"}, {merge:true}).then(val => console.log)
+          updateUser(userId, {genderPreference:"male"})
      }
      else if(woman){
-         
-    const currentUser = firebase.auth().currentUser; 
-    const db = firebase.firestore();
-    db.collection('user').doc('trial_user').set({ genderPreference:"female"}, {merge:true}).then(val => console.log)
+          updateUser(userId, {genderPreference:"female"})     
+    
      }
      else if(both){
-
-    const currentUser = firebase.auth().currentUser; 
-    const db = firebase.firestore();
-    db.collection('user').doc('trial_user').set({ genderPreference:"both"}, {merge:true}).then(val => console.log)
+          updateUser(userId, {genderPreference:"both"})
+    
      }
 }
 

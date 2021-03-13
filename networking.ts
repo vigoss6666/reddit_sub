@@ -3,6 +3,8 @@ import { StyleSheet, Text, View,Button, AsyncStorage, Settings } from 'react-nat
 import ApolloClient, { gql, InMemoryCache } from 'apollo-boost';
 import {firebase} from './config'; 
 import { Foundation } from '@expo/vector-icons';
+import { merge } from 'src/common/helper';
+
 
 
 const localhost: string = 'http://192.168.1.15:3000/graphql';
@@ -127,6 +129,11 @@ export async function uploadImage(response,filename,){
  }).catch((err)=>{console.log(err)});
 
 }
+
+
+
+
+
 export const arrayReplace = (arr, obj) => {
 	const copyArr = arr.concat(); 
 	const result =  copyArr.filter(val => val._id == obj._id); 
@@ -135,9 +142,10 @@ export const arrayReplace = (arr, obj) => {
    return copyArr; 
   }
   const index = copyArr.findIndex(val => val._id == obj._id); 
-  copyArr.splice(index, 1, obj);  
-  return arr;  
-}
+    copyArr[index] = obj; 
+    return copyArr;  
+  
+  }
 
 
 // obj1 = { dimensions}
@@ -331,6 +339,13 @@ export const computeSectionLabel = (arr:objectWithDimension[]):section[] => {
 
   return finaler; 
 
+}
+
+export const updateUser = (user, obj) => {
+   const db = firebase.firestore(); 
+   db.collection('user').doc(user).set(obj, {merge:true}).catch(error => {
+      console.log(error.message)
+   })
 }
 
   

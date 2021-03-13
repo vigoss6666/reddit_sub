@@ -1,11 +1,12 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView,} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Text,Overlay, Avatar} from 'react-native-elements'; 
-import {arrayReplace} from '../../networking'; 
+import {arrayReplace, computeSectionLabel} from '../../networking'; 
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking';
 // @refresh reset
 
-import { Icon } from 'react-native-vector-icons/Icon';
 import { AntDesign } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
 import { Button } from 'react-native-elements';
@@ -22,6 +23,8 @@ mutation namer($userInputList:userInputList1!){
 
 `
 export default function ContactsAge({navigation,route}){
+    const myContext = useContext(AppContext); 
+    const {user, userId} = myContext;
     const [profiles, setProfiles] = useState([
    
         { 
@@ -37,6 +40,24 @@ export default function ContactsAge({navigation,route}){
        },
      ])     
 
+
+     useEffect(() => {
+        async function namer(){
+         const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
+         const users = onResult.docs.map(val => val.data()); 
+         const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
+         const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
+         const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker]; 
+         const finalTransformed = finalUsers.map((val, index) => ( {...val, zIndex:index}));
+         finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
+          
+         setProfiles(finalTransformed); 
+     
+        }
+        namer()
+        
+     }, [])
+
 const data1 = [{ fullname:"zaid",min:15,max:19}, {fullname:"zaheer",min:20,max:24}, {zIndex:400, fullname:"nihal",ageRange:{min:25, max:29}},{fullname:"nihal",ageRange:{min:30, max:34}}]
 //const [addAge, {data}] = useMutation(ADD_USER_AGE); 
 const [selectedValue, setSelectedValue] = useState("java");
@@ -46,19 +67,26 @@ const [country,selectCountry] = useState([]);
 const [namer, setNamer] = useState(0); 
 const [zIndex, setIndex] = useState(1000); 
 const [gate, checkGate] = useState(true);
+
+
+console.log(country)
+
+const changeArray = (arr, obj) => {
+console.log(arr) 
+
+
+return arr; 
+
+}
+
+
+
 useEffect(() => {
     if(country.length == profiles.length){
         checkGate(false); 
     }    
  }, [profiles, country])
- 
-
-
-
-//console.log(country.size)
-console.log(country.length)
-
-const updateToServer = () => {
+ const updateToServer = () => {
      const batch  = db.batch(); 
      country.map(val => {
           const ref = db.collection('user').doc(val._id); 
@@ -92,24 +120,30 @@ useEffect(() => {
      
 }, [namer])
  const zIndexSetter = (val1, index) => {
-
      const result = profiles.filter(val => {
-          return val1._id == val._id
+          return val1.phoneNumber == val.phoneNumber
      })
      result[0].zIndex = zIndex;
      profiles.splice(index, 1, result[0]);  
      setNamer(namer + 1); 
      setIndex(zIndex + 10) 
  } 
+ const computeName = (obj) => {
+    if(obj.name){
+       return obj.name
+    }
+    if(obj.firstName && obj.lastName){
+       return obj.firstName+obj.lastName
+    }
+    return obj.firstName
+}
   
 
     return(
-        <View style = {{flex:1, }}>
-        <View style = {{flex:0.1}}>
+        <SafeAreaView style = {{flex:1, }}>
         
-        </View>
-        <View style = {{flex:0.1}}>
-        <Text h4 style = {{alignSelf:'center', fontWeight:'600'}}>
+        <View style = {{flex:0.2}}>
+        <Text h4 style = {{alignSelf:'center', fontWeight:'600', marginTop:30}}>
             Tell us about your friends
         </Text>
         <Text h6 style = {{alignSelf:'center', fontWeight:'600'}}>
@@ -120,10 +154,10 @@ useEffect(() => {
         <ScrollView>
         {
            profiles.map((val,index) => {
-                return <View  onPress = {toggleOverlay} style = {{flexDirection: 'row',borderWidth:1, justifyContent:'space-between',marginRight:20, borderRightWidth:0, borderLeftWidth:0, marginLeft:20, height:100, alignItems:'center', zIndex:val.zIndex}} key = {index.toString()}>
+                return <View style = {{flexDirection: 'row',borderWidth:1, justifyContent:'space-between',marginRight:20, borderRightWidth:0, borderLeftWidth:0, marginLeft:20, height:100, alignItems:'center', zIndex:val.zIndex}} key = {index.toString()}>
                     <View style = {{flexDirection:'row',alignItems:'center',}}>
-                    <MaterialIcons name="account-circle" size={24} color="black" />
-                    <Text>{val.name || val.firstname}</Text>
+                    {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
+                    <Text style = {{marginLeft:10, fontWeight:'bold'}}>{computeName(val)}</Text>
                     </View>
                     <DropDownPicker
                     items={[
@@ -138,18 +172,17 @@ useEffect(() => {
                     
     
     onPress = {() => {console.log("pressed")}}
-    onOpen = {() => {zIndexSetter(val,index)}}
     containerStyle={{height: 40, width:200, }}
     placeholder = {"20 - 25 years"}
     style={{}}
     itemStyle={{
-        
         backgroundColor:"white", 
         fontColor:"white",
         justifyContent: 'flex-start'
     }}
     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-    onChangeItem={item => selectCountry(arrayReplace(country, {...item.value, _id:val._id}))}
+    onChangeItem={item => selectCountry(arrayReplace(country, {...item.value, _id:val.phoneNumber}))}
+    
     
 />
                     
@@ -163,9 +196,9 @@ useEffect(() => {
         </ScrollView>        
         </View>
         <View style = {{flex:0.2, justifyContent:'center',marginTop:10}}>
-         <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {updateToServer(), navigation.navigate('ProfilePool')}} disabled = {gate}></Button>   
+         <Button title = "Save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {updateToServer(), navigation.navigate('ProfilePool')}} disabled = {gate}></Button>   
         </View>
-        </View>
+        </SafeAreaView>
         )    
 
 

@@ -1,19 +1,20 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { Dimensions,View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, KeyboardAvoidingView} from 'react-native';
 import {Button} from 'react-native-elements'; 
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Header } from '../../src/common/Common';
-import {firebase} from '../../config'; 
+
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking';
+
 export default function School({navigation,route}){
     const [Email, setEmail] = useState();
+    const myContext = useContext(AppContext); 
+    const {userId} = myContext;
         
        
   const _sendToServer = () => {
-    console.log("called")
-    const currentUser = firebase.auth().currentUser; 
-    const db = firebase.firestore();
-    console.log(currentUser.uid)
-    db.collection('user').doc('trial_user').set({ school:Email}, {merge:true}).then(val => console.log)
+    updateUser(userId,{school:Email} )
   }
     return(
         <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>

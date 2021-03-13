@@ -33,7 +33,7 @@ export default function Intro({navigation}){
         <StatusBar barStyle="dark-content" />
         <SafeAreaView style={{ flex: 1 }}>
           <ScrollView
-            style={{ flex: 1 }}
+            style={{ flex: 1,  }}
             horizontal={true}
             scrollEventThrottle={16}
             pagingEnabled={true}

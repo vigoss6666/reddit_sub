@@ -1,17 +1,15 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {Header} from '../../src/common/Common'; 
-import {mutateSettings} from '../../networking'; 
-import {firebase} from '../../config'; 
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking';
 export default function Posted({navigation}){
+    const myContext = useContext(AppContext); 
+    const {userId} = myContext;
     const _sendToServer = () => {
-        console.log("called")
-        const currentUser = firebase.auth().currentUser; 
-        const db = firebase.firestore();
-        console.log(currentUser.uid)
-        db.collection('user').doc('trial_user').set({ posted:true}, {merge:true}).then(val => console.log)
+        updateUser(userId, { posted:true})
       }    
 return(
 <View style = {{flex:1, justifyContent:'center', alignItems:'center'}}>

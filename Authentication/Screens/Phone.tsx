@@ -1,5 +1,6 @@
-import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, AsyncStorageStatic} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { AntDesign } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
@@ -8,11 +9,19 @@ import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-fi
 import {firebase} from '../../config';
 
 
+const db = firebase.firestore(); 
+const auth = firebase.auth(); 
 
-
-
-export default function Phone({navigation,route}){
+export default function App({navigation}) {
   const recaptchaVerifier = React.useRef(null);
+  const storeData = async (value:string) => {
+    try {
+      await AsyncStorage.setItem('user', value)
+    } catch (e) {
+      // saving error
+    }
+  }
+  
   const [phoneNumber, setPhoneNumber] = React.useState();
   const [verificationId, setVerificationId] = React.useState();
   const [verificationCode, setVerificationCode] = React.useState();
@@ -25,7 +34,8 @@ export default function Phone({navigation,route}){
         }
       : undefined
   );
-  const attemptInvisibleVerification = true;
+  const attemptInvisibleVerification = false;
+  
 
   return (
     <View style={{ padding: 20, marginTop: 50 }}>
@@ -82,9 +92,24 @@ export default function Phone({navigation,route}){
               verificationId,
               verificationCode
             );
-            await firebase.auth().signInWithCredential(credential);
-            showMessage({ text: 'Phone authentication successful 👍' });
-            navigation.navigate('Name')
+                
+
+            firebase.auth().signInWithCredential(credential).then(async onfulfilled => {
+               if(onfulfilled.user){
+                  await AsyncStorage.setItem('user', phoneNumber);  
+                  console.log("Authentication have passed")
+
+                  showMessage({ text: 'Phone authentication successful 👍' })
+                  navigation.navigate('Name'); 
+                  
+               }
+               
+            }).catch(err => {
+              showMessage({ text: `Error: ${err.message}`, color: 'red' });
+            }) 
+            
+            
+            
           } catch (err) {
             showMessage({ text: `Error: ${err.message}`, color: 'red' });
           }
@@ -113,96 +138,4 @@ export default function Phone({navigation,route}){
       {attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
     </View>
   );
-    // const dial_code = React.useRef(navigation.getParam('dial_code')).current; 
-    // const country = React.useRef(navigation.getParam('code')).current;
-//     const recaptchaVerifier = React.useRef(null);
-//     const [phoneNumber, setPhoneNumber] = React.useState();
-//     const [verificationId, setVerificationId] = React.useState();
-//     const [verificationCode, setVerificationCode] = React.useState();
-//     const firebaseConfig = firebase.apps.length ? firebase.app().options : undefined;
-//     const attemptInvisibleVerification = false;
-     
-
-     
-    
-//     let dial_code = "+1"; 
-//     let code = 'US'; 
-
-//     if(route.params){
-//      if(route.params.code){
-//           dial_code = route.params.dial_code;  
-//      }
-//      if(route.params.code){
-//           code = route.params.code; 
-//      }
-// }
-
- 
-//     const [phone, setPhone] = useState(); 
-    
-//     const [clicker,setclicker] = React.useState({color:"grey", disabled:true}); 
-//     function validator(input){
-//          console.log(input)
-//          if(input.length >= 7){
-//               setclicker({color:"red", disabled:false})
-//               return; 
-//          }
-//          setclicker({color:"grey", disabled:true})
-//     } 
-//      return (
-//           <View style = {{flex:1,}}>
-//    <FirebaseRecaptchaVerifierModal
-//         ref={recaptchaVerifier}
-//         firebaseConfig={firebaseConfig}
-//         attemptInvisibleVerification={attemptInvisibleVerification}
-//       />
-//       <FirebaseRecaptchaBanner />
-
-               {/* <View style = {{flex:0.1}}>
-               </View>     
-               <View style = {{flex:0.9}}>
-        
-               <Text style = {{marginTop:50,fontSize:40,fontWeight:"bold"}}> My Number Is... </Text>
-               <Text style = {{marginTop:30,alignSelf:"center",textAlign:"center", marginBottom:20}}> When you tap "continue," we will send a text with verification code. Message and data rates may apply. </Text>
-               <View style = {{borderBottomWidth:1, marginBottom:20}}>
-
-               </View>
-               <View style = {{flexDirection:"row",}}>
-                <TouchableOpacity 
-                style = {{borderBottomWidth:1,borderColor:"black",flexDirection:"row",justifyContent:"space-between", alignItems:"center",flex:1,padding:10}}
-                onPress = {() => {navigation.navigate('CountryCodes', {page:"Phone"})}}
-                >
-                <Text style = {{fontSize:20}}>
-                { code} 
-                </Text>
-                <Text style = {{fontSize:20}}>
-                 { dial_code}   
-                </Text>
-                <AntDesign name = "caretdown" color = "grey" size = {15}/>
-                </TouchableOpacity>
-                <View style = {{flex:0.3}}></View>
-                <TextInput style = {{flex:2,borderBottomColor:"black",borderBottomWidth:1}} onChangeText = {(text) => {validator(text), setPhone(text)}}></TextInput>
-               </View>
-               </View> */}
-                 {/* <View style = {{flex:0.2}}> */}
-       
-                   {/* <TouchableOpacity 
-                   style = {{width:300,backgroundColor:clicker.color, alignSelf:"center",height:40,justifyContent:"center",alignItems:"center",borderRadius:30,marginTop:40}} disabled = {clicker.disabled}
-                   onPress = {() => {registerPhone({variables:{phoneNumber:parseInt(phone)}}), navigation.navigate('VerifyPhone', {page:page})}}
-                   >
-                       <Text style = {{textAlign:"center",color:"white",fontWeight:"500",fontSize:20}}> Continue</Text>
-                   </TouchableOpacity> */}
-                   {/* <Button
-  title="Continue"
-  type="outline"
-  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
-  titleStyle = {{color:"white", fontWeight:"700"}}
-  disabled = {clicker.disabled}
-  disabledStyle = {{backgroundColor:"grey",}}
-  onPress = {() => {navigation.navigate('VerifyPhone', {page:page}) }}
-/> */}
-       
-                   {/* </View> */}
-          // </View>
-     // )
 }

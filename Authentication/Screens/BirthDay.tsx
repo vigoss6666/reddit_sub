@@ -1,15 +1,16 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { Platform,View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
-import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Header,Continue} from '../../src/common/Common'; 
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { mutateSettings } from '../../networking';
 import {Button} from 'react-native-elements'; 
-import {firebase} from '../../config';
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking'; 
 
 export default function BirthDay({navigation, route}){
   const {page} = route.params; 
-
+  const myContext = useContext(AppContext);
+  const {user, userId} = myContext; 
+  console.log(user.firstName, user.lastName)
   const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
@@ -41,14 +42,9 @@ export default function BirthDay({navigation, route}){
     const year = d.getFullYear()
     const timeStamp =  d.getTime()
     const day = d.getDate(); 
-    //mutateSettings({month, year, timeStamp})
-    const currentUser = firebase.auth().currentUser; 
     const namer = new Date(); 
     const age = namer.getFullYear() - year; 
-    
-    const db = firebase.firestore();
-    db.collection('user').doc('trial_user').set({ month,year,timeStamp,day, age}, {merge:true}).then(val => console.log)
-
+    updateUser(userId, { month,year,timeStamp,day, age}); 
   }
 
   const showMode = (currentMode) => {
@@ -81,7 +77,8 @@ return(
       textColor = {"red"}
     />
     <View style = {{marginLeft:30,borderBottomColor:"black", borderBottomWidth:2, width:Dimensions.get('window').width - 60,opacity:0.3,marginTop:10}}/>
-    <Text style = {{alignSelf:'center', marginTop:20, color:"grey", fontWeight:"bold"}}>Your age will be public</Text>
+    
+
 </View>
 <View style = {{flex:0.3, justifyContent:'center' }}>
  {/* <Continue onPress = {() => {_sendToServer(), navigation.navigate('Gender')}} />     */}

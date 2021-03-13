@@ -1,12 +1,19 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import {Header, Continue} from '../../src/common/Common'; 
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking';
 import * as Location from 'expo-location';
 import {firebase} from '../../config'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 export default function EnableLocation({navigation}){
+    const myContext = useContext(AppContext); 
+    const {userId} = myContext;
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState("");
 const handleLocation = async () => {
@@ -16,18 +23,21 @@ const handleLocation = async () => {
       }
       let location = await Location.getCurrentPositionAsync({});
       
-      setLocation(location);
-      const currentUser = firebase.auth().currentUser; 
-        const db = firebase.firestore();
-        console.log(currentUser.uid)
-        db.collection('user').doc('trial_user').set({ latitude:location.coords.latitude, longitude:location.coords.longitude}, {merge:true}).then(val => console.log)
+        setLocation(location);
+        
+        updateUser(userId,{ latitude:location.coords.latitude, longitude:location.coords.longitude} )
         const lamer = firebase.functions().httpsCallable('batman'); 
         lamer({lat:location.coords.latitude, lon:location.coords.longitude})
         .then(result => {
-              db.collection('user').doc('trial_user').set({state:result.data.state, subLocality:result.data.sublocality},{merge:true})
-             .then(() =>  navigation.navigate('LoadContacts'))
-             .catch(() => console.log('some error'))
+              updateUser(userId,{state:result.data.state, subLocality:result.data.sublocality})
+               
+              
+
+             //.then(() =>  navigation.navigate('LoadContacts'))
+             // put the load contacts page right here, tomorrow, 
+             
         })
+        AsyncStorage.setItem('basicAuth', 'true')
          
      
       

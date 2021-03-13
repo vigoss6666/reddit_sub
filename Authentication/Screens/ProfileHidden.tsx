@@ -3,7 +3,21 @@ import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Bu
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {Header} from '../../src/common/Common'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 export default function ProfileHidden({navigation}){
+    const storeData = async (value:string) => {
+        try {
+          await AsyncStorage.setItem('basicAuth', value)
+        } catch (e) {
+          // saving error
+        }
+      }    
+const setValues = async () => {
+     storeData('basicAuth', true)
+     navigation.navigate('Homer'); 
+}    
 return(
 <View style = {{flex:1, justifyContent:'center', alignItems:'center'}}>
 <View style = {{flex:0.1}}>
@@ -23,10 +37,14 @@ see your profle and match with you.
 </Text>
 </View>
 <View style = {{flex:0.3}}>
-<TouchableOpacity style = {{borderWidth:1,padding:20,backgroundColor:"black"}}>
+<TouchableOpacity style = {{borderWidth:1,padding:20,backgroundColor:"black"}} 
+onPress = {() => setValues()}
+>
     <Text style = {{color:"white", fontWeight:"600"}}>Add me to the dating pool</Text>
 </TouchableOpacity>
-<TouchableOpacity style = {{padding:20,justifyContent:"center",alignItems:'center'}}>
+<TouchableOpacity style = {{padding:20,justifyContent:"center",alignItems:'center'}}
+onPress = {() => setValues()}
+>
     <Text style = {{ fontWeight:"600"}}>MATCHMAKING ONLY</Text>
 </TouchableOpacity>
 
