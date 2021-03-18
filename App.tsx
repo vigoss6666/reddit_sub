@@ -1,9 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
-import React, { useState, useEffect, useRef, createContext } from 'react';
+import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
+import { Ionicons, SimpleLineIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState, useEffect, useRef, createContext, useContext, } from 'react';
 import { AntDesign } from '@expo/vector-icons';
-import { StyleSheet, Text, View,Button, Settings, Platform, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View,Button, Settings, Platform,  Image } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { NavigationContainer, BaseRouter } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Name from './Authentication/Screens/Name';
@@ -35,7 +38,9 @@ import Try from './Authentication/Screens/Try';
 import Contacts from './Authentication/Screens/Contacts'; 
 import ContactsSex from './Authentication/Screens/ContactsSex'; 
 import ContactsMenu from './Authentication/Screens/ContactsMenu'; 
+import ContactsPhotos from './Authentication/Screens/ContactsPhotos';
 import ContactsAge from './Authentication/Screens/ContactsAge'; 
+import ContactsLocation from './Authentication/Screens/ContactsLocation';
 import NewContact from './Authentication/Screens/NewContact'; 
 import ContactLoadSuccess from './Authentication/Screens/ContactLoadSuccess';
 import Playgame from './Game/Screens/Playgame'; 
@@ -78,6 +83,7 @@ import SelfView from './ClientViews/Screens/SelfView';
 import MatchViewLatest from './Game/Screens/MatchViewLatest';
 import BrowseMatchSettings from './Game/Screens/BrowseMatchSettings';  
 import Webber from './Game/Screens/Webber'; 
+import SplashScreen from './SplashScreen'; 
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
@@ -109,10 +115,14 @@ const db = firebase.firestore();
 const Stack = createStackNavigator();
 export default function App() {
 
-  
+  console.disableYellowBox = true;
 
   const [expoPushToken, setExpoPushToken] = useState('');
   const [currentUser, setCurrentUser] = useState('+917208110384'); 
+  const [contactList, setContactList] = useState([]); 
+  const [countryCode, setCountryCode] = useState("US");
+  const [dialCode, setDialCode] = useState("+1");  
+
   const [basicAuth, setBasicAuth] = useState(null); 
   const [registeredUsers, setRegisteredUsers] = useState([]); 
   const [user, setUser] = useState({}); 
@@ -126,17 +136,17 @@ export default function App() {
      })
      return () => subscribe(); 
   }, [])
-  useEffect(() => {
-    async function namer(){
-       const user = await AsyncStorage.getItem('user');  
-       setCurrentUser(user); 
+//   useEffect(() => {
+//     async function namer(){
+//        const user = await AsyncStorage.getItem('user');  
+//        setCurrentUser(user); 
        
-       const basicAuth = await AsyncStorage.getItem('basicAuth')
+//        const basicAuth = await AsyncStorage.getItem('basicAuth')
        
-       setBasicAuth(basicAuth);  
-    }
-    namer()
- },[])
+//        setBasicAuth(basicAuth);  
+//     }
+//     namer()
+//  },[])
 
 
 
@@ -149,6 +159,13 @@ export default function App() {
     user, 
     registeredUsers, 
     setRegisteredUsers, 
+    contactList, 
+    setContactList, 
+    countryCode, 
+    setCountryCode, 
+    dialCode, 
+    setDialCode
+    
     
   }
   
@@ -199,12 +216,23 @@ export default function App() {
  
 }
 
+const customHeader = () => {
+   const insets = useSafeAreaInsets();
+   return ( 
+     <View style = {{paddingTop:insets.top, paddingBottom:insets.bottom}}>
+
+     </View>
+   )
+}
+
+ if(Object.keys(user).length > 1){
   return (
     <AppContext.Provider value={globalObject}>
+      <SafeAreaProvider>
       <NavigationContainer>
        
-      <Stack.Navigator screenOptions = {{headerShown:true}}>
-        <Stack.Screen name="Home" component={LoadContacts} options = {{headerTitle:false}}/>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
         <Stack.Screen name="Gender" component={Gender}/>
@@ -230,8 +258,10 @@ export default function App() {
         <Stack.Screen name="VerifyPhone" component={VerifyPhone}/>
         <Stack.Screen name="PhoneSuccess" component={PhoneSuccess}/>
         <Stack.Screen name="LoadContacts" component={LoadContacts}/>
-        <Stack.Screen name="ContactsSex" component={ContactsSex}/>
+        <Stack.Screen name="ContactsSex" component={ContactsSex} options = {{headerTitle:false, headerLeft:false}}/>
         <Stack.Screen name="ContactsAge" component={ContactsAge} options = {{headerTitle:false, headerLeft:false}}/>
+        <Stack.Screen name="ContactsLocation" component={ContactsLocation} options = {{headerTitle:false, headerLeft:false}}/>
+        <Stack.Screen name="ContactsPhotos" component={ContactsPhotos} options = {{headerTitle:false, headerLeft:false}}/>
         <Stack.Screen name="Contacts" component={Contacts} options = {{headerTitle:false, headerLeft:false}}/>
         <Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess} options = {{headerTitle:false, headerLeft:false}}/>
         <Stack.Screen name="NewContact" component={NewContact}/>
@@ -239,13 +269,13 @@ export default function App() {
         animationEnabled: false,
       }}/>
         <Stack.Screen name="Play20" component={Play20}/>
-        <Stack.Screen name="ProfilePool" component={ProfilePool}/>
-        <Stack.Screen name="SettingsHome" component={SettingsHome} options = {{headerTitle:"Settings"}} />
+        <Stack.Screen name="ProfilePool" component={ProfilePool} options = {{headerTitle:false, headerLeft:false}}/>
+        <Stack.Screen name="SettingsHome" component={SettingsHome} options = {{headerTitle:false}} />
         <Stack.Screen name="AccountSettings" component={AccountSettings  } options = {{headerShown:false, headerTitle:"SOmething", headerRight:() => <Button title = {"Press me"} onPress = {() => alert('Hello woeld')}>Hello world</Button>}}   />
         <Stack.Screen name="MapVeiw" component={MapViewMainer}/>
         <Stack.Screen name="ImageSlider" component={ImageSlider}/>
         <Stack.Screen name="DetailsSettings" component={DetailsSettings} options = {{headerShown:false}} />
-        <Stack.Screen name="AddPhotos" component={Photos} options = {{headerShown:false}}/>
+        <Stack.Screen name="AddPhotos" component={Photos} options = {{headerTitle:false, headerLeft:null, headerRightContainerStyle:{marginRight:10}}}/>
         <Stack.Screen name="MapViewMainer" component={MapViewMainer}/>
         <Stack.Screen name="Login" component={Login}/>
         <Stack.Screen name="Checker" component={Checker}/>
@@ -274,19 +304,25 @@ export default function App() {
         <Stack.Screen name="MatchMakeLatest" component={MatchMakeLatest}/>
         <Stack.Screen name="MatchViewLatest" component={MatchViewLatest}/>
         <Stack.Screen name="Webber" component={Webber}/>
-        <Stack.Screen name="Homer" component={Home}/>
+        <Stack.Screen name="Homer" component={Home} options = {{headerShown:false}}/>
         
         
         
       </Stack.Navigator>
       
     </NavigationContainer>
+    </SafeAreaProvider>
     </AppContext.Provider>
     
     
      
   );
-}
+  }
+  return (
+    <SplashScreen />
+  )
+ }
+  
 
 const Tab = createMaterialTopTabNavigator();
 function MyTabs() {
@@ -307,15 +343,21 @@ const HeaderLeft = () => (
    </View>
 )
 function Home(props){
-  console.log("chatty is "+props.chatter)
+  const myContext = useContext(AppContext); 
+  const {user, userId, countryCode, dialCode} = myContext;
+  const insets = useSafeAreaInsets();
   return (
-    
-    <Tab.Navigator options = {{headerShown:"none"}}
+    <SafeAreaProvider>
+    <Tab.Navigator 
+      style = {{paddingTop:insets.top, paddingRight:insets.right, paddingLeft:insets.left}} 
+      initialRouteName = {"ProfilePool"}
       tabBarOptions={{
       activeTintColor: 'tomato',
       inactiveTintColor: 'gray',
     }}
     screenOptions={({ route }) => ({
+      
+      
       title: ({ focused, color, size }) => {
         if(route.name === 'Matchlist'){
           console.log(route.params); 
@@ -351,23 +393,52 @@ function Home(props){
           
           
         }      
-        if(route.name === 'Feed'){
+        if(route.name === 'ProfilePool'){
           if(focused) {
-            return <AntDesign name="stepbackward" size={24} color="yellow" />;   
+            return <SimpleLineIcons name="people" size={24} color="orange" />;   
           } 
-          return <AntDesign name="stepbackward" size={24} color="black" />;
+          return <SimpleLineIcons name="people" size={24} color="black" />;
+        }
+        if(route.name === 'Game'){
+          if(focused) {
+            return <AntDesign name="play" size={24} color="orange" />   
+          } 
+          return <AntDesign name="play" size={24} color="black" />;
+        }
+        if(route.name === 'Trophy'){
+          if(focused) {
+            return <FontAwesome name="trophy" size={24} color="orange" />   
+          } 
+          return <FontAwesome name="trophy" size={24} color="black" />;
+        }
+        if(route.name === 'Settings'){
+          if(focused) {
+            return <MaterialCommunityIcons name="account-circle" size={26} color="orange" />   
+          } 
+          return <MaterialCommunityIcons name="account-circle" size={24} color="black" />;
+        }
+        if(route.name === 'SelfView'){
+          if(focused) {
+            return user.profilePic ? <Image source = {{uri:user.profilePic}} style = {{height:30, width:30, borderRadius:15}}/>:<MaterialCommunityIcons name="account-circle" size={26} color="orange" />; 
+          } 
+          return user.profilePic ? <Image source = {{uri:user.profilePic}} style = {{height:30, width:30, borderRadius:15}}/>:<MaterialCommunityIcons name="account-circle" size={26} color="orange" />
         }
         
       },
+      initialRouteName:"ProfilePool", 
     })}
     
     >
-      <Tab.Screen name="Feed" component={GameHomepage}  />
-      <Tab.Screen name="Messages" component={MatchList} />
-      <Tab.Screen name="Feed1" component={Name} />
+        
+       <Tab.Screen name="SelfView" component={SelfView} /> 
+      <Tab.Screen name="Game" component={GameHomepage} />
+      <Tab.Screen name="Trophy" component={Trophy} />
+      <Tab.Screen name="ProfilePool" component={ProfilePool}  />
       <Tab.Screen name="Matchlist" component={MatchList}  /> 
       <Tab.Screen name="Settings" component={SettingsHome} />
+        
     </Tab.Navigator>
+    </SafeAreaProvider>
     
   );
 }

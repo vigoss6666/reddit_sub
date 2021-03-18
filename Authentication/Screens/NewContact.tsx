@@ -1,4 +1,4 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -12,6 +12,10 @@ import {Button} from 'react-native-elements';
 import { gql } from 'apollo-boost';
 import { Platform } from 'react-native';
 import {GET_DATING_POOL,GET_CONTACT_POOL} from './ProfilePool'; 
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import AppContext from '../../AppContext'; 
+
+import {updateUser} from '../../networking';
 import {firebase} from '../../config'; 
 import { uuidv4} from '../../networking';  
 const db = firebase.firestore(); 
@@ -29,7 +33,8 @@ const ADD_NEW_CONTACT = gql`
 
 
 export default function NewContact({navigation,route}){
-      
+    const myContext = useContext(AppContext); 
+    const {user, userId, countryCode, dialCode} = myContext;     
  
  const data1 = {name:"zaid shaikh", firstname:"zaid", countryCode:"+1", gender: "male", orientation:"male",minAge:24, maxAge:24,inches:"11", feet:"5", addToDatingPool:'yes', number:"2103888163"}   
  //const [addNewContact, {data}] = useMutation(ADD_NEW_CONTACT);
@@ -53,7 +58,8 @@ const [gender,setGender] = useState();
 const [orientation, setOrientation] = useState(); 
 const [height, setHeight] = useState(); 
 const [addDatingPool, setAddDatingPool] = useState(); 
-const [countryCode, setCountryCode] = useState('US'); 
+
+
 
 if(data){
      console.log(data); 
@@ -145,10 +151,11 @@ return(
 <Text style = {{marginRight:20,padding:10,fontWeight:'bold'}}>
   Mobile  
 </Text>
-<TouchableOpacity style = {{flexDirection:'row', marginRight:20,  }} onPress = {() => navigation.navigate('CountryCodes')}>
+<TouchableOpacity style = {{flexDirection:'row', marginRight:20,  }} onPress = {() => navigation.navigate('CountryCodes', {page:'NewContact'})}>
     <Text style = {{borderWidth:2,padding:10,}}>
-         {route.params ? "US" : "US" }
-           {route.params ? "+1" : "+1"}
+         {countryCode}
+           {dialCode}
+
     </Text>
     <View style = {{borderWidth:2,padding:10}}>
     <FontAwesome5 name="caret-down" size={24} color="black" />
@@ -161,6 +168,25 @@ return(
 </TextInput>
 </View>
 <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:30, marginBottom:30}}/>
+<View style = {{  marginBottom:40, marginLeft:30}}>
+<Text style = {{marginBottom:20}}>Location</Text>
+<GooglePlacesAutocomplete
+              styles = {{container:{  }}}
+              placeholder = {"Type location"}
+              fetchDetails = {true}  
+              
+              onPress={(data, details = null) => {
+                // 'details' is provided when fetchDetails = true
+                console.log(data, details);
+              }}
+              query={{
+                key: 'AIzaSyBxsuj6tm1D5d3hEfG2ASfleUBIRREl15Y',
+                language: 'en',
+              }}
+        />
+</View>
+<View style = {{borderBottomWidth:3, marginLeft:30, marginRight:30, marginBottom:30}}/>
+
 <View style = {{flexDirection:'row', marginLeft:30,justifyContent:'space-between',marginRight:30,alignItems:'center',marginBottom:30}}>
 <Text style = {{flex:0.5,fontWeight:'bold'}}>Sex</Text>
 <View style = {{flexDirection:'row',justifyContent:'space-between',flex:0.3,alignItems:'center'}}>

@@ -6,23 +6,13 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import {HeaderBar} from '../../src/common/Common'; 
-import { gql } from 'apollo-boost';
 
-const GET_EVENTS = gql`
- query {
-      getEvents {
-           data {
-               type
-           }
-      }
- }
-`
+
 
 
 export default function Trophy({navigation}){
 const [page, setPage] = useState('rank');     
-const {data, loading, error} = useQuery(GET_EVENTS); 
+
 
 const usePointsTemplate = () => {
    const data = [
@@ -52,7 +42,7 @@ const usePointsTemplate = () => {
     
    
        
-    const template = data.map(val => {
+    const template = [].map(val => {
         if(val.type == 'roundCompleted'){
              return <View style = {{flexDirection:"row",  padding:10, alignItems:'center',marginBottom:20, borderBottomWidth:2}}>
                  <FontAwesome5 name="trophy" size={24} color="black" />
@@ -177,7 +167,8 @@ const user = data.filter((val,index) => val._id == "user");
 return(
 <View style = {{flex:1, }}>
 <View style = {{flex:0.1}}> 
- <HeaderBar page = {"trophy"} navigation = {navigation}/>
+ 
+
 </View>
 <View style = {{ flex:0.1,}}>
     <View style = {{flexDirection:"row" ,justifyContent:'space-around', borderWidth:1, marginLeft:30, marginRight:30, height:40}}>

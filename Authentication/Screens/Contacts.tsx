@@ -35,9 +35,8 @@ useEffect(() => {
    namer()
    
 }, [])
-const sendToServer = () => {
-   
-   updateUser(userId,{datingPoolList:indexer})
+const sendToServer = async () => {
+   const result = await db.collection('user').doc(userId).update({datingPoolList:indexer})
    navigation.navigate('ContactsAge') 
 }
 

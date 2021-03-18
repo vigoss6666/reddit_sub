@@ -19,6 +19,7 @@ import * as VideoThumbnails from 'expo-video-thumbnails';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Foundation } from '@expo/vector-icons';
 import * as Print from 'expo-print';
+import {Input} from 'react-native-elements'; 
 
 
 
@@ -95,64 +96,65 @@ export const HeaderBar = (props) => {
      ) 
     
 }
-export function AudioSetter({setRecording}) { 
+// export function AudioSetter({setRecording}) { 
+  
      
 
-     const [audioDuration, setAudioDuration] = useState(); 
-     const [permission, askForPermission] = usePermissions(Permissions.AUDIO_RECORDING, { ask: true });
-     const recordingInstance = useRef(new Audio.Recording());
-     const [uri, setUri] = useState(); 
+//      const [audioDuration, setAudioDuration] = useState(); 
+//      const [permission, askForPermission] = usePermissions(Permissions.AUDIO_RECORDING, { ask: true });
+//      const recordingInstance = useRef(new Audio.Recording());
+//      const [uri, setUri] = useState(); 
      
-     useEffect(() => {
-          if (!permission || permission.status !== 'granted') {
+//      useEffect(() => {
+//           if (!permission || permission.status !== 'granted') {
 
-           askForPermission()
+//            askForPermission()
            
            
-          }
-          async function namer(){
-          await recordingInstance.current.setOnRecordingStatusUpdate(onRecordingStatusUpdate)    
-          await recordingInstance.current.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
-          await recordingInstance.current.startAsync()
-          }
+//           }
+//           async function namer(){
+//           await recordingInstance.current.setOnRecordingStatusUpdate(onRecordingStatusUpdate)    
+//           await recordingInstance.current.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+//           await recordingInstance.current.startAsync()
+//           }
 
-          namer()
-     }, [])
-     const stopRecording = () => {
-           recordingInstance.current.pauseAsync(); 
-     }     
+//           namer()
+//      }, [])
+//      const stopRecording = () => {
+//            recordingInstance.current.pauseAsync(); 
+//      }     
 
      
-     const sendToServer = async () => {
-           recordingInstance.current.stopAndUnloadAsync(); 
-           const uri = await recordingInstance.current.getURI()
-           const response = await fetch(uri); 
-           const blob = await response.blob(); 
-           const ref = await firebase.storage().ref().child("audio/"+"namer1"); 
-           await ref.put(blob).then((url) => console.log("fileSuccessfully uploaded to the server"+url)).catch(error => console.log(error)) 
-           const result = await ref.getDownloadURL(); 
-           const serverObject = {
-              _id:uuidv4(), 
-              createdAt:firebase.firestore.Timestamp.fromDate(new Date()), 
-              user:{
-                _id:5
-              }, 
-              audio:result
-           }
-           db.collection('messages').doc("UJ4u7q4oHqlj3n6nrBv9Pk7jX3qNPAG8acQzMmAB").collection("messages").add(serverObject)
+//      const sendToServer = async () => {
+//            recordingInstance.current.stopAndUnloadAsync(); 
+//            const uri = await recordingInstance.current.getURI()
+//            const response = await fetch(uri); 
+//            const blob = await response.blob(); 
+//            const ref = await firebase.storage().ref().child("audio/"+"namer1"); 
+//            await ref.put(blob).then((url) => console.log("fileSuccessfully uploaded to the server"+url)).catch(error => console.log(error)) 
+//            const result = await ref.getDownloadURL(); 
+//            const serverObject = {
+//               _id:uuidv4(), 
+//               createdAt:firebase.firestore.Timestamp.fromDate(new Date()), 
+//               user:{
+//                 _id:5
+//               }, 
+//               audio:result
+//            }
+//            db.collection('messages').doc("UJ4u7q4oHqlj3n6nrBv9Pk7jX3qNPAG8acQzMmAB").collection("messages").add(serverObject)
            
-          }     
+//           }     
 
-     const onRecordingStatusUpdate = (val) => {
-          const millisToMinutesAndSeconds = (millis) => {
-               var minutes = Math.floor(millis / 60000);
-               var seconds = ((millis % 60000) / 1000).toFixed(0);
-                //ES6 interpolated literals/template literals 
-                  //If seconds is less than 10 put a zero in front.
-               return `${minutes}:${(seconds < 10 ? "0" : "")}${seconds}`;
-           }
-           setAudioDuration(millisToMinutesAndSeconds(val.durationMillis))
-     }
+//      const onRecordingStatusUpdate = (val) => {
+//           const millisToMinutesAndSeconds = (millis) => {
+//                var minutes = Math.floor(millis / 60000);
+//                var seconds = ((millis % 60000) / 1000).toFixed(0);
+//                 //ES6 interpolated literals/template literals 
+//                   //If seconds is less than 10 put a zero in front.
+//                return `${minutes}:${(seconds < 10 ? "0" : "")}${seconds}`;
+//            }
+//            setAudioDuration(millisToMinutesAndSeconds(val.durationMillis))
+//      }
 
      
       
@@ -160,38 +162,38 @@ export function AudioSetter({setRecording}) {
      
      
 
- return (
-<View style = {{height:50,borderRadius:25, borderWidth:1, padding:5, marginLeft:20, marginRight:20, backgroundColor:"white"}}>
-<View style = {{flexDirection:"row", justifyContent:"space-between", borderRadius:25}}>
-<View style = {{flexDirection:"row", alignItems:"center",marginLeft:40,}}>
-{/* <LottieView
-          ref = {myComponent}
-          style={{
-            width: 40,
-            height: 40,
-            backgroundColor: '#eee',
-          }}
-          source={require('/Users/zaidshaikh/fhfclient/assets/35097-microphone.json')}
-          // OR find more Lottie files @ https://lottiefiles.com/featured
-          // Just click the one you like, place that file in the 'assets' folder to the left, and replace the above 'require' statement
-        /> */}
-  <View style = {{flexDirection:"row", marginLeft:20, alignItems:"center", justifyContent:"center"}}>
-    <Text>{audioDuration}</Text>      
+//  return (
+// <View style = {{height:50,borderRadius:25, borderWidth:1, padding:5, marginLeft:20, marginRight:20, backgroundColor:"white"}}>
+// <View style = {{flexDirection:"row", justifyContent:"space-between", borderRadius:25}}>
+// <View style = {{flexDirection:"row", alignItems:"center",marginLeft:40,}}>
+// {/* <LottieView
+//           ref = {myComponent}
+//           style={{
+//             width: 40,
+//             height: 40,
+//             backgroundColor: '#eee',
+//           }}
+//           source={require('/Users/zaidshaikh/fhfclient/assets/35097-microphone.json')}
+//           // OR find more Lottie files @ https://lottiefiles.com/featured
+//           // Just click the one you like, place that file in the 'assets' folder to the left, and replace the above 'require' statement
+//         /> */}
+//   <View style = {{flexDirection:"row", marginLeft:20, alignItems:"center", justifyContent:"center"}}>
+//     <Text>{audioDuration}</Text>      
     
-  </View>      
-</View> 
-<TouchableOpacity style = {{justifyContent:"center", marginLeft:40}} onPress = {() => { stopRecording(), setRecording(false)}}>
-<Text style = {{color:"red", fontWeight:"bold"}}>Cancel</Text>
-</TouchableOpacity>
-<TouchableOpacity style = {{justifyContent:"center", alignItems:"center", marginRight:30}} onPress = {() => {sendToServer(),stopRecording(), setRecording(false) }}>
-<Ionicons name="ios-send" size={30} color="blue" />
-</TouchableOpacity>
+//   </View>      
+// </View> 
+// <TouchableOpacity style = {{justifyContent:"center", marginLeft:40}} onPress = {() => { stopRecording(), setRecording(false)}}>
+// <Text style = {{color:"red", fontWeight:"bold"}}>Cancel</Text>
+// </TouchableOpacity>
+// <TouchableOpacity style = {{justifyContent:"center", alignItems:"center", marginRight:30}} onPress = {() => {sendToServer(),stopRecording(), setRecording(false) }}>
+// <Ionicons name="ios-send" size={30} color="blue" />
+// </TouchableOpacity>
 
-</View>    
+// </View>    
 
-</View>      
- )                  
-} 
+// </View>      
+//  )                  
+// } 
 export function Tester1({navigation,db,chatID,userId}){
      const gifDir = FileSystem.cacheDirectory + 'giphy/';
      const url = "https://firebasestorage.googleapis.com/v0/b/friends-365d0.appspot.com/o/images%2FAdd%20a%20little%20bit%20of%20body%20text%20(1)_pages-to-jpg-0001.jpg?alt=media&token=847ba2d4-72df-4656-9d88-16435c98bc53";      
@@ -295,55 +297,56 @@ export function Tester1({navigation,db,chatID,userId}){
        />
      )
      }
-    export function AudioGetter({audio}){
-          console.log(audio)
-          const [isPlaying, setIsPlaying] = useState(false);      
-          const recordingInstance = useRef(new Audio.Sound());
-          const [loading, setLoading] = useState(0); 
-          const [totalDuration, setTotalDuration] = useState(0); 
-          const [currentPosition, setCurrentPosition] = useState(0); 
-          useEffect(() => {
-               async function namer(){
-                await recordingInstance.current.loadAsync({uri:"https://firebasestorage.googleapis.com/v0/b/friends-365d0.appspot.com/o/audio%2Fnamer1?alt=media&token=0551ba16-db5c-4374-8e25-817dfd2025cd"})
-                await recordingInstance.current.setOnPlaybackStatusUpdate(runner); 
-                setLoading(1); 
-               }
-               namer()
+  //   export function AudioGetter({audio}){
+  //         console.log(audio)
+  //         const [isPlaying, setIsPlaying] = useState(false);      
+  //         const recordingInstance = useRef(new Audio.Sound());
+  //         const [loading, setLoading] = useState(0); 
+  //         const [totalDuration, setTotalDuration] = useState(0); 
+  //         const [currentPosition, setCurrentPosition] = useState(0); 
+  //         useEffect(() => {
+  //              async function namer(){
+  //               await recordingInstance.current.loadAsync({uri:"https://firebasestorage.googleapis.com/v0/b/friends-365d0.appspot.com/o/audio%2Fnamer1?alt=media&token=0551ba16-db5c-4374-8e25-817dfd2025cd"})
+  //               await recordingInstance.current.setOnPlaybackStatusUpdate(runner); 
+  //               setLoading(1); 
+  //              }
+  //              namer()
                
                
                
-               //return () => recordingInstance.current.unloadAsync()
-          }, [])
-          const runner = (status) => {
-             setTotalDuration(status.durationMillis);
-             setCurrentPosition(status.positionMillis);  
-          }
-          const playSound = () => {
-             recordingInstance.current.playAsync()
-          }
-          const pauseSound = () => {
-             recordingInstance.current.pauseAsync()
-          }
-          return ( 
-               <View style = {{flexDirection:"row", borderWidth:1, }}>
-               <View style = {{justifyContent:"center", padding:5}}>
-                 {isPlaying ? 
-                 <TouchableOpacity onPress = {() => {pauseSound(), setIsPlaying(!isPlaying)}}><AntDesign name="pausecircle" size={24} color="black" /></TouchableOpacity>:<TouchableOpacity onPress = {() => {playSound(), setIsPlaying(!isPlaying)}}><AntDesign name="caretright" size={24} color="black" /></TouchableOpacity>}   
-               </View>
-               <Slider
-    style={{width: 200, height: 40}}
-    minimumValue={0}
-    maximumValue={totalDuration}
-    minimumTrackTintColor="#FFFFFF"
-    maximumTrackTintColor="#000000"
-    value = {currentPosition}
-    onValueChange = {(val) => {setCurrentPosition(val),recordingInstance.current.setPositionAsync(val)}}
-  />
+  //              //return () => recordingInstance.current.unloadAsync()
+  //         }, [])
+  //         const runner = (status) => {
+  //            setTotalDuration(status.durationMillis);
+  //            setCurrentPosition(status.positionMillis);  
+  //         }
+  //         const playSound = () => {
+  //            recordingInstance.current.playAsync()
+  //         }
+  //         const pauseSound = () => {
+  //            recordingInstance.current.pauseAsync()
+  //         }
+  //         return ( 
+  //              <View style = {{flexDirection:"row", borderWidth:1, }}>
+  //              <View style = {{justifyContent:"center", padding:5}}>
+  //                {isPlaying ? 
+  //                <TouchableOpacity onPress = {() => {pauseSound(), setIsPlaying(!isPlaying)}}><AntDesign name="pausecircle" size={24} color="black" /></TouchableOpacity>:<TouchableOpacity onPress = {() => {playSound(), setIsPlaying(!isPlaying)}}><AntDesign name="caretright" size={24} color="black" /></TouchableOpacity>}   
+  //              </View>
+  //              <Slider
+  //   style={{width: 200, height: 40}}
+  //   minimumValue={0}
+  //   maximumValue={totalDuration}
+  //   minimumTrackTintColor="#FFFFFF"
+  //   maximumTrackTintColor="#000000"
+  //   value = {currentPosition}
+  //   onValueChange = {(val) => {setCurrentPosition(val),recordingInstance.current.setPositionAsync(val)}}
+  // />
                                                                  
-               </View> 
+  //              </View> 
               
-          )
-    }
+  //         )
+
+  //   }
     
     export function VideoMessage({navigation,video, time}){
 
@@ -450,6 +453,9 @@ export function Tester1({navigation,db,chatID,userId}){
          </TouchableOpacity>
       )       
     }
+
+
+    
     
     export function ServerHeart({messageObject,db,chatID}){
        const [heartPressed, setHeartPressed] = useState(messageObject.like); 

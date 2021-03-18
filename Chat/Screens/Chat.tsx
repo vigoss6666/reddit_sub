@@ -5,6 +5,7 @@ import { GiftedChat, Bubble, InputToolbar,Send,Day, MessageImage, MessageAudioPr
 import { firebase } from '../../config'; 
 import { Video } from 'expo-av';
 import MapView, {Marker} from 'react-native-maps';
+
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -223,7 +224,8 @@ export default function Chat({navigation, route}){
     return (
       <View>
       
-       <AudioGetter audio = {props.currentMessage.audio} />
+       {/* <AudioGetter audio = {props.currentMessage.audio} /> */}
+
        </View>
        
     )
@@ -351,7 +353,9 @@ export default function Chat({navigation, route}){
     const customInputToolbar = props => {
       if(recording){
         return (
-        <AudioSetter setRecording = {setRecording}/>
+        // <AudioSetter setRecording = {setRecording}/>
+        <Text>Hello world</Text>
+
         ) 
       }
       return (

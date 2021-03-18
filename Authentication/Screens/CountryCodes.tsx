@@ -1,9 +1,10 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback,Dimensions, SafeAreaView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {AntDesign} from '@expo/vector-icons'; 
 import { SearchBar } from 'react-native-elements';
 import SearchInput, { createFilter } from 'react-native-search-filter';
+import AppContext from '../../AppContext'; 
 
 
 
@@ -17,14 +18,21 @@ const country = [{"name":"Afghanistan","dial_code":"+93","code":"AF"},{"name":"A
 export default function CountryCodes({navigation, route}){
      const KEYS_TO_FILTERS = ['name'];
      const [search, setSearch] = useState(''); 
+     const myContext = useContext(AppContext); 
+    const {user, userId, setDialCode, setCountryCode} = myContext; 
      const {page} = route.params; 
      console.log(page)
+
+     const setDialer = () => {
+           
+     }
      function Item({dial_code,name,navigation,code,}){
       
           return (
                <TouchableOpacity 
                style = {{flex:1,flexDirection:"row",justifyContent:"space-between",padding:20}}
-               onPress = {() => { navigation.navigate(page,{dial_code, name,code})}}
+               onPress = {() => { setDialCode(dial_code), setCountryCode(code),  navigation.navigate(page)}}
+               // onPress = {() => console.log("dial_code"+dial_code, code) }
                >
                    <Text style = {{fontSize:20}}>{name}</Text>
                     <Text style = {{fontSize:20}}>{dial_code} </Text>

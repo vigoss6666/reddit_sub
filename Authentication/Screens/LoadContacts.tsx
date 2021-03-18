@@ -105,6 +105,7 @@ export default function LoadContacts({navigation}){
                 },
                 registeredUsersNumbers
             );
+            console.log(filtered)
             const newUsers = []; 
             for(let x = 0; x < finaler.length; x++){
                  for(let y = 0; y < filtered.length; y++ ){
@@ -114,7 +115,7 @@ export default function LoadContacts({navigation}){
                  }
             }
             
-            console.log(newUsers)
+            
 
              
 

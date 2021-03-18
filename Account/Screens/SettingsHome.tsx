@@ -1,4 +1,4 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView,Navigator} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {HeaderBar} from '../../src/common/Common'; 
@@ -7,6 +7,9 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { EvilIcons } from '@expo/vector-icons';
 import {firebase} from '../../config';
+import AppContext from '../../AppContext'; 
+
+import {updateUser} from '../../networking';
 
 
 import { AntDesign } from '@expo/vector-icons';
@@ -14,6 +17,8 @@ import { AntDesign } from '@expo/vector-icons';
 
 
 export default function SettingsHome({navigation}){
+    const myContext = useContext(AppContext); 
+    const {user, userId,} = myContext;   
     const [firstName, setFirstname] = useState(); 
     const [age, setAge] = useState(); 
     const [state, setState] = useState(); 
@@ -45,6 +50,15 @@ export default function SettingsHome({navigation}){
         
         
  },[state, subLocality])
+ const computeName = (obj) => {
+    if(obj.name){
+       return obj.name
+    }
+    if(obj.firstName && obj.lastName){
+       return obj.firstName+""+obj.lastName
+    }
+    return obj.firstName
+}
 
 useEffect(() => {
  docRef.get().then(function(doc) {
@@ -73,16 +87,16 @@ return(
 <View style = {{flex:0.7}}>
 <View style = {{alignItems:"center", marginBottom:100}}>
 <TouchableOpacity style = {{alignItems:"center"}} onPress = {() => _firebaseCaller()}>
-<MaterialIcons name="account-circle" size={200} color="black" />
+{user.profilePic ? <Image source = {{uri:user.profilePic}} style = {{height:160, width:160, borderRadius:80}}/>:<MaterialIcons name="account-circle" size={200} color="black" />}
 </TouchableOpacity>
-<Text style = {{fontWeight:"bold", fontSize:30}}>
-{firstName}
+<Text style = {{fontWeight:"bold", fontSize:25, marginTop:10}}>
+{computeName(user)}
 </Text>
-<Text style = {{fontWeight:"bold", fontSize:15}}>
-    {age} years old
+<Text style = {{fontWeight:"bold", fontSize:15, marginTop:5}}>
+    {user.age} years old
 </Text>
-<Text style = {{fontWeight:"bold", fontSize:15}}>
-    {subLocality},{state}
+<Text style = {{fontWeight:"bold", fontSize:15, marginTop:5}}>
+    {user.subLocality},{user.state}
 </Text>
 </View>
 <View style = {{flexDirection:"row",justifyContent:"space-around"}}>

@@ -12,8 +12,10 @@ import { gql } from 'apollo-boost';
 import { Button } from 'react-native-elements';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { MaterialIcons } from '@expo/vector-icons';
+
 import { firebase } from '../../config'; 
 const db = firebase.firestore(); 
+
 
 //addAgeList(userInputList: userInputList1!): Boolean!
 const ADD_USER_AGE = gql`
@@ -22,6 +24,7 @@ mutation namer($userInputList:userInputList1!){
 }
 
 `
+
 export default function ContactsAge({navigation,route}){
     const myContext = useContext(AppContext); 
     const {user, userId} = myContext;
@@ -57,6 +60,7 @@ export default function ContactsAge({navigation,route}){
         namer()
         
      }, [])
+
 
 const data1 = [{ fullname:"zaid",min:15,max:19}, {fullname:"zaheer",min:20,max:24}, {zIndex:400, fullname:"nihal",ageRange:{min:25, max:29}},{fullname:"nihal",ageRange:{min:30, max:34}}]
 //const [addAge, {data}] = useMutation(ADD_USER_AGE); 
@@ -95,6 +99,7 @@ useEffect(() => {
           batch.set(ref, {age:parseInt((val.maxAge + val.minAge)/2)}, {merge:true});
      })
      batch.commit().then(() => console.log("documents have been added successfully"))
+     
 }
 const updateCountryWrapper = (obj:any) => {
      
@@ -157,6 +162,7 @@ useEffect(() => {
                 return <View style = {{flexDirection: 'row',borderWidth:1, justifyContent:'space-between',marginRight:20, borderRightWidth:0, borderLeftWidth:0, marginLeft:20, height:100, alignItems:'center', zIndex:val.zIndex}} key = {index.toString()}>
                     <View style = {{flexDirection:'row',alignItems:'center',}}>
                     {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
+
                     <Text style = {{marginLeft:10, fontWeight:'bold'}}>{computeName(val)}</Text>
                     </View>
                     <DropDownPicker
@@ -196,7 +202,7 @@ useEffect(() => {
         </ScrollView>        
         </View>
         <View style = {{flex:0.2, justifyContent:'center',marginTop:10}}>
-         <Button title = "Save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {updateToServer(), navigation.navigate('ProfilePool')}} disabled = {gate}></Button>   
+         <Button title = "Save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {updateToServer(), navigation.navigate('ContactsSex')}} disabled = {gate}></Button>   
         </View>
         </SafeAreaView>
         )    
