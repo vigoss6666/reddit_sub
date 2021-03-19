@@ -20,6 +20,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Foundation } from '@expo/vector-icons';
 import * as Print from 'expo-print';
 import {Input} from 'react-native-elements'; 
+import {transformCreativity} from '../../networking';
 
 
 
@@ -548,9 +549,31 @@ export function iconFactory(dimension:string, iconSize:number){
    }
 }
 
-
-export function userTemplate() {
+export function useTraits(){
    
+}
+
+
+export function TraitsTemplate(client) {
+   const [traits, setTraits] = useState([]); 
+   useEffect(() => {
+      db.collection('user')
+      .where('gender', '==',  client.gender)
+      .where('state', '==', client.state)
+      .get()
+      .then(onResult => {
+         const users = onResult.docs.map(val => val.data()); 
+         const transformed = transformCreativity(client, users); 
+         console.log('trnasformed is')
+         console.log(transformed)
+         setTraits(transformed); 
+      })
+   },[])
+   return (
+      <View>
+         <Text>Hello world</Text>
+      </View>
+   )
 }
         
 

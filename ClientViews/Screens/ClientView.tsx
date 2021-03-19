@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -8,10 +8,48 @@ import { Feather } from '@expo/vector-icons';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { MaterialIcons } from '@expo/vector-icons';
 import {Button} from 'react-native-elements'; 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { TraitsTemplate} from '../../src/common/Common'; 
+
 
 interface ClientViewProps {}
 
-const ClientView = (props: ClientViewProps) => {
+
+const ClientView = ({navigation, route}) => {
+  const {client} = route.params; 
+  const template = TraitsTemplate(client); 
+
+  const sortedParams = () => {
+     
+  const picked = (({ charisma, creativity, honest, looks, humor, status, wealthy, empathetic }) => ({ charisma, creativity, honest, looks, humor, status, wealthy,empathetic }))(data);  
+
+  let keysSorted = Object.keys(picked).sort(function(a,b){return picked[b]-picked[a]})
+
+  return keysSorted; 
+  }
+  
+  const computeHeader = () => {
+     if(!client.creativity && !client.charisma && !client.looks && !client.honest 
+      && !client.status && !client.wealthy && !client.humour
+      ){
+        return (
+          <View style = {{flex:0.3, justifyContent:'center', alignItems:'center', marginTop:30}}>
+          <Text style = {[styles.textStyle, {fontWeight:'bold', fontSize:40, fontStyle:'italic'}]}>{computeName(client)}</Text>
+          </View>
+        ) 
+      }
+      return (
+        <View style = {{flex:0.3, justifyContent:'center', alignItems:'center', marginTop:30}}>
+        <Text style = {styles.textStyle}> {client.matchMakers.length} people said  </Text>
+        <Text style = {[styles.textStyle, {fontWeight:'bold', fontSize:40, fontStyle:'italic'}]}>{computeName(client)}</Text>
+
+        <Text style = {[styles.textStyle, {fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}]}> is INTELLIGENT, GOOD HEARTED and CREATIVE </Text>
+         </View>
+      )
+  }
+
+  console.log(client)
+  const insets = useSafeAreaInsets();
   const data = { 
       fullName:"Amy Guion", 
       firstName:"Amy", 
@@ -37,27 +75,37 @@ const ClientView = (props: ClientViewProps) => {
        return val.photo ? <TouchableOpacity onPress = {() => console.log("hell oworld")}><Image source = {{uri:val.photo}} style = {{height:75, width:75}}/></TouchableOpacity>:<Feather name="image" size={40} color="black" />
   }):data.profilePhoto ? <Image source = {{uri:data.profilePhoto}} style = {{height:75, width:75}}/>:<Feather name="image" size={40} color="black" /> 
 
-
+  const computeName = (obj) => {
+    if(obj.name){
+       return obj.name
+    }
+    if(obj.firstName && obj.lastName){
+       return obj.firstName+obj.lastName
+    }
+    return obj.firstName
+ }
 
   const matchMaker = [{
        fullName:"David boctor",
        firstName:"David",  
     }];
+
+      
+
      
    if(data){
     return (
-        <View style={styles.container}>
+        <View style={{flex:1, paddingTop:insets.top}}>
         <ScrollView>
-        <View style = {{flex:0.3, justifyContent:'center', alignItems:'center', marginTop:30}}>
-         <Text style = {styles.textStyle}> {data.matchMaker.length} people said  </Text>
-         <Text style = {[styles.textStyle, {fontWeight:'bold', fontSize:40, fontStyle:'italic'}]}>{data.fullName || data.firstName}</Text>
-
-         <Text style = {[styles.textStyle, {fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}]}> is INTELLIGENT, GOOD HEARTED and CREATIVE </Text>
-          </View>
+         {computeHeader()}
           <View style = {{flex:0.7, marginLeft:30, marginRight:30}}>
                 <View style = {[styles.line, {marginTop:40}]}/>
                 <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>TOP TRAITS</Text>
                 <View style = {styles.line}></View>
+                {template}
+                <View>
+                  
+                </View>
                 <View style = {[styles.line, {marginTop:30}]}/>
                 <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>{data.firstName}'s details</Text>
                 <View style = {styles.line}></View>
@@ -125,7 +173,7 @@ const ClientView = (props: ClientViewProps) => {
 export default ClientView;
 
 const styles = StyleSheet.create({
-  container: {flex:1}, 
+   
   textStyle:{fontWeight:'500', fontSize:30}, 
   line:{borderBottomWidth:3,}, 
   iconNames:{marginLeft:10, fontSize:17, fontWeight:'500'}, 

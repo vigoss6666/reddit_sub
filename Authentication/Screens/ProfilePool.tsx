@@ -5,6 +5,10 @@ import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Button, SearchBar,Text,Avatar} from 'react-native-elements'; 
 import { createFilter } from 'react-native-search-filter';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
@@ -274,7 +278,7 @@ const useFetchContactPool = (navigation) => {
            
 }
 
-const useFetchDatingPool = () => {
+const useFetchDatingPool = (navigation) => {
      //const {data,loading,error} = useQuery(GET_DATING_POOL); 
      //const [removeDating] = useMutation(REMOVE_FROM_DATING); 
      const myContext = useContext(AppContext); 
@@ -316,6 +320,205 @@ const useFetchDatingPool = () => {
 namer()
 },[user.datingPoolList])
 
+
+     const renderIsUser = (item) => {
+           if(item.appUser){
+                 return (
+                    <View>
+                    <View style = {{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginTop:10,marginBottom:15}}>
+                    <Text style = {{fontWeight:'bold'}}> View Profile </Text>
+
+                    <TouchableOpacity disabled = {user.points >= 20 ? false:true}>
+                    <AntDesign name="eye" size={24} color="black" />
+               {user.points <= 20 ? <TouchableOpacity style = {{backgroundColor:'grey', position:'absolute', left:7, bottom:35}}>
+               <Entypo name="lock" size={20} color="red" style = {{position:'absolute', }}/>
+               </TouchableOpacity>:null}
+                    </TouchableOpacity>
+           
+                   </View>
+                   <View style={{
+                       borderStyle: 'dotted',
+                       borderWidth: 2,
+                       borderRadius: 1,
+                       borderColor:'grey',
+                        marginBottom:10,
+                        marginTop: 10,
+                     }}/>
+                     <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
+                     <Text style = {{fontWeight:'bold',}}>Remove from Dating Pool</Text>
+                     <TouchableOpacity onPress = {() => {_sendToServer(item)}}>
+                     <FontAwesome name="trash" size={24} color="black" />
+                     </TouchableOpacity>
+                     </View> 
+                     </View>  
+                 )
+           }
+           return (
+               <View>
+               <View style = {{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginTop:10,marginBottom:15}}>
+               <Text style = {{fontWeight:'bold'}}> View Profile </Text>
+               <TouchableOpacity disabled = {user.points >= 20 ? false:true} onPress = {() => navigation.navigate('ClientView', {client:item})}>
+                    <AntDesign name="eye" size={24} color="black" />
+               {user.points <= 20 ? <TouchableOpacity style = {{backgroundColor:'grey', position:'absolute', left:7, bottom:35}}>
+               <Entypo name="lock" size={20} color="red" style = {{position:'absolute', }}/>
+               </TouchableOpacity>:null}
+                    </TouchableOpacity>
+      
+              </View>
+              <View style={{
+                  borderStyle: 'dotted',
+                  borderWidth: 2,
+                  borderRadius: 1,
+                  borderColor:'grey',
+                   marginBottom:10,
+                   marginTop: 10,
+                }}/>
+                <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
+                <Text style = {{fontWeight:'bold',}}>Remove from Dating Pool</Text>
+                <TouchableOpacity onPress = {() => {_sendToServer(item)}}>
+                <FontAwesome name="trash" size={24} color="black" />
+                </TouchableOpacity>
+                </View> 
+                <View style={{
+     borderStyle: 'dotted',
+     borderWidth: 2,
+     borderRadius: 1,
+     borderColor:'grey',
+     marginBottom:10,
+     marginTop: 10,
+     }}/>
+     <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
+     <Text style = {{fontWeight:'bold',}}>{computeName(item)}'s sex</Text>
+     <View style = {{flexDirection:"row",justifyContent:"space-around"}}>
+     <TouchableOpacity style = {{marginRight:20}} onPress = {() => {addMale(item)}} disabled = {item.matchMaker == userId ? false:true}>
+     <FontAwesome name="male" size={30} color={item.gender == 'male' ? 'green':'black'} />
+
+     </TouchableOpacity>
+     <TouchableOpacity onPress = {() => {addFemale(item)}} disabled = {item.matchMaker == userId ? false:true}>  
+     <FontAwesome name="female" size={30} color={item.gender == 'female' ? 'green':'black'}  />
+     </TouchableOpacity>
+     </View>
+     </View>
+     <View style={{
+     borderStyle: 'dotted',
+     borderWidth: 2,
+     borderRadius: 1,
+     borderColor:'grey',
+     marginBottom:10,
+     marginTop: 10,
+     }}/>
+     <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
+     <Text style = {{fontWeight:'bold',}}>{computeName(item)}'s Orientation</Text>
+     <View style = {{flexDirection:"row",justifyContent:"space-around"}}>
+     <TouchableOpacity style = {{marginRight:20}} disabled = {item.matchMaker == userId ? false:true}>
+     <FontAwesome name="male" size={30} color="green" />
+     </TouchableOpacity>
+     <TouchableOpacity style = {{marginRight:20}} disabled = {item.matchMaker == userId ? false:true}>
+     <FontAwesome name="female" size={30} color="black" />
+     </TouchableOpacity>
+     <TouchableOpacity disabled = {item.matchMaker == userId ? false:true}>
+     <Ionicons name="ios-people" size={30} color="black" />
+     </TouchableOpacity>
+     </View>
+     </View>
+     <View style={{
+     borderStyle: 'dotted',
+     borderWidth: 2,
+     borderRadius: 1,
+     borderColor:'grey',
+     marginBottom:10,
+     marginTop: 10,
+     }}/>
+     <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20, zIndex:1000}}>
+     <Text style = {{fontWeight:'bold',}}>{computeName(item)}'s Age</Text>
+     <TouchableOpacity>
+     <DropDownPicker
+      disabled = {item.matchMaker == userId ? false:true}
+     
+items={[
+
+{label: '15 to 19 years', value: {minAge:15, maxAge:19}, selected:item.minAge == 15 && item.maxAge == 19 ? true : false},
+{label: '20 to 24 years', value: {minAge:20, maxAge:24}, selected:item.minAge == 20 && item.maxAge == 24 ? true : false},
+{label: '25 to 29 years', value: {minAge:25, maxAge:29}, selected:item.minAge == 25 && item.maxAge == 29 ? true : false},
+{label: '30 to 34 years', value: {minAge:30, maxAge:34}, selected:item.minAge == 30 && item.maxAge == 34 ? true : false},
+{label: '35 to 39 years', value: {minAge:35, maxAge:39}, selected:item.minAge == 35 && item.maxAge == 39 ? true : false},
+{label: '40 to 44 years', value: {minAge:40, maxAge:44},selected:item.minAge == 40 && item.maxAge == 44 ? true : false}, 
+{label: '45 to 49 years', value: {minAge:45, maxAge:49},selected:item.minAge == 45 && item.maxAge == 49 ? true : false},
+{label: '50 to 54 years', value: {minAge:50, maxAge:54}, selected:item.minAge == 50 && item.maxAge == 54 ? true : false},
+
+]}
+onPress = {() => {console.log("pressed")}}
+
+containerStyle={{height: 40, width:150, }}
+style={{}}
+itemStyle={{
+
+backgroundColor:"white", 
+fontColor:"white",
+justifyContent: 'flex-start'
+}}
+dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
+onChangeItem={namer => addAge(item, namer)}
+
+/>
+     </TouchableOpacity>
+     </View>
+     <View style={{
+     borderStyle: 'dotted',
+     borderWidth: 2,
+     borderRadius: 1,
+     borderColor:'grey',
+     marginBottom:10,
+     marginTop: 10,
+     }}/>
+        <View style = {{flexDirection:'row', justifyContent:'space-between', marginBottom:20, alignItems:'center'}}>
+                      <Text style = {{fontWeight:'bold'}}> {computeName(item)}</Text>
+                      <TouchableOpacity onPress = {() => addPhoto(item)} disabled = {item.matchMaker == userId ? false:true}>
+                      <Text style = {{fontWeight:'bold'}}>Add Photo</Text>
+                      </TouchableOpacity>
+
+                      </View>
+                      <View style={{
+     borderStyle: 'dotted',
+     borderWidth: 2,
+     borderRadius: 1,
+     borderColor:'grey',
+     marginBottom:10,
+     marginTop: 10,
+     }}/>
+     <View style = {{flexDirection:'row', alignItems:'center', flex:0.9, marginBottom:10}}>
+                      {item.profilePic ? <Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
+                      <Text style = {{marginLeft:10}}>{computeName(item)}'s location</Text>
+
+                      </View>  
+              <GooglePlacesAutocomplete
+              key = {item.phoneNumber}
+              styles = {{container:{ }}}
+              placeholder = {"Type location"}
+              fetchDetails = {true} 
+              onPress={(data, details = null) => {
+                const state = ""; 
+                const result = details?.address_components.map(val => {
+                   return val.types.map(val1 => {
+                      if(val1 == 'administrative_area_level_1'){
+                         setLocation([...location, { state: val.long_name, address:data.description, phoneNumber:item.phoneNumber }])
+                      }
+                   })
+                })
+                 
+                setFlatListChanged(flatListChanged+1)
+              }}
+              query={{
+                key: 'AIzaSyBxsuj6tm1D5d3hEfG2ASfleUBIRREl15Y',
+                language: 'en',
+              }}
+        /> 
+
+                </View> 
+           )
+
+
+     }
      
      const renderItem = ({item, index}) => (
           <View key = {index.toString()} style = {{ marginLeft:30, marginRight:30}}>
@@ -333,117 +536,9 @@ namer()
           </View>
           { item.caret ? 
           <View>
-          <View style = {{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginTop:10,marginBottom:15}}>
-           <Text style = {{fontWeight:'bold'}}> View Profile </Text>
-           <TouchableOpacity>
-           <AntDesign name="eye" size={24} color="black" />
-           </TouchableOpacity>
-  
-          </View>
-          <View style={{
-              borderStyle: 'dotted',
-              borderWidth: 2,
-              borderRadius: 1,
-              borderColor:'grey',
-               marginBottom:10,
-               marginTop: 10,
-            }}/>
-            <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
-            <Text style = {{fontWeight:'bold',}}>Remove from Dating Pool</Text>
-            <TouchableOpacity onPress = {() => {_sendToServer(item)}}>
-            <FontAwesome name="trash" size={24} color="black" />
-            </TouchableOpacity>
-            </View>
-            <View style={{
-              borderStyle: 'dotted',
-              borderWidth: 2,
-              borderRadius: 1,
-              borderColor:'grey',
-               marginBottom:10,
-               marginTop: 10,
-            }}/>
-            <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
-            <Text style = {{fontWeight:'bold',}}>{computeName(item)}'s sex</Text>
-            <View style = {{flexDirection:"row",justifyContent:"space-around"}}>
-            <TouchableOpacity style = {{marginRight:20}} onPress = {() => {addMale(item)}}>
-            <FontAwesome name="male" size={30} color={item.gender == 'male' ? 'green':'black'} />
-
-            </TouchableOpacity>
-            <TouchableOpacity onPress = {() => {addFemale(item)}}>  
-            <FontAwesome name="female" size={30} color={item.gender == 'female' ? 'green':'black'}  />
-            </TouchableOpacity>
-            </View>
-            </View>
-            <View style={{
-              borderStyle: 'dotted',
-              borderWidth: 2,
-              borderRadius: 1,
-              borderColor:'grey',
-               marginBottom:10,
-               marginTop: 10,
-            }}/>
-            <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
-            <Text style = {{fontWeight:'bold',}}>{computeName(item)}'s Orientation</Text>
-            <View style = {{flexDirection:"row",justifyContent:"space-around"}}>
-            <TouchableOpacity style = {{marginRight:20}}>
-            <FontAwesome name="male" size={30} color="green" />
-            </TouchableOpacity>
-            <TouchableOpacity style = {{marginRight:20}}>
-            <FontAwesome name="female" size={30} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity>
-            <Ionicons name="ios-people" size={30} color="black" />
-            </TouchableOpacity>
-            </View>
-            </View>
-            <View style={{
-              borderStyle: 'dotted',
-              borderWidth: 2,
-              borderRadius: 1,
-              borderColor:'grey',
-               marginBottom:10,
-               marginTop: 10,
-            }}/>
-            <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20, zIndex:1000}}>
-            <Text style = {{fontWeight:'bold',}}>{computeName(item)}'s Age</Text>
-            <TouchableOpacity>
-            <DropDownPicker
-items={[
-
-{label: '15 to 19 years', value: {minAge:15, maxAge:19}, selected:item.minAge == 15 && item.maxAge == 19 ? true : false},
-{label: '20 to 24 years', value: {minAge:20, maxAge:24}, selected:item.minAge == 20 && item.maxAge == 24 ? true : false},
-{label: '25 to 29 years', value: {minAge:25, maxAge:29}, selected:item.minAge == 25 && item.maxAge == 29 ? true : false},
-{label: '30 to 34 years', value: {minAge:30, maxAge:34}, selected:item.minAge == 30 && item.maxAge == 34 ? true : false},
-{label: '35 to 39 years', value: {minAge:35, maxAge:39}, selected:item.minAge == 35 && item.maxAge == 39 ? true : false},
-{label: '40 to 44 years', value: {minAge:40, maxAge:44},selected:item.minAge == 40 && item.maxAge == 44 ? true : false}, 
-{label: '45 to 49 years', value: {minAge:45, maxAge:49},selected:item.minAge == 45 && item.maxAge == 49 ? true : false},
-{label: '50 to 54 years', value: {minAge:50, maxAge:54}, selected:item.minAge == 50 && item.maxAge == 54 ? true : false},
-
-]}
-onPress = {() => {console.log("pressed")}}
-
-containerStyle={{height: 40, width:200, }}
-style={{}}
-itemStyle={{
-
-backgroundColor:"white", 
-fontColor:"white",
-justifyContent: 'flex-start'
-}}
-dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-onChangeItem={item => selectCountry([...country,{...item.value, _id:item.phoneNumber}])}
-
-/>
-            </TouchableOpacity>
-            </View>
-            <View style={{
-              borderStyle: 'dotted',
-              borderWidth: 2,
-              borderRadius: 1,
-              borderColor:'grey',
-               marginBottom:10,
-               marginTop: 10,
-            }}/>
+           {renderIsUser(item)}
+            
+     
             </View>
             :null}    
           </View>
@@ -477,40 +572,71 @@ onChangeItem={item => selectCountry([...country,{...item.value, _id:item.phoneNu
           }
           const addMale = (obj => {
                 
-
-               const data1 = data.getDatingPoolList.data.concat(); 
-
-                  
-                  
-               const result = data1.filter(val => {
-                    
-                   return val._id == obj._id 
-
-               })
-               
-               result[0].gender = "male"; 
-               data1.splice(0,1,result[0]); 
-               
-               db.collection('user').doc(obj._id).update({gender:'male'});
+               const data = datingPoolList.concat(); 
+               const index = data.findIndex(val1 => val1.phoneNumber == obj.phoneNumber)     
+               data[index].gender = 'male'; 
+               setDatingPoolList(data); 
+               db.collection('user').doc(obj.phoneNumber).update({gender:'male'});
                 
                })
                const addFemale = (obj => {
-               
-
-               const data1 = data.getDatingPoolList.data.concat(); 
-
-                  
-                  
-               const result = data1.filter(val => {
-                   return val._id == obj._id 
-
+               const data = datingPoolList.concat(); 
+               const index = data.findIndex(val1 => val1.phoneNumber == obj.phoneNumber)     
+               data[index].gender = 'female'; 
+               setDatingPoolList(data); 
+               db.collection('user').doc(obj.phoneNumber).update({gender:'female'});
                })
                
-               result[0].gender = "female"; 
-               data1.splice(0,1,result[0]); 
-               db.collection('user').doc(obj._id).update({gender:'female'});
-               setNamer(namer + 1);
-                  })    
+               const addLocation = (obj => {
+                     
+               })
+
+               const addPhoto = (async obj => {
+                      
+    let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("Permission to access camera roll is required!");
+      return;
+    }
+    console.log("conatacts photos called")  
+    
+
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.All});
+    console.log(pickerResult.type)
+    if(pickerResult.type == 'image'){
+      const manipResult = await ImageManipulator.manipulateAsync(
+        pickerResult.uri,
+        [{resize:{width:200, height:200}}],
+        { compress: 0.1, format: ImageManipulator.SaveFormat.PNG,}
+      );
+      
+      const response = await fetch(manipResult.uri); 
+        const blob = await response.blob(); 
+        const namer = Math.random().toString(36).substring(2);
+        const ref = firebase.storage().ref().child("images/"+ namer); 
+        await ref.put(blob)
+        const result1 = await ref.getDownloadURL();
+        const cloner = datingPoolList.concat();  
+        const objIndex = cloner.findIndex(val => val.phoneNumber == obj.phoneNumber);
+        cloner[objIndex].profilePic = result1;  
+        setDatingPoolList(cloner); 
+        
+       db.collection('user').doc(obj.phoneNumber).update({profilePic:result1}); 
+    }
+    if(pickerResult.type == 'video'){
+      alert('Video format not allowed')
+      return; 
+    }
+    })
+               const addAge = ((obj, item) => {
+                     const data = datingPoolList.concat(); 
+                     const index = data.findIndex(val => val.phoneNumber == obj.phoneNumber); 
+                     data[index].minAge = item.value.minAge; 
+                     data[index].maxAge = item.value.maxAge; 
+                     db.collection('user').doc(obj.phoneNumber).update({minAge:item.value.minAge, maxAge:item.value.maxAge})
+                     
+               })
           
                return (
                     <View style = {{flex:1,}}>
@@ -687,7 +813,7 @@ export default function ProfilePool({navigation}){
 const [namer, setNamer] = useState(1); 
 const [selected, setSelected] = useState('friends'); 
 //const dating = useFetchDatingPool(); 
-const dating = useFetchDatingPool()
+const dating = useFetchDatingPool(navigation)
 const contact = useFetchContactPool(navigation);
 const _uploadContacts = async () => {
      const { status } = await Contacts.requestPermissionsAsync(); 

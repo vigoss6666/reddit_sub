@@ -305,6 +305,7 @@ const customHeader = () => {
         <Stack.Screen name="MatchViewLatest" component={MatchViewLatest}/>
         <Stack.Screen name="Webber" component={Webber}/>
         <Stack.Screen name="Homer" component={Home} options = {{headerShown:false}}/>
+        <Stack.Screen name="ClientView" component={ClientView} options = {{headerShown:false}}/>
         
         
         

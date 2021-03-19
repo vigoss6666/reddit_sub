@@ -62,8 +62,7 @@ useEffect(() => {
       aheadOf:number, 
       selected?: boolean;   
       votes:number; 
-       
-}
+    }
     
           
 const [traits, setTraits] = useState<[traits] | []>([]);
