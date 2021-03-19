@@ -556,6 +556,34 @@ export function useTraits(){
 
 export function TraitsTemplate(client) {
    const [traits, setTraits] = useState([]); 
+
+const setArrow = (obj) => {
+  console.log("called"); 
+const result = traits.map(val => {
+      if(val.trait == obj.trait){
+          val.selected = true; 
+           
+    }
+    return val; 
+   
+})
+console.log(result)
+setTraits(traits => result)
+}
+const setArrowFalse = (obj) => {
+ const result = traits.map(val => {
+      if(val.trait == obj.trait){
+          val.selected = false; 
+           
+    }
+    return val; 
+   
+})
+setTraits(traits => result)
+}
+
+
+
    useEffect(() => {
       db.collection('user')
       .where('gender', '==',  client.gender)
@@ -569,9 +597,72 @@ export function TraitsTemplate(client) {
          setTraits(transformed); 
       })
    },[])
+   const traitsTemplate = traits.map((val, index) => {
+      
+    return (
+       <View style = {{ borderBottomWidth:3, justifyContent:'center', alignItems:'center', }}>
+       
+       <View style = {{flexDirection:'row', alignItems:'center', marginTop:30, }}>
+       <View style = {{flex:0.3}}>
+       {iconFactory(val.trait, 40)}
+       </View>    
+      <Text style = {{flex:0.4, fontWeight:'bold', fontSize:20}}>{val.trait.toUpperCase()}</Text>
+       <View style = {{justifyContent:'flex-end',  flex:0.3, alignItems:'center'}}>
+       <Text style = {{fontSize:20, fontWeight:'bold' }}> {val.votes}</Text>
+       <Text style = {{fontSize:20, marginBottom:10}}> votes</Text>
+       
+       </View>
+       
+       
+       </View>
+     
+     {val.selected ? <TouchableOpacity onPress = {() => setArrowFalse(val)}><MaterialIcons name="keyboard-arrow-up" size={24} color="grey" /></TouchableOpacity>:<TouchableOpacity onPress = {() => setArrow(val)}><MaterialIcons name="keyboard-arrow-down" size={24} color="black" /></TouchableOpacity>}
+     {val.selected ? <View style = {{ width:'100%'}}>
+         <View style = {{borderRadius:2, borderWidth:2, borderStyle:'dotted', }}/>
+         <View style = {{flexDirection:'row'}}> 
+         
+          {client.gender == 'female' ? <View style = {{flexDirection:'row', marginTop:20, marginBottom:20 , flex:0.7, }}>
+          <FontAwesome5 name="female" size={35} color="red" />
+         <FontAwesome5 name="female" size={35} color="red" />
+         <FontAwesome5 name="female" size={35} color="red" />
+         <FontAwesome5 name="female" size={35} color="red" />
+         <FontAwesome5 name="female" size={35} color="red" />
+         <FontAwesome5 name="female" size={45} color="red" />
+         <FontAwesome5 name="female" size={35} color="red" />
+         <FontAwesome5 name="female" size={35} color="red" />
+         <FontAwesome5 name="female" size={35} color="red" />
+         <FontAwesome5 name="female" size={35} color="red" /></View>: <View style = {{flexDirection:'row', marginTop:20, marginBottom:20 , flex:0.7, }}>
+          <FontAwesome5 name="male" size={35} color="red" />
+         <FontAwesome5 name="male" size={35} color="red" />
+         <FontAwesome5 name="male" size={35} color="red" />
+         <FontAwesome5 name="male" size={35} color="red" />
+         <FontAwesome5 name="male" size={35} color="red" />
+         <FontAwesome5 name="male" size={45} color="red" />
+         <FontAwesome5 name="male" size={35} color="red" />
+         <FontAwesome5 name="male" size={35} color="red" />
+         <FontAwesome5 name="male" size={35} color="red" />
+         <FontAwesome5 name="male" size={35} color="red" /></View>} 
+         
+         
+         <View style = {{flex:0.3, marginTop:20, marginBottom:15}}>
+            <Text style = {{alignSelf:'center', fontWeight:'bold'}}>AHEAD OF </Text> 
+            <Text style = {{alignSelf:'center', color:'red', fontWeight:'bold', fontSize:20}}>{val.aheadOf}%</Text>
+            <Text style = {{alignSelf:'center', fontWeight:'bold'}}>of males</Text>
+         </View>    
+         </View>    
+
+
+             
+         
+     </View>:null}  
+     
+           
+   </View> 
+    )
+})
    return (
       <View>
-         <Text>Hello world</Text>
+      {traitsTemplate}
       </View>
    )
 }

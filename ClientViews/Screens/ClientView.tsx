@@ -16,8 +16,11 @@ interface ClientViewProps {}
 
 
 const ClientView = ({navigation, route}) => {
-  const {client} = route.params; 
-  const template = TraitsTemplate(client); 
+  const {client} = route.params;
+  
+  const result = TraitsTemplate(client); 
+ 
+  
 
   const sortedParams = () => {
      
@@ -102,7 +105,8 @@ const ClientView = ({navigation, route}) => {
                 <View style = {[styles.line, {marginTop:40}]}/>
                 <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>TOP TRAITS</Text>
                 <View style = {styles.line}></View>
-                {template}
+                {result}
+                
                 <View>
                   
                 </View>
