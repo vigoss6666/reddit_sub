@@ -9,7 +9,7 @@ return(
 <View style = {{flex:0.2}}>
 
 </View>
-<View style = {{flex:0.6, alignItems:"center", marginLeft:50, marginRight:50}}>
+<View style = {{flex:0.6, alignItems:"center", }}>
 <Text style = {{fontWeight:"bold", fontSize:40}}>MATCHMAKE</Text>
 <TouchableOpacity style = {{marginTop:30}} onPress = {() => navigation.navigate('Playgame')}>
 <Image source = {{uri:'https://storage.googleapis.com/nemesis-157710.appspot.com/crossed-arrows.png'}} style = {{height:80, width:80}}/>
@@ -19,7 +19,7 @@ return(
 
 </View>
 <Text style = {{fontWeight:"bold", marginTop:30, fontSize:40}}>DATE </Text>
-<TouchableOpacity style = {{marginTop:30}} onPress = {() => navigation.navigate('Playgame')}>
+<TouchableOpacity style = {{marginTop:30}} onPress = {() => navigation.navigate('SelfGame')}>
 <AntDesign name="hearto" size={80} color="black" />
 </TouchableOpacity>
 <Text style = {{fontWeight:"bold", marginTop:30, color:'grey', fontSize:20}}>Browse Users</Text>

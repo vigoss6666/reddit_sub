@@ -3,7 +3,7 @@ import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 import { Ionicons, SimpleLineIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useEffect, useRef, createContext, useContext, } from 'react';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Entypo } from '@expo/vector-icons';
 import { StyleSheet, Text, View,Button, Settings, Platform,  Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -70,6 +70,7 @@ import CustomSlider from './Game/Screens/CustomSlider';
 import Endorsement from './Endorsement/Screens/Endorsements'; 
 import NoMatch from './Game/Screens/NoMatch'; 
 import Chat from './Chat/Screens/Chat'; 
+import ChatLatest from './Chat/Screens/ChatLatest';
 import MatchScreen from './Chat/Screens/MatchList'; 
 import Camera from './Chat/Screens/Camera'; 
 import ContextProvider from './src/provider'; 
@@ -121,7 +122,20 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState('+917208110384'); 
   const [contactList, setContactList] = useState([]); 
   const [countryCode, setCountryCode] = useState("US");
-  const [dialCode, setDialCode] = useState("+1");  
+  const [dialCode, setDialCode] = useState("+1"); 
+  const [chatNotification, setChatNotification] = useState(false);  
+  const [chatterNotification, setChatterNotification] = useState(false); 
+  const [selfFilter, setSelfFilter] = useState({
+    charisma:0.4, 
+    creativity:0.1, 
+    honest:0.1, 
+    looks:0.1, 
+    empathetic:0.1, 
+    status:0.1, 
+    humor:0.1, 
+    wealthy:0.1, 
+    narcissism:0.9
+  })
 
   const [basicAuth, setBasicAuth] = useState(null); 
   const [registeredUsers, setRegisteredUsers] = useState([]); 
@@ -155,6 +169,12 @@ export default function App() {
   
   
   const globalObject = {
+    selfFilter, 
+    setSelfFilter, 
+    chatterNotification, 
+    setChatterNotification,
+    chatNotification, 
+    setChatNotification, 
     userId:currentUser, 
     user, 
     registeredUsers, 
@@ -299,13 +319,14 @@ const customHeader = () => {
         <Stack.Screen name="AttributeFilter" component={AttributeFilter}/>
         <Stack.Screen name="BrowseSettings" component={BrowseSettings}/>
         <Stack.Screen name="SelfMatchView" component={SelfMatchView}/>
-        <Stack.Screen name="SelfGame" component={SelfGame}/>
+        <Stack.Screen name="SelfGame" component={SelfGame} />
         <Stack.Screen name="BrowseMatchSettings" component={BrowseMatchSettings}/>
         <Stack.Screen name="MatchMakeLatest" component={MatchMakeLatest}/>
         <Stack.Screen name="MatchViewLatest" component={MatchViewLatest}/>
         <Stack.Screen name="Webber" component={Webber}/>
         <Stack.Screen name="Homer" component={Home} options = {{headerShown:false}}/>
         <Stack.Screen name="ClientView" component={ClientView} options = {{headerShown:false}}/>
+        <Stack.Screen name="ChatLatest" component={ChatLatest} options = {{headerShown:true}}/>
         
         
         
@@ -345,7 +366,7 @@ const HeaderLeft = () => (
 )
 function Home(props){
   const myContext = useContext(AppContext); 
-  const {user, userId, countryCode, dialCode} = myContext;
+  const {user, userId, countryCode, dialCode, chatNotification, chatterNotification} = myContext;
   const insets = useSafeAreaInsets();
   return (
     <SafeAreaProvider>
@@ -363,14 +384,38 @@ function Home(props){
         if(route.name === 'Matchlist'){
           console.log(route.params); 
           if(focused) {
-            if(props.chatter == false){
+            if(chatNotification == true){
+              if(!chatterNotification){
+                return (
+                  <View>
+                 <View style = {{height:10,width:10, position:'absolute', left:-5, backgroundColor:'red', borderRadius:5,zIndex:100}}/>
+                 <AntDesign name="wechat" size={24} color="black" />
+                 </View> 
+                 );
+              }
+           }
+           if(chatNotification == true){
+            if(chatterNotification){
               return (
                 <View>
                <View style = {{height:10,width:10, position:'absolute', left:-5, backgroundColor:'red', borderRadius:5,zIndex:100}}/>
                <AntDesign name="wechat" size={24} color="black" />
+               <Entypo name="message" size={24} color="black" style = {{position:'absolute', top:5, right:5}}/>
                </View> 
                );
             }
+         }
+         if(!chatNotification){
+          if(chatterNotification){
+            return (
+              <View>
+             
+             <AntDesign name="wechat" size={24} color="black" />
+             <Entypo name="message" size={12} color="red" style = {{position:'absolute', top:2, right:0}}/>
+             </View> 
+             );
+          }
+       }
               return (
               <View>
               <AntDesign name="wechat" size={24} color="black" />
@@ -378,22 +423,20 @@ function Home(props){
              );     
                
           }
-          if(props.chatter == false){
+          if(chatNotification == false){
             return (
               <View>
-             <View style = {{height:10,width:10, position:'absolute', left:-5, backgroundColor:'red', borderRadius:5,zIndex:100}}/>
-             <AntDesign name="wechat" size={24} color="black" />
+              <AntDesign name="wechat" size={24} color="black" />
              </View> 
-             );
+             ); 
           }
-            return (
+          return (
             <View>
-            <AntDesign name="wechat" size={24} color="black" />
+           <View style = {{height:10,width:10, position:'absolute', left:-5, backgroundColor:'red', borderRadius:5,zIndex:100}}/>
+           <AntDesign name="wechat" size={24} color="black" />
            </View> 
-           ); 
-          
-          
-        }      
+           );
+         }      
         if(route.name === 'ProfilePool'){
           if(focused) {
             return <SimpleLineIcons name="people" size={24} color="orange" />;   

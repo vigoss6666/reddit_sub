@@ -129,7 +129,7 @@ export default function LoadContacts({navigation}){
              var batch = db.batch();
              newUsers.map(val => {
                   const ref = db.collection('user').doc(val.phoneNumber)
-                  batch.set(ref, {...val, matchMaker:userId})
+                  batch.set(ref, {...val, matchMaker:userId, creativity:0, charisma:0, humor:0, honest:0, empathetic:0, status:0, wealthy:0,narcissism:0})
              })
              batch.commit().then(() => {
                 navigation.navigate('Loader'); 

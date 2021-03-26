@@ -1047,11 +1047,6 @@ const renderChatEmpty = () => {
       }
 return(
    <SafeAreaView style = {{flex:1}}>
-   
-   
-   
-      
-  
  <GiftedChat
  
       messages={messages}
@@ -1100,8 +1095,6 @@ return(
    /> 
   
   </SafeAreaView>
-    
-
 )
 }
 const styles = StyleSheet.create({

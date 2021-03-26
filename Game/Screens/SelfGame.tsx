@@ -1,10 +1,12 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { Text, View, StyleSheet, Dimensions, ScrollView, Image, SafeAreaView, SectionList, FlatList, TouchableOpacity } from 'react-native';
 import { MaterialIcons, Foundation, Feather, Entypo } from '@expo/vector-icons';
 import {firebase } from '../../config'; 
 import {transformCreativity, computeSimDimension, computeSectionLabel} from '../../networking'; 
 import { iconFactory} from '../../src/common/Common'; 
 import { logTen } from './logTen';
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking';
 // @refresh reset
 const db = firebase.firestore(); 
 
@@ -86,38 +88,26 @@ function applyFilters(filter:filter , arr:serverDataObjectDimension[]):serverDat
 }
 
 const SelfGame = ({navigation, route}) => {
+  const myContext = useContext(AppContext); 
+  const {user, userId, selfFilter, setSelfFilter} = myContext;
     const [filter, setFilter] = useState(route.params ? route.params.finalObject:{});
     const [sliderState, setSliderState] = useState({ currentPage: 0 });
     const [selfMatchView, setSelfMatchView] = useState();     
     const [filters, setFilters] = useState({
         state:'california'
     })
-    const [user, setUser] = useState({
-        name:"zaid shaikh",
-        firstName:"zaid",
-        profilePic:"https://i.pinimg.com/originals/f0/a6/4e/f0a64e32194d341befecc80458707565.jpg",
-        charisma:1000, 
-        creativity:900, 
-        honest:400, 
-        looks:400, 
-        empathetic:400, 
-        status:350, 
-        wealthy:350, 
-        humor:350, 
-        _id:'gamer'
-        
-    })
+    
 
     useEffect(() => {
         console.log("called")
-      db.collection('user').doc('trial_user').get().then(doc => {
-          const user = Object.assign({}, doc.data(), {_id:doc.id})
+      db.collection('user').doc('+917208110384').get().then(doc => {
+          
            db.collection('user')
-           .where('state', '==', filters.state)
+           .where('state', '==', 'New york')
            .where('gender', '==', 'female')
            .get()
            .then(result => {
-                 const serverObjectWithId = result.docs.map(doc => Object.assign({}, doc.data(), {_id:doc.id})); 
+                 const serverObjectWithId = result.docs.map(val => val.data()) 
                  const logData = logTen(serverObjectWithId);
                  const userLogged = logTen(user);
                  setSelfMatchView({
@@ -237,6 +227,18 @@ const SelfGame = ({navigation, route}) => {
              </View>  
          
     }
+    useEffect(() => {
+      navigation.setOptions({
+         headerTitle:false, 
+         headerLeft:() => <TouchableOpacity onPress = {() => navigation.navigate('GameHomepage')}>
+         <Entypo name="controller-play" size={35} style = {{marginLeft:20}} />                    
+         </TouchableOpacity>, 
+         headerStyle:{backgroundColor:'grey'}, 
+         headerRight:() => <TouchableOpacity onPress = {() =>navigation.navigate('BrowseSettings')}>
+         <Feather name="settings" size={30} color="black" style = {{marginRight:20, marginBottom:5, marginTop:5}}/>
+         </TouchableOpacity> 
+      })
+    }, [])
 
     const renderSectionItem = ({section, index}) => {
         
@@ -256,14 +258,7 @@ const SelfGame = ({navigation, route}) => {
     
   return (
     <SafeAreaView style = {styles.container}>
-        <View style = {{flexDirection:'row', justifyContent:'space-between',alignItems:'center', backgroundColor:'grey'}}>
-         <TouchableOpacity>
-        <Entypo name="controller-play" size={35} style = {{marginLeft:20}} />                    
-        </TouchableOpacity>   
-        <TouchableOpacity onPress = {() =>navigation.navigate('BrowseSettings')}>
-        <Feather name="settings" size={30} color="black" style = {{marginRight:20, marginBottom:5, marginTop:5}}/>
-        </TouchableOpacity>
-        </View>
+        
         <View style = {{justifyContent:'center', alignItems:'center', marginTop:20}}>
         {headerTemplate}        
      

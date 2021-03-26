@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useContext } from 'react';
 import { Text, View, StyleSheet, Dimensions, SafeAreaView, TouchableOpacity } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Slider from '@react-native-community/slider';
@@ -6,6 +6,8 @@ import { iconFactory } from '../../src/common/Common';
 import { ScrollView } from 'react-native-gesture-handler';
 import SwitchSelector from "react-native-switch-selector";
 import {firebase} from '../../config'; 
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking';
 const db = firebase.firestore(); 
 
 
@@ -15,6 +17,8 @@ interface BrowseSettingsProps {}
 
 const BrowseSettings = ({navigation, route}) => {
 const [selected, setSelected] = useState('filter'); 
+const myContext = useContext(AppContext); 
+const {user, userId, selfFilter, setSelfFilter} = myContext;
 const [potentialMatches, setPotentialMatches] = useState(0); 
 const [minAgePref, selectminAgePref] = useState(15); 
 const [maxAgePref, selectmaxAgePref] = useState(20);
@@ -25,15 +29,23 @@ const [matchmaking, setMatchmaking] = useState();
 const [compatibility, setCompatibility] = useState(1);
 const [distance, setDistance] = useState(); 
 const [creativity, setCreativity] = useState(0.1); 
-const [charisma, setCharisma] = useState(2.1);
+const [charisma, setCharisma] = useState(selfFilter.charisma);
 const [honest, setHonest] = useState(0.1);
 const [humor, setHumor] = useState(0.1);
 const [empathetic, setEmpathetic] = useState(0.1);
 const [looks, setLooks] = useState(0.1);
 const [wealthy, setWealthy] = useState(0.1);
 const [status, setStatus] = useState(0.1);
-
-
+console.log(selfFilter)
+useEffect(() => {
+   navigation.setOptions({
+      headerLeft:false, 
+      headerTitle:false, 
+      headerRight:() => <TouchableOpacity onPress = {() => sendBack()} style = {{marginRight:10}}>
+      <Text style = {{color:'orange', fontWeight:'bold'}}>Done</Text>
+  </TouchableOpacity>
+   })
+}, [])
 
 //   if(route.params){
 
@@ -106,36 +118,36 @@ const initialValue = matchmaking == true ? 0:1;
 const [traits, setTraits] = useState([
     {
      trait:'charisma', 
-     value:charisma
+     value:selfFilter.charisma
     }, 
     {
         trait:'creativity', 
-        value:creativity
+        value:selfFilter.creativity
     },
     
     {
         trait:'honest', 
-        value:honest
+        value:selfFilter.honest
     },
     {
         trait:'looks', 
-        value:looks
+        value:selfFilter.looks
     },
     {
         trait:'empathetic', 
-        value:empathetic
+        value:selfFilter.empathetic
     },
     {
         trait:'status', 
-        value:status
+        value:selfFilter.status
     },
     {
         trait:'wealthy', 
-        value:wealthy
+        value:selfFilter.wealthy
     },
     {
         trait:'narcissism', 
-        value:3.4
+        value:selfFilter.narcissism
     },
 
 ]) 
@@ -160,23 +172,7 @@ const finalObject = {
 
   return (
     <SafeAreaView style={{flex:1}}>
-        <View style = {{flex:0.1}}>
-        <View style = {{flexDirection:'row', justifyContent:'space-between', marginTop:20, marginRight:20, alignItems:'center', }}>
-       <Text></Text>   
-       <Text style = {{fontWeight:'bold', fontSize:20}}>Browse Settings</Text> 
-       <TouchableOpacity onPress = {() => sendBack()}>
-           <Text style = {{color:'orange', fontWeight:'bold'}}>Done</Text>
-       </TouchableOpacity>
-      </View>
-      {/* <View style = {{flexDirection:'row',marginLeft:30, marginRight:30,}}>
-            <TouchableOpacity style = {{ flex:1,  borderWidth:2, backgroundColor:selected == 'filter' ? '#90a5d6':'white'}} onPress = {() => setSelected('filter')}>
-            <Text style = {{fontSize:30, alignSelf:'center', marginRight:30, marginLeft:20}}>Filter</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style = {{ flex:1,  borderWidth:2,backgroundColor:selected == 'sort' ? '#90a5d6':'white'}} onPress = {() => setSelected('sort')}>
-            <Text style = {{fontSize:30, alignSelf:'center',}}>Sort</Text>
-            </TouchableOpacity>
-         </View> */}
-        </View>
+        
 
         <ScrollView style = {{flex:0.9, marginBottom:20 }}>
         <View style = {{marginLeft:10, marginRight:15, marginBottom:20}}>

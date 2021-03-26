@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useContext } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { iconFactory } from '../../src/common/Common';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -9,6 +9,8 @@ import {Button} from 'react-native-elements';
 import {firebase} from '../../config'; 
 import { getBaseLog} from './getBaseLog'; 
 import { transformCreativity} from '../../networking'; 
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking';
 const db = firebase.firestore();
 
 // @refresh reset
@@ -60,6 +62,8 @@ function jsUcfirst(str)
 
 const AttributeFilter = ({navigation, route}) => {
    const [attribute, setAttribute] = useState('creativity'); 
+   const myContext = useContext(AppContext);
+   const {user, userId, selfFilter, setSelfFilter} = myContext;
    const [maleMatches, setMaleMatches] = useState(0); 
    const [femaleMatches, setFemaleMatches] = useState(0); 
    const [femaleAhead, setFemaleAhead] = useState(0); 
@@ -109,52 +113,171 @@ const AttributeFilter = ({navigation, route}) => {
 
   
   ]
+   
+   console.log(route.params.attribute)
    const [attValue, setAttValue]  = useState(0);
+   useEffect(() => {
+    navigation.setOptions({
+       headerTitle:false, 
+       headerRight:() => <TouchableOpacity onPress = {() => navigation.navigate('BrowseSettings')} style = {{marginRight:10}}>
+       <Text style = {{fontSize:20, color:'orange', fontWeight:'bold'}}> Cancel</Text>
+       </TouchableOpacity>,
+       headerLeft:false,  
+      })
+   },[])
    useEffect(() => {
       route.params ? setAttValue(route.params.value):null;
       route.params ? setAttribute(route.params.attribute):null;
       
         
    },[])     
-   useEffect(() => {
-      db.collection('user').doc('trial_user').get().then(doc => {
-      const user = Object.assign({}, doc.data(), {_id:doc.id})
-       db.collection('user')
-       .where('state', '==', 'california')
-       .get()
-       .then(result => {
-             const serverObjectWithId = result.docs.map(doc => Object.assign({}, doc.data(), {_id:doc.id})); 
-             const logData = logTen(serverObjectWithId);
-             const userLogged = logTen(user);
-             const male = logData.filter(val => val.gender == 'male'); 
-             const female = logData.filter(val => val.gender == 'female');  
-             console.log(attribute)
+//    useEffect(() => {
+//       db.collection('user').doc(userId).get().then(doc => {
+      
+//        db.collection('user')
+//        .where('state', '==', 'New York')
+//        .get()
+//        .then(result => {
+//              const serverObjectWithId = result.docs.map(doc => doc.data()); 
+//              const logData = logTen(serverObjectWithId);
+//              console.log(logData.length)
+//              const userLogged = logTen(user);
              
-             const maleMatches = male.filter(val => val.[attribute] > attValue); 
+//              const male = logData.filter(val => val.gender == 'male'); 
+//              const female = logData.filter(val => val.gender == 'female');  
+//              console.log(attribute)
              
-             setMaleMatches(maleMatches.length); 
-             const femaleMatches = female.filter(val => val.[attribute] > attValue);
-             setFemaleMatches(femaleMatches.length)
-             
-             const femaleAheadFilter = transformCreativity(userLogged, female);  
-             const menAheadFilter = transformCreativity(userLogged, male); 
-
-             const currentAheadFemale = femaleAheadFilter.filter(val => val.trait == attribute); 
-             const currentAheadMale = menAheadFilter.filter(val => val.trait == attribute); 
-
-             console.log(currentAheadFemale)
-             setFemaleAhead(currentAheadFemale[0].aheadOf); 
-             setMaleAhead(currentAheadMale[0].aheadOf); 
-             
-             
-
+ 
 
              
+//              const femaleAheadFilter = transformCreativity(userLogged, female);  
+//              const menAheadFilter = transformCreativity(userLogged, male); 
+
+//              const currentAheadFemale = femaleAheadFilter.filter(val => val.trait == attribute); 
+//              const currentAheadMale = menAheadFilter.filter(val => val.trait == attribute); 
+//              console.log(currentAheadFemale)
+//              setFemaleAhead(currentAheadFemale[0].aheadOf); 
+//              setMaleAhead(currentAheadMale[0].aheadOf); 
+
+//        })
+//   })
+// }, [maleMatches, femaleMatches, attValue])
+
+useEffect(() => {
+db.collection('user')
+.where('state', '==', 'New York')
+.where('gender', '==', 'male')
+.get()
+.then(onResult => {
+   if(onResult.empty){
+      setMaleAhead('100')
+      return; 
+   }
+   const users = onResult.docs.map(val => val.data()); 
+   const usersLogged = logTen(users); 
+   const userLogged = logTen(user); 
+   const result = transformCreativity(userLogged, usersLogged); 
+   const getAttribute = result.filter(val => val.trait == attribute); 
+   console.log(getAttribute)
+   setMaleAhead(getAttribute[0].aheadOf); 
+})
+}, [])
 
 
-       })
+useEffect(() => {
+  db.collection('user')
+  .where('state', '==', 'New York')
+  .where('gender', '==', 'female')
+  .get()
+  .then(onResult => {
+     if(onResult.empty){
+        setFemaleAhead('100')
+        return; 
+     }
+     const users = onResult.docs.map(val => val.data()); 
+     const usersLogged = logTen(users); 
+     const userLogged = logTen(user); 
+     console.log(userLogged)
+   const result = transformCreativity(userLogged, usersLogged); 
+   const getAttribute = result.filter(val => val.trait == attribute); 
+   console.log(getAttribute)
+   setFemaleAhead(getAttribute[0].aheadOf); 
+  
   })
-}, [maleMatches, femaleMatches, attValue])
+  }, [])
+
+
+
+const potenTialFemaleMatches = () => {
+   console.log("attribute is"+attribute)
+   db.collection('user')
+   .where('gender', '==', 'female')
+   .where(attribute, ">", Math.pow(5, computeDefaultValue())) 
+   .get()
+   .then(onResult => {
+      const finalResult = onResult.docs.map(val => val.data()); 
+      return finalResult; 
+  })
+}
+const potenTialMaleMatches = () => {
+  console.log("attribute is"+attribute)
+  
+}
+
+useEffect(() => {
+  db.collection('user')
+  .where('gender', '==', 'male')
+  .where(attribute, ">", Math.pow(5, computeDefaultValue())) 
+  .get()
+  .then(onResult => {
+     const finalResult = onResult.docs.map(val => val.data()); 
+     
+     
+     console.log(finalResult.length)
+     setFemaleMatches(finalResult.length) 
+ })
+}, [])
+
+useEffect(() => {
+  db.collection('user')
+  .where('gender', '==', 'male')
+  .where(attribute, ">", Math.pow(5, computeDefaultValue())) 
+  .get()
+  .then(onResult => {
+     const finalResult = onResult.docs.map(val => val.data()); 
+     setMaleMatches(finalResult.length)
+ })
+}, [])
+
+
+
+ const computeDefaultValue = () => {
+    if(route.params.attribute == "creativity"){
+       return selfFilter.creativity; 
+    }
+    if(route.params.attribute == "charisma"){
+      return selfFilter.charisma; 
+   }
+   if(route.params.attribute == "honest"){
+    return selfFilter.honest; 
+ }
+ if(route.params.attribute == "looks"){
+  return selfFilter.looks; 
+}
+if(route.params.attribute == "humor"){
+  return selfFilter.humor; 
+}
+if(route.params.attribute == "status"){
+  return selfFilter.status; 
+}
+if(route.params.attribute == "wealthy"){
+  return selfFilter.wealthy; 
+}
+if(route.params.attribute == "narcissism"){
+  return selfFilter.narcissism; 
+}
+
+ }
 
   const text = attriText.map(val => {
     if(val.dimension == attribute){
@@ -170,9 +293,7 @@ const AttributeFilter = ({navigation, route}) => {
        <View style = {[{justifyContent:'space-between', flexDirection:'row', marginTop:30, }]}>
            <Text></Text>
            <Text></Text>
-           <TouchableOpacity onPress = {() => navigation.navigate('BrowseSettings')}>
-           <Text style = {{fontSize:20, color:'orange', fontWeight:'bold'}}> Cancel</Text>
-           </TouchableOpacity>
+           
        </View> 
       <View style = {{justifyContent:'center', alignItems:'center', marginTop:30}}>
           {iconFactory(attribute, 60)}
@@ -310,7 +431,7 @@ const AttributeFilter = ({navigation, route}) => {
                 
                       ]}
                     
-                    defaultValue = {attValue}
+                    defaultValue = {computeDefaultValue()}
                     
                     
                     arrowStyle={{marginRight: 10, size:20}}
