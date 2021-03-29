@@ -20,74 +20,32 @@ const [selected, setSelected] = useState('filter');
 const myContext = useContext(AppContext); 
 const {user, userId, selfFilter, setSelfFilter} = myContext;
 const [potentialMatches, setPotentialMatches] = useState(0); 
-const [minAgePref, selectminAgePref] = useState(15); 
-const [maxAgePref, selectmaxAgePref] = useState(20);
+
 const [inches, setInches] = useState("11"); 
 const [feet, setFeet ] = useState("5"); 
-
 const [matchmaking, setMatchmaking] = useState();
 const [compatibility, setCompatibility] = useState(1);
 const [distance, setDistance] = useState(); 
-const [creativity, setCreativity] = useState(0.1); 
-const [charisma, setCharisma] = useState(selfFilter.charisma);
-const [honest, setHonest] = useState(0.1);
-const [humor, setHumor] = useState(0.1);
-const [empathetic, setEmpathetic] = useState(0.1);
-const [looks, setLooks] = useState(0.1);
-const [wealthy, setWealthy] = useState(0.1);
-const [status, setStatus] = useState(0.1);
+
+
+useEffect(() => {
+setCompatibility(selfFilter.dimension)
+},[selfFilter.dimension])
+
 console.log(selfFilter)
 useEffect(() => {
    navigation.setOptions({
       headerLeft:false, 
       headerTitle:false, 
-      headerRight:() => <TouchableOpacity onPress = {() => sendBack()} style = {{marginRight:10}}>
+      headerRight:() => <TouchableOpacity  style = {{marginRight:10}} onPress = {() => {navigation.navigate('SelfGame')}}>
       <Text style = {{color:'orange', fontWeight:'bold'}}>Done</Text>
   </TouchableOpacity>
    })
 }, [])
 
-//   if(route.params){
-
-//     if(route.params.attribute == 'creativity'){
-//        if(creativity !== route.params.attribute){
-//         setCreativity(route.params.value); 
-//        }
-       
-//     }
-//     if(route.params.attribute == 'charisma'){
-//      setCharisma(route.params.value); 
-//     }
-//  }
-
-
-
-
-
-
-const sendBack = () => {
-   const finalObject = {
-      creativity, 
-      charisma, 
-      honest, 
-      looks, 
-      empathetic, 
-      humor, 
-      status, 
-      wealthy
-   }
-   navigation.navigate('SelfGame', {finalObject}); 
+const changeOtherFilter = () => {
+   setSelfFilter({...selfFilter, dimension:compatibility})
 }
-
-
-
-useEffect(() => {
-  if(route.params){
-     if(route.params.attribute == 'charisma'){
-        setCharisma(route.params.value); 
-     }
-  }
-},[])
 
 const initialValue = matchmaking == true ? 0:1; 
     const options = [
@@ -97,7 +55,8 @@ const initialValue = matchmaking == true ? 0:1;
       ];
       const changeValue = (value) => {
         const changed = parseInt(value); 
-        setCompatibility(changed); 
+        setCompatibility(changed);
+        //setSelfFilter({...selfFilter, dimension:changed}) 
    }
    const handleSwitch = () => {
     if(matchmaking == "yes"){
@@ -115,59 +74,59 @@ const initialValue = matchmaking == true ? 0:1;
     setDistance(changed); 
 }
 
-const [traits, setTraits] = useState([
-    {
-     trait:'charisma', 
-     value:selfFilter.charisma
-    }, 
-    {
-        trait:'creativity', 
-        value:selfFilter.creativity
-    },
-    
-    {
-        trait:'honest', 
-        value:selfFilter.honest
-    },
-    {
-        trait:'looks', 
-        value:selfFilter.looks
-    },
-    {
-        trait:'empathetic', 
-        value:selfFilter.empathetic
-    },
-    {
-        trait:'status', 
-        value:selfFilter.status
-    },
-    {
-        trait:'wealthy', 
-        value:selfFilter.wealthy
-    },
-    {
-        trait:'narcissism', 
-        value:selfFilter.narcissism
-    },
+const [traits, setTraits] = useState([]); 
 
-]) 
+useEffect(() => {
+const arr = [
+  {
+   trait:'charisma', 
+   value:selfFilter.charisma
+  }, 
+  {
+      trait:'creativity', 
+      value:selfFilter.creativity
+  },
+  
+  {
+      trait:'honest', 
+      value:selfFilter.honest
+  },
+  {
+      trait:'looks', 
+      value:selfFilter.looks
+  },
+  {
+      trait:'empathetic', 
+      value:selfFilter.empathetic
+  },
+  {
+      trait:'status', 
+      value:selfFilter.status
+  },
+  {
+    trait:'humor', 
+    value:selfFilter.humor
+  },
+  {
+      trait:'wealthy', 
+      value:selfFilter.wealthy
+  },
+  {
+      trait:'narcissism', 
+      value:selfFilter.narcissism
+  },
+
+]
+setTraits(arr); 
+}, [selfFilter])
+
 function jsUcfirst(str) 
 {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 
-const finalObject = {
-     minAgePref, 
-     maxAgePref, 
-     inches, 
-     feet,
-     distance, 
-     traits
-     
-     
 
-}
 
 
   return (
@@ -188,13 +147,13 @@ const finalObject = {
          <Text style = {{marginTop:10, fontWeight:'bold', fontSize:20}}>{compatibility}</Text>
          <Slider
     style={{ height: 40}}
-    minimumValue={1}
+    minimumValue={0}
     maximumValue={10}
     minimumTrackTintColor="#FFFFFF"
     maximumTrackTintColor="#000000" 
     onValueChange = {changeValue}
-      
-    // onSlidingComplete = {onSlidingComplete}
+    value = {selfFilter.dimension}
+    onSlidingComplete = {changeOtherFilter}
     
 
   />
@@ -235,7 +194,7 @@ const finalObject = {
  <Text style = {{fontWeight:"600", marginRight:20}}>MIN</Text>
 
  <DropDownPicker
-    defaultValue = {minAgePref}                
+    defaultValue = {selfFilter.minAge}                
     items={[
         
         {label: '15', value: 15, selected:true},
@@ -299,14 +258,14 @@ const finalObject = {
         justifyContent: 'flex-start'
     }}
     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-    onChangeItem={item => selectminAgePref(item.value)}
+    onChangeItem={item => setSelfFilter({...selfFilter,minAge:item.value})}
     
 />
 
 <Text style = {{fontWeight:"600", marginRight:20, marginLeft:20}}>MAX</Text>
 <DropDownPicker
     labelStyle = {{fontSize:20, fontWeight:'bold'}}
-    defaultValue = {maxAgePref}                
+    defaultValue = {selfFilter.maxAge}                
     items={[
         
         {label: '15', value: 15, selected:true},
@@ -370,7 +329,7 @@ const finalObject = {
         fontWeight: '600',
     }}
     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-    onChangeItem={item => selectmaxAgePref(item.value)}
+    onChangeItem={item => setSelfFilter({...selfFilter, maxAge:item.value})}
     
 />
 

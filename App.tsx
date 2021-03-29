@@ -94,7 +94,7 @@ import { gql } from 'apollo-boost';
 //import { client , mutateSettings}  from './networking'; 
 import {firebase} from './config'; 
 import Constants from 'expo-constants';
-import * as Notifications from 'expo-notifications';
+import * as Notifications from 'expo-notifications'; 
 import * as Permissions from 'expo-permissions';
 import DocumentViewer from './src/common/DocumentViewer';
 import MatchList from './Chat/Screens/MatchList';
@@ -111,6 +111,7 @@ import Gamer from './Game/Screens/Try';
 import MatchMakeLatest from './Game/Screens/MatchMakeLatest'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from './AppContext'; 
+
 const db = firebase.firestore();
 
 const Stack = createStackNavigator();
@@ -123,18 +124,25 @@ export default function App() {
   const [contactList, setContactList] = useState([]); 
   const [countryCode, setCountryCode] = useState("US");
   const [dialCode, setDialCode] = useState("+1"); 
+  const [introNotification, setIntroNotification] = useState(); 
   const [chatNotification, setChatNotification] = useState(false);  
   const [chatterNotification, setChatterNotification] = useState(false); 
+  const [notification, setNotification] = useState(false);
+  const responseListener = useRef();
+  const notificationListener = useRef();
   const [selfFilter, setSelfFilter] = useState({
-    charisma:0.4, 
-    creativity:0.1, 
-    honest:0.1, 
-    looks:0.1, 
-    empathetic:0.1, 
-    status:0.1, 
-    humor:0.1, 
-    wealthy:0.1, 
-    narcissism:0.9
+    charisma:0, 
+    creativity:0, 
+    honest:0, 
+    looks:0, 
+    empathetic:0, 
+    status:0, 
+    humor:0, 
+    wealthy:0, 
+    narcissism:0,
+    minAge:15, 
+    maxAge:60,
+    dimension:4, 
   })
 
   const [basicAuth, setBasicAuth] = useState(null); 
@@ -163,12 +171,27 @@ export default function App() {
 //  },[])
 
 
+useEffect(() => {
+   Notifications.addNotificationReceivedListener(response => {
+     console.log(response)
+   })
+   Notifications.addNotificationsDroppedListener(response => {
+      console.log("hello world")
+   })
+   Notifications.addNotificationResponseReceivedListener(response => {
+   console.log("Hello world") 
+  });
+
+  
+}, [])
 
 
 
   
   
   const globalObject = {
+    introNotification, 
+    setIntroNotification, 
     selfFilter, 
     setSelfFilter, 
     chatterNotification, 
@@ -318,7 +341,7 @@ const customHeader = () => {
         <Stack.Screen name="MatchList" component={MatchList} options = {{headerShown:false}}/>
         <Stack.Screen name="AttributeFilter" component={AttributeFilter}/>
         <Stack.Screen name="BrowseSettings" component={BrowseSettings}/>
-        <Stack.Screen name="SelfMatchView" component={SelfMatchView}/>
+        <Stack.Screen name="SelfMatchView" component={SelfMatchView} options = {{headerTitle:false}}/>
         <Stack.Screen name="SelfGame" component={SelfGame} />
         <Stack.Screen name="BrowseMatchSettings" component={BrowseMatchSettings}/>
         <Stack.Screen name="MatchMakeLatest" component={MatchMakeLatest}/>
@@ -326,7 +349,7 @@ const customHeader = () => {
         <Stack.Screen name="Webber" component={Webber}/>
         <Stack.Screen name="Homer" component={Home} options = {{headerShown:false}}/>
         <Stack.Screen name="ClientView" component={ClientView} options = {{headerShown:false}}/>
-        <Stack.Screen name="ChatLatest" component={ChatLatest} options = {{headerShown:true}}/>
+        <Stack.Screen name="ChatLatest" component={ChatLatest} options = {{headerShown:true, }}/>
         
         
         

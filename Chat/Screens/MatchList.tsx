@@ -19,26 +19,7 @@ console.log(user.seenMatches)
 console.log(danny)
 
 const db = firebase.firestore();
-// useEffect(() => { 
-//    console.log("the component was rendered")
-//    const unsubscribe = db.collection("matches").doc("UJ4u7q4oHqlj3n6nrBv9").collection("users").onSnapshot(snap => {
-//      const data1 = snap.docs.map(doc => doc.data())
-     
-//      const result = data1.map(val => {
-//        return val._id; 
-//      })
-//     const users = db.collection("user").where('_id','in', result).where('isNew', '==', true).onSnapshot(snap => {
-//         const data = snap.docs.map(doc => doc.data())
-//         const result = data.map(val => {
-//             return val; 
-//         })
-        
-//         setMatches(merge(result,data1)); 
-//     }) 
-     
-//    });
-//   return () => {return unsubscribe()}
-// }, []);
+
 const createChatThread = (userID:string, user2ID:string) => {
   if(userID > user2ID){
      return userID+user2ID.toString()
@@ -52,15 +33,15 @@ const danny = createChatThread(userId, "+15554787672");
 console.log(danny)
 
 useEffect(() => {
- async function namer(){
+ 
   
-  db.collection('matches').where('client1', '==', user.phoneNumber ).get().then(async onResultClient1 => {
+  const unsubscribe = db.collection('matches').where('client1', '==', user.phoneNumber ).onSnapshot(async onResultClient1 => {
      const client1 = onResultClient1.docs.map(val => Object.assign({}, val.data(), {_id:val.id}));
      const client1Users = client1.filter(val => val.client2);  
      const transformedWithUsers1 =  await Promise.all(client1.map(async val => {
       return await db.collection('user').doc(val.client2).get().then(result => Object.assign({}, val, {clientUser:result.data()})) 
    }))
-   const seen1 = []; 
+   
    var filtered1 = transformedWithUsers1.filter(
     function(e) {
       return this.indexOf(e._id) < 0;
@@ -82,7 +63,7 @@ const seenTransformed1 = filtered1.map(val => {
   
 
      
-     db.collection('matches').where('client2', '==', user.phoneNumber).get().then(async onResultClient2 => {
+    const unsubscribe1 =  db.collection('matches').where('client2', '==', user.phoneNumber).onSnapshot(async onResultClient2 => {
         let client2 = onResultClient2.docs.map(val => Object.assign({}, val.data(), {_id:val.id})); 
         const transformed = client2.map(val => {
            let a = val.client1; 
@@ -97,7 +78,10 @@ const seenTransformed1 = filtered1.map(val => {
         const transformedWithUsers =  await Promise.all(transformed.map(async val => {
            return await db.collection('user').doc(val.client2).get().then(result => Object.assign({}, val, {clientUser:result.data()})) 
         }))
-        const seen = ['0846c5b1-584b-4ae7-920b-6d895e59d38e']; 
+        
+
+        
+        
         
         var filtered = transformedWithUsers.filter(
           function(e) {
@@ -134,22 +118,23 @@ const seenTransformed1 = filtered1.map(val => {
        setChatNotification(false); 
     }  
     setMatches(filterByChatted)
-
-        
-     })
-     
-     
- 
+  
   })
- } 
-namer(); 
-}, [user.seenMatches])
+ })
+ 
+ return () => {
+    unsubscribe() 
+    
+   
+ }
+
+}, [])
 
 
 useEffect(() => {
   async function namer(){
     db.collection('matches').where(firebase.firestore.FieldPath.documentId(), 'in', user.chatted).get().then(async onResult => {
-      const data = onResult.docs.map(val => val.data()); 
+      const data = onResult.docs.map(val => Object.assign({}, val.data(), {_id:val.id})); 
       const result = data.map(val => {
  
         if(val.client2 == userId){
@@ -170,17 +155,20 @@ useEffect(() => {
      const transformedWithUsers =  await Promise.all(result.map(async val => {
       return await db.collection('user').doc(val.client2).get().then(async result => {
          return await db.collection('messages').doc(createChatThread(userId, result.data().phoneNumber)).collection('messages').orderBy('createdAt', 'desc').limit(1).get().then(onChatResult => {
-            return  Object.assign({}, val, {clientUser:result.data(), lastMessage:onChatResult.docs.map(val => val.data())})
+            const lastNamer = onChatResult.docs.map(val => val.data()) 
+            return  Object.assign({}, val, {clientUser:result.data(), lastMessage:lastNamer[0]})
          })
       }) 
    }))
+   console.log('transformed with user is')
+   console.log(transformedWithUsers)
      
      setChatList(transformedWithUsers); 
-     transformedWithUsers.map(val => {
-        if(!val.lastMessage[0].seen){
-           setChatterNotification(true)
-        }
-     }) 
+    //  transformedWithUsers.map(val => {
+    //     if(!val.lastMessage[0].seen){
+    //        setChatterNotification(true)
+    //     }
+    //  }) 
     
     })
     // const chatThread = createChatThread(userId, '+15555648583'); 
@@ -278,7 +266,6 @@ const DATA1 = [
 
 
 const Item = ({ title }) => {
-    console.log(title)
    return horizontalIcon(title)
 };
 const Item1 = (obj:chatInstance) => {
@@ -324,17 +311,16 @@ return verticalIcon
    }
 }
   const renderVerticalList = ({item}) => {
-    if(item.lastMessage[0].seen == true && item.clientUser.profilePic){
-        return verticalIconWithImageSeen(item)
-    }  
-    if(!item.lastMessage[0].seen && item.clientUser.profilePic){
+    
+     return verticalIconWithImageSeen(item)
+      
+    if(!item.lastMessage.seen && item.clientUser.profilePic){
       return verticalIconWithImage(item)
     }
   }
 
 
 const setChatSeen = (doc) => {
-   console.log("set seen called")
    const docRef = db.collection("matches").doc("UJ4u7q4oHqlj3n6nrBv9").collection("users"); 
    const unsubscribe = docRef.where("_id", "==", doc._id).onSnapshot(snap => {
      const data1 = snap.docs.map(doc => {
@@ -346,13 +332,13 @@ useEffect(() => {
  console.log("chats component was rendered")
 }, [])
 const handleChatPressed = (doc) => {
-    setChatSeen(doc); 
-    navigation.navigate('ChatLatest', {title:doc.fullName, backPage:'chatList', _id:doc._id}); 
+    //setChatSeen(doc); 
+    navigation.navigate('ChatLatest', {mainer:doc}); 
 }
 
 const handleMatchPressed = (doc) => {
     db.collection('user').doc(user.phoneNumber).update({seenMatches:firebase.firestore.FieldValue.arrayUnion(doc._id)}); 
-    navigation.navigate('ChatLatest', {title:"something", backPage:'match', _id:doc._id});  
+    navigation.navigate('ChatLatest', {mainer:doc});  
 }
 
 
@@ -392,11 +378,11 @@ const verticalIconSeen = (obj:chatInstance) => <TouchableOpacity style = {{flexD
 <TouchableOpacity style = {{height:50, width:50, borderRadius:25, borderWidth:1,justifyContent:"flex-end", alignItems:"center", marginLeft:10}}>
 <View style = {{height:15,width:15, position:'absolute', left:-5, backgroundColor:'red', borderRadius:7.5, top:13}}/>
 <MaterialIcons name="account-circle" size={50} color="black" />
-<View style = {{height:15,width:15, position:'absolute', left:-5, backgroundColor:'red', borderRadius:7.5, top:13,zIndex:100}}/>
+
 </TouchableOpacity>
 <View style = {{marginLeft:10, justifyContent:'center',}}>
-    <Text  textBreakStrategy = {"highQuality"} style = {{fontWeight:'bold'}} >{obj.fullname}</Text>
-    <Text style = {{maxWidth:Dimensions.get('window').width - 100}} numberOfLines = {1}>{obj.Message.text}</Text>
+    <Text style = {{fontWeight:'bold'}} >{computeName(obj.clientUser)}</Text>
+    <Text style = {{maxWidth:Dimensions.get('window').width - 100}} numberOfLines = {1}>{obj.lastMessage.user._id !== userId ? obj.lastMessage.text: `You: ${obj.lastMessage.text}`}</Text>
 </View>
 </TouchableOpacity> 
 
@@ -404,24 +390,30 @@ const verticalIconWithImage =  (obj:chatInstance) => <TouchableOpacity
 style = {{flexDirection:"row", marginTop:10, marginLeft:10}}
 onPress = {() => handleChatPressed(obj)}
 >
+<View style = {{height:15,width:15, position:'absolute', left:-5, backgroundColor:'red', borderRadius:7.5, top:13, zIndex:100}}/>
 <Image source = {{uri:obj.clientUser.profilePic}} style = {{height:50, width:50, borderRadius:25,}}/>
 <View style = {{marginLeft:10, justifyContent:'center',}}>
     <Text style = {{fontWeight:'bold'}} >{computeName(obj.clientUser)}</Text>
-    <Text style = {{maxWidth:Dimensions.get('window').width - 100}} numberOfLines = {1}>{obj.lastMessage[0].user._id !== userId ? obj.lastMessage[0].text: `You: ${obj.lastMessage[0].text}`}</Text>
+    <Text style = {{maxWidth:Dimensions.get('window').width - 100}} numberOfLines = {1}>{obj.lastMessage.user._id !== userId ? obj.lastMessage.text: `You: ${obj.lastMessage.text}`}</Text>
 </View>
 </TouchableOpacity>
 
-const verticalIconWithImageSeen = (obj:chatInstance) => <TouchableOpacity 
+const verticalIconWithImageSeen = (obj:chatInstance) => {
+
+  console.log("objet is vertical list is"); 
+  
+
+return <TouchableOpacity 
 style = {{flexDirection:"row", marginTop:10, marginLeft:10}}
 onPress = {() => handleChatPressed(obj)}
 >
-<View style = {{height:15,width:15, position:'absolute', left:-5, backgroundColor:'red', borderRadius:7.5, top:13, zIndex:100}}/>
-<Image source = {{uri:obj.profile_pic}} style = {{height:50, width:50, borderRadius:25,}}/>
+
+<Image source = {{uri:obj.clientUser.profilePic}} style = {{height:50, width:50, borderRadius:25,}}/>
 <View style = {{marginLeft:10, justifyContent:'center',}}>
-    <Text  textBreakStrategy = {"highQuality"} style = {{fontWeight:'bold'}} >{obj.fullName}</Text>
-    <Text style = {{maxWidth:Dimensions.get('window').width - 100}} numberOfLines = {1}>{obj.lastMessage.text}</Text>
+    <Text style = {{fontWeight:'bold'}} >{computeName(obj.clientUser)}</Text>
+    <Text style = {{maxWidth:Dimensions.get('window').width - 100}} numberOfLines = {1}>{obj.lastMessage.user._id !== userId ? obj.lastMessage.text: `You: ${obj.lastMessage.text}`}</Text>
 </View>
-</TouchableOpacity>
+</TouchableOpacity>}
  
   
 

@@ -7,6 +7,7 @@ import { iconFactory} from '../../src/common/Common';
 import { logTen } from './logTen';
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';
+import { FontAwesome } from '@expo/vector-icons';
 // @refresh reset
 const db = firebase.firestore(); 
 
@@ -30,7 +31,9 @@ interface filter extends serverData {
    inches:number, 
    feet:number, 
    distance:number
-   matchMakerContact:boolean
+   matchMakerContact:boolean,
+   
+   
   }
 
 
@@ -44,7 +47,9 @@ interface serverDataObjectDimension {
     wealthy:number, 
     humor:number, 
     dimension:number, 
-    _id:number
+    _id:number,
+    minAge:number, 
+    maxAge:number
     
 }
 export interface serverDataWithDimension extends serverData {
@@ -53,38 +58,32 @@ export interface serverDataWithDimension extends serverData {
 function pipe(...fns) {
     return (arg) => fns.reduce((prev, fn) => fn(prev), arg);
 }
-function applyFilters(filter:filter , arr:serverDataObjectDimension[]):serverDataObjectDimension[]{
+function applyFilters(filter:filter, arr:serverDataObjectDimension[]):serverDataObjectDimension[]{
  console.log("function filter")   
  console.log(filter)
  console.log(arr)   
  const finalObject:any = []; 
- const creativity = filter.creativity == undefined || filter.creativity == 0? -1:filter.creativity;  
- const charisma = filter.charisma == undefined || filter.charisma == 0? -1:filter.charisma;
- const humor = filter.humor == undefined || filter.humor == 0? -1:filter.humor;  
- const honest = filter.honest == undefined || filter.honest == 0 ? -1:filter.honest;
- const empathetic = filter.empathetic == undefined ? -1:filter.empathetic;  
- const looks = filter.looks == undefined || filter.looks == 0 ? -1:filter.looks;
- const status = filter.status == undefined || filter.status == 0? -1 :filter.status;  
- const wealthy = filter.wealthy == undefined || filter.wealthy == 0? -1:filter.wealthy;
- const narcissistic = filter.narcissistic == undefined || filter.narcissistic == 0? -1:filter.narcissistic;  
 
  
  arr.map(val => {
-      if(val.creativity > creativity 
-        && val.charisma > charisma 
-        && val.humor > humor
-        && val.honest > honest
-        && val.looks > looks
-        && val.empathetic > empathetic
-        && val.status > status
-        && val.wealthy > wealthy
+      if(val.creativity >= filter.creativity 
+        && val.charisma >= filter.charisma 
+        && val.humor >= filter.humor
+        && val.honest >= filter.honest
+        && val.looks >= filter.looks
+        && val.empathetic >= filter.empathetic
+        && val.status >= filter.status
+        && val.wealthy >= filter.wealthy
+        && val.minAge >= filter.minAge
+        && val.maxAge <= filter.maxAge
+        && val.dimension >= filter.dimension
+         
         
         ){
            finalObject.push(val); 
       }
  }) 
  return finalObject;  
- 
 }
 
 const SelfGame = ({navigation, route}) => {
@@ -97,18 +96,28 @@ const SelfGame = ({navigation, route}) => {
         state:'california'
     })
     
-
+    console.log('charisma is')
+    console.log(Math.pow(5, selfFilter.charisma))
     useEffect(() => {
         console.log("called")
-      db.collection('user').doc('+917208110384').get().then(doc => {
+           db.collection('user').doc(userId).get().then(doc => {
           
            db.collection('user')
-           .where('state', '==', 'New york')
-           .where('gender', '==', 'female')
+           .where('state', '==', user.state)
+           .where('gender', '==', user.gender == 'male'?'female':'male')
            .get()
            .then(result => {
+               
                  const serverObjectWithId = result.docs.map(val => val.data()) 
-                 const logData = logTen(serverObjectWithId);
+                 var filtered = serverObjectWithId.filter(
+                  function(e) {
+                    return this.indexOf(e.phoneNumber) < 0;
+                  },
+                  user.introRequest
+              );
+              
+                 
+                 const logData = logTen(filtered);
                  const userLogged = logTen(user);
                  setSelfMatchView({
                    user:userLogged, 
@@ -117,7 +126,8 @@ const SelfGame = ({navigation, route}) => {
 
                  const simD = computeSimDimension(userLogged, logData);
                  
-                 const filters = applyFilters(filter, simD);  
+                 const filters = applyFilters(selfFilter, simD);  
+                 
                  
 
                  
@@ -125,10 +135,10 @@ const SelfGame = ({navigation, route}) => {
                  setSectionData(sectionData);  
            })
       })
-    }, [])
+    }, [selfFilter])
 
-
-
+ console.log("section data is")
+ console.log(selfFilter)
 
     const transformedServer = [
         {
@@ -201,7 +211,15 @@ const SelfGame = ({navigation, route}) => {
 
  ]; 
 
-
+ const computeName = (obj) => {
+  if(obj.name){
+     return obj.name
+  }
+  if(obj.firstName && obj.lastName){
+     return obj.firstName+obj.lastName
+  }
+  return obj.firstName
+}
     
     
     useEffect(() => {
@@ -210,7 +228,13 @@ const SelfGame = ({navigation, route}) => {
        }) 
     }, [])
      
-    const headerTemplate = user.profilePic ? <Image source = {{uri:user.profilePic}} style = {{height:80, width:80, borderRadius:40}}/>:<MaterialIcons name="account-circle" size={24} color="black" />
+    const headerTemplate = user.profilePic ? <View>
+    <Image source = {{uri:user.profilePic}} style = {{height:80, width:80, borderRadius:40}}/>
+    <Text style = {{fontWeight:'bold', marginTop:5}}>{computeName(user)}</Text>
+    </View>:<View>
+    <MaterialIcons name="account-circle" size={24} color="black" />
+    <Text style = {{fontWeight:'bold', marginTop:5}}>{computeName(user)}</Text>
+    </View>
     
 
     const renderFlatlist = ({item}) => {
@@ -218,6 +242,7 @@ const SelfGame = ({navigation, route}) => {
         
          return <View key = {item.name} style = {{flexDirection:'row'}}>
              <TouchableOpacity onPress = {() => navigation.navigate('SelfMatchView', {selfMatchView})}>
+
                <MaterialIcons name="account-circle" size={70} color="black" /></TouchableOpacity>
 
              {item.simDimension ? <View style = {{position:'absolute', top:13, right:2, zIndex:100, backgroundColor:'#393a3b', borderRadius:15, height:30, width:30, justifyContent:'center', alignItems:'center'}}>
@@ -230,15 +255,39 @@ const SelfGame = ({navigation, route}) => {
     useEffect(() => {
       navigation.setOptions({
          headerTitle:false, 
-         headerLeft:() => <TouchableOpacity onPress = {() => navigation.navigate('GameHomepage')}>
+         headerLeft:() => <TouchableOpacity onPress = {() => navigation.goBack()}>
          <Entypo name="controller-play" size={35} style = {{marginLeft:20}} />                    
          </TouchableOpacity>, 
          headerStyle:{backgroundColor:'grey'}, 
-         headerRight:() => <TouchableOpacity onPress = {() =>navigation.navigate('BrowseSettings')}>
+         headerRight:() => <View style = {{flexDirection:'row', alignItems:'center',}}>
+         <TouchableOpacity onPress = {() => setDefaultFilter()} style = {{marginRight:10}}>
+         <FontAwesome name="refresh" size={30} color="black" />
+         </TouchableOpacity>
+         <TouchableOpacity onPress = {() =>navigation.navigate('BrowseSettings')}>
          <Feather name="settings" size={30} color="black" style = {{marginRight:20, marginBottom:5, marginTop:5}}/>
-         </TouchableOpacity> 
+         </TouchableOpacity>
+         
+         </View> 
       })
     }, [])
+
+
+    const setDefaultFilter = () => {
+    setSelfFilter({
+      charisma:0, 
+      creativity:0, 
+      honest:0, 
+      looks:0, 
+      empathetic:0, 
+      status:0, 
+      humor:0, 
+      wealthy:0, 
+      narcissism:0,
+      minAge:15, 
+      maxAge:60,
+      dimension:0,
+    })   
+    }
 
     const renderSectionItem = ({section, index}) => {
         
@@ -249,7 +298,7 @@ const SelfGame = ({navigation, route}) => {
         data={section.data}
         extraData = {filter}
         renderItem={renderFlatlist}
-        // keyExtractor={item => item}
+        keyExtractor={item => item.phoneNumber}
         numColumns = {5}
       />
 
@@ -268,10 +317,10 @@ const SelfGame = ({navigation, route}) => {
       style = {{marginTop:10, marginRight:15, marginLeft:15}}
       sections={sectionData}
       extraData = {filter}
-    //   keyExtractor={(item, index) => item + index}
+      keyExtractor={(item, index) => item.phoneNumber}
       renderItem={renderSectionItem}
       renderSectionHeader={({ section: { title } }) => (
-        <View style = {{ }}><Text style = {styles.header}>{title}</Text></View>
+        <View style = {{ }}><Text style = {[styles.header, {paddingLeft:20}]}>{title}</Text></View>
       )}
     />
     </SafeAreaView>

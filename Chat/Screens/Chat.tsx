@@ -1036,15 +1036,8 @@ const renderChatEmpty = () => {
         console.log("forward not called")
         messages[0].createdAt = firebase.firestore.Timestamp.fromDate(new Date()),
         messages[0].sent = true; 
-         
-        
-         
-        
-        
         db.collection('messages').doc(chatID).collection("messages").add(messages[0])
-        
-        
-      }
+        }
 return(
    <SafeAreaView style = {{flex:1}}>
  <GiftedChat

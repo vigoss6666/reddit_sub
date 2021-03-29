@@ -181,26 +181,48 @@ interface section {
 export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
  
   const dimensions =  ['creativity', 'charisma', 'honest', 'looks', 'empathetic', 'humor', 'status', 'wealthy']; 
-  const mainerObj = []; 
-  arr1.push(obj1);
+  const mainerObj = [];
+  
+  if(arr1[0].gender !== obj1.gender){
+     arr1.push(obj1); 
+  }
+  
   
   function creativity(){
-  const result = arr1.sort((a, b) => {
+  //   if(arr1[0].gender !== obj1.gender){
+  //     arr1.push(obj1); 
+  //  }   
+  const dup = arr1.concat();   
+  const result = dup.sort((a, b) => {
       return b.creativity - a.creativity;
   });
   //console.log(result)
   const index = result.findIndex(x => x.phoneNumber == obj1.phoneNumber); 
-  const sub = ((arr1.length -1 ) - index); 
+  const sub = ((result.length -1 ) - index);
+  if(sub == 0){
+    mainerObj.push({ trait:'creativity', aheadOf:0, votes:obj1.creativity}) 
+    return   
+  }  
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'creativity', aheadOf:Math.floor(percent), votes:obj1.creativity}) 
   }
   function charisma(){
-  const result = arr1.sort((a, b) => {
+     
+  const duplicate = arr1.concat();   
+  const result = duplicate.sort((a, b) => {
       return b.charisma - a.charisma;
   });
   //console.log(result)
   const index = result.findIndex(x => x.phoneNumber == obj1.phoneNumber); 
-  const sub = ((arr1.length -1 ) - index); 
+  console.log(result)
+
+  
+  
+  const sub = ((result.length -1 ) - index);
+  if(sub == 0){
+    mainerObj.push({ trait:'charisma', aheadOf:0, votes:obj1.charisma}) 
+    return   
+  } 
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'charisma', aheadOf:Math.floor(percent), votes:obj1.charisma}) 
   }
@@ -210,7 +232,11 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
   });
   //console.log(result)
   const index = result.findIndex(x => x.phoneNumber == obj1.phoneNumber); 
-  const sub = ((arr1.length -1 ) - index); 
+  const sub = ((result.length -1 ) - index);
+  if(sub == 0){
+    mainerObj.push({ trait:'honest', aheadOf:0, votes:obj1.honest}) 
+    return   
+  } 
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'honest', aheadOf:Math.floor(percent), votes:obj1.honest}) 
   }
@@ -220,7 +246,11 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
   });
   //console.log(result)
   const index = result.findIndex(x => x.phoneNumber == obj1.phoneNumber); 
-  const sub = ((arr1.length -1 ) - index); 
+  const sub = ((result.length -1 ) - index); 
+  if(sub == 0){
+    mainerObj.push({ trait:'looks', aheadOf:0, votes:obj1.looks}) 
+    return   
+  } 
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'looks', aheadOf:Math.floor(percent), votes:obj1.looks}) 
   }
@@ -229,7 +259,11 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
       return b.empathetic - a.empathetic;
   });
   const index = result.findIndex(x => x.phoneNumber == obj1.phoneNumber); 
-  const sub = ((arr1.length -1 ) - index); 
+  const sub = ((result.length -1 ) - index); 
+  if(sub == 0){
+    mainerObj.push({ trait:'empathetic', aheadOf:0, votes:obj1.empathetic}) 
+    return   
+  } 
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'empathetic', aheadOf:Math.floor(percent), votes:obj1.empathetic}) 
   }
@@ -238,7 +272,11 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
       return b.humor - a.humor;
   });
   const index = result.findIndex(x => x.phoneNumber == obj1.phoneNumber); 
-  const sub = ((arr1.length -1 ) - index); 
+  const sub = ((result.length -1 ) - index); 
+  if(sub == 0){
+    mainerObj.push({ trait:'humor', aheadOf:0, votes:obj1.humor}) 
+    return   
+  } 
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'humor', aheadOf:Math.floor(percent), votes:obj1.humor}) 
   }
@@ -247,7 +285,11 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
       return b.status - a.status;
   });
   const index = result.findIndex(x => x.phoneNumber == obj1.phoneNumber); 
-  const sub = ((arr1.length -1 ) - index); 
+  const sub = ((result.length -1 ) - index); 
+  if(sub == 0){
+    mainerObj.push({ trait:'status', aheadOf:0, votes:obj1.status}) 
+    return   
+  } 
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'status', aheadOf:Math.floor(percent), votes:obj1.status}) 
   }
@@ -256,10 +298,27 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
       return b.wealthy - a.wealthy;
   });
   const index = result.findIndex(x => x.phoneNumber == obj1.phoneNumber); 
-  const sub = ((arr1.length -1 ) - index); 
+  const sub = ((result.length -1 ) - index); 
+  if(sub == 0){
+    mainerObj.push({ trait:'wealthy', aheadOf:0, votes:obj1.wealthy}) 
+    return   
+  } 
   const percent = (sub/ (result.length - 1))*100;
   mainerObj.push({ trait:'wealthy', aheadOf:Math.floor(percent), votes:obj1.wealthy}) 
   }
+  function narcissism(){
+    const result = arr1.sort((a, b) => {
+        return b.narcissism - a.narcissism;
+    });
+    const index = result.findIndex(x => x.phoneNumber == obj1.phoneNumber); 
+    const sub = ((result.length -1 ) - index); 
+    if(sub == 0){
+      mainerObj.push({ trait:'narcissism', aheadOf:0, votes:obj1.wealthy}) 
+      return   
+    } 
+    const percent = (sub/ (result.length - 1))*100;
+    mainerObj.push({ trait:'narcissism', aheadOf:Math.floor(percent), votes:obj1.narcissism}) 
+    }
   creativity(); 
   charisma()
   honest()
@@ -268,6 +327,7 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
   humor()
   status()
   wealthy()
+  narcissism()
   return mainerObj; 
   }
 

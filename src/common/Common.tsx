@@ -539,13 +539,13 @@ export function iconFactory(dimension:string, iconSize:number){
     return <FontAwesome5 name="laugh-beam" size={iconSize} color="blue" />
    }
    if(dimension == 'status'){
-    return <Ionicons name="ios-airplane-sharp" size={iconSize} color="violet" />
+    return <FontAwesome name="money" size={iconSize} color="black" />
    }
    if(dimension == 'wealthy'){
     return <Foundation name="dollar" size={iconSize} color="orange" />
    }
    if(dimension == 'narcissism'){
-    return <Foundation name="dollar" size={iconSize} color="red" />
+    return <Entypo name="warning" size={iconSize} color="red" />
    }
 }
 

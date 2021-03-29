@@ -1,21 +1,37 @@
 
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { Text, View, StyleSheet,Image, ScrollView, Dimensions, TouchableOpacity } from 'react-native';
 import {MaterialIcons, Feather, Foundation, AntDesign, FontAwesome, FontAwesome5, MaterialCommunityIcons} from '@expo/vector-icons'; 
 import {Button} from 'react-native-elements'; 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { iconFactory } from '../../src/common/Common';
+import {firebase} from '../../config'; 
+import { updateUser } from '../../networking';
+import AppContext from '../../AppContext'; 
 interface SelfMatchViewProps {}
 
 const SelfMatchView = ({navigation, route}) => {
-    const {selfMatchView} = route.params;  
+    const {selfMatchView} = route.params; 
+    const myContext = useContext(AppContext); 
+    const {user, userId} = myContext; 
     const [hidden, setHidden]= useState(false);
     const { width, height } = Dimensions.get('window');
     const [sliderState, setSliderState] = useState({ currentPage: 1 });
     const [listItem1, setListItem] = useState(1);
-    const [user, setUser] = useState({
-       profilePic:"https://i.pinimg.com/originals/f0/a6/4e/f0a64e32194d341befecc80458707565.jpg",
-       firstName:"Amy Buckthorpe"
-    }); 
+    const insets = useSafeAreaInsets(); 
+
+    const requestIntro = () => {
+       const object = {
+          client:selfMatchView.user.phoneNumber, 
+          yourClient:selfMatchView.data[sliderState.currentPage].phoneNumber, 
+          matchMaker:selfMatchView.data[sliderState.currentPage].matchMaker, 
+          createdAt:new Date(), 
+        }
+        const db = firebase.firestore(); 
+        db.collection('introductions').add(object).then(() => console.log("Introduction added"))
+        updateUser(userId, {introRequest:firebase.firestore.FieldValue.arrayUnion(selfMatchView.data[sliderState.currentPage].phoneNumber)}); 
+      
+    }
     
     console.log(selfMatchView); 
     console.log(sliderState)
@@ -71,6 +87,15 @@ const SelfMatchView = ({navigation, route}) => {
             dimension:5.5, 
         }
     ]
+    const computeName = (obj) => {
+      if(obj.name){
+         return obj.name
+      }
+      if(obj.firstName && obj.lastName){
+         return obj.firstName+obj.lastName
+      }
+      return obj.firstName
+    }
     const textTemplate = hidden ? null: <View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('humor', 20)}
@@ -111,12 +136,7 @@ const SelfMatchView = ({navigation, route}) => {
         
         
         const indexOfNextScreen = Math.floor(x / width);
-        if (indexOfNextScreen !== currentPage) {
-          
-           
-           
-          
-         
+        if (indexOfNextScreen !== currentPage ) {
           setSliderState({
             ...sliderState,
             currentPage: indexOfNextScreen,
@@ -125,10 +145,10 @@ const SelfMatchView = ({navigation, route}) => {
       };
     const headerTemplate = selfMatchView.user.profilePic ? 
     <View>
-     <Text style = {{alignSelf:'center', marginBottom:10, fontWeight:'bold'}}>{user.firstName}</Text>   
-    <Image source = {{uri:user.profilePic}} style = {{height:200, width:200, borderRadius:100}}/></View>:<MaterialIcons name="account-circle" size={220} color="black" />
+     <Text style = {{alignSelf:'center', marginBottom:10, fontWeight:'bold'}}>{computeName(selfMatchView.user)}</Text>   
+    <Image source = {{uri:selfMatchView.user.profilePic}} style = {{height:200, width:200, borderRadius:100}}/></View>:<MaterialIcons name="account-circle" size={220} color="black" />
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {paddingBottom:insets.bottom}]}>
       <View style = {{flex:0.6}}>
        <View style = {{flex:1}}>   
       <View style = {{justifyContent:'center', alignItems:'center', marginTop:20, zIndex:1}}>
@@ -211,7 +231,7 @@ const SelfMatchView = ({navigation, route}) => {
            
            </ScrollView>
            <View style = {{marginTop:10, marginLeft:30, marginRight:30, flex:0.1, marginBottom:15, justifyContent:"center", }}>
-           <Button title = "Generate Match" buttonStyle = {{backgroundColor:"#afd968"}} titleStyle = {{color:"black", fontWeight:'bold'}} onPress = {() => {setEvent(), navigation.navigate('GameHomepage')}}/>
+           <Button title = "Request Introduction" buttonStyle = {{backgroundColor:"#afd968"}} titleStyle = {{color:"black", fontWeight:'bold'}} onPress = {() => { requestIntro(),navigation.navigate('SelfGame')}}/>
            </View>
         
     </View>
@@ -225,6 +245,7 @@ const styles = StyleSheet.create({
   scores:{
     fontSize:15, 
     fontWeight:'bold', 
-    marginLeft:5
+    marginLeft:5, 
+    
   },
 });
