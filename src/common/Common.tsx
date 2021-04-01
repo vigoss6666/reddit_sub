@@ -497,6 +497,10 @@ export function Tester1({navigation,db,chatID,userId}){
 
  
      const styles = StyleSheet.create({
+      textStyle:{fontWeight:'500', fontSize:30}, 
+      line:{borderBottomWidth:3,}, 
+      iconNames:{marginLeft:10, fontSize:17, fontWeight:'500'}, 
+      dotted:{borderStyle:'dotted', borderWidth:2, borderRadius:10, marginTop:10 },
          view: {
            flex: 1,
            alignItems: 'center',
@@ -666,7 +670,78 @@ setTraits(traits => result)
       </View>
    )
 }
-        
-
-
+const computeName = (obj) => {
+  if(obj.name){
+     return obj.name
+  }
+  if(obj.firstName && obj.lastName){
+     return obj.firstName+obj.lastName
+  }
+  return obj.firstName
+}        
+export function ClientHeader ({client, style}) {
+  const {creativity, charisma, humor, honest, looks, empathetic, status, wealthy} = client; 
+   const newObject = {status}; 
+   Object.keys(newObject).forEach(key => {
+    if (!newObject[key]) delete newObject[key];
+  });
+  
+  let keysSorted = Object.keys(newObject).sort(function(a,b){return newObject[b]-newObject[a]}); 
+  const adjectives = keysSorted.map(val => {
+     if(val == 'charisma'){
+        return 'Charismatic'
+     }
+     if(val == 'humor'){
+       return 'funny'
+     }
+     if(val == 'creativity'){
+        return 'creative'
+     }
+     if(val == 'status'){
+       return 'brand concious'
+     }
+     return val; 
+  })
+   if(keysSorted.length >= 3){
+    return (
+      <View style = {style}>
+      <View style = {{ justifyContent:'center', alignItems:'center', marginTop:30}}>
+      <Text style = {styles.textStyle}> {client.matchMakers.length} people said  </Text>
+      <Text style = {[styles.textStyle, {fontWeight:'bold', fontSize:40, fontStyle:'italic'}]}>{computeName(client)}</Text>
+      <Text style = {[styles.textStyle, {fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}]}> is {adjectives[0].toUpperCase()}, {adjectives[1].toUpperCase()} </Text>
+      <Text style = {[styles.textStyle, {fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}]}> and {adjectives[2].toUpperCase()}</Text>
+       </View>
+       </View>
+    )
+   }
+   if(keysSorted.length == 2) {
+    return <View style = {style}>
+    <View style = {{ justifyContent:'center', alignItems:'center', marginTop:30}}>
+      <Text style = {styles.textStyle}> {client.matchMakers.length} people said  </Text>
+      <Text style = {[styles.textStyle, {fontWeight:'bold', fontSize:40, fontStyle:'italic'}]}>{computeName(client)}</Text>
+      <Text style = {[styles.textStyle, {fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}]}> is {adjectives[0].toUpperCase()}</Text>
+      <Text style = {[styles.textStyle, {fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}]}>and {adjectives[1]}</Text>
+       </View>
+       </View> 
+   }
+   if(keysSorted.length == 1) {
+    return <View style = {style}> 
+    <View style = {{ justifyContent:'center', alignItems:'center', marginTop:30}}>
+      <Text style = {styles.textStyle}> {client.matchMakers.length} people said  </Text>
+      <Text style = {[styles.textStyle, {fontWeight:'bold', fontSize:40, fontStyle:'italic'}]}>{computeName(client)}</Text>
+      <Text style = {[styles.textStyle, {fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}]}> is {adjectives[0].toUpperCase()}</Text>
+       </View> 
+       </View> 
+   }
+   if(keysSorted.length == 0) {
+    return <View style = {style}> 
+    <View style = {{ justifyContent:'center', alignItems:'center', marginTop:30}}>
+      
+      <Text style = {[styles.textStyle, {fontWeight:'bold', fontSize:40, fontStyle:'italic'}]}>{computeName(client)}</Text>
+      
+       </View> 
+       </View> 
+   }
+   return null; 
+ }
 

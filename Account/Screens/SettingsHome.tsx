@@ -17,6 +17,13 @@ import { AntDesign } from '@expo/vector-icons';
 
 
 export default function SettingsHome({navigation}){
+    useEffect(() => {
+         navigation.setOptions({
+             headerLeft:() => <TouchableOpacity onPress = {() => navigation.navigate('Homer')}>
+                 <Text style = {{fontWeight:'bold', color:'blue', marginLeft:10, }}> Back </Text>
+             </TouchableOpacity>
+         })
+    })
     const myContext = useContext(AppContext); 
     const {user, userId,} = myContext;   
     const [firstName, setFirstname] = useState(); 

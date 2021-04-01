@@ -41,6 +41,7 @@ import ContactsMenu from './Authentication/Screens/ContactsMenu';
 import ContactsPhotos from './Authentication/Screens/ContactsPhotos';
 import ContactsAge from './Authentication/Screens/ContactsAge'; 
 import ContactsLocation from './Authentication/Screens/ContactsLocation';
+import ContactsLocationLatest from './Authentication/Screens/ContactsLocationLatest';
 import NewContact from './Authentication/Screens/NewContact'; 
 import ContactLoadSuccess from './Authentication/Screens/ContactLoadSuccess';
 import Playgame from './Game/Screens/Playgame'; 
@@ -111,6 +112,7 @@ import Gamer from './Game/Screens/Try';
 import MatchMakeLatest from './Game/Screens/MatchMakeLatest'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from './AppContext'; 
+import GameEngine from './GameEngine'; 
 
 const db = firebase.firestore();
 
@@ -256,7 +258,7 @@ useEffect(() => {
  if(!currentUser && !basicAuth){
     return Intro; 
  }
- 
+
 }
 
 const customHeader = () => {
@@ -314,7 +316,7 @@ const customHeader = () => {
         <Stack.Screen name="Play20" component={Play20}/>
         <Stack.Screen name="ProfilePool" component={ProfilePool} options = {{headerTitle:false, headerLeft:false}}/>
         <Stack.Screen name="SettingsHome" component={SettingsHome} options = {{headerTitle:false}} />
-        <Stack.Screen name="AccountSettings" component={AccountSettings  } options = {{headerShown:false, headerTitle:"SOmething", headerRight:() => <Button title = {"Press me"} onPress = {() => alert('Hello woeld')}>Hello world</Button>}}   />
+        <Stack.Screen name="AccountSettings" component={AccountSettings  }  />
         <Stack.Screen name="MapVeiw" component={MapViewMainer}/>
         <Stack.Screen name="ImageSlider" component={ImageSlider}/>
         <Stack.Screen name="DetailsSettings" component={DetailsSettings} options = {{headerShown:false}} />
@@ -350,6 +352,7 @@ const customHeader = () => {
         <Stack.Screen name="Homer" component={Home} options = {{headerShown:false}}/>
         <Stack.Screen name="ClientView" component={ClientView} options = {{headerShown:false}}/>
         <Stack.Screen name="ChatLatest" component={ChatLatest} options = {{headerShown:true, }}/>
+        
         
         
         
@@ -405,7 +408,46 @@ function Home(props){
       
       title: ({ focused, color, size }) => {
         if(route.name === 'Matchlist'){
-          console.log(route.params); 
+          if(!focused){
+            if(chatNotification == true){
+              if(!chatterNotification){
+                return (
+                  <View>
+                 <View style = {{height:10,width:10, position:'absolute', left:-5, backgroundColor:'red', borderRadius:5,zIndex:100}}/>
+                 <AntDesign name="wechat" size={24} color="black" />
+                 </View> 
+                 );
+              }
+           }
+           if(chatNotification == true){
+            if(chatterNotification){
+              return (
+                <View>
+               <View style = {{height:10,width:10, position:'absolute', left:-5, backgroundColor:'red', borderRadius:5,zIndex:100}}/>
+               <AntDesign name="wechat" size={24} color="black" />
+               <Entypo name="message" size={24} color="black" style = {{position:'absolute', top:5, right:5}}/>
+               </View> 
+               );
+            }
+         }
+         if(!chatNotification){
+          if(chatterNotification){
+            return (
+              <View>
+             
+             <AntDesign name="wechat" size={24} color="black" />
+             <Entypo name="message" size={12} color="red" style = {{position:'absolute', top:2, right:0}}/>
+             </View> 
+             );
+          }
+       }
+       return (
+        <View>
+        <AntDesign name="wechat" size={24} color="black" />
+       </View> 
+       );
+
+          } 
           if(focused) {
             if(chatNotification == true){
               if(!chatterNotification){
@@ -445,7 +487,7 @@ function Home(props){
              </View> 
              );     
                
-          }
+       }
           if(chatNotification == false){
             return (
               <View>

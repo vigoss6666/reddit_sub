@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Text, View, StyleSheet, Image,ScrollView, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -11,10 +11,11 @@ import Moment from 'react-moment';
 import {transformCreativity} from '../../networking'; 
 import {iconFactory} from '../../src/common/Common'; 
 //@refresh reset
-
+import AppContext from '../../AppContext'; 
 import { formatDistanceToNow } from "date-fns";
 import { firebase } from '../../config'; 
 import { Octicons } from '@expo/vector-icons';
+import {ClientHeader} from '../../src/common/Common'; 
 
 
 const db = firebase.firestore(); 
@@ -24,11 +25,11 @@ interface SelfViewProps {}
 
 
 function useTraits(){ 
-    const [namer, setNamer] = useState(1); 
+const [namer, setNamer] = useState(1); 
 
 
 useEffect(() => {
-    console.log("called")
+ console.log("called")
  db.collection('user').doc('trial_user').get().then(doc => {
       const gender = doc.data().gender; 
       const state = doc.data().state; 
@@ -251,6 +252,8 @@ return (
 
 const SelfView = (props: ClientViewProps) => {
     const [selected, setSelected] = useState('traits');
+    const myContext = useContext(AppContext);
+    const {user, userId} = myContext;  
     const traits = useTraits(); 
     const votes = useVotes(); 
      
@@ -285,7 +288,25 @@ const SelfView = (props: ClientViewProps) => {
          return val.photo ? <TouchableOpacity onPress = {() => console.log("hell oworld")}><Image source = {{uri:val.photo}} style = {{height:75, width:75}}/></TouchableOpacity>:<Feather name="image" size={40} color="black" />
     }):data.profilePhoto ? <Image source = {{uri:data.profilePhoto}} style = {{height:75, width:75}}/>:<Feather name="image" size={40} color="black" /> 
   
-  
+    const computeHeader = () => {
+        if(!client.creativity && !client.charisma && !client.looks && !client.honest 
+         && !client.status && !client.wealthy && !client.humour
+         ){
+           return (
+             <View style = {{flex:0.3, justifyContent:'center', alignItems:'center', marginTop:30}}>
+             <Text style = {[styles.textStyle, {fontWeight:'bold', fontSize:40, fontStyle:'italic'}]}>{computeName(client)}</Text>
+             </View>
+           ) 
+         }
+         return (
+           <View style = {{flex:0.3, justifyContent:'center', alignItems:'center', marginTop:30}}>
+           <Text style = {styles.textStyle}> {client.matchMakers.length} people said  </Text>
+           <Text style = {[styles.textStyle, {fontWeight:'bold', fontSize:40, fontStyle:'italic'}]}>{computeName(client)}</Text>
+   
+           <Text style = {[styles.textStyle, {fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}]}> is INTELLIGENT, GOOD HEARTED and CREATIVE </Text>
+            </View>
+         )
+     }
   
     const matchMaker = [{
          fullName:"David boctor",
@@ -296,12 +317,9 @@ const SelfView = (props: ClientViewProps) => {
       return (
           <View style={styles.container}>
           <ScrollView>
-          <View style = {{flex:0.3, justifyContent:'center', alignItems:'center', marginTop:30}}>
-           <Text style = {styles.textStyle}> {data.matchMaker.length} people said  </Text>
-           <Text style = {[styles.textStyle, {fontWeight:'bold', fontSize:40, fontStyle:'italic'}]}>{data.fullName || data.firstName}</Text>
-  
-           <Text style = {[styles.textStyle, {fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}]}> is INTELLIGENT, GOOD HEARTED and CREATIVE </Text>
-            </View>
+          
+           <ClientHeader client = {user} style = {{ flex:0.3}}/>  
+           
             <View style = {{flex:0.7, marginLeft:30, marginRight:30}}>
                    <View style = {{flexDirection:'row', justifyContent:'space-evenly', borderWidth:2, marginTop:40}}>
 

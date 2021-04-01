@@ -14,9 +14,7 @@ const [matches, setMatches] = useState([]);
 const [chatList, setChatList] = useState([]); 
 const myContext = useContext(AppContext); 
 const {user, userId, setChatNotification,setChatterNotification} = myContext;
-console.log(user.seenMatches)
  
-console.log(danny)
 
 const db = firebase.firestore();
 
@@ -28,9 +26,7 @@ const createChatThread = (userID:string, user2ID:string) => {
    return user2ID+userID.toString()
   }
 }
-console.log(chatList)
 const danny = createChatThread(userId, "+15554787672");
-console.log(danny)
 
 useEffect(() => {
  
@@ -48,6 +44,7 @@ useEffect(() => {
     },
     user.seenMatches
 );
+
 const seenTransformed1 = filtered1.map(val => {
   return {...val, new:true } 
   })
@@ -132,8 +129,8 @@ const seenTransformed1 = filtered1.map(val => {
 
 
 useEffect(() => {
-  async function namer(){
-    db.collection('matches').where(firebase.firestore.FieldPath.documentId(), 'in', user.chatted).get().then(async onResult => {
+  
+    db.collection('matches').where(firebase.firestore.FieldPath.documentId(), 'in', user.chatted).onSnapshot(async onResult => {
       const data = onResult.docs.map(val => Object.assign({}, val.data(), {_id:val.id})); 
       const result = data.map(val => {
  
@@ -160,27 +157,42 @@ useEffect(() => {
          })
       }) 
    }))
-   console.log('transformed with user is')
-   console.log(transformedWithUsers)
-     
-     setChatList(transformedWithUsers); 
-    //  transformedWithUsers.map(val => {
-    //     if(!val.lastMessage[0].seen){
-    //        setChatterNotification(true)
-    //     }
-    //  }) 
-    
-    })
-    // const chatThread = createChatThread(userId, '+15555648583'); 
-    // db.collection('messages').doc(chatThread).collection('messages').orderBy('createdAt', "desc").limit(1).get().then(onResult => {
-    //    const finalData = onResult.docs.map(val => val.data()); 
-    //    console.log(finalData[0])
-    // })
+   const dataUsers = []
+   if(user.lastMessage.length < 1) {
+      setChatList(transformedWithUsers)
+      setChatterNotification(true)
+   }
+   if(user.lastMessage.length > 0){
+    for(let x = 0; x < user.lastMessage.length; x++){
+      for(let y = 0; y <  transformedWithUsers.length; y++){
+         if(user.lastMessage[x] == transformedWithUsers[y].lastMessage._id){
+            dataUsers.push({...transformedWithUsers[y], seen:true})
 
-  }
-  namer()
+            break; 
+          }
+         if(user.lastMessage[x] !== transformedWithUsers[y].lastMessage._id){
+           dataUsers.push({...transformedWithUsers[y]})
+         }
+      }       
+    }
+    const resulter = dataUsers.filter(val => !val.seen); 
+    if(resulter.length > 0){
+       setChatterNotification(true)
+    }
+    if(resulter.length == 0){
+      setChatterNotification(false)
+   }
+
+    setChatList(dataUsers); 
+   }
+   
+  })
+    
+
   
-}, [])
+  
+  
+}, [user.lastMessage])
 
 
 
@@ -311,10 +323,13 @@ return verticalIcon
    }
 }
   const renderVerticalList = ({item}) => {
-    
-     return verticalIconWithImageSeen(item)
+     
+     if(item.seen && item.clientUser.profilePic){
+      return verticalIconWithImageSeen(item)
+     } 
+     
       
-    if(!item.lastMessage.seen && item.clientUser.profilePic){
+    if(!item.seen && item.clientUser.profilePic){
       return verticalIconWithImage(item)
     }
   }
@@ -329,10 +344,10 @@ const setChatSeen = (doc) => {
   })
 }
 useEffect(() => {
- console.log("chats component was rendered")
 }, [])
 const handleChatPressed = (doc) => {
-    //setChatSeen(doc); 
+    
+    db.collection('user').doc(userId).update({lastMessage:firebase.firestore.FieldValue.arrayUnion(doc.lastMessage._id)})
     navigation.navigate('ChatLatest', {mainer:doc}); 
 }
 
@@ -400,7 +415,6 @@ onPress = {() => handleChatPressed(obj)}
 
 const verticalIconWithImageSeen = (obj:chatInstance) => {
 
-  console.log("objet is vertical list is"); 
   
 
 return <TouchableOpacity 

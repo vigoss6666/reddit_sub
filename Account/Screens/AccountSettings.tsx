@@ -1,10 +1,12 @@
-import  React, {useState,useRef,useEffect,createRef, forwardRef} from 'react';
+import  React, {useState,useRef,useEffect,createRef, forwardRef, useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, NavigatorIOS} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import Slider from '@react-native-community/slider';
 import { FontAwesome } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import SwitchSelector from "react-native-switch-selector";
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking';
 //import { mutateSettings } from '../../networking';
 import { firebase} from '../../config'; 
 import { gql } from 'apollo-boost';
@@ -34,11 +36,23 @@ export default function AccountSettings({navigation}){
 const [matchmaking, setMatchmaking] = useState();   
 const [value, setValue] = useState(1);
 const [email, setEmail] = useState();
+const myContext = useContext(AppContext);
+const {user, userId} = myContext; 
 
 const [genderPreference, setGenderPreference] = useState();  
 const [minAgePref, selectminAgePref] = useState(); 
 const [maxAgePref, selectmaxAgePref] = useState(); 
 const slider = forwardRef; 
+useEffect(() => {
+ navigation.setOptions({
+    headerTitle:'AccountSettings', 
+    headerLeft:false, 
+    headerShown:true,
+    headerRight:() => <TouchableOpacity onPress = {() => {_sendToServer(),navigation.navigate('Homer')}} style = {{marginRight:10}}>
+    <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
+    </TouchableOpacity>
+   })
+}, [])
    //const {data, loading, error} = useQuery(GET_DETAILS);
    // if(data){
 
@@ -128,19 +142,8 @@ const _sendToServer = () => {
 
 return(
 <View style = {{flex:1,marginLeft:30, marginRight:30}}>
-<View style = {{flex:0.2}}>
-<View style = {{flexDirection:"row", justifyContent:"space-between",marginTop:60, alignItems:"center"}}>
-   <Text>
-   </Text> 
-   <Text style = {{fontWeight:"bold",fontSize:18}}>
-       Account Settings
-   </Text>
-   <TouchableOpacity onPress = {() => {_sendToServer(),navigation.navigate('SettingsHome')}}>
-   <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
-   </TouchableOpacity>
-</View>
-</View>
-<View style = {{flex:0.7}}>
+
+<View style = {{flex:1, marginTop:40}}>
 
 <View style = {{}}>
 <Text style = {styles.headerSection}>
@@ -152,7 +155,7 @@ return(
       MOBILE 
    </Text> 
    <Text style = {{fontWeight:"bold",fontSize:15}}>
-       (530) 321-7868
+       {user.phoneNumber}
    </Text>
    <TouchableOpacity onPress = {() => navigation.navigate('Phone', {page:"AccountSettings"})}>
    <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
@@ -173,7 +176,7 @@ return(
       EMAIL 
    </Text> 
    <Text style = {{fontWeight:"bold",fontSize:15}}>
-       {email || ""}
+       {user.email}
    </Text>
    <TouchableOpacity onPress = {() => navigation.navigate('Email',{page:'AccountSettings'})}>
    <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>

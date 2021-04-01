@@ -1,4 +1,4 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView,Dimensions, KeyboardAvoidingView, Platform} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Header, Continue} from '../../src/common/Common'; 
@@ -7,13 +7,11 @@ import { getMaxListeners } from 'cluster';
 import { mutateSettings } from '../../networking';
 import {Button} from 'react-native-elements'; 
 import { firebase } from '../../config'; 
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking';
 const db = firebase.firestore();  
 
-const REGISTER_EMAIL = gql`
- mutation email($email1:String!){
-       email(email1:$email1)
- }
-`; 
+ 
 function ValidateEmail(mail) 
 {
  if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(mail))
@@ -26,12 +24,18 @@ function ValidateEmail(mail)
 
 
 export default function Email({navigation, route}){
+const myContext = useContext(AppContext);
+const {user, userId} = myContext; 
   const {page} = route.params; 
   const [Email, setEmail] = useState();
 
-
+ useEffect(() => {
+  navigation.setOptions({
+     headerTitle:false
+  })
+ }, [])
   const _sendToServer = () => {
-     db.collection('user').doc('trialUser').set({email:Email}, {merge:true}).then(() => console.log('added')).catch(() => console.log('not updated'))
+     db.collection('user').doc(userId).set({email:Email}, {merge:true}).then(() => console.log('added')).catch(() => console.log('not updated'))
   }
   const _handlePage = () => {
     if(page == "AccountSettings"){
