@@ -16,6 +16,10 @@ import { formatDistanceToNow } from "date-fns";
 import { firebase } from '../../config'; 
 import { Octicons } from '@expo/vector-icons';
 import {ClientHeader} from '../../src/common/Common'; 
+import {ClientDetails} from '../../src/common/Common'; 
+import {ClientPhotos} from '../../src/common/Common'; 
+import {ClientMatchMakers} from '../../src/common/Common'; 
+
 
 
 const db = firebase.firestore(); 
@@ -332,37 +336,10 @@ const SelfView = (props: ClientViewProps) => {
                        </TouchableOpacity>
                    </View> 
                    {selected == 'traits' ? traits:votes}
-                  <View style = {[styles.line, {marginTop:40}]}/>
+                   <ClientDetails client = {user} />
+                  <ClientPhotos client = {user}/>
+                  <ClientMatchMakers client = {user} />
                   
-                  <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>{data.firstName}'s details</Text>
-
-                  <View style = {styles.line}></View>
-                  <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
-                  <FontAwesome name="birthday-cake" size={24} color="black" />
-                  <Text style = {styles.iconNames}>{data.age} years old</Text>
-  
-                  </View>
-                  <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
-                  <FontAwesome name="suitcase" size={24} color="black" />
-                  <Text style = {styles.iconNames}>{data.job}</Text>
-  
-                  </View>
-                  <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
-                  <FontAwesome5 name="house-damage" size={24} color="black" />
-                  <Text style = {styles.iconNames}>Lives in {data.subLocality}</Text>
-  
-                  </View>
-                  <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
-                  <Entypo name="location-pin" size={24} color="black" />
-                  <Text style = {styles.iconNames}> {data.distance} miles away</Text>
-  
-                  </View>
-                  <View style = {styles.dotted}/>
-                  <View style = {{flexDirection:'row',marginTop:20, alignItems:'center',marginBottom:10}}>
-                  <AntDesign name="instagram" size={24} color="black" />
-                  <Text style = {[styles.iconNames, ] }> Photos</Text>
-                  </View>
-                  {imageTemplate}
                   <View style = {[styles.line, {marginTop:40}]}/>
                   <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>{data.firstName.toUpperCase()}'s MATCHMAKERS</Text>
                   <View style = {styles.line}></View>

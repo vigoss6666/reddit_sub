@@ -4,6 +4,7 @@ import { firebase } from '../../config';
 import {MaterialIcons} from '@expo/vector-icons'; 
 import {logTen} from './logTen'; 
 import { iconFactory } from '../../src/common/Common';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {Entypo, Feather} from '@expo/vector-icons'; 
 import {transformCreativity, computeSimDimension, computeSectionLabel} from '../../networking'; 
 // @refresh reset
@@ -77,6 +78,8 @@ function applyFilters(filter:filter , arr:serverDataObjectDimension[]):serverDat
 
 
 const MatchMakeLatest = ({navigation, route}) => {
+
+const insets = useSafeAreaInsets();
 const user = {
   name:"zaid shaikh",
   firstName:"zaid",
@@ -187,7 +190,7 @@ const sliderTemplate =  pageData.map((val,index) => {
  </View>
 })
   return (
-    <View style={{flex:1}}>
+    <View style={{flex:1, paddingTop:insets.top}}>
       <View style = {{flex:0.2}}>
       <View style = {{flexDirection:'row', justifyContent:'space-between',alignItems:'center', backgroundColor:'grey'}}>
          <TouchableOpacity>

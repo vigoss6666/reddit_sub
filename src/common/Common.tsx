@@ -1,4 +1,4 @@
-import  React, {useState,useRef,useEffect,FunctionComponent, } from 'react';
+import  React, {useState,useRef,useEffect,FunctionComponent, useContext } from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, AsyncStorage} from 'react-native';
 import {Button, Icon} from 'react-native-elements'; 
 import { Entypo } from '@expo/vector-icons';
@@ -21,6 +21,7 @@ import { Foundation } from '@expo/vector-icons';
 import * as Print from 'expo-print';
 import {Input} from 'react-native-elements'; 
 import {transformCreativity} from '../../networking';
+import AppContext from '../../AppContext'; 
 
 
 
@@ -743,5 +744,120 @@ export function ClientHeader ({client, style}) {
        </View> 
    }
    return null; 
+ }
+
+ export function ClientDetails({client}){
+  const myContext = useContext(AppContext); 
+  const {user, userId} = myContext;
+  const distanceTemplate = client.phoneNumber == user.phoneNumber ? null: <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
+  <Entypo name="location-pin" size={24} color="black" />
+  <Text style = {styles.iconNames}> {client.distance} miles away</Text>
+  </View>
+  return <View>
+  <View style = {[styles.line, {marginTop:40}]}/>
+                  
+  <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>{client.firstName}'s details</Text>
+
+  <View style = {styles.line}></View>
+  <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
+  <FontAwesome name="birthday-cake" size={24} color="black" />
+  <Text style = {styles.iconNames}>{client.age} years old</Text>
+
+  </View>
+  <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
+  <FontAwesome name="suitcase" size={24} color="black" />
+  <Text style = {styles.iconNames}>{client.job}</Text>
+
+  </View>
+  <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
+  <FontAwesome5 name="house-damage" size={24} color="black" />
+  <Text style = {styles.iconNames}>Lives in {client.subLocality}</Text>
+
+  </View>
+  {distanceTemplate}
+  
+  <View style = {styles.dotted}/>
+  </View>
+
+ }
+
+ export function ClientPhotos({client}){
+  const photosMainer = [null, null, null, null, null, null];
+  const photos = client.photos.slice(2)
+  let template; 
+  
+   const checkNull = photos.filter(val => val !== null); 
+   
+   if(client.profilePic){
+     checkNull.unshift(client.profilePic)
+   }
+   
+   if(checkNull.length == 0){
+      template = <MaterialIcons name="account-circle" size={50} color="black" />
+   }
+   if(checkNull.length > 0){
+      template = checkNull.map(val => {
+         return <Image source = {{uri:val}} style = {{height:80, width:80, marginRight:10}}/>
+      })
+   }
+   
+   return <View>
+   <View style = {{flexDirection:'row',marginTop:20, alignItems:'center',marginBottom:10}}>
+   <AntDesign name="instagram" size={24} color="black" />
+   <Text style = {[styles.iconNames, {fontWeight:'bold'}] }> Photos</Text>
+   </View>
+   <View style = {{flexDirection:'row', alignItems:'center'}}>
+   {template}
+   </View>
+   </View>
+    
+ }
+
+ export function ClientMatchMakers({client}){
+    
+    
+    let template; 
+    if(client.matchMakers.length > 5){
+       const result = client.matchMakers.slice(5); 
+       let icons = client.matchMakers.map(val => {
+        return <MaterialIcons name="account-circle" size={50} color="black" />
+     })
+     template = <View>
+          <View style = {{flexDirection:'row'}}>
+          {icons}
+          </View>
+          <Text>{client.matchMaker} and 1 others</Text>
+       </View>
+
+    }
+    if(client.matchMakers.length == 1){
+       template = <View style = {{justifyContent:'center', alignItems:'center', marginTop:20}}>
+        <MaterialIcons name="account-circle" size={50} color="black" />
+        <Text style = {{marginTop:10, fontWeight:'bold', fontSize:20}}>{client.matchMaker}</Text> 
+       </View>
+    }
+    if(client.matchMakers.length > 1 && client.matchMakers.length < 5){
+       let icons = client.matchMakers.map(val => {
+          return <MaterialIcons name="account-circle" size={50} color="black" />
+       })
+       template = <View>
+          <View style = {{flexDirection:'row'}}>
+          {icons}
+          </View>
+          <Text>{client.matchMaker} and 1 others</Text>
+       </View>
+    }
+    if(client.matchMakers.length == 0){
+       template = <View style = {{justifyContent:'center', alignItems:'center', marginTop:20}}>
+         <Entypo name="emoji-sad" size={50} color="black" />
+         <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>No MatchMakers </Text>
+         </View>
+    }
+    return <View>
+    <View style = {[styles.line, {marginTop:40}]}/>
+    <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>{computeName(client).toUpperCase()}'s MATCHMAKERS</Text>
+    <View style = {styles.line}></View>
+    {template}
+    </View>
  }
 

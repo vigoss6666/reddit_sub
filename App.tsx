@@ -45,6 +45,7 @@ import ContactsLocationLatest from './Authentication/Screens/ContactsLocationLat
 import NewContact from './Authentication/Screens/NewContact'; 
 import ContactLoadSuccess from './Authentication/Screens/ContactLoadSuccess';
 import Playgame from './Game/Screens/Playgame'; 
+import PlayGameLatest from './Game/Screens/PlayGameLatest';
 import Play20 from './Game/Screens/Play20';
 import ProfilePool from './Authentication/Screens/ProfilePool';
 import SettingsHome from './Account/Screens/SettingsHome';  
@@ -64,7 +65,9 @@ import Hometown from './Authentication/Screens/Hometown';
 import Loader from './Authentication/Screens/Loader';
 import Trophy from './Trophy/Screens/Trophy'; 
 import GameHomepage from './Game/Screens/GameHomepage'; 
-import Matchmake from './Game/Screens/Matchmake'; 
+import Matchmake from './Game/Screens/Matchmake';
+import MatchMakeFinal from './Game/Screens/MatchMakeFinal';
+
 import MatchView from './Game/Screens/MatchView'; 
 //import MatchView from './Game/MatchView/src/screens/MatchView';
 import CustomSlider from './Game/Screens/CustomSlider';
@@ -277,7 +280,7 @@ const customHeader = () => {
       <NavigationContainer>
        
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
+        <Stack.Screen name="Home" component={MatchMakeFinal} options = {{headerShown:false}}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
         <Stack.Screen name="Gender" component={Gender}/>
@@ -311,6 +314,9 @@ const customHeader = () => {
         <Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess} options = {{headerTitle:false, headerLeft:false}}/>
         <Stack.Screen name="NewContact" component={NewContact}/>
         <Stack.Screen name="Playgame" component={Playgame} options={{
+        animationEnabled: false,
+      }}/>
+      <Stack.Screen name="PlayGameLatest" component={PlayGameLatest} options={{
         animationEnabled: false,
       }}/>
         <Stack.Screen name="Play20" component={Play20}/>
@@ -348,6 +354,7 @@ const customHeader = () => {
         <Stack.Screen name="BrowseMatchSettings" component={BrowseMatchSettings}/>
         <Stack.Screen name="MatchMakeLatest" component={MatchMakeLatest}/>
         <Stack.Screen name="MatchViewLatest" component={MatchViewLatest}/>
+        <Stack.Screen name="MatchMakeFinal" component={MatchViewLatest}/>
         <Stack.Screen name="Webber" component={Webber}/>
         <Stack.Screen name="Homer" component={Home} options = {{headerShown:false}}/>
         <Stack.Screen name="ClientView" component={ClientView} options = {{headerShown:false}}/>

@@ -310,8 +310,6 @@ const SelfGame = ({navigation, route}) => {
         
         <View style = {{justifyContent:'center', alignItems:'center', marginTop:20}}>
         {headerTemplate}        
-     
-
         </View>
         <SectionList
       style = {{marginTop:10, marginRight:15, marginLeft:15}}
