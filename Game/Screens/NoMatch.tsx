@@ -3,6 +3,14 @@ import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Fl
 import {Button} from 'react-native-elements'; 
 import { useMutation,useQuery } from '@apollo/react-hooks';
 export default function NoMatch({navigation}){
+ 
+ useEffect(() => {
+  navigation.setOptions({
+    headerTitle:false, 
+    headerLeft:false
+  }) 
+ }, []) 
+ 
 return(
 <View style = {{flex:1, backgroundColor:'black'}}>
 <View style = {{flex:0.2 }}>
@@ -23,15 +31,14 @@ return(
  containerStyle = {{marginBottom:20,marginLeft:30, marginRight:30, }}
   buttonStyle = {{backgroundColor:'yellow', height:40}}
   titleStyle = {{color:'black', fontWeight:'900'}}
-  onPress = {() => navigation.navigate('Matchmake')}
-  
+  onPress = {() => navigation.navigate('MatchMakeFinal')}
   />
 <Button 
 title = {"Play Again"} 
 containerStyle = {{marginBottom:10,marginLeft:30, marginRight:30}}
  buttonStyle = {{backgroundColor:'grey'}} 
  titleStyle = {{color:'black', fontWeight:'900'}}
- onPress = {() => navigation.navigate('Playgame')}
+ onPress = {() => navigation.navigate('PlayGameLatest')}
  />
 </View>
 

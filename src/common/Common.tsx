@@ -15,6 +15,7 @@ import { firebase } from '../../config';
 import * as FileSystem from 'expo-file-system';
 import Slider from '@react-native-community/slider';
 import { Feather } from '@expo/vector-icons';
+import { formatDistanceToNow } from "date-fns";
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Foundation } from '@expo/vector-icons';
@@ -22,8 +23,14 @@ import * as Print from 'expo-print';
 import {Input} from 'react-native-elements'; 
 import {transformCreativity} from '../../networking';
 import AppContext from '../../AppContext'; 
-
-
+// @refresh reset
+export function getBaseLog(x, y) {
+  const result = Math.log(y) / Math.log(x);
+  if (result == -Infinity) {
+    return 0;
+  }
+  return result;
+}
 
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -34,7 +41,40 @@ function uuidv4() {
 const db = firebase.firestore();
 
 
+export function logTen(arr: serverData[] | serverData): serverDataWithDimension[] | serverDataWithDimension {
+  if (Array.isArray(arr)) {
+    const result = arr.map(val => ({
+      ...val,
+      charisma: parseFloat(getBaseLog(5, val.charisma).toFixed(1)),
+      dimension: parseFloat(getBaseLog(5, val.charisma + val.creativity + val.empathetic + val.honest + val.humor + val.looks + val.status + val.wealthy).toFixed(1)),
+      creativity: parseFloat(getBaseLog(5, val.creativity).toFixed(1)),
+      honest: parseFloat(getBaseLog(5, val.honest).toFixed(1)),
+      looks: parseFloat(getBaseLog(5, val.looks).toFixed(1)),
+      empathetic: parseFloat(getBaseLog(5, val.empathetic).toFixed(1)),
+      status: parseFloat(getBaseLog(5, val.status).toFixed(1)),
+      wealthy: parseFloat(getBaseLog(5, val.wealthy).toFixed(1)),
+      humor: parseFloat(getBaseLog(5, val.humor).toFixed(1)),
+      narcissistic: parseFloat(getBaseLog(5, val.narcissistic).toFixed(1)),
+    }
 
+    ));
+    return result;
+  }
+  return {
+    ...arr,
+    dimension: parseFloat(getBaseLog(5, arr.charisma + arr.creativity + arr.empathetic + arr.honest + arr.humor + arr.looks + arr.status + arr.wealthy).toFixed(1)),
+    charisma: parseFloat(getBaseLog(5, arr.charisma).toFixed(1)),
+    creativity: parseFloat(getBaseLog(5, arr.creativity).toFixed(1)),
+    honest: parseFloat(getBaseLog(5, arr.honest).toFixed(1)),
+    looks: parseFloat(getBaseLog(5, arr.looks).toFixed(1)),
+    empathetic: parseFloat(getBaseLog(5, arr.empathetic).toFixed(1)),
+    status: parseFloat(getBaseLog(5, arr.status).toFixed(1)),
+    wealthy: parseFloat(getBaseLog(5, arr.wealthy).toFixed(1)),
+    humor: parseFloat(getBaseLog(5, arr.humor).toFixed(1)),
+    narcissistic: parseFloat(getBaseLog(5, arr.narcissistic).toFixed(1)),
+  };
+
+}
 
 
 export interface HeaderProps {
@@ -560,7 +600,7 @@ export function useTraits(){
 
 
 export function TraitsTemplate(client) {
-   const [traits, setTraits] = useState([]); 
+ const [traits, setTraits] = useState([]); 
 
 const setArrow = (obj) => {
   console.log("called"); 
@@ -596,6 +636,7 @@ setTraits(traits => result)
       .get()
       .then(onResult => {
          const users = onResult.docs.map(val => val.data()); 
+
          const transformed = transformCreativity(client, users); 
          console.log('trnasformed is')
          console.log(transformed)
@@ -680,7 +721,7 @@ const computeName = (obj) => {
   }
   return obj.firstName
 }        
-export function ClientHeader ({client, style}) {
+export function ClientHeader({client, style}) {
   const {creativity, charisma, humor, honest, looks, empathetic, status, wealthy} = client; 
    const newObject = {status}; 
    Object.keys(newObject).forEach(key => {
@@ -707,10 +748,10 @@ export function ClientHeader ({client, style}) {
     return (
       <View style = {style}>
       <View style = {{ justifyContent:'center', alignItems:'center', marginTop:30}}>
-      <Text style = {styles.textStyle}> {client.matchMakers.length} people said  </Text>
-      <Text style = {[styles.textStyle, {fontWeight:'bold', fontSize:40, fontStyle:'italic'}]}>{computeName(client)}</Text>
-      <Text style = {[styles.textStyle, {fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}]}> is {adjectives[0].toUpperCase()}, {adjectives[1].toUpperCase()} </Text>
-      <Text style = {[styles.textStyle, {fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}]}> and {adjectives[2].toUpperCase()}</Text>
+      <Text style = {{fontWeight:'bold',fontSize:30}}> {client.matchMakers.length} people said  </Text>
+      <Text style = {{fontWeight:'bold', fontSize:40, fontStyle:'italic'}}>{computeName(client)}</Text>
+      <Text style = {{fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}}> is {adjectives[0].toUpperCase()}, {adjectives[1].toUpperCase()} </Text>
+      <Text style = {{fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}}> and {adjectives[2].toUpperCase()}</Text>
        </View>
        </View>
     )
@@ -749,31 +790,39 @@ export function ClientHeader ({client, style}) {
  export function ClientDetails({client}){
   const myContext = useContext(AppContext); 
   const {user, userId} = myContext;
+  const age = client.age ? <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
+  <FontAwesome name="birthday-cake" size={24} color="black" />
+  <Text style = {styles.iconNames}>{client.age} years old</Text>
+
+  </View>:<View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
+  <FontAwesome name="birthday-cake" size={24} color="black" />
+  <Text style = {styles.iconNames}>{client.minAge} - {client.maxAge} years old</Text>
+  </View>; 
+  const job = client.job ? <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
+  <FontAwesome name="suitcase" size={24} color="black" />
+  <Text style = {styles.iconNames}>{client.job}</Text>
+
+  </View>:null; 
+  const location = client.subLocality ? <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
+  <FontAwesome5 name="house-damage" size={24} color="black" />
+  <Text style = {styles.iconNames}>Lives in {client.subLocality}</Text>
+
+  </View>:null; 
   const distanceTemplate = client.phoneNumber == user.phoneNumber ? null: <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
   <Entypo name="location-pin" size={24} color="black" />
   <Text style = {styles.iconNames}> {client.distance} miles away</Text>
   </View>
-  return <View>
+  return <View style = {{marginLeft:20, marginRight:20}}>
   <View style = {[styles.line, {marginTop:40}]}/>
                   
   <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>{client.firstName}'s details</Text>
 
   <View style = {styles.line}></View>
-  <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
-  <FontAwesome name="birthday-cake" size={24} color="black" />
-  <Text style = {styles.iconNames}>{client.age} years old</Text>
-
-  </View>
-  <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
-  <FontAwesome name="suitcase" size={24} color="black" />
-  <Text style = {styles.iconNames}>{client.job}</Text>
-
-  </View>
-  <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
-  <FontAwesome5 name="house-damage" size={24} color="black" />
-  <Text style = {styles.iconNames}>Lives in {client.subLocality}</Text>
-
-  </View>
+  {age}
+  {job}
+  {location}
+  
+  
   {distanceTemplate}
   
   <View style = {styles.dotted}/>
@@ -783,7 +832,7 @@ export function ClientHeader ({client, style}) {
 
  export function ClientPhotos({client}){
   const photosMainer = [null, null, null, null, null, null];
-  const photos = client.photos.slice(2)
+  const photos = photosMainer.slice(2)
   let template; 
   
    const checkNull = photos.filter(val => val !== null); 
@@ -860,4 +909,209 @@ export function ClientHeader ({client, style}) {
     {template}
     </View>
  }
+
+
+ export function ClientTraits({client}){
+    const [namer, setNamer] = useState(1); 
+    const [traits, setTraits] = useState<[traits] | []>([]);
+    const [gender, setGender] = useState<string>(''); 
+    
+    useEffect(() => {
+          db.collection('user')
+          .where('gender', '==', client.gender)
+          .where('state', '==', client.state)
+          .onSnapshot(result => {
+                const users = result.docs.map(val => val.data());
+                const finaler = transformCreativity(client, users); 
+                setTraits(finaler); 
+                setGender(gender)
+             })
+          
+             
+    },[client])
+    
+    
+       interface traits  {
+          trait:string, 
+          aheadOf:number, 
+          selected?: boolean;   
+          votes:number; 
+        }
+        
+              
+    
+    const setArrow = (obj) => {
+        console.log("called"); 
+     const result = traits.map(val => {
+            if(val.trait == obj.trait){
+                val.selected = true; 
+                 
+          }
+          return val; 
+         
+     })
+     console.log(result)
+     setTraits(traits => result)
+    }
+    const setArrowFalse = (obj) => {
+        console.log("called"); 
+     const result = traits.map(val => {
+            if(val.trait == obj.trait){
+                val.selected = false; 
+                 
+          }
+          return val; 
+         
+     })
+     
+     setTraits(traits => result)
+    }
+    const traitsTemplate = traits.map((val, index) => {
+          
+         return (
+            <View style = {{ borderBottomWidth:3, justifyContent:'center', alignItems:'center', }}>
+            
+            <View style = {{flexDirection:'row', alignItems:'center', marginTop:30, }}>
+            <View style = {{flex:0.3}}>
+            {iconFactory(val.trait, 40)}
+            </View>    
+           <Text style = {{flex:0.4, fontWeight:'bold', fontSize:20}}>{val.trait.toUpperCase()}</Text>
+            <View style = {{justifyContent:'flex-end',  flex:0.3, alignItems:'center'}}>
+            <Text style = {{fontSize:20, fontWeight:'bold' }}> {val.votes}</Text>
+            <Text style = {{fontSize:20, marginBottom:10}}> votes</Text>
+            
+            </View>
+            
+            
+            </View>
+          
+          {val.selected ? <TouchableOpacity onPress = {() => setArrowFalse(val)}><MaterialIcons name="keyboard-arrow-up" size={24} color="grey" /></TouchableOpacity>:<TouchableOpacity onPress = {() => setArrow(val)}><MaterialIcons name="keyboard-arrow-down" size={24} color="black" /></TouchableOpacity>}
+          {val.selected ? <View style = {{ width:'100%'}}>
+              <View style = {{borderRadius:2, borderWidth:2, borderStyle:'dotted', }}/>
+              <View style = {{flexDirection:'row'}}> 
+              
+               {gender == 'female' ? <View style = {{flexDirection:'row', marginTop:20, marginBottom:20 , flex:0.7, }}>
+               <FontAwesome5 name="female" size={35} color="red" />
+              <FontAwesome5 name="female" size={35} color="red" />
+              <FontAwesome5 name="female" size={35} color="red" />
+              <FontAwesome5 name="female" size={35} color="red" />
+              <FontAwesome5 name="female" size={35} color="red" />
+              <FontAwesome5 name="female" size={45} color="red" />
+              <FontAwesome5 name="female" size={35} color="red" />
+              <FontAwesome5 name="female" size={35} color="red" />
+              <FontAwesome5 name="female" size={35} color="red" />
+              <FontAwesome5 name="female" size={35} color="red" /></View>: <View style = {{flexDirection:'row', marginTop:20, marginBottom:20 , flex:0.7, }}>
+               <FontAwesome5 name="male" size={35} color="red" />
+              <FontAwesome5 name="male" size={35} color="red" />
+              <FontAwesome5 name="male" size={35} color="red" />
+              <FontAwesome5 name="male" size={35} color="red" />
+              <FontAwesome5 name="male" size={35} color="red" />
+              <FontAwesome5 name="male" size={45} color="red" />
+              <FontAwesome5 name="male" size={35} color="red" />
+              <FontAwesome5 name="male" size={35} color="red" />
+              <FontAwesome5 name="male" size={35} color="red" />
+              <FontAwesome5 name="male" size={35} color="red" /></View>} 
+              
+              
+              <View style = {{flex:0.3, marginTop:20, marginBottom:15}}>
+                 <Text style = {{alignSelf:'center', fontWeight:'bold'}}>AHEAD OF </Text> 
+                 <Text style = {{alignSelf:'center', color:'red', fontWeight:'bold', fontSize:20}}>{val.aheadOf}%</Text>
+                 <Text style = {{alignSelf:'center', fontWeight:'bold'}}>of males</Text>
+              </View>    
+              </View>    
+    
+    
+                  
+              
+          </View>:null}  
+          
+                
+        </View> 
+         )
+    })
+    
+        return (
+            <View style = {{flex:1}}>
+            <View style = {[styles.line, {marginTop:40}]}/>
+                          
+                          <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>TOP TRAITS </Text>
+                          
+                          <View style = {styles.line}></View>
+                          {traitsTemplate}
+            </View>
+        )
+  
+ }
+
+ export function ClientVotes({client}){
+  interface votes {
+      question:string; 
+      answeredBy:string; 
+      createdAt:any; 
+      dimension:string; 
+  } 
+ const [votes, setVotes] = useState([]);  
+ console.log(client.votes)
+ useEffect(() => {
+  async function gamer(){
+    const finaler = Promise.all(client.votes.map(async val => {
+      const result = await db.collection('user').doc(val.answeredBy).get(); 
+      return {...val, answeredBy:result.data()}
+    })); 
+   console.log("finaler is"); 
+   finaler.then(result => setVotes(result))
+   } 
+  gamer(); 
+  }, [client])   
+ console.log("votes")
+ console.log(votes)
+ 
+ 
+ 
+ 
+ const votesTemplate = votes.length > 0 ? votes.map(val => {
+     return (
+         <View style = {{ borderBottomWidth:3, justifyContent:'center', alignItems:'center', }}>
+             <Text style = {{alignSelf:'flex-end',  marginTop:3, fontSize:12}}>
+                 {formatDistanceToNow(val.createdAt.toDate())} ago
+             </Text>
+             <View style = {{flexDirection:'row', alignItems:'center', marginTop:30, }}>
+             <View style = {{flex:0.3, flexDirection:'row', alignItems:'center'}}>
+             {iconFactory(val.dimension, 50)}
+             <Text style = {{marginLeft:10, fontSize:20, fontWeight:'900' }}>+1</Text>
+ 
+             </View>    
+             <Text style = {{maxWidth:250, fontWeight:'bold', flex:0.7}}>{computeName(client)} {val.question}</Text>
+             
+             </View>
+             <Text style = {{alignSelf:'flex-end', fontWeight:'bold', marginBottom:5}}>- {computeName(val.answeredBy)}</Text>
+                 
+         </View>
+     ) 
+  }):<View>
+    <Text>Loading</Text>
+  </View>
+ 
+ 
+ return (
+     <View style = {{flex:1}}>
+     <View style = {[styles.line, {marginTop:40}]}/>
+ 
+                       <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}> RECENT VOTES </Text>
+                   
+                   <View style = {[styles.line]}></View>
+                   
+                   {votesTemplate}
+                   
+         
+                 
+ 
+     </View>
+ )     
+ }
+
+
+ 
+
+
 

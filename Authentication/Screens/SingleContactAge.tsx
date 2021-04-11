@@ -25,9 +25,9 @@ mutation namer($userInputList:userInputList1!){
 
 `
 
-export default function ContactsAge({navigation,route}){
+export default function SingleContactAge({navigation,route}){
     const myContext = useContext(AppContext); 
-    const {user, userId} = myContext;
+    const {user, userId,singleContact, CustomBackComponent} = myContext;
     const [profiles, setProfiles] = useState([
    
         { 
@@ -46,15 +46,12 @@ export default function ContactsAge({navigation,route}){
 
      useEffect(() => {
         async function namer(){
-         const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
-         const users = onResult.docs.map(val => val.data()); 
-         const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
-         const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
-         const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker]; 
-         const finalTransformed = finalUsers.map((val, index) => ( {...val, zIndex:index}));
-         finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
+         navigation.setOptions({
+             headerLeft:() => <CustomBackComponent navigation = {navigation}/>, 
+             headerTitle:false, 
+         })
           
-         setProfiles(finalTransformed); 
+         setProfiles([singleContact]); 
      
         }
         namer()
@@ -202,7 +199,7 @@ useEffect(() => {
         </ScrollView>        
         </View>
         <View style = {{flex:0.2, justifyContent:'center',marginTop:10}}>
-         <Button title = "Save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {updateToServer(), navigation.navigate('ContactsSex')}} disabled = {gate}></Button>   
+         <Button title = "Save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {updateToServer(), navigation.navigate('Homer')}} disabled = {gate}></Button>   
         </View>
         </SafeAreaView>
         )    

@@ -37,7 +37,7 @@ const computeName = (obj) => {
 
 const useFetchContactPool = (navigation) => {
      const myContext = useContext(AppContext); 
-     const {user, userId, contactList, setContactList} = myContext;
+     const {user, userId, contactList, setContactList, setSingleContact} = myContext;
      const KEYS_TO_FILTERS = ['name'];
      const [search, setSearch] = useState('');
      const [namer, setNamer] = useState(1);
@@ -74,11 +74,13 @@ const useFetchContactPool = (navigation) => {
 
 
      const _sendToServer = (val) => {
-                   db.collection('user').doc(userId).update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}).then(() => {
-                   db.collection('user').doc(userId).update({contactList:firebase.firestore.FieldValue.arrayRemove(val.phoneNumber)}).then(() => {
-                   console.log("update have been made") 
-               })
-           }) 
+               //     db.collection('user').doc(userId).update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}).then(() => {
+               //     db.collection('user').doc(userId).update({contactList:firebase.firestore.FieldValue.arrayRemove(val.phoneNumber)}).then(() => {
+               //     console.log("update have been made") 
+               // })
+          //  }) 
+          setSingleContact(val); 
+          navigation.navigate('SingleContactPhoto'); 
              
            
      }
@@ -328,7 +330,7 @@ namer()
                     <View style = {{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginTop:10,marginBottom:15}}>
                     <Text style = {{fontWeight:'bold'}}> View Profile </Text>
 
-                    <TouchableOpacity disabled = {user.points >= 20 ? false:true}>
+                    <TouchableOpacity disabled = {user.points >= 20 ? false:true} onPress = {() => navigation.navigate('ClientView', {client:item})}>
                     <AntDesign name="eye" size={24} color="black" />
                {user.points <= 20 ? <TouchableOpacity style = {{backgroundColor:'grey', position:'absolute', left:7, bottom:35}}>
                <Entypo name="lock" size={20} color="red" style = {{position:'absolute', }}/>

@@ -4,12 +4,15 @@ import { MaterialIcons, Foundation, Feather, Entypo,MaterialCommunityIcons  } fr
 import {firebase } from '../../config'; 
 import {Button} from 'react-native-elements'; 
 import {iconFactory} from '../../src/common/Common'; 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { client } from 'networking';
 interface MatchViewLatestProps {}
 
 const MatchViewLatest = ({navigation, route}) => {
     const {width, height} = Dimensions.get('window'); 
     const [hidden, setHidden]= useState(false);
+    const insets = useSafeAreaInsets();
+    
     
     const tester = route.params.pageData; 
     const clientIndex = route.params.clientIndex; 
@@ -19,7 +22,19 @@ const MatchViewLatest = ({navigation, route}) => {
     console.log(clientIndex)
     console.log(userIndex); 
      
-    
+    useEffect(() => {
+       navigation.setOptions({
+           headerTitle:false, 
+           headerLeft:() => (<TouchableOpacity onPress = {() => navigation.navigate('MatchMakeFinal')} style = {{marginLeft:10}}><Text style = {{fontWeight:'bold', color:'blue', fontSize:20}}>Back</Text></TouchableOpacity>)
+       }) 
+    }, [])
+
+
+    const generateMatch = () => {
+       const matchObject = {
+           client1: 
+       }  
+    }
      
     const setSliderPage = (event: any) => {
         const { currentPage } = sliderState;
@@ -37,8 +52,10 @@ const MatchViewLatest = ({navigation, route}) => {
         }
     };
 
+    
+
     const setSliderPage1 = (event: any) => {
-        const { currentPage } = sliderState;
+        const { currentPage } = sliderState1;
         const { x } = event.nativeEvent.contentOffset;
         
         const indexOfNextScreen = Math.floor(x / width);
@@ -86,6 +103,17 @@ const MatchViewLatest = ({navigation, route}) => {
     ]
    },
 ])
+console.log("checker"+sliderState1.currentPage)
+console.log(tester[sliderState.currentPage].data[sliderState1.currentPage].name); 
+const computeName = (obj) => {
+    if(obj.name){
+       return obj.name
+    }
+    if(obj.firstName && obj.lastName){
+       return obj.firstName+obj.lastName
+    }
+    return obj.firstName
+}
     const textTemplate = hidden ? null: <View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('humor', 20)}
@@ -109,9 +137,9 @@ const MatchViewLatest = ({navigation, route}) => {
           </View>
           </View> 
     const sliderTemplate =  tester.map((val,index) => {
-        return <View style={{ width, }} id = {val.client.id}>
+        return <View style={{ width, }} id = {val.client.phoneNumber}>
         <View style = {{ alignItems:"center", marginTop:20}}>
-        <Text style = {{fontWeight:"bold", marginTop:10}}>{ val.client.name }</Text>
+        <Text style = {{fontWeight:"bold", marginTop:10, marginBottom:10}}>{ computeName(val.client) }</Text>
         {val.client.profilePic ?<Image source = {{uri:val.client.profilePic}} style = {{height:160, width:160, borderRadius:80}}/> :<MaterialIcons name="account-circle" size={150} color="orange" />}
         
         </View>
@@ -127,7 +155,7 @@ const MatchViewLatest = ({navigation, route}) => {
        })
 
      return (
-         <View style = {{flex:1}}>
+         <View style = {{flex:1, paddingBottom:insets.bottom}}>
              <View style = {{flex:0.5}}>
             <View style = {{flex:1}}>
              <ScrollView
@@ -188,9 +216,7 @@ onScroll={(event: any) => {
           {iconFactory('honest', 20)}
           <Text style = {styles.scores }> Honest:  {}</Text>
           </View> 
-          
-               
-               {textTemplate}
+          {textTemplate}
             </View>
 
             <View style = {{alignItems:"center", justifyContent:"center", padding:5, marginTop:5}}>

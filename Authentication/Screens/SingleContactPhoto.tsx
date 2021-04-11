@@ -23,23 +23,22 @@ const computeName = (obj) => {
     return obj.firstName
  }
 
-const ContactsPhotos = ({navigation}) => {
+const SingleContactPhoto = ({navigation}) => {
   const [profiles, setProfiles] = useState([{firstName:"zaid"}]);   
   const myContext = useContext(AppContext); 
-  const {user, userId} = myContext;
+  const {user, userId, singleContact, CustomBackComponent} = myContext;
   const [gate, checkGate] = useState(true); 
   useEffect(() => {
-    console.log("hello world")
+    navigation.setOptions({
+        headerLeft:() => <CustomBackComponent navigation = {navigation}/>, 
+        headerTitle:false
+    })
+  }, [])
+  useEffect(() => {
+    
     async function namer(){
-      console.log("contacts photos called")
-     const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
-     const users = onResult.docs.map(val => val.data());
-     console.log(users) 
-     const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
-     const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
-     const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker];
-     
-     setProfiles(finalUsers); 
+      
+     setProfiles([singleContact]); 
  
     }
     namer()
@@ -93,8 +92,9 @@ const ContactsPhotos = ({navigation}) => {
     
     </View>
     <View style = {{flex:0.1}}>
-    <Text h4 style = {{alignSelf:'center', fontWeight:"600"}}>Tell us about your friends</Text>
-    <Text h5 style = {{alignSelf:'center', fontWeight:"600"}}>Add a photo for each friend</Text>
+
+    <Text h4 style = {{alignSelf:'center', fontWeight:"600"}}>Tell us about your friend</Text>
+    <Text h5 style = {{alignSelf:'center', fontWeight:"600"}}>Add a photo for your friend</Text>
    
     </View>
     <View style = {{flex:0.6}}>
@@ -119,14 +119,14 @@ const ContactsPhotos = ({navigation}) => {
             </ScrollView> 
     </View>
     <View style = {{flex:0.2, justifyContent:'center',marginTop:10 }}>
-    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {navigation.navigate('Homer')}}></Button>   
+    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {navigation.navigate('SingleContactLocation')}}></Button>   
 
     </View>
     </View>
     ) 
 };
 
-export default ContactsPhotos;
+export default SingleContactPhoto;
 
 const styles = StyleSheet.create({
   container: {}

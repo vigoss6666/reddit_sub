@@ -4,7 +4,7 @@ import { Ionicons, SimpleLineIcons, MaterialCommunityIcons } from '@expo/vector-
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useEffect, useRef, createContext, useContext, } from 'react';
 import { AntDesign, Entypo } from '@expo/vector-icons';
-import { StyleSheet, Text, View,Button, Settings, Platform,  Image } from 'react-native';
+import { StyleSheet, Text, View,Button, Settings, Platform,  Image, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { NavigationContainer, BaseRouter } from '@react-navigation/native';
@@ -48,6 +48,10 @@ import Playgame from './Game/Screens/Playgame';
 import PlayGameLatest from './Game/Screens/PlayGameLatest';
 import Play20 from './Game/Screens/Play20';
 import ProfilePool from './Authentication/Screens/ProfilePool';
+import SingleContactPhoto from './Authentication/Screens/SingleContactPhoto';  
+import SingleContactLocation from './Authentication/Screens/SingleContactLocation';  
+import SingleContactGender from './Authentication/Screens/SingleContactGender';
+import SingleContactAge from './Authentication/Screens/SingleContactAge';
 import SettingsHome from './Account/Screens/SettingsHome';  
 import AccountSettings from './Account/Screens/AccountSettings';
 import MapViewMainer from './Account/Screens/MapViewMainer';
@@ -109,6 +113,7 @@ import Sort from './Game/Screens/Sort';
 import Filter from './Game/Screens/Filter'; 
 import BrowseSettings from './Game/Screens/BrowseSettings';
 import AttributeFilter from './Game/Screens/AttributeFilter'; 
+import AttributeFilterClient from './Game/Screens/AttributeFilterClient';
 import SelfGame from './Game/Screens/SelfGame'; 
 import SelfMatchView from './Game/Screens/SelfMatchView';
 import Gamer from './Game/Screens/Try'; 
@@ -116,6 +121,7 @@ import MatchMakeLatest from './Game/Screens/MatchMakeLatest';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from './AppContext'; 
 import GameEngine from './GameEngine'; 
+
 
 const db = firebase.firestore();
 
@@ -131,10 +137,19 @@ export default function App() {
   const [dialCode, setDialCode] = useState("+1"); 
   const [introNotification, setIntroNotification] = useState(); 
   const [chatNotification, setChatNotification] = useState(false);  
-  const [chatterNotification, setChatterNotification] = useState(false); 
+  const [chatterNotification, setChatterNotification] = useState(false);
+  const [singleContact, setSingleContact] = useState();  
   const [notification, setNotification] = useState(false);
   const responseListener = useRef();
   const notificationListener = useRef();
+  
+  function CustomBackComponent({navigation}){
+    return <TouchableOpacity style = {{marginLeft:10}} onPress = {() => navigation.goBack()}>
+    <Text style = {{fontWeight:'bold', color:'blue', fontSize:17}}>
+      Back
+    </Text>
+    </TouchableOpacity>   
+  }
   const [selfFilter, setSelfFilter] = useState({
     charisma:0, 
     creativity:0, 
@@ -149,6 +164,7 @@ export default function App() {
     maxAge:60,
     dimension:4, 
   })
+  const [clientFilter, setClientFilter] = useState([]); 
 
   const [basicAuth, setBasicAuth] = useState(null); 
   const [registeredUsers, setRegisteredUsers] = useState([]); 
@@ -195,6 +211,11 @@ useEffect(() => {
   
   
   const globalObject = {
+    CustomBackComponent, 
+    singleContact, 
+    setSingleContact,
+    clientFilter, 
+    setClientFilter,
     introNotification, 
     setIntroNotification, 
     selfFilter, 
@@ -280,7 +301,7 @@ const customHeader = () => {
       <NavigationContainer>
        
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={MatchMakeFinal} options = {{headerShown:false}}/>
+        <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
         <Stack.Screen name="Gender" component={Gender}/>
@@ -348,16 +369,21 @@ const customHeader = () => {
         <Stack.Screen name="Chat" component={Chat} options = {({route}) => ({headerTitle:route.params.title,   headerRight:() => <Feather name="flag" size={20} color="red" style = {{marginRight:10}}/>})} />
         <Stack.Screen name="MatchList" component={MatchList} options = {{headerShown:false}}/>
         <Stack.Screen name="AttributeFilter" component={AttributeFilter}/>
+        <Stack.Screen name="AttributeFilterClient" component={AttributeFilterClient}/>
         <Stack.Screen name="BrowseSettings" component={BrowseSettings}/>
         <Stack.Screen name="SelfMatchView" component={SelfMatchView} options = {{headerTitle:false}}/>
         <Stack.Screen name="SelfGame" component={SelfGame} />
         <Stack.Screen name="BrowseMatchSettings" component={BrowseMatchSettings}/>
         <Stack.Screen name="MatchMakeLatest" component={MatchMakeLatest}/>
         <Stack.Screen name="MatchViewLatest" component={MatchViewLatest}/>
-        <Stack.Screen name="MatchMakeFinal" component={MatchViewLatest}/>
+        <Stack.Screen name="MatchMakeFinal" component={MatchMakeFinal} options = {{headerShown:false}}/>
         <Stack.Screen name="Webber" component={Webber}/>
+        <Stack.Screen name="SingleContactPhoto" component={SingleContactPhoto}/>
+        <Stack.Screen name="SingleContactLocation" component={SingleContactLocation}/> 
+        <Stack.Screen name="SingleContactGender" component={SingleContactGender}/>
+        <Stack.Screen name="SingleContactAge" component={SingleContactAge}/>
         <Stack.Screen name="Homer" component={Home} options = {{headerShown:false}}/>
-        <Stack.Screen name="ClientView" component={ClientView} options = {{headerShown:false}}/>
+        <Stack.Screen name="ClientView" component={ClientView} />
         <Stack.Screen name="ChatLatest" component={ChatLatest} options = {{headerShown:true, }}/>
         
         

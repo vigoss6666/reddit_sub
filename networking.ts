@@ -188,6 +188,9 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
   }
   
   
+  
+  
+  
   function creativity(){
   //   if(arr1[0].gender !== obj1.gender){
   //     arr1.push(obj1); 
@@ -207,7 +210,8 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
   mainerObj.push({ trait:'creativity', aheadOf:Math.floor(percent), votes:obj1.creativity}) 
   }
   function charisma(){
-     
+  console.log("debugging charisma")
+  console.log(arr1.length)   
   const duplicate = arr1.concat();   
   const result = duplicate.sort((a, b) => {
       return b.charisma - a.charisma;
@@ -327,7 +331,7 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
   humor()
   status()
   wealthy()
-  narcissism()
+  //narcissism()
   return mainerObj; 
   }
 
@@ -407,5 +411,7 @@ export const updateUser = (user, obj) => {
       console.log(error.message)
    })
 }
+
+
 
   

@@ -10,15 +10,14 @@ import {Button} from 'react-native-elements';
 import Moment from 'react-moment';
 import {transformCreativity} from '../../networking'; 
 import {iconFactory} from '../../src/common/Common'; 
+import { logTen } from './logTen';
 //@refresh reset
 import AppContext from '../../AppContext'; 
 import { formatDistanceToNow } from "date-fns";
 import { firebase } from '../../config'; 
 import { Octicons } from '@expo/vector-icons';
-import {ClientHeader} from '../../src/common/Common'; 
-import {ClientDetails} from '../../src/common/Common'; 
-import {ClientPhotos} from '../../src/common/Common'; 
-import {ClientMatchMakers} from '../../src/common/Common'; 
+import {ClientHeader, ClientDetails, ClientPhotos, ClientMatchMakers, ClientTraits, ClientVotes} from '../../src/common/Common'; 
+
 
 
 
@@ -28,238 +27,16 @@ interface SelfViewProps {}
 
 
 
-function useTraits(){ 
-const [namer, setNamer] = useState(1); 
 
 
-useEffect(() => {
- console.log("called")
- db.collection('user').doc('trial_user').get().then(doc => {
-      const gender = doc.data().gender; 
-      const state = doc.data().state; 
-      const obj = doc.data();
-      obj._id = doc.id;  
-      db.collection('user')
-      .where('gender', '==', gender)
-      .where('state', '==', state )
-      
-
-      .get()
-      .then(result => {
-            const valer = []; 
-            result.docs.map(val => valer.push(val.data()))
-            // console.log(valer)
-            const finaler = transformCreativity(obj, valer); 
-            setTraits(traits => finaler); 
-            setGender(gender)
-            
-
-
-
-      })
-      
- })        
-},[])
-
-
-   interface traits  {
-      trait:string, 
-      aheadOf:number, 
-      selected?: boolean;   
-      votes:number; 
-    }
-    
-          
-const [traits, setTraits] = useState<[traits] | []>([]);
-const [gender, setGender] = useState<string>(''); 
-
-const setArrow = (obj) => {
-    console.log("called"); 
- const result = traits.map(val => {
-        if(val.trait == obj.trait){
-            val.selected = true; 
-             
-      }
-      return val; 
-     
- })
- console.log(result)
- setTraits(traits => result)
-}
-const setArrowFalse = (obj) => {
-    console.log("called"); 
- const result = traits.map(val => {
-        if(val.trait == obj.trait){
-            val.selected = false; 
-             
-      }
-      return val; 
-     
- })
- 
- setTraits(traits => result)
-}
-const traitsTemplate = traits.map((val, index) => {
-      
-     return (
-        <View style = {{ borderBottomWidth:3, justifyContent:'center', alignItems:'center', }}>
-        
-        <View style = {{flexDirection:'row', alignItems:'center', marginTop:30, }}>
-        <View style = {{flex:0.3}}>
-        {iconFactory(val.trait, 40)}
-        </View>    
-       <Text style = {{flex:0.4, fontWeight:'bold', fontSize:20}}>{val.trait.toUpperCase()}</Text>
-        <View style = {{justifyContent:'flex-end',  flex:0.3, alignItems:'center'}}>
-        <Text style = {{fontSize:20, fontWeight:'bold' }}> {val.votes}</Text>
-        <Text style = {{fontSize:20, marginBottom:10}}> votes</Text>
-        
-        </View>
-        
-        
-        </View>
-      
-      {val.selected ? <TouchableOpacity onPress = {() => setArrowFalse(val)}><MaterialIcons name="keyboard-arrow-up" size={24} color="grey" /></TouchableOpacity>:<TouchableOpacity onPress = {() => setArrow(val)}><MaterialIcons name="keyboard-arrow-down" size={24} color="black" /></TouchableOpacity>}
-      {val.selected ? <View style = {{ width:'100%'}}>
-          <View style = {{borderRadius:2, borderWidth:2, borderStyle:'dotted', }}/>
-          <View style = {{flexDirection:'row'}}> 
-          
-           {gender == 'female' ? <View style = {{flexDirection:'row', marginTop:20, marginBottom:20 , flex:0.7, }}>
-           <FontAwesome5 name="female" size={35} color="red" />
-          <FontAwesome5 name="female" size={35} color="red" />
-          <FontAwesome5 name="female" size={35} color="red" />
-          <FontAwesome5 name="female" size={35} color="red" />
-          <FontAwesome5 name="female" size={35} color="red" />
-          <FontAwesome5 name="female" size={45} color="red" />
-          <FontAwesome5 name="female" size={35} color="red" />
-          <FontAwesome5 name="female" size={35} color="red" />
-          <FontAwesome5 name="female" size={35} color="red" />
-          <FontAwesome5 name="female" size={35} color="red" /></View>: <View style = {{flexDirection:'row', marginTop:20, marginBottom:20 , flex:0.7, }}>
-           <FontAwesome5 name="male" size={35} color="red" />
-          <FontAwesome5 name="male" size={35} color="red" />
-          <FontAwesome5 name="male" size={35} color="red" />
-          <FontAwesome5 name="male" size={35} color="red" />
-          <FontAwesome5 name="male" size={35} color="red" />
-          <FontAwesome5 name="male" size={45} color="red" />
-          <FontAwesome5 name="male" size={35} color="red" />
-          <FontAwesome5 name="male" size={35} color="red" />
-          <FontAwesome5 name="male" size={35} color="red" />
-          <FontAwesome5 name="male" size={35} color="red" /></View>} 
-          
-          
-          <View style = {{flex:0.3, marginTop:20, marginBottom:15}}>
-             <Text style = {{alignSelf:'center', fontWeight:'bold'}}>AHEAD OF </Text> 
-             <Text style = {{alignSelf:'center', color:'red', fontWeight:'bold', fontSize:20}}>{val.aheadOf}%</Text>
-             <Text style = {{alignSelf:'center', fontWeight:'bold'}}>of males</Text>
-          </View>    
-          </View>    
-
-
-              
-          
-      </View>:null}  
-      
-            
-    </View> 
-     )
-})
-
- 
-  
-
-   
-
-    return (
-        <View style = {{flex:1}}>
-        <View style = {[styles.line, {marginTop:40}]}/>
-                      
-                      <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>TOP TRAITS </Text>
-                      
-                      <View style = {styles.line}></View>
-                      {traitsTemplate}
-                      
-                
-                      
-                      
-            
-        </View>
-    )
-}
-
-function useVotes(){
- interface votes {
-     question:string; 
-     answeredBy:string; 
-     createdAt:any; 
-     dimension:string; 
- }   
-     
-const [votes, setVotes] = useState<[votes]|[]>([]); 
-
-useEffect(() => {
-    
-    const subscribe = db.collection('user').doc('trial_user').collection('votes').get().then(result => {
-        const finaler = result.docs.map(val => val.data()); 
-        setVotes(votes => finaler); 
-
-
-    }); 
-    
-    
-}, [])
-const votesTemplate = votes.map(val => {
-    //const time = val.createdAt.toDate();
-    
-    
-    
-    
-    
-    // console.log(d)
-    
-    return (
-        <View style = {{ borderBottomWidth:3, justifyContent:'center', alignItems:'center', }}>
-            <Text style = {{alignSelf:'flex-end',  marginTop:3, fontSize:12}}>
-                {formatDistanceToNow(val.createdAt.toDate())} 
-            </Text>
-            <View style = {{flexDirection:'row', alignItems:'center', marginTop:30, }}>
-            <View style = {{flex:0.3, flexDirection:'row', alignItems:'center'}}>
-            {iconFactory(val.dimension, 50)}
-            <Text style = {{marginLeft:10, fontSize:20, fontWeight:'900' }}>+1</Text>
-
-            </View>    
-            <Text style = {{maxWidth:250, fontWeight:'bold', flex:0.7}}>{val.question}</Text>
-            
-            </View>
-            <Text style = {{alignSelf:'flex-end', fontWeight:'bold', marginBottom:5}}>- {val.answeredBy}</Text>
-                
-        </View>
-    ) 
- })
-
-
-return (
-    <View style = {{flex:1}}>
-    <View style = {[styles.line, {marginTop:40}]}/>
-
-                      <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}> RECENT VOTES </Text>
-                  
-                  <View style = {[styles.line]}></View>
-                  
-                  {votesTemplate}
-                  
-        
-                
-
-    </View>
-)     
-}
 
 
 const SelfView = (props: ClientViewProps) => {
     const [selected, setSelected] = useState('traits');
     const myContext = useContext(AppContext);
     const {user, userId} = myContext;  
-    const traits = useTraits(); 
-    const votes = useVotes(); 
+    
+    
      
      
 
@@ -335,7 +112,7 @@ const SelfView = (props: ClientViewProps) => {
                         <Text style = {{alignSelf:'center', fontSize:20,  fontWeight:'bold', marginTop:6, marginBottom:6}}>Votes</Text>
                        </TouchableOpacity>
                    </View> 
-                   {selected == 'traits' ? traits:votes}
+                   {selected == 'traits' ? <ClientTraits client = {user} />:<ClientVotes client = {user}/>}
                    <ClientDetails client = {user} />
                   <ClientPhotos client = {user}/>
                   <ClientMatchMakers client = {user} />
@@ -382,5 +159,4 @@ const styles = StyleSheet.create({
     line:{borderBottomWidth:3,}, 
     iconNames:{marginLeft:10, fontSize:17, fontWeight:'500'}, 
     dotted:{borderStyle:'dotted', borderWidth:2, borderRadius:10, marginTop:10 }
-  
   });

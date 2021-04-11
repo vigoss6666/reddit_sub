@@ -2,7 +2,23 @@ import  React, {useState,useRef,useEffect} from 'react';
 import {Dimensions, View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Text, Button,Icon} from 'react-native-elements'; 
-export default function Play20({navigation}){
+import { selectPrinterAsync } from 'expo-print';
+
+
+export default function Play20({navigation, route}){
+
+const {matchFound} = route.params; 
+
+useEffect(() => {
+ if(matchFound){
+    return
+ }
+ setTimeout(() => {
+  navigation.navigate('NoMatch')
+ }, 3000)
+ 
+}, [])
+
 return(
 <View style = {{flex:1, backgroundColor:"#ffffff" }}>
 <View style = {{flex:0.1}}>
@@ -16,6 +32,7 @@ return(
 </View>
 <View style = {{flex:0.2, justifyContent:"center", }}>
 <Button 
+disabled = {matchFound ? false : true}
 onPress = {() => navigation.navigate('Playgame')}
 title = "Play again" containerStyle = {{marginLeft:30, marginRight:30}} buttonStyle = {{backgroundColor:"black"}} icon={
     <Icon
