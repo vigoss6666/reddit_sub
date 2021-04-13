@@ -176,8 +176,6 @@ interface section {
   title:number, 
   data:objectWithDimension[] 
 }
-
-
 export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
  
   const dimensions =  ['creativity', 'charisma', 'honest', 'looks', 'empathetic', 'humor', 'status', 'wealthy']; 
@@ -411,6 +409,71 @@ export const updateUser = (user, obj) => {
       console.log(error.message)
    })
 }
+
+
+
+export function filterGamer(arr, indexValue, arrFilter, applyToExcluded, applyToIncluded){
+
+  let excludedTransform; 
+  let includedTransform; 
+  let finalExcludedarr; 
+  let finalIncludedarr; 
+  
+  var filteredIntros = arr.filter(
+      function(e) {
+  
+        return this.indexOf(e[indexValue]) < 0;
+      },
+     arrFilter
+  );
+  if(applyToExcluded){
+   const result = filteredIntros.map(val => applyToExcluded(val))
+   excludedTransform = result; 
+  }
+  
+  const keys = filteredIntros.map(val => val._id); 
+  
+  var filteredIntrosIncluded = arr.filter(
+      function(e) {
+        return this.indexOf(e[indexValue]) < 0;
+      },
+      keys
+  );
+  if(applyToIncluded){
+   const result  = filteredIntrosIncluded.map(val => applyToIncluded(val)); 
+   includedTransform = result; 
+  }
+  finalIncludedarr = filteredIntrosIncluded; 
+  finalExcludedarr = filteredIntros; 
+  if(includedTransform){
+   finalIncludedarr = includedTransform; 
+  
+  }
+  
+  if(excludedTransform){
+   finalExcludedarr = excludedTransform; 
+  
+  }
+  
+  return {
+   excludedObjects:finalExcludedarr, 
+   includedObjects:finalIncludedarr, 
+  
+  }
+  }  
+
+  export const createChatThread = (userID:string, user2ID:string) => {
+    if(userID > user2ID){
+       return userID+user2ID.toString()
+    }
+    if(userID < user2ID){
+     return user2ID+userID.toString()
+    }
+ } 
+
+
+
+
 
 
 

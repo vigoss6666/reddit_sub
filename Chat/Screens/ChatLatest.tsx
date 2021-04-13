@@ -34,7 +34,7 @@ const createChatThread = (userID:string, user2ID:string) => {
   }
 }
 useEffect(() => {
-  if(clientObj){
+  if(clientObj.discoveredBy){
      db.collection('user').doc(clientObj.discoveredBy).get().then(doc => {
         setMatchMaker(doc.data()); 
      })
@@ -118,12 +118,12 @@ const [result, setResult] = useState('🔮');
       }
     );
     const renderChatEmpty = () => {
-      const dater = formatDistance(subDays(new Date(clientObj.createdAt), 3), new Date(), { addSuffix: true })
+      const dater = formatDistance(subDays(new Date(clientObj.createdAt.toDate()), 3), new Date(), { addSuffix: true })
       return <View style = {{flex:1, justifyContent:"center", alignItems:"center", transform: [ { scaleY: -1 } ]}}>
         <Text style = {{marginBottom:10, fontWeight:'bold'}}>You matched with {computeName(clientObj.clientUser)} </Text>
         <Text style = {{marginBottom:10, fontWeight:'bold'}}> {dater} </Text>
         <Image source = {{uri:clientObj.clientUser.profilePic}} style = {{height:100, width:100, borderRadius:50}}/>
-        <Text style = {{marginTop:30, fontWeight:'bold'}}> Matched by {computeName(matchMaker)}</Text>
+        {Object.keys(matchMaker).length ? <Text style = {{marginTop:30, fontWeight:'bold'}}> Matched by {computeName(matchMaker)}</Text>:null }
       </View>
    }
 

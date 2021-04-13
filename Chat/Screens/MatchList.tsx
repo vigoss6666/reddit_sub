@@ -6,8 +6,108 @@ import {Line, HeaderBar } from '../../src/common/Common';
 import {merge} from '../../src/common/helper'; 
 import { firebase } from '../../config';
 import AppContext from '../../AppContext'; 
-import {updateUser} from '../../networking';
+import {updateUser,filterGamer} from '../../networking';
+
 // @refresh reset
+const db = firebase.firestore();
+
+function UserFactory({user, onPress}){
+   
+if(user.seen && user.clientUser.profilePic){
+return <TouchableOpacity onPress = {() => onPress(user)}><Image source = {{uri:user.clientUser .profilePic}} style = {{height:50, width:50, borderRadius:25, marginLeft:10, marginRight:10}}/></TouchableOpacity>
+}
+if(user.seen && !user.clientUser.profilePic){
+  <TouchableOpacity 
+  style = {{height:50, width:50, borderRadius:25, borderWidth:1,justifyContent:"flex-end", alignItems:"center", marginLeft:10}}
+  onPress = {() => onPress(user)}
+  >
+  <MaterialIcons name="account-circle" size={50} color="black" />
+  </TouchableOpacity> 
+}
+if(!user.seen && user.clientUser.profilePic){
+  return <TouchableOpacity onPress = {() => onPress(user)}>
+    <View style = {{height:15,width:15, position:'absolute', left:5, backgroundColor:'red', borderRadius:7.5, top:13, zIndex:200}}/>
+    <Image source = {{uri:user.clientUser.profilePic}} style = {{height:50, width:50, borderRadius:25, marginLeft:10, marginRight:10, zIndex:100}}/>
+  </TouchableOpacity>
+}
+if(!user.seen && !user.clientUser.profilePic){
+  <TouchableOpacity 
+style = {{height:50, width:50, borderRadius:25, borderWidth:1,justifyContent:"flex-end", alignItems:"center", marginLeft:10}}
+onPress = {() => onPress(user)}
+>
+<MaterialIcons name="account-circle" size={50} color="black" />
+<View style = {{height:15,width:15, position:'absolute', left:-5, backgroundColor:'red', borderRadius:7.5, top:13}}/>
+</TouchableOpacity>
+  
+}
+return <View>
+  <Text>Hello world</Text>
+</View>
+
+
+}
+
+
+
+
+function Introductions({navigation, user, userId}){
+const [intros, setIntros] = useState([{client1:'+15554787672', client2:'+917208110384', createdAt:new Date(), _id:'something', clientUser:{profilePic:'https://firebasestorage.googleapis.com/v0/b/friends-365d0.appspot.com/o/images%2Ff36jh47t3dr?alt=media&token=a5b14492-468f-4fb2-becc-2425e7b471c9', name:'zaid shaikh'}}]); 
+
+useEffect(() => {
+  const unsubscribe = db.collection('introductions').where('client2', '==', userId ).onSnapshot(async onResultClient1 => {
+    const clientObjects = onResultClient1.docs.map(val => Object.assign({}, val.data(), {_id:val.id}));
+    const client1Users = clientObjects.filter(val => val.client1);  
+    const transformedWithUsers1 =  await Promise.all(client1Users.map(async val => {
+     return await db.collection('user').doc(val.client1).get().then(result => Object.assign({}, val, {clientUser:result.data()})) 
+    }));
+    const filterByintroMatches = transformedWithUsers1.filter(
+      function(e) {
+        return this.indexOf(e._id) < 0;
+      },
+      user.introMatches
+  );
+
+    function namer(val){
+      return {...val, seen:true}  
+    }
+    const seenIntrosChecker = user.seenIntros !== undefined && user.seenIntros.length ? user.seenIntros:[]; 
+    const filtered = filterGamer(filterByintroMatches, '_id', seenIntrosChecker,null,namer); 
+
+    setIntros([...filtered.excludedObjects, ...filtered.includedObjects]); 
+})
+return () => unsubscribe(); 
+},[user.seenIntros])
+const handleClick = (intro) => {
+
+db.collection('user').doc(userId).set({seenIntros:firebase.firestore.FieldValue.arrayUnion(intro._id)}, {merge:true}).then(() => console.log("clientUser updated"));  
+navigation.navigate('RequestIntro', {intro}) 
+}
+
+const renderIntroList = ({item}) => {
+  return  <UserFactory user = {item} onPress = {handleClick}/> 
+}
+return (
+  <FlatList
+  data={intros}
+  renderItem={renderIntroList}
+  keyExtractor={item => item._id}
+  horizontal = {true}
+  showsHorizontalScrollIndicator = {false}
+  style = {{marginTop:20, marginBottom:20, marginLeft:20, marginRight:20}}
+/> 
+)
+
+}
+
+
+
+
+
+
+
+
+
+
 export default function MatchList({navigation}){
 const [image, setImage] = useState(false);
 const [matches, setMatches] = useState([]); 
@@ -29,20 +129,22 @@ const createChatThread = (userID:string, user2ID:string) => {
 const danny = createChatThread(userId, "+15554787672");
 
 useEffect(() => {
- 
-  
-  const unsubscribe = db.collection('matches').where('client1', '==', user.phoneNumber ).onSnapshot(async onResultClient1 => {
+ const unsubscribe = db.collection('matches').where('client1', '==', user.phoneNumber ).onSnapshot(async onResultClient1 => {
      const client1 = onResultClient1.docs.map(val => Object.assign({}, val.data(), {_id:val.id}));
      const client1Users = client1.filter(val => val.client2);  
      const transformedWithUsers1 =  await Promise.all(client1.map(async val => {
       return await db.collection('user').doc(val.client2).get().then(result => Object.assign({}, val, {clientUser:result.data()})) 
    }))
-   
-   var filtered1 = transformedWithUsers1.filter(
+   const dater = transformedWithUsers1.map(val => {
+     return {...val, createdAt:val.createdAt.toDate()}
+   })
+  
+   const seenMatchesChecker = user.seenMatches !== undefined  ? user.seenMatches:[];  
+   var filtered1 = dater.filter(
     function(e) {
       return this.indexOf(e._id) < 0;
     },
-    user.seenMatches
+    []
 );
 
 const seenTransformed1 = filtered1.map(val => {
@@ -79,12 +181,12 @@ const seenTransformed1 = filtered1.map(val => {
 
         
         
-        
+        const seenMatchesChecker = user.seenMatches !== undefined  ? user.seenMatches:[];   
         var filtered = transformedWithUsers.filter(
           function(e) {
             return this.indexOf(e._id) < 0;
           },
-          user.seenMatches
+          []
       );
       const seenTransformed = filtered.map(val => {
         return {...val, new:true } 
@@ -121,72 +223,109 @@ const seenTransformed1 = filtered1.map(val => {
  
  return () => {
     unsubscribe() 
-    
-   
- }
+  }
+
+}, [])
+
+useEffect(() => {
+ 
+const unsubscribe = db.collection('matches').where('client1', '==', user.phoneNumber ).onSnapshot(async onResultClient1 => {
+     const client1 = onResultClient1.docs.map(val => Object.assign({}, val.data(), {_id:val.id}));
+     const client1Users = client1.filter(val => val.client2);  
+     const transformedWithUsers1 =  await Promise.all(client1.map(async val => {
+      return await db.collection('user').doc(val.client2).get().then(result => Object.assign({}, val, {clientUser:result.data()})) 
+   }))
+   const seenMatchesChecker = user.seenMatches !== undefined ? user.seenMatches:[];  
+   var filtered1 = transformedWithUsers1.filter(
+    function(e) {
+      return this.indexOf(e._id) < 0;
+    },
+    seenMatchesChecker
+);
+
+const seenTransformed1 = filtered1.map(val => {
+  return {...val, new:true } 
+  })
+  const otherFilter1 = seenTransformed1.map(val => val._id);
+  const otherFilteredObjects1 = transformedWithUsers1.filter(
+    function(e) {
+      return this.indexOf(e._id) < 0;
+    },
+    otherFilter1
+);
+  const finalArray1 = [...seenTransformed1, ...otherFilteredObjects1];
+  
+  })
+ 
+ return () => {
+    unsubscribe() 
+  }
 
 }, [])
 
 
+
 useEffect(() => {
-  
-    db.collection('matches').where(firebase.firestore.FieldPath.documentId(), 'in', user.chatted).onSnapshot(async onResult => {
-      const data = onResult.docs.map(val => Object.assign({}, val.data(), {_id:val.id})); 
-      const result = data.map(val => {
- 
-        if(val.client2 == userId){
-                 let a = val.client1; 
-                 let b = val.client2; 
-                 let temp; 
-                 temp = a;
-                 a = b;
-                 b = temp;
-                 return {...val, client1:a, client2:b}; 
-        }
-        return val; 
-      })
-      
-    //   const transformedWithUsers =  await Promise.all(result.map(async val => {
-    //     return await db.collection('user').doc(val.client2).get().then(result => Object.assign({}, val, {clientUser:result.data()})) 
-    //  }))
-     const transformedWithUsers =  await Promise.all(result.map(async val => {
-      return await db.collection('user').doc(val.client2).get().then(async result => {
-         return await db.collection('messages').doc(createChatThread(userId, result.data().phoneNumber)).collection('messages').orderBy('createdAt', 'desc').limit(1).get().then(onChatResult => {
-            const lastNamer = onChatResult.docs.map(val => val.data()) 
-            return  Object.assign({}, val, {clientUser:result.data(), lastMessage:lastNamer[0]})
-         })
-      }) 
-   }))
-   const dataUsers = []
-   if(user.lastMessage.length < 1) {
-      setChatList(transformedWithUsers)
-      setChatterNotification(true)
-   }
-   if(user.lastMessage.length > 0){
-    for(let x = 0; x < user.lastMessage.length; x++){
-      for(let y = 0; y <  transformedWithUsers.length; y++){
-         if(user.lastMessage[x] == transformedWithUsers[y].lastMessage._id){
-            dataUsers.push({...transformedWithUsers[y], seen:true})
-
-            break; 
-          }
-         if(user.lastMessage[x] !== transformedWithUsers[y].lastMessage._id){
-           dataUsers.push({...transformedWithUsers[y]})
-         }
-      }       
-    }
-    const resulter = dataUsers.filter(val => !val.seen); 
-    if(resulter.length > 0){
-       setChatterNotification(true)
-    }
-    if(resulter.length == 0){
-      setChatterNotification(false)
-   }
-
-    setChatList(dataUsers); 
-   }
+    if(user.chatted.length){
+      db.collection('matches').where(firebase.firestore.FieldPath.documentId(), 'in', user.chatted).onSnapshot(async onResult => {
+        const data = onResult.docs.map(val => Object.assign({}, val.data(), {_id:val.id})); 
+        const result = data.map(val => {
    
-  })
+          if(val.client2 == userId){
+                   let a = val.client1; 
+                   let b = val.client2; 
+                   let temp; 
+                   temp = a;
+                   a = b;
+                   b = temp;
+                   return {...val, client1:a, client2:b}; 
+          }
+          return val; 
+        })
+        
+      //   const transformedWithUsers =  await Promise.all(result.map(async val => {
+      //     return await db.collection('user').doc(val.client2).get().then(result => Object.assign({}, val, {clientUser:result.data()})) 
+      //  }))
+       const transformedWithUsers =  await Promise.all(result.map(async val => {
+        return await db.collection('user').doc(val.client2).get().then(async result => {
+           return await db.collection('messages').doc(createChatThread(userId, result.data().phoneNumber)).collection('messages').orderBy('createdAt', 'desc').limit(1).get().then(onChatResult => {
+              const lastNamer = onChatResult.docs.map(val => val.data()) 
+              return  Object.assign({}, val, {clientUser:result.data(), lastMessage:lastNamer[0]})
+           })
+        }) 
+     }))
+     const dataUsers = []
+     if(user.lastMessage.length < 1) {
+        setChatList(transformedWithUsers)
+        setChatterNotification(true)
+     }
+     if(user.lastMessage.length > 0){
+      for(let x = 0; x < user.lastMessage.length; x++){
+        for(let y = 0; y <  transformedWithUsers.length; y++){
+           if(user.lastMessage[x] == transformedWithUsers[y].lastMessage._id){
+              dataUsers.push({...transformedWithUsers[y], seen:true})
+  
+              break; 
+            }
+           if(user.lastMessage[x] !== transformedWithUsers[y].lastMessage._id){
+             dataUsers.push({...transformedWithUsers[y]})
+           }
+        }       
+      }
+      const resulter = dataUsers.filter(val => !val.seen); 
+      if(resulter.length > 0){
+         setChatterNotification(true)
+      }
+      if(resulter.length == 0){
+        setChatterNotification(false)
+     }
+  
+      setChatList(dataUsers); 
+     }
+     
+    })
+    }
+    
     
 
   
@@ -375,7 +514,10 @@ onPress = {() => handleMatchPressed(obj)}
 <MaterialIcons name="account-circle" size={50} color="black" />
 </TouchableOpacity>; 
 
-const horizontalIconWithImageSeen = (obj) => <TouchableOpacity onPress = {() => handleMatchPressed(obj)}><Image source = {{uri:obj.clientUser .profilePic}} style = {{height:50, width:50, borderRadius:25, marginLeft:10, marginRight:10}}/></TouchableOpacity>;  
+const horizontalIconWithImageSeen = (obj) => 
+<TouchableOpacity onPress = {() => handleMatchPressed(obj)}>
+ <Image source = {{uri:obj.clientUser .profilePic}} style = {{height:50, width:50, borderRadius:25, marginLeft:10, marginRight:10}}/>
+ </TouchableOpacity>;  
 
 const verticalIcon = (obj:chatInstance) => <TouchableOpacity style = {{flexDirection:"row", marginTop:10}}>
 <TouchableOpacity style = {{height:50, width:50, borderRadius:25, borderWidth:1,justifyContent:"flex-end", alignItems:"center", marginLeft:10}}>
@@ -438,7 +580,12 @@ Matches template
 */}
 <StatusBar />
 <View>
-
+<Line />
+<View style = {{justifyContent:"center", alignItems:"center"}}>
+<Text style = {{alignSelf:"center", fontWeight:"bold", fontSize:15, marginTop:10, marginBottom:10}}>Introductions</Text>
+</View>
+<Line /> 
+<Introductions navigation = {navigation} user = {user} userId = {userId}/>
 <Line />
 <View style = {{justifyContent:"center", alignItems:"center"}}>
 <Text style = {{alignSelf:"center", fontWeight:"bold", fontSize:15, marginTop:10, marginBottom:10}}>Matches</Text>
@@ -448,6 +595,7 @@ Matches template
 {/* 
 Horizontal flatlist 
 */}
+
 
 <View>
 <FlatList

@@ -87,6 +87,7 @@ import { Feather } from '@expo/vector-icons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import FrontPage from './Authentication/Screens/Frontpage'; 
 import ClientView from './ClientViews/Screens/ClientView'; 
+import RequestIntro from './ClientViews/Screens/RequestIntro';
 import Matchee from './ClientViews/Screens/Matchee'; 
 import SelfView from './ClientViews/Screens/SelfView'; 
 import MatchViewLatest from './Game/Screens/MatchViewLatest';
@@ -108,7 +109,7 @@ import DocumentViewer from './src/common/DocumentViewer';
 import MatchList from './Chat/Screens/MatchList';
 import { FontAwesome } from '@expo/vector-icons';
 import Frontpage from './Authentication/Screens/Frontpage';
-import { uploadImage } from 'networking';
+import { uploadImage, createChatThread } from './networking';
 import Sort from './Game/Screens/Sort'; 
 import Filter from './Game/Screens/Filter'; 
 import BrowseSettings from './Game/Screens/BrowseSettings';
@@ -211,6 +212,9 @@ useEffect(() => {
   
   
   const globalObject = {
+    createChatThread,
+    db,
+    firebase, 
     CustomBackComponent, 
     singleContact, 
     setSingleContact,
@@ -384,6 +388,7 @@ const customHeader = () => {
         <Stack.Screen name="SingleContactAge" component={SingleContactAge}/>
         <Stack.Screen name="Homer" component={Home} options = {{headerShown:false}}/>
         <Stack.Screen name="ClientView" component={ClientView} />
+        <Stack.Screen name="RequestIntro" component={RequestIntro} />
         <Stack.Screen name="ChatLatest" component={ChatLatest} options = {{headerShown:true, }}/>
         
         

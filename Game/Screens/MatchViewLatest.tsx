@@ -29,13 +29,6 @@ const MatchViewLatest = ({navigation, route}) => {
        }) 
     }, [])
 
-
-    const generateMatch = () => {
-       const matchObject = {
-           client1: 
-       }  
-    }
-     
     const setSliderPage = (event: any) => {
         const { currentPage } = sliderState;
         const { x } = event.nativeEvent.contentOffset;
