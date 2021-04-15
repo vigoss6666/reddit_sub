@@ -127,6 +127,15 @@ import GameEngine from './GameEngine';
 const db = firebase.firestore();
 
 const Stack = createStackNavigator();
+const computeName = (obj) => {
+  if(obj.name){
+     return obj.name
+  }
+  if(obj.firstName && obj.lastName){
+     return obj.firstName+obj.lastName
+  }
+  return obj.firstName
+}
 export default function App() {
 
   console.disableYellowBox = true;
@@ -212,6 +221,7 @@ useEffect(() => {
   
   
   const globalObject = {
+    computeName,
     createChatThread,
     db,
     firebase, 
