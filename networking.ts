@@ -7,6 +7,7 @@ import { merge } from 'src/common/helper';
 
 
 
+
 const localhost: string = 'http://192.168.1.15:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 async function getId(){
@@ -413,6 +414,9 @@ export const updateUser = (user, obj) => {
 
 
 export function filterGamer(arr, indexValue, arrFilter, applyToExcluded, applyToIncluded){
+ if(arrFilter == undefined){
+    arrFilter = []; 
+ } 
 
   let excludedTransform; 
   let includedTransform; 
@@ -470,6 +474,12 @@ export function filterGamer(arr, indexValue, arrFilter, applyToExcluded, applyTo
      return user2ID+userID.toString()
     }
  } 
+
+ export async function getObjectFromDatabase(_id, db){
+   return db.collection('user').doc(_id).get().then(result => {
+     return result.data()
+   })  
+ }
 
 
 

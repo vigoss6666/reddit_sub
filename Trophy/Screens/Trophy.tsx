@@ -11,6 +11,9 @@ import { FontAwesome } from '@expo/vector-icons';
 import {firebase} from '../../config'; 
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';  
+import Rank from './Rank'; 
+import Points from './Points';
+import Match from './Match';
 
 
 const db = firebase.firestore(); 
@@ -118,8 +121,10 @@ const usePointsTemplate = () => {
     
     
  }
+
 const useRankTemplate = () => {
-     
+    const [allTime, setAllTime] = useState(0); 
+    const [monthly, setMonthly] = useState(0);  
     const data = [
      {
        _id:"user",
@@ -226,39 +231,11 @@ const useIntroTemplate = () => {
 
 export default function Trophy({navigation}){
 const [page, setPage] = useState('rank');   
+
 const pushToken = 'ExponentPushToken[FrneiUBwFvVhNI161d99is]'; 
-async function registerForPushNotificationsAsync() {
-    let token;
-    if (Constants.isDevice) {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-      if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!');
-        return;
-      }
-      token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log(token);
-    } else {
-      alert('Must use physical device for Push Notifications');
-    }
-  
-    if (Platform.OS === 'android') {
-      Notifications.setNotificationChannelAsync('default', {
-        name: 'default',
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FF231F7C',
-      });
-    }
-  
-    return token;
-  }
+
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => console.log(token))
+    
   }, [])
 
 const rankText = useRankTemplate(); 
@@ -291,14 +268,12 @@ return(
     <TouchableOpacity style = {[styles.touchBar,{backgroundColor:page == 'points' ? '#add1ed':'white'}]} onPress = {() => setPage('points')}>
     <Text style = {styles.touchBarFont}>Points</Text>    
     </TouchableOpacity>
-    <TouchableOpacity style = {[styles.touchBar,{backgroundColor:page == 'intros' ? '#add1ed':'white'}]} onPress = {() => setPage('intros')}>
-    <Text style = {styles.touchBarFont}>Intros</Text>    
-    </TouchableOpacity>
+    
     </View>
 
 </View>
 <View style = {{flex:0.8}}>
- {page == 'points' ? pointText:page == 'match' ? matchText:page == 'rank' ? rankText:page == 'intros'? introTemplate:null}
+ {page == 'points' ? <Points />:page == 'match' ? <Match navigation = {navigation}/>:page == 'rank' ? <Rank />:page == 'intros'? introTemplate:null}
 </View>
 </View>
 )

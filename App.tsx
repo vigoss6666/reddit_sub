@@ -94,6 +94,7 @@ import MatchViewLatest from './Game/Screens/MatchViewLatest';
 import BrowseMatchSettings from './Game/Screens/BrowseMatchSettings';  
 import Webber from './Game/Screens/Webber'; 
 import SplashScreen from './SplashScreen'; 
+import EndorsementClient from './Trophy/Screens/EndorsementClient'; 
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
@@ -216,11 +217,20 @@ useEffect(() => {
   
 }, [])
 
+var special = ['zeroth','first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth', 'thirteenth', 'fourteenth', 'fifteenth', 'sixteenth', 'seventeenth', 'eighteenth', 'nineteenth'];
+var deca = ['twent', 'thirt', 'fort', 'fift', 'sixt', 'sevent', 'eight', 'ninet'];
+
+function stringifyNumber(n) {
+  if (n < 20) return special[n];
+  if (n%10 === 0) return deca[Math.floor(n/10)-2] + 'ieth';
+  return deca[Math.floor(n/10)-2] + 'y-' + special[n%10];
+}
 
 
   
   
   const globalObject = {
+    stringifyNumber,
     computeName,
     createChatThread,
     db,
@@ -400,6 +410,7 @@ const customHeader = () => {
         <Stack.Screen name="ClientView" component={ClientView} />
         <Stack.Screen name="RequestIntro" component={RequestIntro} />
         <Stack.Screen name="ChatLatest" component={ChatLatest} options = {{headerShown:true, }}/>
+        <Stack.Screen name="EndorsementClient" component={EndorsementClient} options = {{headerShown:true, }}/>
         
         
         

@@ -88,7 +88,7 @@ function applyFilters(filter:filter, arr:serverDataObjectDimension[]):serverData
 
 const SelfGame = ({navigation, route}) => {
   const myContext = useContext(AppContext); 
-  const {user, userId, selfFilter, setSelfFilter} = myContext;
+  const {user, userId, selfFilter, setSelfFilter,computeName} = myContext;
     const [filter, setFilter] = useState(route.params ? route.params.finalObject:{});
     const [sliderState, setSliderState] = useState({ currentPage: 0 });
     const [selfMatchView, setSelfMatchView] = useState();     
@@ -140,50 +140,7 @@ const SelfGame = ({navigation, route}) => {
  console.log("section data is")
  console.log(selfFilter)
 
-    const transformedServer = [
-        {
-        name:"joker",
-        firstName:"zaid",
-        profilePic:"https://i.pinimg.com/originals/f0/a6/4e/f0a64e32194d341befecc80458707565.jpg",
-        charisma:100, 
-        creativity:90, 
-        honest:400, 
-        looks:400, 
-        empathetic:400, 
-        status:350, 
-        wealthy:350, 
-        humor:350,  
-        _id:"something"
-    },
-    {
-        name:"joker",
-        firstName:"zaid",
-        profilePic:"https://i.pinimg.com/originals/f0/a6/4e/f0a64e32194d341befecc80458707565.jpg",
-        charisma:100, 
-        creativity:90, 
-        honest:4000, 
-        looks:400, 
-        empathetic:400, 
-        status:350, 
-        wealthy:350, 
-        humor:350,  
-        _id:"something"
-    },
-    {
-        name:"zaid shaikh",
-        firstName:"zaid",
-        profilePic:"https://i.pinimg.com/originals/f0/a6/4e/f0a64e32194d341befecc80458707565.jpg",
-        charisma:1000, 
-        creativity:9002, 
-        honest:400, 
-        looks:400, 
-        empathetic:400, 
-        status:350, 
-        wealthy:350, 
-        humor:350,  
-        _id:"something"
-    }
-]
+ 
     const [serverData, setServerData] = useState<[serverData]>([{
         charisma:1000, 
         creativity:1200, 
@@ -211,23 +168,8 @@ const SelfGame = ({navigation, route}) => {
 
  ]; 
 
- const computeName = (obj) => {
-  if(obj.name){
-     return obj.name
-  }
-  if(obj.firstName && obj.lastName){
-     return obj.firstName+obj.lastName
-  }
-  return obj.firstName
-}
+
     
-    
-    useEffect(() => {
-       db.collection('user').doc('trial_user').get().then(doc => {
-             
-       }) 
-    }, [])
-     
     const headerTemplate = user.profilePic ? <View>
     <Image source = {{uri:user.profilePic}} style = {{height:80, width:80, borderRadius:40}}/>
     <Text style = {{fontWeight:'bold', marginTop:5}}>{computeName(user)}</Text>
@@ -240,7 +182,7 @@ const SelfGame = ({navigation, route}) => {
     const renderFlatlist = ({item}) => {
         console.log(item.simDimension)
         
-         return <View key = {item.name} style = {{flexDirection:'row'}}>
+         return <View key = {item.phoneNumber} style = {{flexDirection:'row'}}>
              <TouchableOpacity onPress = {() => navigation.navigate('SelfMatchView', {selfMatchView})}>
 
                <MaterialIcons name="account-circle" size={70} color="black" /></TouchableOpacity>

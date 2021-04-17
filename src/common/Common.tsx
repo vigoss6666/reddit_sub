@@ -528,11 +528,10 @@ export function Tester1({navigation,db,chatID,userId}){
        )
     }
 
-    export function Line({leftMargin,rightMargin}){
-       const leftMarginT = leftMargin ? leftMargin : 30; 
-       const rightMarginT = rightMargin ? rightMargin : 30; 
+    export function Line(){
+       
        return (
-          <View style = {{marginLeft:leftMarginT, marginRight:rightMarginT, borderColor:'black', borderWidth:2}}/>
+          <View style = {{ borderColor:'black', borderWidth:1}}/>
        ) 
     }
 
