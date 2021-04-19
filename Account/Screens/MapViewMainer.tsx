@@ -38,7 +38,7 @@ export default function MapViewMainer({navigation}){
       .catch(() => console.log("location update failed"))
      
   }
-console.log(markers)
+
   useEffect(() => {
 
   }, [])

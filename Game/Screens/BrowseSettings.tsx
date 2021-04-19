@@ -32,7 +32,7 @@ useEffect(() => {
 setCompatibility(selfFilter.dimension)
 },[selfFilter.dimension])
 
-console.log(selfFilter)
+
 useEffect(() => {
    navigation.setOptions({
       headerLeft:false, 

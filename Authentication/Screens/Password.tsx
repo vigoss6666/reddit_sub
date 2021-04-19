@@ -10,7 +10,7 @@ export default function Password({navigation}){
     const [retype, setretype] = useState(""); 
     const [error,setError] = useState(false);
     const [shortError, setShortError] = useState(false); 
-    console.log(password)
+    
     const errorTemplate = error ? <Text style = {{fontSize:14, color:"red", marginLeft:10 }}>"Passwords dont match"</Text>:null; 
     const shortErrorTemplate = shortError ? <Text style = {{fontSize:14, color:"red", marginLeft:10, marginTop:10 }}>Password too short</Text>:null; 
 

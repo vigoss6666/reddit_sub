@@ -78,8 +78,7 @@ const [hidden, setHidden]= useState(false);
 const [columnNumbers, setColumnNumbers] = useState(3);
 
 const computeNextElement = (val) => {
-  console.log(val)
-  console.log(listItem1)
+  
   if(val == listItem1){
     return; 
   }

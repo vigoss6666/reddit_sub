@@ -32,7 +32,7 @@ export default function Name({navigation}){
   useEffect(() => {
     async function namer(){
       const user = await AsyncStorage.getItem('user'); 
-      console.log(user); 
+       
     }
     namer()
     

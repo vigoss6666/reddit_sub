@@ -52,16 +52,15 @@ const useFetchContactPool = (navigation) => {
      useEffect(() => {
        async function namer(){
        if(user.contactList.length > 0){
-       console.log('usercontalist'+user.contactList)    
+          
        const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.contactList).get().then(onResult => {
           const data = onResult.docs.map(val => val.data());
-          console.log("data length is what"+data.length)     
+             
           setContactList(data);
        }).catch(error => console.log(error.message))
        }
        if(user.contactList.length == 0){
-          console.log('user cpntactList called'); 
-          console.log(user.contactList.length)  
+          
           setContactList([])
        }     
        
@@ -150,7 +149,7 @@ const useFetchContactPool = (navigation) => {
                         }
                    }
                    
-                   console.log(newUsers)
+                   
        
                     
        
@@ -307,13 +306,12 @@ const useFetchDatingPool = (navigation) => {
          
      const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get().then(onResult => {
         const data = onResult.docs.map(val => val.data());
-        console.log("data length is what"+data.length)     
+            
         setDatingPoolList(data);
      }).catch(error => console.log(error.message))
      }
      if(user.datingPoolList.length == 0){
-        console.log('user cpntactList called'); 
-        console.log(user.contactList.length)  
+         
         setContactList([])
      }     
      
@@ -601,11 +599,11 @@ onChangeItem={namer => addAge(item, namer)}
       alert("Permission to access camera roll is required!");
       return;
     }
-    console.log("conatacts photos called")  
+      
     
 
     let pickerResult = await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.All});
-    console.log(pickerResult.type)
+    
     if(pickerResult.type == 'image'){
       const manipResult = await ImageManipulator.manipulateAsync(
         pickerResult.uri,
@@ -825,7 +823,7 @@ const _uploadContacts = async () => {
          });
          if (data.length > 0) {
            const contact = data;
-           console.log(contact); 
+           
            const finaler = contact.map(val => {
                 return {
                     name:val.name, 

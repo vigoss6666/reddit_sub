@@ -123,8 +123,7 @@ const AttributeFilter = ({navigation, route}) => {
 
   
   ]
-   console.log("Attribute page started")
-   console.log(route.params.attribute)
+   
    
    useEffect(() => {
     navigation.setOptions({
@@ -181,7 +180,7 @@ useEffect(() => {
      }
      const users = onResult.docs.map(val => val.data());
     const listWithoutUser = users.filter(val => val.phoneNumber !== userId); 
-     console.log(listWithoutUser) 
+     
      if(listWithoutUser.length < 1){
        setFemaleAhead(100)
        return; 
@@ -192,8 +191,7 @@ useEffect(() => {
      
    const result = transformCreativity(userLogged, usersLogged); 
    const getAttribute = result.filter(val => val.trait == attribute); 
-   console.log("the attribute is")
-   console.log(getAttribute[0])
+   
    setFemaleAhead(getAttribute[0].aheadOf); 
   })
   }
@@ -202,8 +200,7 @@ useEffect(() => {
 
 useEffect(() => {
   if(attValue){
-  console.log("att value is")
-  console.log(attValue)
+  
   db.collection('user')
   .where('gender', '==', 'female')
   .where('state', '==', user.state)

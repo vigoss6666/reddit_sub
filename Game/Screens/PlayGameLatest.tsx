@@ -1,16 +1,18 @@
 import  React, {useState,useRef,useEffect, useContext, useLayoutEffect, useCallback, forwardRef, createRef} from 'react';
 import { Text, View, StyleSheet,Dimensions, Animated, Image } from 'react-native';
 import AppContext from '../../AppContext'; 
-import {updateUser} from '../../networking';
+import {createChatThread, updateUser} from '../../networking';
 import { firebase } from '../../config'; 
 import Draggable from 'react-native-draggable';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialIcons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Progress from 'react-native-progress';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { assertValidExecutionArguments } from 'graphql/execution/execute';
 import { logTen } from './logTen';
 import { filter } from 'underscore';
+import GamePreview from './GamePreview'; 
+import {filterGamer, getDistanceFromLatLonInKm} from '../../networking'; 
 const db = firebase.firestore(); 
 //@refresh reset
 interface PlayGameLatestProps {}
@@ -41,16 +43,17 @@ const PlayGameLatest = ({navigation}) => {
   const [index, setIndex] = useState(0); 
   const [profiles,setProfiles] = useState([])
   const myContext = useContext(AppContext); 
+  
   const [questions, setQuestions] = useState([]); 
   const element = createRef();
   const [matchFound, setMatchFound] = useState(false); 
 
 
- console.log(questions.length)
+ 
   
 
    useEffect(() => {
-    console.log("i was called")  
+    
     db.collection('questions').get().then(onResult => {
          const result = onResult.docs.map(val => val.data()); 
          setQuestions(result); 
@@ -134,7 +137,7 @@ const namer =  [
   
   const [namer, setNamer] = useState(); 
   const mainView = useRef(); 
-  const {user, userId} = myContext;
+  const {user, userId, setInitialRouteName} = myContext;
   const [demo, setDemo] = useState([])  
   const measure = () => {
       
@@ -154,7 +157,7 @@ const namer =  [
          setDemo(result); 
     })      
   }, [])
-  console.log("compinent was rendered")
+  
   useLayoutEffect(() => {
     if(mailer.current){
         mailer.current.measure((x,y, height, width, px, py) => {
@@ -183,51 +186,95 @@ const namer =  [
         return; 
    }
   }
+
+ 
+  async function introChecker(client1, client2){
+    
+    const id = createChatThread(client1, client2); 
+    
+    const result = await db.collection('introductions').doc(id).get(); 
+    if(result.exists){
+      return false; 
+    }
+    return true; 
+
+  }
+
+  
+  console.log("hello world")
   const suggestMatches = () => {
+   console.log("hello world")  
+    
     if(client == 'first'){
-        console.log("updating this client")
-        console.log("updating this dimension"+ questions[questionsIndex].dimension)
-        console.log(demo[index])
+        
+        
         const client = demo[index]; 
-        db.collection('user').where('state', '==', demo[index].state).get().then(onResult => {
+        db.collection('user').where('state', '==', demo[index].state).get().then(async onResult => {
           const users = onResult.docs.map(val =>val.data()); 
           const usersLogged = logTen(users); 
           const clientLogged = logTen(client)
           
           let matchObject; 
-          const filtered = filteredMatched(usersLogged); 
-           filtered.map(val => {
-               if(val.charisma == client.charisma || val.creativity == client.creativity || val.empathetic == client.empathetic 
-                 || val.honest == client.honest || val.humor == client.humor || val.looks == client.looks || val.status || val.wealthy == client.wealthy
+          
+          const filterBySuggestions = filterGamer(usersLogged, 'phoneNumber', user.suggestedMatches, null, null);
+          const filterBySelf = filterGamer(filterBySuggestions.excludedObjects, 'phoneNumber', [client.phoneNumber], null, null);
+          
+          filterBySelf.excludedObjects.map(async val => {
+               const gender = val.gender; 
+               const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude);
+               
+
+
+               const genderChecker = client.gender == 'male' ? 'female':'male';  
+               if( distance < client.distancePreference && val.gender == genderChecker && (client.minAgePreference <= val.age && client.maxAgePreference >= val.age ) && (val.charisma == client.charisma || val.creativity == client.creativity || val.empathetic == client.empathetic 
+                 || val.honest == client.honest || val.humor == client.humor || val.looks == client.looks || val.status || val.wealthy == client.wealthy)
                 ) {
-                matchObject = val;     
+                console.log("we are within mainer");   
+                 const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
+                 db.collection('introductions').doc(_id).get().then(onDoc => {
+                  console.log(onDoc.exists)
+                   if(onDoc.exists == false){
+                    db.collection('user').doc(userId).set({suggestedMatches:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}, {merge:true})
+                    navigation.navigate('Endorsement', {client:clientLogged,user:val })   
+
+                     
+                   }
+                 })
+                  
+                
+                
                }
           })
-          if(Object.keys(matchObject).length){
-               console.log("match found"); 
-               db.collection('user').doc(userId).set({suggestedMatches:firebase.firestore.FieldValue.arrayUnion(matchObject.phoneNumber)}, {merge:true})
-               navigation.navigate('Endorsement', {client:clientLogged,user:matchObject })
-          }  
+          
+          // if (matchObject && matchObject.phoneNumber !== null){
+                
+          //     db.collection('user').doc(userId).set({suggestedMatches:firebase.firestore.FieldValue.arrayUnion(matchObject.phoneNumber)}, {merge:true})
+          //     navigation.navigate('Endorsement', {client:clientLogged,user:matchObject })  
+
+          //    }  
         })
         return; 
    }
    if(client == 'second'){
-     console.log("updating this client")
-     console.log("updating this dimension"+ questions[questionsIndex].dimension)
-     console.log(demo[index + 1])
+     
      
      return; 
 } 
 }
-
+const onRefresh = () => {
+db.collection('user').doc(userId).set({suggestedMatches:[]}, {merge:true}) 
+}
  useEffect(() => {
      navigation.setOptions({
        headerTitle:false, 
        headerLeft:() => { 
-          return  <TouchableOpacity onPress = {() => navigation.goBack()} style = {{marginLeft:15}}>
+          return  <TouchableOpacity onPress = {() => {setInitialRouteName('Game'),navigation.navigate('Homer')}} style = {{marginLeft:15}}>
               <Text style = {{fontWeight:'bold', fontSize:17, color:'blue'}}>Back</Text>  
               </TouchableOpacity>
-       }     
+       }, 
+       headerRight:() => <TouchableOpacity style = {{marginRight:20}} onPress = {onRefresh}>
+         <FontAwesome name="refresh" size={24} color="black" />
+       </TouchableOpacity>     
      })
  },[])
  
@@ -282,14 +329,13 @@ const namer =  [
   }
 
   const onDragRelease = (gesture) => {
-    console.log("ref is")  
-    console.log(element.current)  
+    
     const measured = measureMain(gesture); 
     if(measured){
        fadeOp()
-       addPoints()
+       //addPoints()
        suggestMatches() 
-       fadeIn()
+        fadeIn()
        
        incrementIndex();   
        questionsIndexIncrement(); 
@@ -300,9 +346,9 @@ const namer =  [
     
   }
   if(questions.length){
-    console.log(questions[0].question)
   }
   
+   
   
   
     return (

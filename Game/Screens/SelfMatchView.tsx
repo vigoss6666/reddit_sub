@@ -33,8 +33,7 @@ const SelfMatchView = ({navigation, route}) => {
       
     }
     
-    console.log(selfMatchView); 
-    console.log(sliderState)
+    
     
     const data = [
          {

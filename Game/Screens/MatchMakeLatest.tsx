@@ -100,7 +100,7 @@ const {width, height} = Dimensions.get('window');
 const [sliderState, setSliderState] = useState({ currentPage: 0 });
 const [filter, setFilter] = useState(route.params ? route.params.finalObject:{});
 const index = useRef().current; 
-console.log(filter); 
+ 
 const sectionData = pageData.length > 0 ? computeSectionLabel(pageData[sliderState.currentPage].data):[]
 const computeSelectedIndex = (id:string) => { 
    const index = pageData[sliderState.currentPage].data.findIndex(val => val._id == id);  

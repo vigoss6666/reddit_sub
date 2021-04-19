@@ -175,7 +175,7 @@ const MatchMakeFinal = ({navigation}) => {
           
     }
     const renderFlatlist = ({item, index}) => {
-        console.log(item.simDimension)
+        
         
          return <View key = {item.phoneNumber} style = {{flexDirection:'row'}}>
              <TouchableOpacity onPress = {() => navigation.navigate('MatchViewLatest', {pageData:userDisplay, clientIndex:sliderState.currentPage, userIndex:index})}>

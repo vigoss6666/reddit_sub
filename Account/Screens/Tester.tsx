@@ -57,9 +57,9 @@ export default function Tester({navigation}){
   }
 
   },[])
-  console.log
+  
     async function signInWithGoogleAsync() {
-        console.log("called")
+        
         try {
           const result = await Google.logInAsync({
             
@@ -68,7 +68,7 @@ export default function Tester({navigation}){
           });
       
           if (result.type === 'success') {
-            console.log(result.accessToken)
+            
             fetch("https://people.googleapis.com")  
             return result.accessToken;
           } else {
@@ -99,7 +99,7 @@ export default function Tester({navigation}){
           quality: 1,
         });
     
-        console.log(result);
+        
     
         if (!result.cancelled) {
           const response = await fetch(result.uri); 
@@ -115,7 +115,7 @@ export default function Tester({navigation}){
         if (!playbackStatus.isLoaded) {
           // Update your UI for the unloaded state
           if (playbackStatus.error) {
-            console.log(`Encountered a fatal error during playback: ${playbackStatus.error}`);
+            
             // Send Expo team the error on Slack or the forums so we can help you debug!
           }
         } else {
@@ -182,7 +182,7 @@ export default function Tester({navigation}){
       const fileUri = gifFileUri(gifId); 
       const fileInfo = await FileSystem.getInfoAsync(fileUri);
       if (!fileInfo.exists) {
-        console.log("Gif isn't cached locally. Downloading...");
+        
         FileSystem.downloadAsync(gifId, fileUri);
       }
        //setImager(gifFileUri);
@@ -191,17 +191,17 @@ export default function Tester({navigation}){
     async function ensureDirExists(dir:string) {
       const dirInfo = await FileSystem.getInfoAsync(dir);
       if (!dirInfo.exists) {
-        console.log("Gif directory doesn't exist, creating...");
+        
         await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
       }
     }
 
-    console.log("component rendered")
+    
     async function tester(url:string){
        const {exists} = await FileSystem.getInfoAsync(dir) 
        if(!exists){
         await FileSystem.makeDirectoryAsync(dir)  
-        console.log("Directory created")
+        
        }
        const fileUri = dir + urlToFilename(url);
        const checker = await FileSystem.getInfoAsync(fileUri)

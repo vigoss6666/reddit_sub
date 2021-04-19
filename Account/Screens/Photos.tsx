@@ -21,26 +21,23 @@ export default function Photos({navigation, route }){
     const [camera,setCamera] = useState(); 
     
     //const {page} = route.params; 
-    console.log(userId)
+    
     
     const [profilePic,setProfilePic] = useState(user.profilePic); 
     
     async function updateProfilePicToServer(){
-      console.log("Namer was called")  
+      
       const pattern = /file/i; 
       const result = profilePic.match(pattern); 
-      console.log("result is")
-      console.log(result)
       
-      console.log("chaddi was called")  
+      
       const response = await fetch(profilePic); 
       const blob = await response.blob(); 
       const namer = Math.random().toString(36).substring(2);
       const ref = firebase.storage().ref().child("images/"+ namer); 
       await ref.put(blob).catch(error => console.log(error))
       const result1 = await ref.getDownloadURL().catch(error => console.log(error))
-      console.log("updating profile pic")
-      console.log(result1)
+      
       updateUser(userId, {profilePic:result1}); 
       
       
@@ -63,7 +60,7 @@ export default function Photos({navigation, route }){
     
     
     const [photos, setPhotos] = useState(user.photos)
-    console.log(profilePic)
+    
     const loadProfilePic = async () => {
     let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
         
@@ -71,7 +68,7 @@ export default function Photos({navigation, route }){
           alert("Permission to access camera roll is required!");
           return;
         }
-        console.log('caleed')
+        
         let pickerResult = await ImagePicker.launchImageLibraryAsync({base64:true});
         setProfilePic(pickerResult.uri) 
   }   
@@ -119,7 +116,7 @@ export default function Photos({navigation, route }){
         return val;       
       })
       Promise.all(result).then(finaler => {
-         console.log(finaler)
+         
          updateUser(userId, {photos:finaler})
       }).catch(error => console.log(error)); 
     
@@ -134,9 +131,9 @@ export default function Photos({navigation, route }){
           alert("Permission to access camera roll is required!");
           return;
         }
-        console.log('caleed')
+        
         let pickerResult = await ImagePicker.launchImageLibraryAsync({base64:false});
-        console.log(pickerResult)
+        
         setPhotosFunc(pickerResult.uri)
         // var storageRef = firebase.storage().ref();
         // var mountainsRef = storageRef.child('mountains.png');

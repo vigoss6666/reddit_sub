@@ -21,7 +21,7 @@ export default function CountryCodes({navigation, route}){
      const myContext = useContext(AppContext); 
     const {user, userId, setDialCode, setCountryCode} = myContext; 
      const {page} = route.params; 
-     console.log(page)
+     
 
      const setDialer = () => {
            

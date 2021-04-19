@@ -29,12 +29,12 @@ const ContactsPhotos = ({navigation}) => {
   const {user, userId} = myContext;
   const [gate, checkGate] = useState(true); 
   useEffect(() => {
-    console.log("hello world")
+    
     async function namer(){
-      console.log("contacts photos called")
+      
      const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
      const users = onResult.docs.map(val => val.data());
-     console.log(users) 
+     
      const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
      const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
      const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker];
@@ -47,18 +47,18 @@ const ContactsPhotos = ({navigation}) => {
  }, [])
   
   let openImagePickerAsync = async (obj) => {
-    console.log('the function was called')  
+    
     let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
 
     if (permissionResult.granted === false) {
       alert("Permission to access camera roll is required!");
       return;
     }
-    console.log("conatacts photos called")  
+    
     
 
     let pickerResult = await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.All});
-    console.log(pickerResult.type)
+    
     if(pickerResult.type == 'image'){
       const manipResult = await ImageManipulator.manipulateAsync(
         pickerResult.uri,

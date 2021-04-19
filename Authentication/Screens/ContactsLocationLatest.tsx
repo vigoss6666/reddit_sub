@@ -24,7 +24,7 @@ const ContactsLocationLatest = ({navigation, route}) => {
   const [markers, setMarkers] = useState([]);  
   const [location, setLocation] = useState({}); 
   const [gate, setGate] = useState(true); 
-  console.log(location.address)
+  
   const handleServerLocation = () => {
      const marker1 = Array.from(markers);  
      const batch = db.batch(); 
@@ -34,19 +34,19 @@ const ContactsLocationLatest = ({navigation, route}) => {
      })
      batch.commit().then(console.log("documents have been updated"))
   }
-console.log("markers is")  
+
 
 const handleMarker = (marker) => {
     setMarkers([...markers, marker])
     
 }
 
-console.log(markers)
+
   useEffect(() => {
     if(profiles.length > 0){
     const filter = markers.map(val => val.client); 
-    console.log("filter is")
-    console.log(filter)
+    
+    
     if(markers.length < 1){
         setGate(true); 
         return; 
@@ -94,7 +94,7 @@ console.log(markers)
     namer()
     
  }, [])
- console.log("sliderState current "+sliderState.currentPage)
+ 
   const setSliderPage = (event: any) => {
     const { currentPage } = sliderState;
     const { x } = event.nativeEvent.contentOffset;
@@ -156,13 +156,13 @@ console.log(markers)
               keyboardShouldPersistTaps = {'always'}
               fetchDetails = {true} 
               onPress={(data, details = null) => {
-                console.log(details?.geometry.location)
+                
                 setX({latitude:details?.geometry.location.lat, longitude:details?.geometry.location.lng})
                 const state = ""; 
                 const result = details?.address_components.map(val => {
                    return val.types.map(val1 => {
                       if(val1 == 'administrative_area_level_1'){
-                         console.log(val.long_name)
+                         
                          setLocation({state: val.long_name, address:data.description})
                       }
                    })

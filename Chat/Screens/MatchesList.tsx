@@ -30,7 +30,7 @@ export function MatchesList({navigation}) {
     
     const finalArray1 = dater; 
        const unsubscribe1 = db.collection('matches').where('client2', '==', user.phoneNumber).onSnapshot(async (onResultClient2) => {
-         console.log("Second snapshot called")  
+           
         let client2 = onResultClient2.docs.map(val => Object.assign({}, val.data(), { _id: val.id }));
         const transformed = client2.map(val => {
           let a = val.client1;

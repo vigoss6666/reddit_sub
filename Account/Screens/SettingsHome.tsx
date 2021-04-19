@@ -41,7 +41,7 @@ export default function SettingsHome({navigation}){
     
         var docRef = db.collection("user").doc('trialUser');
         docRef.onSnapshot((doc) => {
-            console.log(doc.data())
+            
             let timestamp = doc.data().timeStamp;
             const d = new Date(timestamp);
             var ageDifMs = Date.now() - d.getTime();
@@ -70,20 +70,20 @@ export default function SettingsHome({navigation}){
 useEffect(() => {
  docRef.get().then(function(doc) {
     if (doc.exists) {
-        //console.log("Document data:", doc.data());
+        
         
     } else {
         // doc.data() will be undefined in this case
-        console.log("No such document!");
+        
     }
 }).catch(function(error) {
-    console.log("Error getting document:", error);
+    
 });    
 }, [state, subLocality])
 
 const _firebaseCaller = () => { 
      const lamer = firebase.functions().httpsCallable('batman');
-     lamer().then(result => console.log(result));  
+     lamer();  
 }
 
 return(

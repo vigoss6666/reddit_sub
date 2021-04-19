@@ -19,8 +19,7 @@ const MatchViewLatest = ({navigation, route}) => {
     const userIndex = route.params.userIndex; 
     const [sliderState, setSliderState] = useState({ currentPage: clientIndex });
     const [sliderState1, setSliderState1] = useState({ currentPage: userIndex });
-    console.log(clientIndex)
-    console.log(userIndex); 
+     
      
     useEffect(() => {
        navigation.setOptions({
@@ -96,8 +95,8 @@ const MatchViewLatest = ({navigation, route}) => {
     ]
    },
 ])
-console.log("checker"+sliderState1.currentPage)
-console.log(tester[sliderState.currentPage].data[sliderState1.currentPage].name); 
+
+
 const computeName = (obj) => {
     if(obj.name){
        return obj.name

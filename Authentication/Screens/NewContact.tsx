@@ -62,7 +62,7 @@ const [addDatingPool, setAddDatingPool] = useState();
 
 
 if(data){
-     console.log(data); 
+     
 }
 console.log(countryCode); 
 console.log(digits)
@@ -177,7 +177,7 @@ return(
               
               onPress={(data, details = null) => {
                 // 'details' is provided when fetchDetails = true
-                console.log(data, details);
+                
               }}
               query={{
                 key: 'AIzaSyBxsuj6tm1D5d3hEfG2ASfleUBIRREl15Y',

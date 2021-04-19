@@ -59,9 +59,7 @@ function pipe(...fns) {
     return (arg) => fns.reduce((prev, fn) => fn(prev), arg);
 }
 function applyFilters(filter:filter, arr:serverDataObjectDimension[]):serverDataObjectDimension[]{
- console.log("function filter")   
- console.log(filter)
- console.log(arr)   
+ 
  const finalObject:any = []; 
 
  
@@ -96,10 +94,9 @@ const SelfGame = ({navigation, route}) => {
         state:'california'
     })
     
-    console.log('charisma is')
-    console.log(Math.pow(5, selfFilter.charisma))
+    
     useEffect(() => {
-        console.log("called")
+        
            db.collection('user').doc(userId).get().then(doc => {
           
            db.collection('user')
@@ -137,8 +134,7 @@ const SelfGame = ({navigation, route}) => {
       })
     }, [selfFilter])
 
- console.log("section data is")
- console.log(selfFilter)
+ 
 
  
     const [serverData, setServerData] = useState<[serverData]>([{
@@ -180,7 +176,7 @@ const SelfGame = ({navigation, route}) => {
     
 
     const renderFlatlist = ({item}) => {
-        console.log(item.simDimension)
+        
         
          return <View key = {item.phoneNumber} style = {{flexDirection:'row'}}>
              <TouchableOpacity onPress = {() => navigation.navigate('SelfMatchView', {selfMatchView})}>
@@ -233,7 +229,7 @@ const SelfGame = ({navigation, route}) => {
 
     const renderSectionItem = ({section, index}) => {
         
-        console.log('called')
+        
         if (index !== 0) return null;
 
          return <FlatList

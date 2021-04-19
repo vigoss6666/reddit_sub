@@ -192,7 +192,7 @@ const useIntroTemplate = () => {
         
          const unsubscribe = db.collection('introductions').where('matchMaker', '==', userId).onSnapshot(onResult => {
            if(onResult.empty){
-               console.log("no users found")
+               
            }  
            const result = onResult.docs.map(val => val.data())            
 

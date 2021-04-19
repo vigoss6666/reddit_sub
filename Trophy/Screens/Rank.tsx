@@ -55,8 +55,7 @@ const Rank = (props: RankProps) => {
                 
               })
               const filtered = val.points.filter(val1 => val1.createdAt.toDate() > date); 
-              console.log("filtered is")
-              console.log(filtered); 
+              
               return {...val, points:filtered}; 
           })
           const monthAdder = transfromWithMonth.map(val => {
@@ -70,16 +69,14 @@ const Rank = (props: RankProps) => {
           })
           
 
-          console.log("chaddi")
-          console.log(monthAdder); 
-          console.log("chaddi")
+          
 
           const arrangedDescending =  monthAdder.sort((a, b) => {
             return b.aggregatePoint - a.aggregatePoint;
           });
           setTemplate(arrangedDescending); 
           const index = arrangedDescending.findIndex(val => val.phoneNumber == userId); 
-          console.log(index);
+          
           setAllTime(index + 1); 
           const monthSort = monthAdder.sort((a, b) => {
             return b.monthAggregatePoint - a.monthAggregatePoint;

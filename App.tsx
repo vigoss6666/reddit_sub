@@ -149,6 +149,7 @@ export default function App() {
   const [introNotification, setIntroNotification] = useState(); 
   const [chatNotification, setChatNotification] = useState(false);  
   const [chatterNotification, setChatterNotification] = useState(false);
+  const [initialRouteName, setInitialRouteName] = useState('ProfilePool');  
   const [singleContact, setSingleContact] = useState();  
   const [notification, setNotification] = useState(false);
   const responseListener = useRef();
@@ -205,13 +206,13 @@ export default function App() {
 
 useEffect(() => {
    Notifications.addNotificationReceivedListener(response => {
-     console.log(response)
+     
    })
    Notifications.addNotificationsDroppedListener(response => {
-      console.log("hello world")
+      
    })
    Notifications.addNotificationResponseReceivedListener(response => {
-   console.log("Hello world") 
+   
   });
 
   
@@ -230,6 +231,8 @@ function stringifyNumber(n) {
   
   
   const globalObject = {
+    initialRouteName, 
+    setInitialRouteName, 
     stringifyNumber,
     computeName,
     createChatThread,
@@ -275,7 +278,7 @@ function stringifyNumber(n) {
   }
 
    
-   console.log(currentUser)
+   
   
   const [chatNotify,setChatNotify] = useState(true); 
   useEffect(() => {
@@ -451,13 +454,13 @@ const HeaderLeft = () => (
 )
 function Home(props){
   const myContext = useContext(AppContext); 
-  const {user, userId, countryCode, dialCode, chatNotification, chatterNotification} = myContext;
+  const {user, userId, countryCode, dialCode, chatNotification, chatterNotification, initialRouteName} = myContext;
   const insets = useSafeAreaInsets();
   return (
     <SafeAreaProvider>
     <Tab.Navigator 
       style = {{paddingTop:insets.top, paddingRight:insets.right, paddingLeft:insets.left}} 
-      initialRouteName = {"ProfilePool"}
+      initialRouteName = {initialRouteName}
       tabBarOptions={{
       activeTintColor: 'tomato',
       inactiveTintColor: 'gray',
@@ -592,8 +595,10 @@ function Home(props){
           return user.profilePic ? <Image source = {{uri:user.profilePic}} style = {{height:30, width:30, borderRadius:15}}/>:<MaterialCommunityIcons name="account-circle" size={26} color="orange" />
         }
         
+        
       },
-      initialRouteName:"ProfilePool", 
+      
+       
     })}
     
     >

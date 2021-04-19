@@ -78,7 +78,7 @@ useEffect(() => {
        
    }) 
 }, [email])
-console.log(matchmaking)
+
 const initialValue = matchmaking == "yes" ? 0:1; 
     const options = [
         { label: "yes", value: "yes" },

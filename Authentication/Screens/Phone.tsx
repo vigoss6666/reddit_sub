@@ -97,7 +97,7 @@ export default function App({navigation}) {
             firebase.auth().signInWithCredential(credential).then(async onfulfilled => {
                if(onfulfilled.user){
                   await AsyncStorage.setItem('user', phoneNumber);  
-                  console.log("Authentication have passed")
+                  
 
                   showMessage({ text: 'Phone authentication successful 👍' })
                   navigation.navigate('Name'); 

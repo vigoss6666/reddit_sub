@@ -173,7 +173,7 @@ const Match = ({navigation}) => {
             return {...val, endorsementFlag}
         }); 
         const checker = endorsementAdder.map(val => val.seen); 
-        console.log(checker)
+        
        
         setClient1Template(endorsementAdder); 
     
@@ -185,7 +185,7 @@ const Match = ({navigation}) => {
   return () => unsubscribe(); 
   }, [user.seenClientMatches])
 
-  console.log(client1Template.length)
+  
 
   useEffect(() => {
      const unsubscribe = db.collection('matches').where('client2', 'in', user.datingPoolList).onSnapshot(onResult => {

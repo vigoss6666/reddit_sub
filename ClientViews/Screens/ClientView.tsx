@@ -17,7 +17,7 @@ const {user, userId, CustomBackComponent} = myContext;
   })
  }, [])
   const {client} = route.params; 
-  console.log(client)
+  
   
   return (
     <ScrollView style={{flex:1,}}>

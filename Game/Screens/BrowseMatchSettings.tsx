@@ -26,7 +26,7 @@ const [feet, setFeet ] = useState("5");
 const [matchmaking, setMatchmaking] = useState();
 const [compatibility, setCompatibility] = useState(1);
 const [distance, setDistance] = useState(); 
-console.log("client is"+client)
+
 
 const index = clientFilter.findIndex(val => val.client == client.phoneNumber); 
 const currentClientFilter = clientFilter[index].filter; 

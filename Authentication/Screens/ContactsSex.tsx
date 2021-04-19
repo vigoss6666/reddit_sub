@@ -39,7 +39,7 @@ useEffect(() => {
    namer()
    
 }, [])
-console.log(profiles)
+
 const updateToServer = () => {
     const db = firebase.firestore(); 
     let batch = db.batch(); 
@@ -88,7 +88,7 @@ const _sendToServer = () => {
  const finaler = profiles.map(val => {
     return {_id:val.phoneNumber, gender:val.gender}
  }) 
- console.log({data:finaler})
+ 
  updateContactsGender({variables:{userInputList:{data:finaler}}});   
 }
 const computeName = (obj) => {

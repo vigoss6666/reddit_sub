@@ -12,7 +12,7 @@ const localhost: string = 'http://192.168.1.15:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 async function getId(){
     const result = await AsyncStorage.getItem('_id')
-    console.log(result)
+    
     return result; 
  }
  export function uuidv4() {
@@ -106,7 +106,7 @@ export async function mutateSettings(obj:AccountSettings, refetchQueries:any) {
  }
 `
 const result = await client.mutate({mutation:ACCOUNT_SETTING_MUTATION,variables:{userInput:obj}, refetchQueries:refetchQueries});
-console.log(result);      
+   
 }
 export async function uploadImage(response,filename,){
   const data = new FormData();
@@ -209,8 +209,8 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
   mainerObj.push({ trait:'creativity', aheadOf:Math.floor(percent), votes:obj1.creativity}) 
   }
   function charisma(){
-  console.log("debugging charisma")
-  console.log(arr1.length)   
+  
+  
   const duplicate = arr1.concat();   
   const result = duplicate.sort((a, b) => {
       return b.charisma - a.charisma;
@@ -407,7 +407,7 @@ export const computeSectionLabel = (arr:objectWithDimension[]):section[] => {
 export const updateUser = (user, obj) => {
    const db = firebase.firestore(); 
    db.collection('user').doc(user).set(obj, {merge:true}).catch(error => {
-      console.log(error.message)
+      
    })
 }
 
@@ -480,6 +480,24 @@ export function filterGamer(arr, indexValue, arrFilter, applyToExcluded, applyTo
      return result.data()
    })  
  }
+
+ export function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+  var dLon = deg2rad(lon2-lon1); 
+  var a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+    ; 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  var d = R * c; // Distance in km
+  return d/1.609;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180)
+}
 
 
 

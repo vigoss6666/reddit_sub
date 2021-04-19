@@ -17,7 +17,7 @@ query {
 export default function Checker({navigation}){
     const {data, loading, error} = useQuery(GET_DATA); 
     if(data){
-         console.log(data); 
+          
     }
 
 return(

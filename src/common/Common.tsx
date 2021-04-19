@@ -507,7 +507,7 @@ export function Tester1({navigation,db,chatID,userId}){
         var jobskill_query = db.collection('messages').doc(chatID).collection("messages").where('_id','==',messageObject._id);
         jobskill_query.get().then(function(querySnapshot) {
           querySnapshot.forEach(function(doc) {
-            console.log(doc.data())
+            
             doc.ref.update({like:likeStatus});
           });
         });
@@ -602,7 +602,7 @@ export function TraitsTemplate(client) {
  const [traits, setTraits] = useState([]); 
 
 const setArrow = (obj) => {
-  console.log("called"); 
+  
 const result = traits.map(val => {
       if(val.trait == obj.trait){
           val.selected = true; 
@@ -611,7 +611,7 @@ const result = traits.map(val => {
     return val; 
    
 })
-console.log(result)
+
 setTraits(traits => result)
 }
 const setArrowFalse = (obj) => {
@@ -637,8 +637,7 @@ setTraits(traits => result)
          const users = onResult.docs.map(val => val.data()); 
 
          const transformed = transformCreativity(client, users); 
-         console.log('trnasformed is')
-         console.log(transformed)
+         
          setTraits(transformed); 
       })
    },[])
@@ -949,11 +948,11 @@ export function ClientHeader({client, style}) {
           return val; 
          
      })
-     console.log(result)
+     
      setTraits(traits => result)
     }
     const setArrowFalse = (obj) => {
-        console.log("called"); 
+         
      const result = traits.map(val => {
             if(val.trait == obj.trait){
                 val.selected = false; 
@@ -1050,20 +1049,20 @@ export function ClientHeader({client, style}) {
       dimension:string; 
   } 
  const [votes, setVotes] = useState([]);  
- console.log(client.votes)
+ 
  useEffect(() => {
   async function gamer(){
     const finaler = Promise.all(client.votes.map(async val => {
       const result = await db.collection('user').doc(val.answeredBy).get(); 
       return {...val, answeredBy:result.data()}
     })); 
-   console.log("finaler is"); 
+    
    finaler.then(result => setVotes(result))
    } 
   gamer(); 
   }, [client])   
- console.log("votes")
- console.log(votes)
+ 
+
  
  
  
