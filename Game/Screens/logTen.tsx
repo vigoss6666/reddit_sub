@@ -14,7 +14,7 @@ export function logTen(arr: serverData[] | serverData): serverDataWithDimension[
       status: parseFloat(getBaseLog(5, val.status).toFixed(1)),
       wealthy: parseFloat(getBaseLog(5, val.wealthy).toFixed(1)),
       humor: parseFloat(getBaseLog(5, val.humor).toFixed(1)),
-      narcissistic: parseFloat(getBaseLog(5, val.narcissistic).toFixed(1)),
+      narcissism: parseFloat(getBaseLog(5, val.narcissism).toFixed(1)),
     }
 
     ));
@@ -31,7 +31,7 @@ export function logTen(arr: serverData[] | serverData): serverDataWithDimension[
     status: parseFloat(getBaseLog(5, arr.status).toFixed(1)),
     wealthy: parseFloat(getBaseLog(5, arr.wealthy).toFixed(1)),
     humor: parseFloat(getBaseLog(5, arr.humor).toFixed(1)),
-    narcissistic: parseFloat(getBaseLog(5, arr.narcissistic).toFixed(1)),
+    narcissism: parseFloat(getBaseLog(5, arr.narcissism).toFixed(1)),
   };
 
 }

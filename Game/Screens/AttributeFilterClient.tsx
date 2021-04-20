@@ -64,7 +64,7 @@ const AttributeFilterCLient = ({navigation, route}) => {
   
    const [attribute, setAttribute] = useState(''); 
    const myContext = useContext(AppContext);
-   const {user, userId, selfFilter, setSelfFilter} = myContext;
+   const {user, userId, setClientFilter, clientFilter} = myContext;
    const [maleMatches, setMaleMatches] = useState(0); 
    const [femaleMatches, setFemaleMatches] = useState(0); 
    const [femaleAhead, setFemaleAhead] = useState(0); 
@@ -130,7 +130,7 @@ const AttributeFilterCLient = ({navigation, route}) => {
    },[])
    useEffect(() => {
       route.params ? setAttribute(route.params.attribute):null;
-      route.params ? setAttValue(computeDefaultValue()):null; 
+      //route.params ? setAttValue(computeDefaultValue()):null; 
    },[])     
 
 
@@ -227,34 +227,51 @@ useEffect(() => {
 }, [attValue])
 
 
-const computeDefaultValue = () => {
-  if(route.params.attribute == "creativity"){
-     return selfFilter.creativity; 
-  }
-  if(route.params.attribute == "empathetic"){
-    return selfFilter.empathetic; 
- }
-  if(route.params.attribute == "charisma"){
-    return selfFilter.charisma; 
- }
- if(route.params.attribute == "honest"){
-  return selfFilter.honest; 
-}
-if(route.params.attribute == "looks"){
-return selfFilter.looks; 
-}
-if(route.params.attribute == "humor"){
-return selfFilter.humor; 
-}
-if(route.params.attribute == "status"){
-return selfFilter.status; 
-}
-if(route.params.attribute == "wealthy"){
-return selfFilter.wealthy; 
-}
-if(route.params.attribute == "narcissism"){
-return selfFilter.narcissism; 
-}
+// const computeDefaultValue = () => {
+//   if(route.params.attribute == "creativity"){
+//      return selfFilter.creativity; 
+//   }
+//   if(route.params.attribute == "empathetic"){
+//     return selfFilter.empathetic; 
+//  }
+//   if(route.params.attribute == "charisma"){
+//     return selfFilter.charisma; 
+//  }
+//  if(route.params.attribute == "honest"){
+//   return selfFilter.honest; 
+// }
+// if(route.params.attribute == "looks"){
+// return selfFilter.looks; 
+// }
+// if(route.params.attribute == "humor"){
+// return selfFilter.humor; 
+// }
+// if(route.params.attribute == "status"){
+// return selfFilter.status; 
+// }
+// if(route.params.attribute == "wealthy"){
+// return selfFilter.wealthy; 
+// }
+// if(route.params.attribute == "narcissism"){
+// return selfFilter.narcissism; 
+// }
+// }
+
+const addClientFilter = () => {
+
+  const indexer = clientFilter.findIndex(val => val.client == client.phoneNumber); 
+  // const currentClientFilter = clientFilter[index].filter;
+  // clientFilter[index].filter = Object.assign({}, clientFilter[index].filter, { [attribute]:attValue})
+  const result = clientFilter.map((val, index) => {
+     if(index == indexer){
+       return {client:val.client, filter:Object.assign({},val.filter, {[attribute]:attValue} )} 
+     }
+     return val; 
+  })
+  console.log("clientFilter gamer")
+  console.log(clientFilter)
+  setClientFilter(result); 
+   
 }
 
 
@@ -504,7 +521,7 @@ return selfFilter.narcissism;
               <Text style = {{fontWeight:'bold'}} >Males</Text>
           </View>
           </View>
-          <Button title = {'Save'} containerStyle = {{marginTop:20, marginBottom:30,marginLeft:20, marginRight:20}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {setSelfFilter({...selfFilter, [attribute]:attValue}),navigation.navigate('BrowseSettings')}}/>
+          <Button title = {'Save'} containerStyle = {{marginTop:20, marginBottom:30,marginLeft:20, marginRight:20}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {addClientFilter(),  navigation.navigate('BrowseMatchSettings')}}/>
           </View> 
     </ScrollView>
     </SafeAreaView>

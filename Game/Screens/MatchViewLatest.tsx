@@ -1,4 +1,4 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { Text, View, StyleSheet, Dimensions, ScrollView, Image, SafeAreaView, SectionList, FlatList, TouchableOpacity } from 'react-native';
 import { MaterialIcons, Foundation, Feather, Entypo,MaterialCommunityIcons  } from '@expo/vector-icons';
 import {firebase } from '../../config'; 
@@ -6,19 +6,44 @@ import {Button} from 'react-native-elements';
 import {iconFactory} from '../../src/common/Common'; 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { client } from 'networking';
+;
+import AppContext from '../../AppContext'; 
 interface MatchViewLatestProps {}
 
 const MatchViewLatest = ({navigation, route}) => {
     const {width, height} = Dimensions.get('window'); 
     const [hidden, setHidden]= useState(false);
     const insets = useSafeAreaInsets();
+    const myContext = useContext(AppContext); 
+    const {user, userId, db, createChatThread, firebase} = myContext;
     
     
     const tester = route.params.pageData; 
     const clientIndex = route.params.clientIndex; 
-    const userIndex = route.params.userIndex; 
+    const userIndex = route.params.userIndex;
+    console.log("userIndex"+userIndex) 
     const [sliderState, setSliderState] = useState({ currentPage: clientIndex });
     const [sliderState1, setSliderState1] = useState({ currentPage: userIndex });
+
+
+    const setEvent = () => {
+      const client = tester[sliderState.currentPage].client; 
+      const user = tester[sliderState.currentPage].data[sliderState1.currentPage];
+      const _id = createChatThread(client.phoneNumber, user.phoneNumber);
+      console.log("id is"+_id)   
+      db.collection('introductions').doc(_id).set({client1:client.phoneNumber, client2:user.phoneNumber, createdAt:new Date(), discoveredBy:userId}, {merge:true});
+      db.collection('user').doc(userId).set({points:firebase.firestore.FieldValue.arrayUnion({
+        pointFor:'matchDiscovered', 
+        point:50, 
+        createdAt: new Date()  
+      })}, {merge:true}) 
+
+    }
+
+
+
+
+
      
      
     useEffect(() => {
@@ -109,23 +134,23 @@ const computeName = (obj) => {
     const textTemplate = hidden ? null: <View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('humor', 20)}
-          <Text style = {styles.scores }>Humor:  1 </Text>
+          <Text style = {styles.scores }>Humor:  {tester[sliderState.currentPage].data[sliderState1.currentPage].humor} </Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('empathetic', 20)}
-          <Text style = {styles.scores }>Empathetic:  1 </Text>
+          <Text style = {styles.scores }>Empathetic:  {tester[sliderState.currentPage].data[sliderState1.currentPage].empathetic} </Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5, marginLeft:5}}>
           {iconFactory('wealthy', 20)}
-          <Text style = {styles.scores }>Wealthy:  1 </Text>
+          <Text style = {styles.scores }>Wealthy:  {tester[sliderState.currentPage].data[sliderState1.currentPage].wealthy} </Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('looks', 20)}
-          <Text style = {styles.scores }>Looks:  1</Text>
+          <Text style = {styles.scores }>Looks:  {tester[sliderState.currentPage].data[sliderState1.currentPage].looks}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center",padding:5}}>
           {iconFactory('status', 20)}
-          <Text style = {styles.scores }>Status:  1 </Text>
+          <Text style = {styles.scores }>Status:  {tester[sliderState.currentPage].data[sliderState1.currentPage].status} </Text>
           </View>
           </View> 
     const sliderTemplate =  tester.map((val,index) => {
@@ -166,7 +191,7 @@ onScroll={(event: any) => {
 </ScrollView>
 
 <ScrollView
-contentOffset = {{x:414*sliderState1.currentPage, y:0}}
+contentOffset = {{x:414*userIndex, y:0}}
 showsVerticalScrollIndicator={false}
 showsHorizontalScrollIndicator={false}
 style = {{position:'absolute', top:150, left:50, zIndex:2000}} 
@@ -206,7 +231,7 @@ onScroll={(event: any) => {
           </View> 
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('honest', 20)}
-          <Text style = {styles.scores }> Honest:  {}</Text>
+          <Text style = {styles.scores }> Honest:  {tester[sliderState.currentPage].data[sliderState1.currentPage].honest}</Text>
           </View> 
           {textTemplate}
             </View>
@@ -214,6 +239,7 @@ onScroll={(event: any) => {
             <View style = {{alignItems:"center", justifyContent:"center", padding:5, marginTop:5}}>
                 <Text style = {{fontSize:30, fontWeight:"900"}}>{}</Text>
                 <Text style = {{fontSize:14, fontWeight:'bold',marginTop:5}}>Compatability Score</Text>
+                <Text style = {{fontSize:14, fontWeight:'bold',marginTop:5}}>{tester[sliderState.currentPage].data[sliderState1.currentPage].dimension} </Text>
             </View> 
 
             </View>
@@ -229,14 +255,14 @@ onScroll={(event: any) => {
   }}></View>
            <View style = {{flexDirection:"row", justifyContent:"center",alignItems:"center"}}>
            <Feather name="alert-triangle" size={24} color="red" />
-           <Text style = {{marginLeft:5, fontWeight:'bold'}}>Narcissism: {}</Text>
+           <Text style = {{marginLeft:5, fontWeight:'bold'}}>Narcissism: {tester[sliderState.currentPage].data[sliderState1.currentPage].narcissism}</Text>
            </View>
            <View style = {{borderBottomWidth:2, marginLeft:30, marginRight:30, borderBottomColor:"grey", marginTop:10}}>
            </View>
            
            </ScrollView>
            <View style = {{marginTop:10, marginLeft:30, marginRight:30, flex:0.1, marginBottom:15, justifyContent:"center", }}>
-           <Button title = "Generate Match" buttonStyle = {{backgroundColor:"#afd968"}} titleStyle = {{color:"black", fontWeight:'bold'}} onPress = {() => {setEvent(), navigation.navigate('GameHomepage')}}/>
+           <Button title = "Generate Match" buttonStyle = {{backgroundColor:"#afd968"}} titleStyle = {{color:"black", fontWeight:'bold'}} onPress = {() => {setEvent() }}/>
            </View>
          </View>
      )

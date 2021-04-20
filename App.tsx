@@ -328,7 +328,7 @@ const customHeader = () => {
       <NavigationContainer>
        
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
+        <Stack.Screen name="Home" component={MatchMakeFinal} options = {{headerShown:false}}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
         <Stack.Screen name="Gender" component={Gender}/>

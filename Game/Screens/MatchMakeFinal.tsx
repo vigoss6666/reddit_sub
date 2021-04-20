@@ -47,7 +47,7 @@ function applyFilters(filter:filter, arr:serverDataObjectDimension[]):serverData
 
 const MatchMakeFinal = ({navigation}) => {
     const myContext = useContext(AppContext); 
-    const {user, userId, clientFilter, setClientFilter } = myContext;
+    const {user, userId, clientFilter, setClientFilter, } = myContext;
     const [sliderState, setSliderState] = useState({ currentPage: 0 });
     const insets = useSafeAreaInsets();
     const [sectionData,setSectionData] = useState([]); 
@@ -70,7 +70,8 @@ const MatchMakeFinal = ({navigation}) => {
     useEffect(() => {
         async function namer(){
           const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get(); 
-          const client = await result.docs.map(val => val.data()); 
+          const client = await result.docs.map(val => val.data());
+           
           const defaultSetter = client.map(val => {
               return Object.assign({}, {client:val.phoneNumber, filter:{
                 charisma:0, 
@@ -159,6 +160,11 @@ const MatchMakeFinal = ({navigation}) => {
             });
         }
     };
+
+    const computeIndex = (flatListuser) => {
+       const result = userDisplay[sliderState.currentPage].data.findIndex(val => val.phoneNumber == flatListuser.phoneNumber);
+       return result;  
+    }
     const renderSectionItem = ({section, index}) => {
         
         console.log('called')
@@ -178,7 +184,7 @@ const MatchMakeFinal = ({navigation}) => {
         
         
          return <View key = {item.phoneNumber} style = {{flexDirection:'row'}}>
-             <TouchableOpacity onPress = {() => navigation.navigate('MatchViewLatest', {pageData:userDisplay, clientIndex:sliderState.currentPage, userIndex:index})}>
+             <TouchableOpacity onPress = {() => navigation.navigate('MatchViewLatest', {pageData:userDisplay, clientIndex:sliderState.currentPage, userIndex:computeIndex(item)})}>
 
                <MaterialIcons name="account-circle" size={70} color="black" /></TouchableOpacity>
 

@@ -29,7 +29,55 @@ const [distance, setDistance] = useState();
 
 
 const index = clientFilter.findIndex(val => val.client == client.phoneNumber); 
-const currentClientFilter = clientFilter[index].filter; 
+const currentClientFilter = clientFilter[index].filter;
+console.log(currentClientFilter) 
+const distanceTemplate = () => {
+  console.log("clientDistance"+client.distancePreference)
+  if(client.distancePreference == 40){
+    return (
+      <View>
+      <View style = {{flexDirection:'row',marginTop:20,justifyContent:'space-between'}}>
+      <Text style = {{ fontWeight:'bold', fontSize:20}}>Maximum distance</Text>
+      <Text style = {{ fontWeight:'bold', fontSize:20}}> >{distance} mi </Text>
+      </View>           
+
+      <Slider
+ style={{ height: 40}}
+ minimumValue={1}
+ maximumValue={40}
+ minimumTrackTintColor="#FFFFFF"
+ maximumTrackTintColor="#000000" 
+ onValueChange = {changeValue1}
+ // value = {value} 
+ // onSlidingComplete = {onSlidingComplete}
+ 
+
+/>
+</View>
+    )
+  }
+ return (
+  <View>
+      <View style = {{flexDirection:'row',marginTop:20,justifyContent:'space-between'}}>
+      <Text style = {{ fontWeight:'bold', fontSize:20}}>Maximum distance</Text>
+      <Text style = {{ fontWeight:'bold', fontSize:20}}> >{client.distancePreference} mi </Text>
+      </View>           
+
+      <Slider
+ style={{ height: 40}}
+ minimumValue={1}
+ maximumValue={40}
+ minimumTrackTintColor="#FFFFFF"
+ maximumTrackTintColor="#000000" 
+ onValueChange = {changeValue1}
+  value = {client.distancePreference} 
+ // onSlidingComplete = {onSlidingComplete}
+ disabled = {true}
+ />
+<Text style = {{alignSelf:'flex-end', fontStyle:'italic', fontSize:10}}>Set by client</Text>
+</View> 
+ )  
+}
 
 
 
@@ -422,24 +470,8 @@ function jsUcfirst(str)
 
 
 </View>    
-
-         <View style = {{flexDirection:'row',marginTop:20,justifyContent:'space-between'}}>
-         <Text style = {{ fontWeight:'bold', fontSize:20}}>Maximum distance</Text>
-         <Text style = {{ fontWeight:'bold', fontSize:20}}> >{distance} mi </Text>
-         </View>           
-
-         <Slider
-    style={{ height: 40}}
-    minimumValue={1}
-    maximumValue={40}
-    minimumTrackTintColor="#FFFFFF"
-    maximumTrackTintColor="#000000" 
-    onValueChange = {changeValue1}
-    // value = {value} 
-    // onSlidingComplete = {onSlidingComplete}
-    
-
-  />
+{distanceTemplate()}
+   
 <View style={{
     borderStyle: 'dotted',
     borderWidth: 2,

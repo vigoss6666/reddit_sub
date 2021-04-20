@@ -26,6 +26,9 @@ const computeName = (obj) => {
     return obj.firstName
 }
 
+
+
+
 const PlayGameLatest = ({navigation}) => {
   const [bar, setBar] = useState(0);
   const [client, setClient] = useState(); 
@@ -49,7 +52,19 @@ const PlayGameLatest = ({navigation}) => {
   const [matchFound, setMatchFound] = useState(false); 
 
 
- 
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle:false, 
+      headerLeft:() => { 
+         return  <TouchableOpacity onPress = {() => {setInitialRouteName('Game'),navigation.navigate('Homer')}} style = {{marginLeft:15}}>
+             <Text style = {{fontWeight:'bold', fontSize:17, color:'blue'}}>Back</Text>  
+             </TouchableOpacity>
+      }, 
+      headerRight:() => <TouchableOpacity style = {{marginRight:20}} onPress = {onRefresh}>
+        <FontAwesome name="refresh" size={24} color="black" />
+      </TouchableOpacity>     
+    })
+},[]) 
   
 
    useEffect(() => {
@@ -222,9 +237,6 @@ const namer =  [
           filterBySelf.excludedObjects.map(async val => {
                const gender = val.gender; 
                const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude);
-               
-
-
                const genderChecker = client.gender == 'male' ? 'female':'male';  
                if( distance < client.distancePreference && val.gender == genderChecker && (client.minAgePreference <= val.age && client.maxAgePreference >= val.age ) && (val.charisma == client.charisma || val.creativity == client.creativity || val.empathetic == client.empathetic 
                  || val.honest == client.honest || val.humor == client.humor || val.looks == client.looks || val.status || val.wealthy == client.wealthy)
@@ -236,47 +248,58 @@ const namer =  [
                    if(onDoc.exists == false){
                     db.collection('user').doc(userId).set({suggestedMatches:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}, {merge:true})
                     navigation.navigate('Endorsement', {client:clientLogged,user:val })   
-
-                     
                    }
                  })
-                  
-                
-                
                }
           })
           
-          // if (matchObject && matchObject.phoneNumber !== null){
-                
-          //     db.collection('user').doc(userId).set({suggestedMatches:firebase.firestore.FieldValue.arrayUnion(matchObject.phoneNumber)}, {merge:true})
-          //     navigation.navigate('Endorsement', {client:clientLogged,user:matchObject })  
-
-          //    }  
+           
         })
-        return; 
+        
    }
    if(client == 'second'){
+    const client = demo[index + 1]; 
+    db.collection('user').where('state', '==', demo[index + 1].state).get().then(async onResult => {
+      const users = onResult.docs.map(val =>val.data()); 
+      const usersLogged = logTen(users); 
+      const clientLogged = logTen(client)
+      
+      let matchObject; 
+      
+      const filterBySuggestions = filterGamer(usersLogged, 'phoneNumber', user.suggestedMatches, null, null);
+      const filterBySelf = filterGamer(filterBySuggestions.excludedObjects, 'phoneNumber', [client.phoneNumber], null, null);
+      
+      filterBySelf.excludedObjects.map(async val => {
+           const gender = val.gender; 
+           const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude);
+           const genderChecker = client.gender == 'male' ? 'female':'male';  
+           if( distance < client.distancePreference && val.gender == genderChecker && (client.minAgePreference <= val.age && client.maxAgePreference >= val.age ) && (val.charisma == client.charisma || val.creativity == client.creativity || val.empathetic == client.empathetic 
+             || val.honest == client.honest || val.humor == client.humor || val.looks == client.looks || val.status || val.wealthy == client.wealthy)
+            ) {
+            console.log("we are within mainer");   
+             const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
+             db.collection('introductions').doc(_id).get().then(onDoc => {
+              console.log(onDoc.exists)
+               if(onDoc.exists == false){
+                db.collection('user').doc(userId).set({suggestedMatches:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}, {merge:true})
+                navigation.navigate('Endorsement', {client:clientLogged,user:val })   
+               }
+             })
+           }
+      })
+      
+       
+    })  
+    
      
      
-     return; 
+      
 } 
 }
 const onRefresh = () => {
 db.collection('user').doc(userId).set({suggestedMatches:[]}, {merge:true}) 
 }
- useEffect(() => {
-     navigation.setOptions({
-       headerTitle:false, 
-       headerLeft:() => { 
-          return  <TouchableOpacity onPress = {() => {setInitialRouteName('Game'),navigation.navigate('Homer')}} style = {{marginLeft:15}}>
-              <Text style = {{fontWeight:'bold', fontSize:17, color:'blue'}}>Back</Text>  
-              </TouchableOpacity>
-       }, 
-       headerRight:() => <TouchableOpacity style = {{marginRight:20}} onPress = {onRefresh}>
-         <FontAwesome name="refresh" size={24} color="black" />
-       </TouchableOpacity>     
-     })
- },[])
+ 
  
 
 
@@ -333,10 +356,9 @@ db.collection('user').doc(userId).set({suggestedMatches:[]}, {merge:true})
     const measured = measureMain(gesture); 
     if(measured){
        fadeOp()
-       //addPoints()
+       addPoints()
        suggestMatches() 
-        fadeIn()
-       
+       fadeIn()
        incrementIndex();   
        questionsIndexIncrement(); 
        
@@ -387,13 +409,11 @@ db.collection('user').doc(userId).set({suggestedMatches:[]}, {merge:true})
               
               
         </View>
-      );
+      )
   
-  return <View>
-      <Text>Loading</Text>
-  </View>
   
-};
+  
+}
 
 export default PlayGameLatest;
 
