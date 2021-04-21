@@ -6,7 +6,7 @@ import {firebase} from '../../config';
 import AppContext from '../../AppContext'; 
 import { logTen } from './logTen';
 import { iconFactory} from '../../src/common/Common';
-import {transformCreativity, computeSimDimension, computeSectionLabel} from '../../networking'; 
+import {transformCreativity, computeSimDimension, computeSectionLabel, filterGamer} from '../../networking'; 
 const db = firebase.firestore(); 
 interface MatchMakeFinalProps {}
 const computeName = (obj) => {
@@ -45,14 +45,26 @@ function applyFilters(filter:filter, arr:serverDataObjectDimension[]):serverData
     return finalObject;  
    }
 
-const MatchMakeFinal = ({navigation}) => {
+const MatchMakeFinal = ({navigation, route}) => {
     const myContext = useContext(AppContext); 
-    const {user, userId, clientFilter, setClientFilter, } = myContext;
-    const [sliderState, setSliderState] = useState({ currentPage: 0 });
+    const {user, userId, clientFilter, setClientFilter,sentFromBrowse} = myContext;
+    const [sliderState, setSliderState] = useState({ currentPage:0  });
     const insets = useSafeAreaInsets();
     const [sectionData,setSectionData] = useState([]); 
     const {width, height} = Dimensions.get('window'); 
     const [userDisplay, setUserDisplay] = useState([]); 
+    const [clienter, setClienter] = useState(null); 
+    
+    useEffect(() => {
+      if(route.params){
+        const {clientFrom} = route.params;     
+        setClienter(clientFrom)
+      }
+    }, [])
+
+
+    
+
     
     
 
@@ -65,30 +77,46 @@ const MatchMakeFinal = ({navigation}) => {
         </View>
         </View>
        })
-
-
+    
+    
     useEffect(() => {
         async function namer(){
           const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get(); 
           const client = await result.docs.map(val => val.data());
+          if(clienter){
+            const index = client.findIndex(val => val.phoneNumber == clienter.phoneNumber);
+            setSliderState({
+              ...sliderState,
+              currentPage: index,
+          }); 
+          }
+
            
-          const defaultSetter = client.map(val => {
-              return Object.assign({}, {client:val.phoneNumber, filter:{
-                charisma:0, 
-                creativity:0, 
-                honest:0, 
-                looks:0, 
-                empathetic:0, 
-                status:0, 
-                humor:0, 
-                wealthy:0, 
-                narcissism:0,
-                minAge:15, 
-                maxAge:60,
-                dimension:0,
-              }})
-          })
-           setClientFilter(defaultSetter); 
+const copy = clientFilter.concat();           
+const clientNumber = copy.map(val1 => val1.client); 
+
+const resulter = filterGamer(client, 'phoneNumber', clientNumber, null, null); 
+
+resulter.excludedObjects.map(val2 => {
+ copy.push({
+ client:val2.phoneNumber, 
+ filter:{
+        charisma:0, 
+        creativity:0, 
+        honest:0, 
+        looks:0, 
+        empathetic:0, 
+        status:0, 
+        humor:0, 
+        wealthy:0, 
+        narcissism:0,
+        minAge:15, 
+        maxAge:60,
+        dimension:0,
+      }
+ })
+})
+           setClientFilter(copy); 
 
           const finalResult = Promise.all(client.map(async val => {
                const gender = val.gender; 
@@ -147,7 +175,8 @@ const MatchMakeFinal = ({navigation}) => {
 
         } 
         namer()
-    }, [])
+    }, [clienter])
+    
     const setSliderPage = (event: any) => {
         const { currentPage } = sliderState;
         const { x } = event.nativeEvent.contentOffset;
@@ -209,11 +238,13 @@ const MatchMakeFinal = ({navigation}) => {
             </View>
             <View style = {{flex:'16%'}}>
             <ScrollView
+            contentOffset = {{x:414*sliderState.currentPage, y:0}}
            style = {{ }} 
+           
     horizontal = {true}
     pagingEnabled = {true}
     showsHorizontalScrollIndicator={false}
-    scrollEventThrottle={16}
+    scrollEventThrottle={8}
     onScroll={(event: any) => {
         setSliderPage(event);
     }}

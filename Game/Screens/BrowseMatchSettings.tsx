@@ -10,27 +10,81 @@ import AppContext from '../../AppContext';
 import {updateUser} from '../../networking';
 const db = firebase.firestore(); 
 
+//@refresh reset
 
-// @refresh reset
 
 interface BrowseSettingsProps {}
 
 const BrowseMatchSettings = ({navigation, route}) => {
 const [selected, setSelected] = useState('filter'); 
+const [counter, setCounter] = useState(1); 
 const myContext = useContext(AppContext); 
-const {user, userId, selfFilter, setSelfFilter, clientFilter} = myContext;
+const {user, userId, selfFilter, setSelfFilter, clientFilter, firebase, db, setSentFromBrowse} = myContext;
 const [potentialMatches, setPotentialMatches] = useState(0); 
+const [clientIndex, setClientIndex] = useState(); 
 const {client} = route.params; 
 const [inches, setInches] = useState("11"); 
 const [feet, setFeet ] = useState("5"); 
 const [matchmaking, setMatchmaking] = useState();
 const [compatibility, setCompatibility] = useState(1);
 const [distance, setDistance] = useState(); 
+const [traits, setTraits] = useState([]); 
 
 
-const index = clientFilter.findIndex(val => val.client == client.phoneNumber); 
-const currentClientFilter = clientFilter[index].filter;
-console.log(currentClientFilter) 
+
+
+
+useEffect(() => {
+  console.log("useEffect called")
+  const index = clientFilter.findIndex(val => val.client == client.phoneNumber); 
+  const currentClientFilter = clientFilter[index].filter
+const arr = [
+  {
+   trait:'charisma', 
+   value:currentClientFilter.charisma
+  }, 
+  {
+      trait:'creativity', 
+      value:currentClientFilter.creativity
+  },
+  
+  {
+      trait:'honest', 
+      value:currentClientFilter.honest
+  },
+  {
+      trait:'looks', 
+      value:currentClientFilter.looks
+  },
+  {
+      trait:'empathetic', 
+      value:currentClientFilter.empathetic
+  },
+  {
+      trait:'status', 
+      value:currentClientFilter.status
+  },
+  {
+    trait:'humor', 
+    value:currentClientFilter.humor
+  },
+  {
+      trait:'wealthy', 
+      value:currentClientFilter.wealthy
+  },
+  {
+      trait:'narcissism', 
+      value:currentClientFilter.narcissism
+  },
+
+]
+setTraits(arr); 
+}, [clientFilter, client])
+
+
+
+
+
 const distanceTemplate = () => {
   console.log("clientDistance"+client.distancePreference)
   if(client.distancePreference == 40){
@@ -79,15 +133,14 @@ const distanceTemplate = () => {
  )  
 }
 
-
+console.log("client is"); 
+console.log(client.phoneNumber); 
 
 useEffect(() => {
    navigation.setOptions({
       headerLeft:false, 
       headerTitle:false, 
-      headerRight:() => <TouchableOpacity  style = {{marginRight:10}} onPress = {() => {navigation.navigate('MatchMakeFinal')}}>
-      <Text style = {{color:'orange', fontWeight:'bold'}}>Done</Text>
-  </TouchableOpacity>
+      headerShown:false
    })
 }, [])
 
@@ -122,51 +175,9 @@ const initialValue = matchmaking == true ? 0:1;
     setDistance(changed); 
 }
 
-const [traits, setTraits] = useState([]); 
 
-useEffect(() => {
-const arr = [
-  {
-   trait:'charisma', 
-   value:currentClientFilter.charisma
-  }, 
-  {
-      trait:'creativity', 
-      value:currentClientFilter.creativity
-  },
-  
-  {
-      trait:'honest', 
-      value:currentClientFilter.honest
-  },
-  {
-      trait:'looks', 
-      value:currentClientFilter.looks
-  },
-  {
-      trait:'empathetic', 
-      value:currentClientFilter.empathetic
-  },
-  {
-      trait:'status', 
-      value:currentClientFilter.status
-  },
-  {
-    trait:'humor', 
-    value:currentClientFilter.humor
-  },
-  {
-      trait:'wealthy', 
-      value:currentClientFilter.wealthy
-  },
-  {
-      trait:'narcissism', 
-      value:currentClientFilter.narcissism
-  },
+console.log("component mounted"); 
 
-]
-setTraits(arr); 
-}, [clientFilter])
 
 function jsUcfirst(str) 
 {
@@ -180,7 +191,9 @@ function jsUcfirst(str)
   return (
     <SafeAreaView style={{flex:1}}>
         
-
+        <TouchableOpacity  style = {{marginRight:10, alignSelf:'flex-end'}} onPress = {() => {navigation.navigate('MatchMakeFinal', {clientFrom:client})}}>
+      <Text style = {{color:'orange', fontWeight:'bold'}}>Done</Text>
+  </TouchableOpacity>
         <ScrollView style = {{flex:0.9, marginBottom:20 }}>
         <View style = {{marginLeft:10, marginRight:15, marginBottom:20}}>
          

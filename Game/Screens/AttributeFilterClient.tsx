@@ -268,8 +268,7 @@ const addClientFilter = () => {
      }
      return val; 
   })
-  console.log("clientFilter gamer")
-  console.log(clientFilter)
+  
   setClientFilter(result); 
    
 }

@@ -152,6 +152,7 @@ export default function App() {
   const [initialRouteName, setInitialRouteName] = useState('ProfilePool');  
   const [singleContact, setSingleContact] = useState();  
   const [notification, setNotification] = useState(false);
+  const [sentFromBrowse, setSentFromBrowse] = useState(null); 
   const responseListener = useRef();
   const notificationListener = useRef();
   
@@ -176,7 +177,10 @@ export default function App() {
     maxAge:60,
     dimension:4, 
   })
-  const [clientFilter, setClientFilter] = useState([]); 
+  const [clientFilter, setClientFilter] = useState([{
+    client:'something', 
+    filter:'something'
+  }]); 
 
   const [basicAuth, setBasicAuth] = useState(null); 
   const [registeredUsers, setRegisteredUsers] = useState([]); 
@@ -231,6 +235,8 @@ function stringifyNumber(n) {
   
   
   const globalObject = {
+    sentFromBrowse, 
+    setSentFromBrowse, 
     initialRouteName, 
     setInitialRouteName, 
     stringifyNumber,
