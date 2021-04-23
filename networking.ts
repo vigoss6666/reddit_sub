@@ -336,12 +336,13 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
 
 
   export const computeSimDimension = (obj:obj1, arr:obj1[]):objectWithDimension[] => {
-  const dimensions =  ['creativity', 'charisma', 'honest', 'looks', 'empathetic', 'humor', 'status', 'wealthy']; 
+  const dimensions =  ['creativity', 'charisma', 'honest', 'looks', 'empathetic', 'humor', 'status', 'wealthy', 'narcissism']; 
   const mainerObj:any = []; 
   const result =  arr.map(val => {
      if(val.creativity == obj.creativity){
         return {...val, simDimension:'creativity'}
      }
+    
      if(val.charisma == obj.charisma){
       return {...val, simDimension:'charisma'}
      }

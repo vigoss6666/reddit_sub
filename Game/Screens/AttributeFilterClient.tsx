@@ -72,6 +72,9 @@ const AttributeFilterCLient = ({navigation, route}) => {
    const [potentialMatches, setPotentialMatches] = useState(0);
    const [attValue, setAttValue]  = useState();
    const {client} = route.params; 
+
+  const index = clientFilter.findIndex(val => val.client == client.phoneNumber); 
+  const currentClientFilter = clientFilter[index].filter
     
    const attriText = [
      {
@@ -131,6 +134,10 @@ const AttributeFilterCLient = ({navigation, route}) => {
    useEffect(() => {
       route.params ? setAttribute(route.params.attribute):null;
       //route.params ? setAttValue(computeDefaultValue()):null; 
+      const index = clientFilter.findIndex(val => val.client == client.phoneNumber); 
+      const currentClientFilter = clientFilter[index].filter
+      setAttValue(currentClientFilter[route.params.attribute])
+
    },[])     
 
 

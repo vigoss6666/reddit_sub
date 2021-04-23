@@ -47,7 +47,7 @@ const changeOtherFilter = () => {
    setSelfFilter({...selfFilter, dimension:compatibility})
 }
 
-const initialValue = matchmaking == true ? 0:1; 
+
     const options = [
         { label: "yes", value: true },
         { label: "No", value: false },

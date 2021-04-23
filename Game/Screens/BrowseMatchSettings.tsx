@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback, useContext } from 'react';
-import { Text, View, StyleSheet, Dimensions, SafeAreaView, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, Dimensions, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Slider from '@react-native-community/slider';
 import { iconFactory } from '../../src/common/Common';
-import { ScrollView } from 'react-native-gesture-handler';
+
 import SwitchSelector from "react-native-switch-selector";
 import {firebase} from '../../config'; 
 import AppContext from '../../AppContext'; 
@@ -19,23 +19,48 @@ const BrowseMatchSettings = ({navigation, route}) => {
 const [selected, setSelected] = useState('filter'); 
 const [counter, setCounter] = useState(1); 
 const myContext = useContext(AppContext); 
-const {user, userId, selfFilter, setSelfFilter, clientFilter, firebase, db, setSentFromBrowse} = myContext;
+const {user, userId, selfFilter, setSelfFilter, clientFilter, firebase, db, setSentFromBrowse, setClientFilter} = myContext;
 const [potentialMatches, setPotentialMatches] = useState(0); 
 const [clientIndex, setClientIndex] = useState(); 
+
 const {client} = route.params; 
+const index = clientFilter.findIndex(val => val.client == client.phoneNumber); 
+const currentClientFilter = clientFilter[index].filter
+
+const [minAge, setMinAge] = useState(); 
+const [maxAge, setMaxAge] = useState(); 
 const [inches, setInches] = useState("11"); 
 const [feet, setFeet ] = useState("5"); 
 const [matchmaking, setMatchmaking] = useState();
 const [compatibility, setCompatibility] = useState(1);
+const [defaultCompatibility, setDefaultCompatibility] = useState(1)
 const [distance, setDistance] = useState(); 
-const [traits, setTraits] = useState([]); 
-
-
-
-
+const [traits, setTraits] = useState([]);
+const [defaultDistance, setDefaultDistance] = useState();  
+const [initialValue, setInitialValue] = useState(); 
+console.log("initalValue")
+console.log(initialValue)
 
 useEffect(() => {
-  console.log("useEffect called")
+  
+  
+  setCompatibility(currentClientFilter.dimension) 
+  setDefaultCompatibility(currentClientFilter.dimension); 
+  setMinAge(currentClientFilter.minAgePreference)
+  setMaxAge(currentClientFilter.maxAgePreference)
+  setDefaultDistance(currentClientFilter.distancePreference); 
+  setDistance(currentClientFilter.distancePreference);
+  console.log("matchProifles"); 
+  console.log(currentClientFilter.matchMakerProfiles)
+  
+  
+}, [])
+
+
+
+console.log(counter)
+useEffect(() => {
+  setCounter(counter + 1); 
   const index = clientFilter.findIndex(val => val.client == client.phoneNumber); 
   const currentClientFilter = clientFilter[index].filter
 const arr = [
@@ -86,7 +111,7 @@ setTraits(arr);
 
 
 const distanceTemplate = () => {
-  console.log("clientDistance"+client.distancePreference)
+  
   if(client.distancePreference == 40){
     return (
       <View>
@@ -102,7 +127,8 @@ const distanceTemplate = () => {
  minimumTrackTintColor="#FFFFFF"
  maximumTrackTintColor="#000000" 
  onValueChange = {changeValue1}
- // value = {value} 
+ value = {defaultDistance} 
+ step = {1}
  // onSlidingComplete = {onSlidingComplete}
  
 
@@ -133,8 +159,21 @@ const distanceTemplate = () => {
  )  
 }
 
-console.log("client is"); 
-console.log(client.phoneNumber); 
+const addClientFilter = () => {
+
+  const indexer = clientFilter.findIndex(val => val.client == client.phoneNumber); 
+  
+  const result = clientFilter.map((val, index) => {
+     if(index == indexer){
+       return {client:val.client, filter:Object.assign({},val.filter, {dimension:compatibility, distancePreference:distance, minAgePreference:minAge, maxAgePreference:maxAge})} 
+     }
+     return val; 
+  })
+  
+  setClientFilter(result); 
+   
+}
+ 
 
 useEffect(() => {
    navigation.setOptions({
@@ -148,16 +187,17 @@ const changeOtherFilter = () => {
    setSelfFilter({...selfFilter, dimension:compatibility})
 }
 
-const initialValue = matchmaking == true ? 0:1; 
+
     const options = [
         { label: "yes", value: true },
         { label: "No", value: false },
         
       ];
       const changeValue = (value) => {
-        const changed = parseInt(value); 
-        setCompatibility(changed);
-        //setSelfFilter({...selfFilter, dimension:changed}) 
+        console.log("valer called")
+        
+        setCompatibility(value.toFixed(1));
+        
    }
    const handleSwitch = () => {
     if(matchmaking == "yes"){
@@ -191,7 +231,7 @@ function jsUcfirst(str)
   return (
     <SafeAreaView style={{flex:1}}>
         
-        <TouchableOpacity  style = {{marginRight:10, alignSelf:'flex-end'}} onPress = {() => {navigation.navigate('MatchMakeFinal', {clientFrom:client})}}>
+        <TouchableOpacity  style = {{marginRight:10, alignSelf:'flex-end'}} onPress = {() => {addClientFilter(),navigation.navigate('MatchMakeFinal', {clientFrom:client})}}>
       <Text style = {{color:'orange', fontWeight:'bold'}}>Done</Text>
   </TouchableOpacity>
         <ScrollView style = {{flex:0.9, marginBottom:20 }}>
@@ -212,9 +252,13 @@ function jsUcfirst(str)
     maximumValue={10}
     minimumTrackTintColor="#FFFFFF"
     maximumTrackTintColor="#000000" 
+    step = {0.1}
+    value = {defaultCompatibility}
+    
+    
     onValueChange = {changeValue}
-    value = {selfFilter.dimension}
-    onSlidingComplete = {changeOtherFilter}
+    
+    //onSlidingComplete = {changeOtherFilter}
     
 
   />
@@ -233,7 +277,7 @@ function jsUcfirst(str)
          <View style = {{flexDirection:'row', justifyContent:'space-between', marginBottom:10, marginLeft:20}}>
            <View style = {{flexDirection:'row', justifyContent:'center', alignItems:'center' }}>  
            {iconFactory(val.trait, 20)}
-          <Text style = {{fontSize:20, fontWeight:'bold', marginLeft:15}}>{jsUcfirst(val.trait)}: {val.value} (Min)</Text>
+          <Text style = {{fontSize:20, fontWeight:'bold', marginLeft:15}}>{jsUcfirst(val.trait)}: {val.value} {val.trait == 'narcissism' ? '(Max)':'(Min)'} </Text>
           </View>
           <TouchableOpacity onPress = {() => navigation.navigate('AttributeFilterClient', {attribute:val.trait, value:val.value, client})}>
               <Text style = {{color:'orange', fontSize:20}}>Edit</Text>
@@ -255,7 +299,7 @@ function jsUcfirst(str)
  <Text style = {{fontWeight:"600", marginRight:20}}>MIN</Text>
 
  <DropDownPicker
-    defaultValue = {selfFilter.minAge}                
+    defaultValue = {minAge}                
     items={[
         
         {label: '15', value: 15, selected:true},
@@ -319,14 +363,14 @@ function jsUcfirst(str)
         justifyContent: 'flex-start'
     }}
     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-    onChangeItem={item => setSelfFilter({...selfFilter,minAge:item.value})}
+    onChangeItem={item => setMinAge(item.value)}
     
 />
 
 <Text style = {{fontWeight:"600", marginRight:20, marginLeft:20}}>MAX</Text>
 <DropDownPicker
     labelStyle = {{fontSize:20, fontWeight:'bold'}}
-    defaultValue = {selfFilter.maxAge}                
+    defaultValue = {maxAge}                
     items={[
         
         {label: '15', value: 15, selected:true},
@@ -390,7 +434,7 @@ function jsUcfirst(str)
         fontWeight: '600',
     }}
     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-    onChangeItem={item => setSelfFilter({...selfFilter, maxAge:item.value})}
+    onChangeItem={item => setMaxAge(item.value)}
     
 />
 
@@ -498,7 +542,7 @@ function jsUcfirst(str)
  <Text style = {{fontWeight:'600'}}>Display MatchMakers contacts</Text>
  <SwitchSelector
   options={options}
-  initial={initialValue}
+  initial={currentClientFilter.matchMakerProfiles ? 0:1}
   onPress={value => {setMatchmaking(value)}}
   style = {{width:100}}
 />

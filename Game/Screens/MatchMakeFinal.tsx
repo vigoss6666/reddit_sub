@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef, createContext, useContext, } from 'react';
+//@refresh reset
+import React, { useState, useEffect, useRef, createContext, useContext, useCallback  } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Text, View, StyleSheet,TouchableOpacity, Dimensions, Image,ScrollView,SectionList, FlatList } from 'react-native';
 import {Entypo, Feather, MaterialIcons} from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -6,7 +8,8 @@ import {firebase} from '../../config';
 import AppContext from '../../AppContext'; 
 import { logTen } from './logTen';
 import { iconFactory} from '../../src/common/Common';
-import {transformCreativity, computeSimDimension, computeSectionLabel, filterGamer} from '../../networking'; 
+
+import {transformCreativity, computeSimDimension, computeSectionLabel, filterGamer, getDistanceFromLatLonInKm} from '../../networking'; 
 const db = firebase.firestore(); 
 interface MatchMakeFinalProps {}
 const computeName = (obj) => {
@@ -18,31 +21,70 @@ const computeName = (obj) => {
     }
     return obj.firstName
 }
-function applyFilters(filter:filter, arr:serverDataObjectDimension[]):serverDataObjectDimension[]{
+function applyFilters(filter:filter,arr:serverDataObjectDimension[], client):serverDataObjectDimension[]{
     
-      
+    
+    
     const finalObject:any = []; 
-   
+
     
-    arr.map(val => {
-         if(val.creativity >= filter.creativity 
-           && val.charisma >= filter.charisma 
-           && val.humor >= filter.humor
-           && val.honest >= filter.honest
-           && val.looks >= filter.looks
-           && val.empathetic >= filter.empathetic
-           && val.status >= filter.status
-           && val.wealthy >= filter.wealthy
-           && val.minAge >= filter.minAge
-           && val.maxAge <= filter.maxAge
-           && val.dimension >= filter.dimension
-            
+    if(filter.matchMakerProfiles == true){
+      const filterByMatchMaker = filterGamer(arr, 'matchMaker', [client.matchMaker], null, null); 
+      filterByMatchMaker.excludedObjects.map(val => {
+        console.log(val.narcissism)
+        const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude); 
+        
+         
+        if(val.creativity >= filter.creativity 
+          && val.charisma >= filter.charisma 
+          && val.narcissism <= filter.narcissism 
+          && val.humor >= filter.humor
+          && val.honest >= filter.honest
+          && val.looks >= filter.looks
+          && val.empathetic >= filter.empathetic
+          && val.status >= filter.status
+          && val.wealthy >= filter.wealthy
+          
+          && val.dimension >= filter.dimension
+          && distance < filter.distancePreference
+          && val.age >= filter.minAgePreference
+          && val.age <= filter.maxAgePreference
            
-           ){
-              finalObject.push(val); 
-         }
-    }) 
-    return finalObject;  
+          
+          ){
+             finalObject.push(val); 
+        }
+   })
+    return finalObject; 
+   }
+   
+      arr.map(val => {
+        console.log(val.narcissism)
+        const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude); 
+        
+         
+        if(val.creativity >= filter.creativity 
+          && val.charisma >= filter.charisma 
+          && val.narcissism <= filter.narcissism 
+          && val.humor >= filter.humor
+          && val.honest >= filter.honest
+          && val.looks >= filter.looks
+          && val.empathetic >= filter.empathetic
+          && val.status >= filter.status
+          && val.wealthy >= filter.wealthy
+          
+          && val.dimension >= filter.dimension
+          && distance < filter.distancePreference
+          && val.age >= filter.minAgePreference
+          && val.age <= filter.maxAgePreference
+           
+          
+          ){
+             finalObject.push(val); 
+        }
+   }) 
+   
+   return finalObject;  
    }
 
 const MatchMakeFinal = ({navigation, route}) => {
@@ -62,10 +104,49 @@ const MatchMakeFinal = ({navigation, route}) => {
       }
     }, [])
 
+  
+    useEffect(() => {
+      async function namer(){
+        console.log("filter use effect caled")
+        const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get({source:'server'}); 
+      const client = await result.docs.map(val => val.data());
+      const copy = clientFilter.concat();           
+const clientNumber = copy.map(val1 => val1.client); 
 
+const resulter = await filterGamer(client, 'phoneNumber', clientNumber, null, null); 
+
+await resulter.excludedObjects.map(val2 => {
+ copy.push({
+ client:val2.phoneNumber, 
+ filter:{
+        charisma:0, 
+        creativity:0, 
+        honest:0, 
+        looks:0, 
+        empathetic:0, 
+        status:0, 
+        humor:0, 
+        wealthy:0, 
+        narcissism:10,
+        minAgePreference:val2.minAgePreference == 15 ? 15: val2.minAgePreference, 
+        maxAgePreference:val2.maxAgePreference == 60 ? 60:val2.maxAgePreference,
+        dimension:0,
+        distancePreference:val2.distancePreference == 40 ? 40: val2.distancePreference, 
+        matchMakerProfiles:false
+
+      }
+ })
+})
+           setClientFilter(copy); 
+      }
+      namer()
+      
+    }, [])
     
 
     
+    
+        
     
 
     const [clients, setClients] = useState([]); 
@@ -80,8 +161,10 @@ const MatchMakeFinal = ({navigation, route}) => {
     
     
     useEffect(() => {
+       console.log(" i am the mainer called")
         async function namer(){
-          const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get(); 
+          console.log("called")
+          const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get({source:'server'}); 
           const client = await result.docs.map(val => val.data());
           if(clienter){
             const index = client.findIndex(val => val.phoneNumber == clienter.phoneNumber);
@@ -95,34 +178,36 @@ const MatchMakeFinal = ({navigation, route}) => {
 const copy = clientFilter.concat();           
 const clientNumber = copy.map(val1 => val1.client); 
 
-const resulter = filterGamer(client, 'phoneNumber', clientNumber, null, null); 
+// const resulter = await filterGamer(client, 'phoneNumber', clientNumber, null, null); 
 
-resulter.excludedObjects.map(val2 => {
- copy.push({
- client:val2.phoneNumber, 
- filter:{
-        charisma:0, 
-        creativity:0, 
-        honest:0, 
-        looks:0, 
-        empathetic:0, 
-        status:0, 
-        humor:0, 
-        wealthy:0, 
-        narcissism:0,
-        minAge:15, 
-        maxAge:60,
-        dimension:0,
-      }
- })
-})
-           setClientFilter(copy); 
+// await resulter.excludedObjects.map(val2 => {
+//  copy.push({
+//  client:val2.phoneNumber, 
+//  filter:{
+//         charisma:0, 
+//         creativity:0, 
+//         honest:0, 
+//         looks:0, 
+//         empathetic:0, 
+//         status:0, 
+//         humor:0, 
+//         wealthy:0, 
+//         narcissism:0,
+//         minAge:val2.minAge == 15 ? 15: val2.minAge, 
+//         maxAge:val2.maxAge == 60 ? 60:val2.maxAge,
+//         dimension:0,
+//         distancePreference:val2.distancePreference == 40 ? 40: val2.distancePreference, 
+
+//       }
+//  })
+// })
+//            setClientFilter(copy); 
 
           const finalResult = Promise.all(client.map(async val => {
                const gender = val.gender; 
                return await db.collection('user').where('gender', '==', gender == 'male'? 'female':'male')
                .where('state', '==', val.state)
-               .get()
+               .get({source:'server'})
                .then(onResult => {
                     return {client:val, users:onResult.docs.map(val => val.data())}
                })
@@ -136,12 +221,15 @@ resulter.excludedObjects.map(val2 => {
                    users:userLogged
               } 
           })
+          
           const simDimensionTransform = transformedpointstoscores.map(val => {
               const simDimension = computeSimDimension(val.client, val.users);
+              console.log(simDimension)
+              
               if(clientFilter.length){
                   if(clientFilter.filter(gamer => gamer.client == val.client.phoneNumber).length){
                       const index = clientFilter.findIndex(val1 => val1.client == val.client.phoneNumber); 
-                      const filters = applyFilters(clientFilter[index].filter, simDimension);
+                      const filters = applyFilters(clientFilter[index].filter, simDimension, val.client);
                       return {client:val.client, users:filters};
                   }
               }
@@ -175,7 +263,9 @@ resulter.excludedObjects.map(val2 => {
 
         } 
         namer()
-    }, [clienter])
+        
+        
+    }, [clienter, clientFilter])
     
     const setSliderPage = (event: any) => {
         const { currentPage } = sliderState;
@@ -229,7 +319,7 @@ resulter.excludedObjects.map(val2 => {
     return (
         <View style={{flex:1, paddingTop:insets.top}}>
           <View style = {{flexDirection:'row', justifyContent:'space-between',alignItems:'center', backgroundColor:'grey',flex:'6%'}}>
-             <TouchableOpacity>
+             <TouchableOpacity onPress = {() => {setClientFilter([{client:'something', filter:{}}]), navigation.navigate('Homer') }} >
             <Entypo name="controller-play" size={35} style = {{marginLeft:20}} />                    
             </TouchableOpacity>   
             <TouchableOpacity onPress = {() => navigation.navigate('BrowseMatchSettings', {client:userDisplay[sliderState.currentPage].client})}>

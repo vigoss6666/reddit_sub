@@ -20,11 +20,12 @@ export interface serverData {
      empathetic:number, 
      status:number, 
      wealthy:number, 
-     humor:number
+     humor:number, 
+     narcissism:number
 }
 
 interface filter extends serverData {
-   narcissistic:number,  
+   narcissism:number,  
    minAge:number, 
    maxAge:number, 
    dimension:number, 

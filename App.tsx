@@ -178,8 +178,8 @@ export default function App() {
     dimension:4, 
   })
   const [clientFilter, setClientFilter] = useState([{
-    client:'something', 
-    filter:'something'
+    client:"something", 
+    filter:{}
   }]); 
 
   const [basicAuth, setBasicAuth] = useState(null); 
