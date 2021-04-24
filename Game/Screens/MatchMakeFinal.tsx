@@ -23,46 +23,17 @@ const computeName = (obj) => {
 }
 function applyFilters(filter:filter,arr:serverDataObjectDimension[], client):serverDataObjectDimension[]{
     
-    
-    
+    console.log('client')
+    console.log(client)
     const finalObject:any = []; 
-
     
-    if(filter.matchMakerProfiles == true){
-      const filterByMatchMaker = filterGamer(arr, 'matchMaker', [client.matchMaker], null, null); 
-      filterByMatchMaker.excludedObjects.map(val => {
-        console.log(val.narcissism)
-        const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude); 
-        
-         
-        if(val.creativity >= filter.creativity 
-          && val.charisma >= filter.charisma 
-          && val.narcissism <= filter.narcissism 
-          && val.humor >= filter.humor
-          && val.honest >= filter.honest
-          && val.looks >= filter.looks
-          && val.empathetic >= filter.empathetic
-          && val.status >= filter.status
-          && val.wealthy >= filter.wealthy
-          
-          && val.dimension >= filter.dimension
-          && distance < filter.distancePreference
-          && val.age >= filter.minAgePreference
-          && val.age <= filter.maxAgePreference
-           
-          
-          ){
-             finalObject.push(val); 
-        }
-   })
-    return finalObject; 
-   }
-   
+    
+      
       arr.map(val => {
         console.log(val.narcissism)
         const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude); 
         
-         
+        
         if(val.creativity >= filter.creativity 
           && val.charisma >= filter.charisma 
           && val.narcissism <= filter.narcissism 
@@ -72,6 +43,8 @@ function applyFilters(filter:filter,arr:serverDataObjectDimension[], client):ser
           && val.empathetic >= filter.empathetic
           && val.status >= filter.status
           && val.wealthy >= filter.wealthy
+          && filter.appUsers ? val.appUser == true:true
+          && filter.matchMakerProfiles ? true: val.matchMaker == client.matchMaker ? false:true
           
           && val.dimension >= filter.dimension
           && distance < filter.distancePreference
@@ -132,7 +105,8 @@ await resulter.excludedObjects.map(val2 => {
         maxAgePreference:val2.maxAgePreference == 60 ? 60:val2.maxAgePreference,
         dimension:0,
         distancePreference:val2.distancePreference == 40 ? 40: val2.distancePreference, 
-        matchMakerProfiles:false
+        matchMakerProfiles:false, 
+        appUsers:true, 
 
       }
  })
