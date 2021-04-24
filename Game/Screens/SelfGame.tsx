@@ -2,7 +2,7 @@ import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { Text, View, StyleSheet, Dimensions, ScrollView, Image, SafeAreaView, SectionList, FlatList, TouchableOpacity } from 'react-native';
 import { MaterialIcons, Foundation, Feather, Entypo } from '@expo/vector-icons';
 import {firebase } from '../../config'; 
-import {transformCreativity, computeSimDimension, computeSectionLabel} from '../../networking'; 
+import {transformCreativity, computeSimDimension, computeSectionLabel, getDistanceFromLatLonInKm} from '../../networking'; 
 import { iconFactory} from '../../src/common/Common'; 
 import { logTen } from './logTen';
 import AppContext from '../../AppContext'; 
@@ -26,12 +26,12 @@ export interface serverData {
 
 interface filter extends serverData {
    narcissism:number,  
-   minAge:number, 
-   maxAge:number, 
+   minAgePreference:number, 
+   maxAgePreference:number, 
    dimension:number, 
    inches:number, 
    feet:number, 
-   distance:number
+   distancePreference:number
    matchMakerContact:boolean,
    
    
@@ -50,7 +50,9 @@ interface serverDataObjectDimension {
     dimension:number, 
     _id:number,
     minAge:number, 
-    maxAge:number
+    maxAge:number, 
+    narcissism:number, 
+    age:number
     
 }
 export interface serverDataWithDimension extends serverData {
@@ -59,12 +61,13 @@ export interface serverDataWithDimension extends serverData {
 function pipe(...fns) {
     return (arg) => fns.reduce((prev, fn) => fn(prev), arg);
 }
-function applyFilters(filter:filter, arr:serverDataObjectDimension[]):serverDataObjectDimension[]{
+function applyFilters(filter:filter, arr:serverDataObjectDimension[], client):serverDataObjectDimension[]{
  
  const finalObject:any = []; 
 
  
  arr.map(val => {
+      const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude); 
       if(val.creativity >= filter.creativity 
         && val.charisma >= filter.charisma 
         && val.humor >= filter.humor
@@ -73,9 +76,12 @@ function applyFilters(filter:filter, arr:serverDataObjectDimension[]):serverData
         && val.empathetic >= filter.empathetic
         && val.status >= filter.status
         && val.wealthy >= filter.wealthy
-        && val.minAge >= filter.minAge
-        && val.maxAge <= filter.maxAge
+        && val.age >= filter.minAgePreference
+        && val.age <= filter.maxAgePreference
         && val.dimension >= filter.dimension
+        && val.narcissism <= filter.narcissism
+        && distance < filter.distancePreference 
+         
          
         
         ){
@@ -97,7 +103,7 @@ const SelfGame = ({navigation, route}) => {
     
     
     useEffect(() => {
-        
+           
            db.collection('user').doc(userId).get().then(doc => {
           
            db.collection('user')
@@ -106,7 +112,8 @@ const SelfGame = ({navigation, route}) => {
            .get()
            .then(result => {
                
-                 const serverObjectWithId = result.docs.map(val => val.data()) 
+                 const serverObjectWithId = result.docs.map(val => val.data())
+
                  var filtered = serverObjectWithId.filter(
                   function(e) {
                     return this.indexOf(e.phoneNumber) < 0;
@@ -124,7 +131,9 @@ const SelfGame = ({navigation, route}) => {
 
                  const simD = computeSimDimension(userLogged, logData);
                  
-                 const filters = applyFilters(selfFilter, simD);  
+                 const filterBySim = simD.filter(val => val.simDimension) 
+                 
+                 const filters = applyFilters(selfFilter, filterBySim, user);  
                  
                  
 
@@ -210,21 +219,23 @@ const SelfGame = ({navigation, route}) => {
       })
     }, [])
 
-
+    console.log(selfFilter)
     const setDefaultFilter = () => {
+    console.log("setting to default")  
     setSelfFilter({
-      charisma:0, 
-      creativity:0, 
-      honest:0, 
-      looks:0, 
-      empathetic:0, 
-      status:0, 
-      humor:0, 
-      wealthy:0, 
-      narcissism:0,
-      minAge:15, 
-      maxAge:60,
-      dimension:0,
+    charisma:0, 
+    creativity:0, 
+    honest:0, 
+    looks:0, 
+    empathetic:0, 
+    status:0, 
+    humor:0, 
+    wealthy:0, 
+    narcissism:10,
+    minAgePreference:15, 
+    maxAgePreference:60,
+    dimension:4, 
+    distancePreference:10
     })   
     }
 

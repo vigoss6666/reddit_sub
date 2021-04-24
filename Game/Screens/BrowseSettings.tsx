@@ -8,6 +8,7 @@ import SwitchSelector from "react-native-switch-selector";
 import {firebase} from '../../config'; 
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const db = firebase.firestore(); 
 
 
@@ -21,43 +22,59 @@ const myContext = useContext(AppContext);
 const {user, userId, selfFilter, setSelfFilter} = myContext;
 const [potentialMatches, setPotentialMatches] = useState(0); 
 
+
+const [minAge, setMinAge] = useState(); 
+const [maxAge, setMaxAge] = useState();
 const [inches, setInches] = useState("11"); 
+const [appUsers, setAppUsers] = useState();
 const [feet, setFeet ] = useState("5"); 
 const [matchmaking, setMatchmaking] = useState();
-const [compatibility, setCompatibility] = useState(1);
-const [distance, setDistance] = useState(); 
-
-
+const [compatibility, setCompatibility] = useState();
+const [defaultCompatibility, setDefaultCompatibility] = useState(); 
+const [distancePreference, setDistancePreference] = useState(); 
+const [defaultDistance, setDefaultDistance] = useState(); 
+const insets = useSafeAreaInsets();
 useEffect(() => {
-setCompatibility(selfFilter.dimension)
-},[selfFilter.dimension])
+  
+  setCompatibility(selfFilter.dimension); 
+  setDefaultCompatibility(selfFilter.dimension)
+  setDistancePreference(selfFilter.distancePreference); 
+  setDefaultDistance(selfFilter.distancePreference)
+  setMinAge(selfFilter.minAgePreference)
+  setMaxAge(selfFilter.maxAgePreference)
+  // setDefaultCompatibility(currentClientFilter.dimension); 
+  // setMinAge(currentClientFilter.minAgePreference)
+  // setMaxAge(currentClientFilter.maxAgePreference)
+  // setDefaultDistance(currentClientFilter.distancePreference); 
+  // setDistance(currentClientFilter.distancePreference);
+  // console.log("matchProifles"); 
+  // console.log(currentClientFilter.matchMakerProfiles)
+  
+  
+}, [])
+
+
+
 
 
 useEffect(() => {
    navigation.setOptions({
-      headerLeft:false, 
-      headerTitle:false, 
-      headerRight:() => <TouchableOpacity  style = {{marginRight:10}} onPress = {() => {navigation.navigate('SelfGame')}}>
-      <Text style = {{color:'orange', fontWeight:'bold'}}>Done</Text>
-  </TouchableOpacity>
+      headerShown:false
    })
 }, [])
 
-const changeOtherFilter = () => {
-   setSelfFilter({...selfFilter, dimension:compatibility})
-}
 
 
+    const initialValue = 0
     const options = [
         { label: "yes", value: true },
         { label: "No", value: false },
         
       ];
       const changeValue = (value) => {
-        const changed = parseInt(value); 
-        setCompatibility(changed);
-        //setSelfFilter({...selfFilter, dimension:changed}) 
-   }
+        setCompatibility(value.toFixed(1));
+        
+      }
    const handleSwitch = () => {
     if(matchmaking == "yes"){
         
@@ -71,10 +88,17 @@ const changeOtherFilter = () => {
   }
    const changeValue1 = (value) => {
     const changed = parseInt(value); 
-    setDistance(changed); 
+    setDistancePreference(changed); 
 }
 
 const [traits, setTraits] = useState([]); 
+const addClientFilter = () => {
+  console.log("Mainer")
+  console.log(compatibility)
+  setSelfFilter(Object.assign({},selfFilter, {dimension:compatibility, distancePreference, minAgePreference:minAge, maxAgePreference:maxAge, appUsers})); 
+  navigation.navigate('SelfGame')
+   
+}
 
 useEffect(() => {
 const arr = [
@@ -125,15 +149,21 @@ function jsUcfirst(str)
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+console.log(appUsers)
+
 
 
 
 
   return (
-    <SafeAreaView style={{flex:1}}>
+    <SafeAreaView style={{flex:1, paddingTop:insets.top}}>
+      <TouchableOpacity  style = {{marginRight:10, justifyContent:'flex-end', alignItems:'flex-end'}} onPress = {addClientFilter}>
+      <Text style = {{color:'orange', fontWeight:'bold'}}>Done</Text>
+  </TouchableOpacity>
         
-
+                    
         <ScrollView style = {{flex:0.9, marginBottom:20 }}>
+
         <View style = {{marginLeft:10, marginRight:15, marginBottom:20}}>
          
 
@@ -152,8 +182,8 @@ function jsUcfirst(str)
     minimumTrackTintColor="#FFFFFF"
     maximumTrackTintColor="#000000" 
     onValueChange = {changeValue}
-    value = {selfFilter.dimension}
-    onSlidingComplete = {changeOtherFilter}
+    value = {defaultCompatibility}
+    
     
 
   />
@@ -194,7 +224,7 @@ function jsUcfirst(str)
  <Text style = {{fontWeight:"600", marginRight:20}}>MIN</Text>
 
  <DropDownPicker
-    defaultValue = {selfFilter.minAge}                
+    defaultValue = {minAge}                
     items={[
         
         {label: '15', value: 15, selected:true},
@@ -258,14 +288,14 @@ function jsUcfirst(str)
         justifyContent: 'flex-start'
     }}
     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-    onChangeItem={item => setSelfFilter({...selfFilter,minAge:item.value})}
+    onChangeItem={item => setMinAge(item.value)}
     
 />
 
 <Text style = {{fontWeight:"600", marginRight:20, marginLeft:20}}>MAX</Text>
 <DropDownPicker
     labelStyle = {{fontSize:20, fontWeight:'bold'}}
-    defaultValue = {selfFilter.maxAge}                
+    defaultValue = {maxAge}                
     items={[
         
         {label: '15', value: 15, selected:true},
@@ -329,7 +359,7 @@ function jsUcfirst(str)
         fontWeight: '600',
     }}
     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-    onChangeItem={item => setSelfFilter({...selfFilter, maxAge:item.value})}
+    onChangeItem={item => setMaxAge(item.value)}
     
 />
 
@@ -425,7 +455,7 @@ function jsUcfirst(str)
 
          <View style = {{flexDirection:'row',marginTop:20,justifyContent:'space-between'}}>
          <Text style = {{ fontWeight:'bold', fontSize:20}}>Maximum distance</Text>
-         <Text style = {{ fontWeight:'bold', fontSize:20}}> >{distance} mi </Text>
+         <Text style = {{ fontWeight:'bold', fontSize:20}}> >{distancePreference} mi </Text>
          </View>           
 
          <Slider
@@ -435,7 +465,7 @@ function jsUcfirst(str)
     minimumTrackTintColor="#FFFFFF"
     maximumTrackTintColor="#000000" 
     onValueChange = {changeValue1}
-    // value = {value} 
+     value = {defaultDistance} 
     // onSlidingComplete = {onSlidingComplete}
     
 
@@ -461,6 +491,19 @@ function jsUcfirst(str)
  <Text style = {{fontWeight:"600", marginTop:10}}>
  While turned on, the contacts of your matchmakers will be displayed as well. Contacts are individuals who your matchmaker knows personally but are have not downloaded Friends Help Friends. They may or may not be responsive to a request for an introduction.
  </Text> 
+
+ <View style = {{flexDirection:"row", alignItems:"center", justifyContent:"space-between", marginBottom:10, marginTop:20}}>
+ <Text style = {{fontWeight:'600'}}>Display App users</Text>
+ <SwitchSelector
+  options={options}
+  initial={selfFilter.appUsers ? 0:1}
+  onPress={value => {setAppUsers(value)}}
+  style = {{width:100}}
+/>
+ </View>
+ <Text style = {{fontWeight:"600", marginTop:10}}>
+ While turned on, you will only be shown profiles that are registered on the App. 
+ </Text>
 
  </View>    
  </ScrollView>

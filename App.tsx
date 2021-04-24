@@ -172,10 +172,12 @@ export default function App() {
     status:0, 
     humor:0, 
     wealthy:0, 
-    narcissism:0,
-    minAge:15, 
-    maxAge:60,
-    dimension:4, 
+    narcissism:10,
+    minAgePreference:15, 
+    maxAgePreference:60,
+    dimension:0, 
+    distancePreference:10, 
+    appUsers:false
   })
   const [clientFilter, setClientFilter] = useState([{
     client:"something", 
@@ -334,7 +336,7 @@ const customHeader = () => {
       <NavigationContainer>
        
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={MatchMakeFinal} options = {{headerShown:false}}/>
+        <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
         <Stack.Screen name="Name" component={Name}/>
         <Stack.Screen name="Birthday" component={BirthDay}/>
         <Stack.Screen name="Gender" component={Gender}/>

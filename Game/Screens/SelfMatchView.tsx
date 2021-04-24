@@ -16,9 +16,11 @@ const SelfMatchView = ({navigation, route}) => {
     const {user, userId} = myContext; 
     const [hidden, setHidden]= useState(false);
     const { width, height } = Dimensions.get('window');
-    const [sliderState, setSliderState] = useState({ currentPage: 1 });
+    const [sliderState, setSliderState] = useState({ currentPage: 0 });
     const [listItem1, setListItem] = useState(1);
     const insets = useSafeAreaInsets(); 
+    console.log("data users"); 
+    console.log(sliderState.currentPage)
 
     const requestIntro = () => {
        const object = {
@@ -35,57 +37,7 @@ const SelfMatchView = ({navigation, route}) => {
     
     
     
-    const data = [
-         {
-            dimension:4.2,   
-            name:"joker",
-            firstName:"zaid",
-            profilePic:"https://i.pinimg.com/originals/f0/a6/4e/f0a64e32194d341befecc80458707565.jpg",
-            charisma:100, 
-            creativity:90, 
-            honest:400, 
-            looks:400, 
-            empathetic:400, 
-            status:350, 
-            wealthy:350, 
-            humor:900,  
-            _id:"something", 
-            narcissism:4.2, 
-
-        },
-        {
-            name:"joker",
-            firstName:"zaid",
-            profilePic:"https://i.pinimg.com/originals/f0/a6/4e/f0a64e32194d341befecc80458707565.jpg",
-            charisma:100, 
-            creativity:90, 
-            honest:4000, 
-            looks:400, 
-            empathetic:400, 
-            status:350, 
-            wealthy:350, 
-            humor:200,  
-            _id:"something",
-            narcissism:4.2, 
-            dimension:9.3, 
-        },
-        {
-            name:"SHarmila",
-            firstName:"sharmila",
-            profilePic:"https://static.toiimg.com/thumb/msid-71970885,width-800,height-600,resizemode-75,imgsize-1145666,pt-32,y_pad-40/71970885.jpg",
-            charisma:1000, 
-            creativity:9002, 
-            honest:400, 
-            looks:400, 
-            empathetic:400, 
-            status:350, 
-            wealthy:350, 
-            humor:350,  
-            _id:"something",
-            narcissism:5.2, 
-            dimension:5.5, 
-        }
-    ]
+    
     const computeName = (obj) => {
       if(obj.name){
          return obj.name
@@ -98,7 +50,7 @@ const SelfMatchView = ({navigation, route}) => {
     const textTemplate = hidden ? null: <View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('humor', 20)}
-          <Text style = {styles.scores }>Humor:  {selfMatchView.data[sliderState.currentPage].humor}</Text>
+          <Text style = {styles.scores }>Humor:  {selfMatchView.data[0].humor}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('empathetic', 20)}
