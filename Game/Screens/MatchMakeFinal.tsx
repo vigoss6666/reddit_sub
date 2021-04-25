@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {firebase} from '../../config'; 
 import AppContext from '../../AppContext'; 
 import { logTen } from './logTen';
-import { iconFactory} from '../../src/common/Common';
+import { iconFactory, LoadScreen} from '../../src/common/Common';
 
 import {transformCreativity, computeSimDimension, computeSectionLabel, filterGamer, getDistanceFromLatLonInKm} from '../../networking'; 
 const db = firebase.firestore(); 
@@ -332,9 +332,8 @@ const clientNumber = copy.map(val1 => val1.client);
         </View>
       );
  }
- return <View>
-     <Text>Loading</Text>
- </View>
+ return <LoadScreen />
+ 
   
 };
 

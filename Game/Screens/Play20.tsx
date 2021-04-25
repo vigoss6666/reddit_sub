@@ -33,7 +33,7 @@ return(
 <View style = {{flex:0.2, justifyContent:"center", }}>
 <Button 
 disabled = {matchFound ? false : true}
-onPress = {() => navigation.navigate('Playgame')}
+onPress = {() => navigation.navigate('PlayGameLatest')}
 title = "Play again" containerStyle = {{marginLeft:30, marginRight:30}} buttonStyle = {{backgroundColor:"black"}} icon={
     <Icon
       name="rowing"

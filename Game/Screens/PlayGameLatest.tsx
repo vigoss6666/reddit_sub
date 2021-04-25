@@ -1,5 +1,6 @@
 import  React, {useState,useRef,useEffect, useContext, useLayoutEffect, useCallback, forwardRef, createRef} from 'react';
 import { Text, View, StyleSheet,Dimensions, Animated, Image } from 'react-native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import AppContext from '../../AppContext'; 
 import {createChatThread, updateUser} from '../../networking';
 import { firebase } from '../../config'; 
@@ -13,6 +14,7 @@ import { logTen } from './logTen';
 import { filter } from 'underscore';
 import GamePreview from './GamePreview'; 
 import {filterGamer, getDistanceFromLatLonInKm} from '../../networking'; 
+import {LoadScreen} from '../../src/common/Common'; 
 const db = firebase.firestore(); 
 //@refresh reset
 interface PlayGameLatestProps {}
@@ -46,6 +48,7 @@ const PlayGameLatest = ({navigation}) => {
   const [index, setIndex] = useState(0); 
   const [profiles,setProfiles] = useState([])
   const myContext = useContext(AppContext); 
+  const [pageFocused, setPageFocused] = useState(false); 
   
   const [questions, setQuestions] = useState([]); 
   const element = createRef();
@@ -54,9 +57,10 @@ const PlayGameLatest = ({navigation}) => {
 
   useEffect(() => {
     navigation.setOptions({
+      didFocus:() => console.log("I was chaddi"), 
       headerTitle:false, 
       headerLeft:() => { 
-         return  <TouchableOpacity onPress = {() => {setInitialRouteName('Game'),navigation.navigate('Homer')}} style = {{marginLeft:15}}>
+         return  <TouchableOpacity onPress = {() => {resetGame(),setInitialRouteName('Game'),navigation.navigate('Homer')}} style = {{marginLeft:15}}>
              <Text style = {{fontWeight:'bold', fontSize:17, color:'blue'}}>Back</Text>  
              </TouchableOpacity>
       }, 
@@ -66,6 +70,14 @@ const PlayGameLatest = ({navigation}) => {
     })
 },[]) 
   
+   
+const resetGame = () => {
+  setBar(0); 
+  setQuestionsIndex(0); 
+}
+    
+    
+   
 
    useEffect(() => {
     
@@ -74,9 +86,21 @@ const PlayGameLatest = ({navigation}) => {
          setQuestions(result); 
     })
   }, [])
+  useEffect(() => {
+    console.log("i was called")
+    setQuestionsIndex(0)
+  }, [])
 
  useEffect(() => {
   if(questionsIndex == 19){
+    db.collection('user').doc(userId).update({
+      points:firebase.firestore.FieldValue.arrayUnion({
+        pointFor:'roundCompleted', 
+        point:20, 
+        createdAt:new Date()
+      })
+    })
+    resetGame(); 
     navigation.navigate('Play20', {matchFound:matchFound})
   }  
 
@@ -192,12 +216,26 @@ const namer =  [
   const addPoints = () => {
       if(client == 'first'){
            
-           db.collection('user').doc(demo[index].phoneNumber).update({[questions[questionsIndex].dimension]:firebase.firestore.FieldValue.increment(1)})
+           db.collection('user').doc(demo[index].phoneNumber).update({[questions[questionsIndex].dimension]:firebase.firestore.FieldValue.increment(1),
+            votes:firebase.firestore.FieldValue.arrayUnion({
+              answeredBy:userId, 
+              createdAt:new Date(), 
+              dimension:questions[questionsIndex].dimension, 
+              question:questions[questionsIndex].question
+            })
+           })
            return; 
       }
       if(client == 'second'){
         
-        db.collection('user').doc(demo[index + 1].phoneNumber).update({[questions[questionsIndex].dimension]:firebase.firestore.FieldValue.increment(1)})
+        db.collection('user').doc(demo[index + 1].phoneNumber).update({[questions[questionsIndex].dimension]:firebase.firestore.FieldValue.increment(1),
+          votes:firebase.firestore.FieldValue.arrayUnion({
+            answeredBy:userId, 
+            createdAt:new Date(), 
+            dimension:questions[questionsIndex].dimension, 
+            question:questions[questionsIndex].question
+          })
+         })
         return; 
    }
   }
@@ -216,7 +254,7 @@ const namer =  [
   }
 
   
-  console.log("hello world")
+  
   const suggestMatches = () => {
    console.log("hello world")  
     
@@ -241,11 +279,12 @@ const namer =  [
                if( distance < client.distancePreference && val.gender == genderChecker && (client.minAgePreference <= val.age && client.maxAgePreference >= val.age ) && (val.charisma == client.charisma || val.creativity == client.creativity || val.empathetic == client.empathetic 
                  || val.honest == client.honest || val.humor == client.humor || val.looks == client.looks || val.status || val.wealthy == client.wealthy)
                 ) {
-                console.log("we are within mainer");   
+                
                  const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
                  db.collection('introductions').doc(_id).get().then(onDoc => {
-                  console.log(onDoc.exists)
+                  
                    if(onDoc.exists == false){
+                    setMatchFound(true);  
                     db.collection('user').doc(userId).set({suggestedMatches:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}, {merge:true})
                     navigation.navigate('Endorsement', {client:clientLogged,user:val })   
                    }
@@ -276,10 +315,10 @@ const namer =  [
            if( distance < client.distancePreference && val.gender == genderChecker && (client.minAgePreference <= val.age && client.maxAgePreference >= val.age ) && (val.charisma == client.charisma || val.creativity == client.creativity || val.empathetic == client.empathetic 
              || val.honest == client.honest || val.humor == client.humor || val.looks == client.looks || val.status || val.wealthy == client.wealthy)
             ) {
-            console.log("we are within mainer");   
+              
              const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
              db.collection('introductions').doc(_id).get().then(onDoc => {
-              console.log(onDoc.exists)
+              
                if(onDoc.exists == false){
                 db.collection('user').doc(userId).set({suggestedMatches:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}, {merge:true})
                 navigation.navigate('Endorsement', {client:clientLogged,user:val })   
@@ -341,9 +380,13 @@ db.collection('user').doc(userId).set({suggestedMatches:[]}, {merge:true})
        }
   }
   const incrementIndex = () => {
+    
     if(index + 1 < demo.length -1 ) {
         setIndex(index + 1)
    }
+    if(index + 1 == demo.length -1){
+      setIndex(0)
+    }
   }
   const questionsIndexIncrement = () => {
       if(questionsIndex < questions.length - 1){
@@ -372,7 +415,13 @@ db.collection('user').doc(userId).set({suggestedMatches:[]}, {merge:true})
   
    
   
-  
+   if(user.datingPoolList.length < 2){
+     return <View style = {{flex:1, backgroundColor:'black', justifyContent:'center', alignItems:'center' }}>
+       <Text style = {{color:'white', fontSize:40, fontWeight:'bold'}}>Not enough contacts</Text>
+       <Text style = {{color:'white', fontStyle:'italic'}}>Please add some contacts in your dating pool list to play the game</Text>
+     </View>
+    
+   }
     return (
         <View style={{flex:1, paddingBottom:insets.bottom}}>
                 <View style = {{flex:0.3,}}>

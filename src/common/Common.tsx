@@ -1066,8 +1066,8 @@ export function ClientHeader({client, style}) {
  
  
  
- 
- const votesTemplate = votes.length > 0 ? votes.map(val => {
+ const reversed = votes.reverse(); 
+ const votesTemplate = reversed.length > 0 ? reversed.map(val => {
      return (
          <View style = {{ borderBottomWidth:3, justifyContent:'center', alignItems:'center', }}>
              <Text style = {{alignSelf:'flex-end',  marginTop:3, fontSize:12}}>
@@ -1105,7 +1105,16 @@ export function ClientHeader({client, style}) {
                  
  
      </View>
+
  )     
+ }
+
+ export function LoadScreen(){
+   return (
+     <View style = {{flex:1,  justifyContent:'center', alignItems:'center'}}>
+     <Image source = {{uri:'https://media.giphy.com/media/YpqWbjNDq8y4DVu4BO/giphy.gif'}} style = {{height:200, width:200}}/>  
+     </View>
+   )
  }
 
 

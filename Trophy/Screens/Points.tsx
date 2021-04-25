@@ -45,8 +45,8 @@ const Points = (props: RankProps) => {
     
      
     
-        
-     const template = user.points.map(val => {
+     const finaler = user.points.reverse();    
+     const template = finaler.map(val => {
          if(val.pointFor == 'roundCompleted'){
               return <View style = {{flexDirection:"row",  padding:10, alignItems:'center',marginBottom:20, borderBottomWidth:2}}>
                   <FontAwesome5 name="trophy" size={24} color="black" />

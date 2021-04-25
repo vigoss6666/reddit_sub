@@ -527,7 +527,7 @@ onChangeItem={namer => addAge(item, namer)}
           <View style = {{flexDirection:"row", justifyContent:'space-between'}}>
           <View style = {{flexDirection:"row", alignItems:"center"}}>
           {item.profilePic ? <Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
-          <Text style = {{marginLeft:10,marginBottom:10,fontWeight:"bold"}}>{computeName(item)}{"\n"} {item.votes} votes by {item.matchMakers.length} {item.matchMakers.length > 1 ? 'friends':'friend'}</Text>
+          <Text style = {{marginLeft:10,marginBottom:10,fontWeight:"bold"}}>{computeName(item)}{"\n"} {item.votes.length} votes by {item.matchMakers.length} {item.matchMakers.length > 1 ? 'friends':'friend'}</Text>
           </View>
           {   
                item.caret ? 

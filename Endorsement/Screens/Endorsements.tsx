@@ -35,20 +35,21 @@ export default function Endorsement({navigation, route}){
   const {client, user} = route.params; 
   const endorse = () => {
       const chat = createChatThread(client.phoneNumber, user.phoneNumber); 
-      db.collection('matches').doc(chat).get().then(onResult => {
-         if(onResult.exists){
-            db.collection('matches').doc(chat).update({endorsement:firebase.firestore.FieldValue.arrayUnion(userId)})
-            return; 
-         }
-         db.collection('matches').doc(chat).set({
+      
+         db.collection('introductions').doc(chat).set({
             client1:user.phoneNumber,
             client2:client.phoneNumber, 
             discoveredBy:userId, 
             createdAt:new Date()
-             
-
-         })
-      })
+          })
+         db.collection('user').doc(userId).update({
+           points:firebase.firestore.FieldValue.arrayUnion({
+             pointFor:'matchDiscovered', 
+             point:50, 
+             createdAt:new Date()
+           })
+         }) 
+      
   }
   const user1 = {
     name:"Zaid shaikh", 
@@ -102,7 +103,7 @@ export default function Endorsement({navigation, route}){
             
           }
         //   onPress = {() => setIndexWrapper()}
-        onPress = {() => { endorse() ,navigation.navigate('GameHomepage')}}
+        onPress = {() => { endorse() ,navigation.navigate('PlayGameLatest')}}
           >
          
         </Button>

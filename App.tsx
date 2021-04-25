@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef, createContext, useContext, } from '
 import { AntDesign, Entypo } from '@expo/vector-icons';
 import { StyleSheet, Text, View,Button, Settings, Platform,  Image, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {LoadScreen} from './src/common/Common'; 
 
 import { NavigationContainer, BaseRouter } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -437,7 +438,7 @@ const customHeader = () => {
   );
   }
   return (
-    <SplashScreen />
+    <LoadScreen />
   )
  }
   
