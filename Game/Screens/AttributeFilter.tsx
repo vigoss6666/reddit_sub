@@ -8,7 +8,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import {Button} from 'react-native-elements'; 
 import {firebase} from '../../config'; 
 import { getBaseLog} from './getBaseLog'; 
-import { transformCreativity} from '../../networking'; 
+import { getDistanceFromLatLonInKm, transformCreativity} from '../../networking'; 
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';
 const db = firebase.firestore();
@@ -71,6 +71,29 @@ const AttributeFilter = ({navigation, route}) => {
    const [maleAhead, setMaleAhead] = useState(0); 
    const [potentialMatches, setPotentialMatches] = useState(0);
    const [attValue, setAttValue]  = useState();
+
+   const computeNarc = (obj1, arr1) => {
+    if(arr1[0].gender !== obj1.gender){
+      arr1.push(obj1); 
+    }
+    
+      const mainerObj = [];   
+      const dup = arr1.concat();   
+      const result = dup.sort((a, b) => {
+          return a.narcissism - b.narcissism;
+      });
+      
+      const index = result.findIndex(x => x.phoneNumber == obj1.phoneNumber); 
+      const sub = ((result.length) - index);
+      if(sub == 0){
+        mainerObj.push({ trait:'narcissism', aheadOf:0, votes:obj1.narcissism}) 
+        return   
+      }  
+      const percent = (sub/ (result.length))*100;
+      mainerObj.push({ trait:'narcissism', aheadOf:Math.floor(percent), votes:obj1.narcissism}) 
+      
+      return mainerObj; 
+   }
 
 
    
@@ -152,19 +175,16 @@ if(attribute){
         return; 
      }
      const users = onResult.docs.map(val => val.data()); 
-     const listWithoutUser = users.filter(val => val.phoneNumber !== userId);
-     if(listWithoutUser.length < 1) {
-       setMaleAhead('100'); 
-       return; 
-     } 
+
+    
      const usersLogged = logTen(users); 
      const userLogged = logTen(user); 
-     const result = transformCreativity(userLogged, usersLogged); 
+     const result = attribute == 'narcissism' ? computeNarc(userLogged, usersLogged): transformCreativity(userLogged, usersLogged); 
      const getAttribute = result.filter(val => val.trait == attribute); 
      setMaleAhead(getAttribute[0].aheadOf); 
   })
 }  
-}, [attribute])
+}, [attribute,selfFilter])
 
 
 useEffect(() => {
@@ -178,29 +198,45 @@ useEffect(() => {
         setFemaleAhead(100)
         return; 
      }
-     const users = onResult.docs.map(val => val.data());
-    const listWithoutUser = users.filter(val => val.phoneNumber !== userId); 
      
-     if(listWithoutUser.length < 1){
-       setFemaleAhead(100)
-       return; 
-     }
+     const users = onResult.docs.map(val => val.data());
      const usersLogged = logTen(users); 
      const userLogged = logTen(user); 
      
      
-   const result = transformCreativity(userLogged, usersLogged); 
+   const result = attribute == 'narcissism' ? computeNarc(userLogged, usersLogged): transformCreativity(userLogged, usersLogged);  
    const getAttribute = result.filter(val => val.trait == attribute); 
    
    setFemaleAhead(getAttribute[0].aheadOf); 
   })
   }
   
-  }, [attribute])
+  }, [attribute, selfFilter])
 
 useEffect(() => {
   if(attValue){
-  
+  if(attribute == 'narcissism'){
+    db.collection('user')
+    .where('gender', '==', 'female')
+    .where('state', '==', user.state)
+    .where(attribute, "<", Math.pow(5, attValue)) 
+    .get()
+    .then(onResult => {
+       const finalResult = onResult.docs.map(val => val.data());
+
+     const filterByDistance = finalResult.map(val => {
+      const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, user.latitude, user.longitude); 
+      if(distance < selfFilter.distancePreference){
+        return val; 
+      }
+
+    }); 
+    const filterByDistanceFinal = filterByDistance.filter(val => val !== undefined);
+       const listWithoutUser = filterByDistanceFinal.filter(val => val.phoneNumber !== userId); 
+       setFemaleMatches(listWithoutUser.length) 
+   })
+   return;   
+  }
   db.collection('user')
   .where('gender', '==', 'female')
   .where('state', '==', user.state)
@@ -208,15 +244,46 @@ useEffect(() => {
   .get()
   .then(onResult => {
      const finalResult = onResult.docs.map(val => val.data());
-     const listWithoutUser = finalResult.filter(val => val.phoneNumber !== userId); 
+
+     const filterByDistance = finalResult.map(val => {
+      const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, user.latitude, user.longitude); 
+      if(distance < selfFilter.distancePreference){
+        return val; 
+      }
+
+    }); 
+    const filterByDistanceFinal = filterByDistance.filter(val => val !== undefined);
+     const listWithoutUser = filterByDistanceFinal.filter(val => val.phoneNumber !== userId); 
      setFemaleMatches(listWithoutUser.length) 
  })
-  }
+ }
   
 }, [attValue])
 
 useEffect(() => {
   if(attValue){
+    if(attribute == 'narcissism'){
+      db.collection('user')
+      .where('gender', '==', 'male')
+      .where('state', '==', user.state)
+      .where(attribute, "<", Math.pow(5, attValue)) 
+      .get()
+      .then(onResult => {
+         const finalResult = onResult.docs.map(val => val.data());
+
+     const filterByDistance = finalResult.map(val => {
+      const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, user.latitude, user.longitude); 
+      if(distance < selfFilter.distancePreference){
+        return val; 
+      }
+
+    }); 
+    const filterByDistanceFinal = filterByDistance.filter(val => val !== undefined);
+         const listWithoutUser = filterByDistanceFinal.filter(val => val.phoneNumber !== userId); 
+         setMaleMatches(listWithoutUser.length) 
+     })
+     return;   
+    }
     db.collection('user')
   .where('gender', '==', 'male')
   .where('state', '==', user.state)
@@ -224,7 +291,16 @@ useEffect(() => {
   .get()
   .then(onResult => {
      const finalResult = onResult.docs.map(val => val.data()); 
-     const listWithoutUser = finalResult.filter(val => val.phoneNumber !== userId);  
+
+     const filterByDistance = finalResult.map(val => {
+      const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, user.latitude, user.longitude); 
+      if(distance < selfFilter.distancePreference){
+        return val; 
+      }
+
+    }); 
+    const filterByDistanceFinal = filterByDistance.filter(val => val !== undefined);
+     const listWithoutUser = filterByDistanceFinal.filter(val => val.phoneNumber !== userId);  
      setMaleMatches(listWithoutUser.length)
  })
  }

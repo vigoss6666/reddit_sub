@@ -3,12 +3,13 @@ import { Text, View, StyleSheet, Dimensions, ScrollView, Image, SafeAreaView, Se
 import { MaterialIcons, Foundation, Feather, Entypo } from '@expo/vector-icons';
 import {firebase } from '../../config'; 
 import {transformCreativity, computeSimDimension, computeSectionLabel, getDistanceFromLatLonInKm} from '../../networking'; 
-import { iconFactory} from '../../src/common/Common'; 
+import { iconFactory, LoadScreen} from '../../src/common/Common'; 
 import { logTen } from './logTen';
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';
 import { FontAwesome } from '@expo/vector-icons';
-// @refresh reset
+//@refresh reset
+
 const db = firebase.firestore(); 
 
 interface SelfGameProps {}
@@ -61,12 +62,13 @@ export interface serverDataWithDimension extends serverData {
 function pipe(...fns) {
     return (arg) => fns.reduce((prev, fn) => fn(prev), arg);
 }
-function applyFilters(filter:filter, arr:serverDataObjectDimension[], client):serverDataObjectDimension[]{
+async function applyFilters(filter:filter, arr:serverDataObjectDimension[], client, createChatThread):serverDataObjectDimension[]{
  
  const finalObject:any = []; 
 
  
- arr.map(val => {
+ arr.map(async val => {
+          
       const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude); 
       if(val.creativity >= filter.creativity 
         && val.charisma >= filter.charisma 
@@ -81,48 +83,69 @@ function applyFilters(filter:filter, arr:serverDataObjectDimension[], client):se
         && val.dimension >= filter.dimension
         && val.narcissism <= filter.narcissism
         && distance < filter.distancePreference 
+        && filter.appUsers ? val.appUser ? true: false:true 
+        && filter.matchMakerContact ? true: val.matchMaker == client.matchMaker ? false:true 
+        
          
          
         
         ){
            finalObject.push(val); 
       }
- }) 
- return finalObject;  
+ })
+
+const ageInit = finalObject.map(val => {
+   if(val.appUser == true){
+     return val
+   }
+})
+
+const ageFilterFinal = ageInit.filter(val => val !== undefined); 
+
+const gamer = await Promise.all(finalObject.map(async val => {
+  const id = createChatThread(val.phoneNumber, client.phoneNumber); 
+  
+  return await db.collection('introductions').doc(id).get().then(onDoc => {
+     if(onDoc.exists == false){
+       return val; 
+     }
+  })
+}))
+const later = gamer.filter(val => val !== undefined); 
+
+  
+ return later;  
 }
 
 const SelfGame = ({navigation, route}) => {
   const myContext = useContext(AppContext); 
-  const {user, userId, selfFilter, setSelfFilter,computeName} = myContext;
+  const {user, userId, selfFilter, setSelfFilter,computeName, createChatThread} = myContext;
     const [filter, setFilter] = useState(route.params ? route.params.finalObject:{});
     const [sliderState, setSliderState] = useState({ currentPage: 0 });
-    const [selfMatchView, setSelfMatchView] = useState();     
+    const [selfMatchView, setSelfMatchView] = useState();  
+    const [isLoading, setIsLoading] = useState(false);    
     const [filters, setFilters] = useState({
         state:'california'
     })
-    
+    console.log(selfFilter)
     
     useEffect(() => {
-           
-           db.collection('user').doc(userId).get().then(doc => {
+          
+          setIsLoading(true);      
+           db.collection('user').doc(userId).get({source:'server'}).then(doc => {
           
            db.collection('user')
            .where('state', '==', user.state)
            .where('gender', '==', user.gender == 'male'?'female':'male')
-           .get()
-           .then(result => {
+           .get({source:'server'})
+           .then(async result => {
                
                  const serverObjectWithId = result.docs.map(val => val.data())
 
-                 var filtered = serverObjectWithId.filter(
-                  function(e) {
-                    return this.indexOf(e.phoneNumber) < 0;
-                  },
-                  user.introRequest
-              );
+                
               
                  
-                 const logData = logTen(filtered);
+                 const logData = logTen(serverObjectWithId);
                  const userLogged = logTen(user);
                  setSelfMatchView({
                    user:userLogged, 
@@ -133,8 +156,9 @@ const SelfGame = ({navigation, route}) => {
                  
                  const filterBySim = simD.filter(val => val.simDimension) 
                  
-                 const filters = applyFilters(selfFilter, filterBySim, user);  
+                 const filters = await applyFilters(selfFilter, filterBySim, user, createChatThread);
                  
+                
                  
 
                  
@@ -142,7 +166,9 @@ const SelfGame = ({navigation, route}) => {
                  setSectionData(sectionData);  
            })
       })
-    }, [selfFilter])
+      
+      setIsLoading(false)
+    }, [selfFilter, user.introSent])
 
  
 
@@ -159,7 +185,7 @@ const SelfGame = ({navigation, route}) => {
         
    }]);
   
-   const [sectionData, setSectionData] = useState(); 
+   const [sectionData, setSectionData] = useState(null); 
     const [userList, setUserList] = useState()
     const { width, height } = Dimensions.get('window'); 
     const demoTemplate = [
@@ -183,13 +209,18 @@ const SelfGame = ({navigation, route}) => {
     <MaterialIcons name="account-circle" size={24} color="black" />
     <Text style = {{fontWeight:'bold', marginTop:5}}>{computeName(user)}</Text>
     </View>
+    const computeIndex = (flatListuser) => {
+      
+      const result = selfMatchView.data.findIndex(val => val.phoneNumber == flatListuser.phoneNumber);
+      return result;  
+   }
     
 
     const renderFlatlist = ({item}) => {
         
         
          return <View key = {item.phoneNumber} style = {{flexDirection:'row'}}>
-             <TouchableOpacity onPress = {() => navigation.navigate('SelfMatchView', {selfMatchView})}>
+             <TouchableOpacity onPress = {() => navigation.navigate('SelfMatchView', {selfMatchView, userIndex:computeIndex(item)})}>
 
                <MaterialIcons name="account-circle" size={70} color="black" /></TouchableOpacity>
 
@@ -219,9 +250,9 @@ const SelfGame = ({navigation, route}) => {
       })
     }, [])
 
-    console.log(selfFilter)
+    
     const setDefaultFilter = () => {
-    console.log("setting to default")  
+    
     setSelfFilter({
     charisma:0, 
     creativity:0, 
@@ -255,25 +286,30 @@ const SelfGame = ({navigation, route}) => {
           
     }
     
-  return (
-    <SafeAreaView style = {styles.container}>
-        
-        <View style = {{justifyContent:'center', alignItems:'center', marginTop:20}}>
-        {headerTemplate}        
-        </View>
-        <SectionList
-      style = {{marginTop:10, marginRight:15, marginLeft:15}}
-      sections={sectionData}
-      extraData = {filter}
-      keyExtractor={(item, index) => item.phoneNumber}
-      renderItem={renderSectionItem}
-      renderSectionHeader={({ section: { title } }) => (
-        <View style = {{ }}><Text style = {[styles.header, {paddingLeft:20}]}>{title}</Text></View>
-      )}
-    />
-    </SafeAreaView>
     
-  );
+
+    return (
+      <SafeAreaView style = {styles.container}>
+          
+          <View style = {{justifyContent:'center', alignItems:'center', marginTop:20}}>
+          {headerTemplate}        
+          </View>
+          <SectionList
+        style = {{marginTop:10, marginRight:15, marginLeft:15}}
+        sections={sectionData}
+        extraData = {filter}
+        keyExtractor={(item, index) => item.phoneNumber}
+        renderItem={renderSectionItem}
+        renderSectionHeader={({ section: { title } }) => (
+          <View style = {{ }}><Text style = {[styles.header, {paddingLeft:20}]}>{title}</Text></View>
+        )}
+      />
+      </SafeAreaView>
+      
+    );
+  
+    
+  
 };
 
 export default SelfGame;

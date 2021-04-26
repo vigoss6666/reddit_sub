@@ -53,6 +53,8 @@ useEffect(() => {
   
 }, [])
 
+console.log(selfFilter)
+
 
 
 
@@ -93,9 +95,8 @@ useEffect(() => {
 
 const [traits, setTraits] = useState([]); 
 const addClientFilter = () => {
-  console.log("Mainer")
-  console.log(compatibility)
-  setSelfFilter(Object.assign({},selfFilter, {dimension:compatibility, distancePreference, minAgePreference:minAge, maxAgePreference:maxAge, appUsers})); 
+  
+  setSelfFilter(Object.assign({},selfFilter, {dimension:compatibility, minAgePreference:minAge, maxAgePreference:maxAge, appUsers, matchMakerContact:matchmaking})); 
   navigation.navigate('SelfGame')
    
 }
@@ -149,7 +150,7 @@ function jsUcfirst(str)
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-console.log(appUsers)
+
 
 
 
@@ -465,8 +466,8 @@ console.log(appUsers)
     minimumTrackTintColor="#FFFFFF"
     maximumTrackTintColor="#000000" 
     onValueChange = {changeValue1}
-     value = {defaultDistance} 
-    // onSlidingComplete = {onSlidingComplete}
+    value = {defaultDistance} 
+    onSlidingComplete = {() => setSelfFilter(Object.assign({}, selfFilter, {distancePreference:distancePreference}))}
     
 
   />
@@ -483,7 +484,7 @@ console.log(appUsers)
  <Text style = {{fontWeight:'600'}}>Display MatchMakers contacts</Text>
  <SwitchSelector
   options={options}
-  initial={initialValue}
+  initial={selfFilter.matchMakerContact ? 0:1}
   onPress={value => {setMatchmaking(value)}}
   style = {{width:100}}
 />

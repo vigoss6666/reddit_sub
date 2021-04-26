@@ -11,27 +11,36 @@ import AppContext from '../../AppContext';
 interface SelfMatchViewProps {}
 
 const SelfMatchView = ({navigation, route}) => {
-    const {selfMatchView} = route.params; 
+    const {selfMatchView, userIndex} = route.params; 
+    console.log("user index")
+    console.log(userIndex)
     const myContext = useContext(AppContext); 
-    const {user, userId} = myContext; 
+    const {user, userId, createChatThread} = myContext; 
     const [hidden, setHidden]= useState(false);
     const { width, height } = Dimensions.get('window');
-    const [sliderState, setSliderState] = useState({ currentPage: 0 });
-    const [listItem1, setListItem] = useState(1);
+    const [sliderState, setSliderState] = useState({ currentPage: userIndex });
+    
     const insets = useSafeAreaInsets(); 
-    console.log("data users"); 
+    
+
+    console.log("sliderState is "); 
     console.log(sliderState.currentPage)
 
     const requestIntro = () => {
+       const _id = createChatThread(userId,selfMatchView.data[sliderState.currentPage].phoneNumber);
+       
        const object = {
-          client:selfMatchView.user.phoneNumber, 
-          yourClient:selfMatchView.data[sliderState.currentPage].phoneNumber, 
-          matchMaker:selfMatchView.data[sliderState.currentPage].matchMaker, 
-          createdAt:new Date(), 
+          client1:userId, 
+          client2:selfMatchView.data[sliderState.currentPage].phoneNumber, 
+          createdAt:new Date(),
+          discoveredBy:userId 
         }
         const db = firebase.firestore(); 
-        db.collection('introductions').add(object).then(() => console.log("Introduction added"))
-        updateUser(userId, {introRequest:firebase.firestore.FieldValue.arrayUnion(selfMatchView.data[sliderState.currentPage].phoneNumber)}); 
+        db.collection('user').doc(userId).set({introSent:firebase.firestore.FieldValue.arrayUnion(selfMatchView.data[sliderState.currentPage].phoneNumber)}, {merge:true}).then(() => {
+          db.collection('introductions').doc(_id).set(object, {merge:true}).then(() => navigation.navigate('SelfGame'))
+        }) 
+        
+         
       
     }
     
@@ -50,7 +59,7 @@ const SelfMatchView = ({navigation, route}) => {
     const textTemplate = hidden ? null: <View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('humor', 20)}
-          <Text style = {styles.scores }>Humor:  {selfMatchView.data[0].humor}</Text>
+          <Text style = {styles.scores }>Humor:  {selfMatchView.data[sliderState.currentPage].humor}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('empathetic', 20)}
@@ -87,7 +96,7 @@ const SelfMatchView = ({navigation, route}) => {
         
         
         const indexOfNextScreen = Math.floor(x / width);
-        if (indexOfNextScreen !== currentPage ) {
+        if (indexOfNextScreen !== currentPage && indexOfNextScreen >= 0) {
           setSliderState({
             ...sliderState,
             currentPage: indexOfNextScreen,
@@ -109,8 +118,8 @@ const SelfMatchView = ({navigation, route}) => {
         
         
         <ScrollView
-
-        contentOffset = {{x:414*listItem1, y:0}}
+    
+        contentOffset = {{x:414*sliderState.currentPage, y:0}}
         style = {{flex:1,  position:'absolute', top:180, left:90,zIndex:100,}} 
         horizontal = {true}
         pagingEnabled = {true}
@@ -175,14 +184,14 @@ const SelfMatchView = ({navigation, route}) => {
   }}></View>
            <View style = {{flexDirection:"row", justifyContent:"center",alignItems:"center"}}>
            <Feather name="alert-triangle" size={24} color="red" />
-           <Text style = {{marginLeft:5, fontWeight:'bold'}}>Narcissism: {data[sliderState.currentPage].narcissism}</Text>
+           <Text style = {{marginLeft:5, fontWeight:'bold'}}>Narcissism: {selfMatchView.data[sliderState.currentPage].narcissism}</Text>
            </View>
            <View style = {{borderBottomWidth:2, marginLeft:30, marginRight:30, borderBottomColor:"grey", marginTop:10}}>
            </View>
            
            </ScrollView>
            <View style = {{marginTop:10, marginLeft:30, marginRight:30, flex:0.1, marginBottom:15, justifyContent:"center", }}>
-           <Button title = "Request Introduction" buttonStyle = {{backgroundColor:"#afd968"}} titleStyle = {{color:"black", fontWeight:'bold'}} onPress = {() => { requestIntro(),navigation.navigate('SelfGame')}}/>
+           <Button title = "Request Introduction" buttonStyle = {{backgroundColor:"#afd968"}} titleStyle = {{color:"black", fontWeight:'bold'}} onPress = {() => { requestIntro()}}/>
            </View>
         
     </View>

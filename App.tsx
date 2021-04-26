@@ -178,7 +178,8 @@ export default function App() {
     maxAgePreference:60,
     dimension:0, 
     distancePreference:10, 
-    appUsers:false
+    appUsers:false, 
+    matchMakerContact:true
   })
   const [clientFilter, setClientFilter] = useState([{
     client:"something", 
