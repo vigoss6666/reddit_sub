@@ -53,7 +53,7 @@ useEffect(() => {
   
 }, [])
 
-console.log(selfFilter)
+
 
 
 

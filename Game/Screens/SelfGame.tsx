@@ -127,7 +127,7 @@ const SelfGame = ({navigation, route}) => {
     const [filters, setFilters] = useState({
         state:'california'
     })
-    console.log(selfFilter)
+    
     
     useEffect(() => {
           

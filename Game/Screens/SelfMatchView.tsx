@@ -12,8 +12,7 @@ interface SelfMatchViewProps {}
 
 const SelfMatchView = ({navigation, route}) => {
     const {selfMatchView, userIndex} = route.params; 
-    console.log("user index")
-    console.log(userIndex)
+    
     const myContext = useContext(AppContext); 
     const {user, userId, createChatThread} = myContext; 
     const [hidden, setHidden]= useState(false);
@@ -23,8 +22,6 @@ const SelfMatchView = ({navigation, route}) => {
     const insets = useSafeAreaInsets(); 
     
 
-    console.log("sliderState is "); 
-    console.log(sliderState.currentPage)
 
     const requestIntro = () => {
        const _id = createChatThread(userId,selfMatchView.data[sliderState.currentPage].phoneNumber);

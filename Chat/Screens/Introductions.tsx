@@ -9,14 +9,29 @@ import { db, UserFactory } from './MatchList';
 export function Introductions({ navigation, }) {
   const myContext = useContext(AppContext);
   const { user, userId, setChatNotification, setChatterNotification } = myContext;
-  const [intros, setIntros] = useState([{ client1: '+15554787672', client2: '+917208110384', createdAt: new Date(), _id: 'something', clientUser: { profilePic: 'https://firebasestorage.googleapis.com/v0/b/friends-365d0.appspot.com/o/images%2Ff36jh47t3dr?alt=media&token=a5b14492-468f-4fb2-becc-2425e7b471c9', name: 'zaid shaikh' } }]);
+  const [intros, setIntros] = useState([]); 
 
   useEffect(() => {
-    const unsubscribe = db.collection('introductions').where('client2', '==', userId).onSnapshot(async (onResultClient1) => {
+    const unsubscribe1 = db.collection('introductions').where('client1', '==', userId).onSnapshot(async (onResultClient1) => {
+      const diffClient = await db.collection('introductions').where('client2', '==', userId).get(); 
+      const diffClientUsers = diffClient.docs.map(val => Object.assign({}, val.data(),{_id:val.id} )); 
+       const transformed = diffClientUsers.map(val => {
+        let a = val.client1;
+        let b = val.client2;
+        let temp;
+        temp = a;
+        a = b;
+        b = temp;
+        return { ...val, client1: a, client2: b };
+      });
+
+
+
       const clientObjects = onResultClient1.docs.map(val => Object.assign({}, val.data(), { _id: val.id }));
-      const client1Users = clientObjects.filter(val => val.client1);
-      const transformedWithUsers1 = await Promise.all(client1Users.map(async (val) => {
-        return await db.collection('user').doc(val.client1).get().then(result => Object.assign({}, val, { clientUser: result.data() }));
+      const collective = [...transformed, ...clientObjects]; 
+      const finalCollective = collective.filter(val => val.discoveredBy !== userId); 
+      const transformedWithUsers1 = await Promise.all(finalCollective.map(async (val) => {
+        return await db.collection('user').doc(val.client2).get().then(result => Object.assign({}, val, { clientUser: result.data() }));
       }));
       const filterByintroMatches = transformedWithUsers1.filter(
         function (e) {
@@ -31,10 +46,51 @@ export function Introductions({ navigation, }) {
       const seenIntrosChecker = user.seenIntros !== undefined && user.seenIntros.length ? user.seenIntros : [];
       const filtered = filterGamer(filterByintroMatches, '_id', seenIntrosChecker, null, namer);
 
-      setIntros([...filtered.excludedObjects, ...filtered.includedObjects]);
+      setIntros([...filtered.excludedObjects, ...filtered.includedObjects,]);
     });
-    return () => unsubscribe();
+     
+    const unsubscribe = db.collection('introductions').where('client2', '==', userId).onSnapshot(async (onResultClient1) => {
+      const clientObjects = onResultClient1.docs.map(val => Object.assign({}, val.data(), { _id: val.id }));
+      const transformed = clientObjects.map(val => {
+        let a = val.client1;
+        let b = val.client2;
+        let temp;
+        temp = a;
+        a = b;
+        b = temp;
+        return { ...val, client1: a, client2: b };
+      });
+      const diffClient = await db.collection('introductions').where('client1', '==', userId).get(); 
+      const diffClientUsers = diffClient.docs.map(val => Object.assign({}, val.data(),{_id:val.id} )); 
+      const collective = [...diffClientUsers, ...transformed]; 
+      const finalCollective = collective.filter(val => val.discoveredBy !== userId); 
+
+
+      
+      const transformedWithUsers1 = await Promise.all(finalCollective.map(async (val) => {
+        return await db.collection('user').doc(val.client2).get().then(result => Object.assign({}, val, { clientUser: result.data() }));
+      }));
+      const filterByintroMatches = transformedWithUsers1.filter(
+        function (e) {
+          return this.indexOf(e._id) < 0;
+        },
+        user.introMatches
+      );
+
+      function namer(val) {
+        return { ...val, seen: true };
+      }
+      const seenIntrosChecker = user.seenIntros !== undefined && user.seenIntros.length ? user.seenIntros : [];
+      const filtered = filterGamer(filterByintroMatches, '_id', seenIntrosChecker, null, namer);
+
+      setIntros([...filtered.excludedObjects, ...filtered.includedObjects, ]);
+    });
+    return () => { unsubscribe1(), unsubscribe()};
   }, [user.seenIntros]);
+  
+  
+  
+  
   const handleClick = (intro) => {
 
     db.collection('user').doc(userId).set({ seenIntros: firebase.firestore.FieldValue.arrayUnion(intro._id) }, { merge: true }).then(() => console.log("clientUser updated"));
@@ -51,13 +107,13 @@ export function Introductions({ navigation, }) {
         <Text style={{ alignSelf: "center", fontWeight: "bold", fontSize: 15, marginTop: 10, marginBottom: 10 }}>Introductions</Text>
       </View>
       <Line />
-      <FlatList
+      {intros.length ?  <FlatList
         data={intros}
         renderItem={renderIntroList}
         keyExtractor={item => item._id}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
-        style={{ marginTop: 20, marginBottom: 20, marginLeft: 20, marginRight: 20 }} />
+        style={{ marginTop: 20, marginBottom: 20,  }} />: <Text style = {{alignSelf:'center', fontSize:20, fontStyle:'italic', fontWeight:'bold', marginTop:10, marginBottom:10}}>No New introductions</Text>}
     </View>
   );
 

@@ -128,7 +128,11 @@ const [result, setResult] = useState('🔮');
    }
 
     const onSend = useCallback((messages = []) => {
-      db.collection('user').doc(clientObj.client1).update({chatted:firebase.firestore.FieldValue.arrayUnion(clientObj._id)})
+      
+      db.collection('matches').doc(clientObj._id).update({chatted:true});
+      db.collection('user').doc(clientObj.client1).update({lastMessage:firebase.firestore.FieldValue.arrayUnion(messages[0])}) 
+      db.collection('user').doc(clientObj.client2).update({lastMessage:firebase.firestore.FieldValue.arrayUnion(messages[0])}) 
+
       db.collection('messages').doc(chatID).collection("messages").add(messages[0])
     }, [])
 

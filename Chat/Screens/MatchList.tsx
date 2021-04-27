@@ -20,7 +20,7 @@ if(user.seen && user.clientUser.profilePic){
 return <TouchableOpacity onPress = {() => onPress(user)}><Image source = {{uri:user.clientUser .profilePic}} style = {{height:50, width:50, borderRadius:25, marginLeft:10, marginRight:10}}/></TouchableOpacity>
 }
 if(user.seen && !user.clientUser.profilePic){
-  <TouchableOpacity 
+  return <TouchableOpacity 
   style = {{height:50, width:50, borderRadius:25, borderWidth:1,justifyContent:"flex-end", alignItems:"center", marginLeft:10}}
   onPress = {() => onPress(user)}
   >
@@ -34,7 +34,7 @@ if(!user.seen && user.clientUser.profilePic){
   </TouchableOpacity>
 }
 if(!user.seen && !user.clientUser.profilePic){
-  <TouchableOpacity 
+  return <TouchableOpacity 
 style = {{height:50, width:50, borderRadius:25, borderWidth:1,justifyContent:"flex-end", alignItems:"center", marginLeft:10}}
 onPress = {() => onPress(user)}
 >
@@ -53,7 +53,7 @@ return <View>
 
 export default function MatchList({navigation}){
 return(
-<SafeAreaView style = {{flex:1, marginTop:20}}>
+<SafeAreaView style = {{flex:1, marginTop:20, marginLeft:20, marginRight:20}}>
 <Introductions navigation = {navigation} />
 <MatchesList navigation = {navigation}/>
 <MatchChats navigation = {navigation}/>
