@@ -121,18 +121,31 @@ export function MatchChats({navigation}) {
           });
         }));
          
-        var filteredSeenChats = transformedWithUsers.filter(
+        let filteredSeenChats = transformedWithUsers.filter(
                     function(e) {
                 
                       return this.indexOf(e.lastMessage._id) < 0;
                     },
                    user.seenChats
           );
-                
+        let keys = filteredSeenChats.map(val => val.lastMessage._id); 
+        const included =  transformedWithUsers.filter(
+          function(e) {
+            return this.indexOf(e.lastMessage._id) < 0;
+          },
+          keys
+      );
+      function applyToIncluded(val){
+        return {...val, seen:true}  
+      }
+
+      const includedTransform = included.map(val => applyToIncluded(val)); 
+      const finalGamer = [...filteredSeenChats, ...includedTransform]; 
+
         
         
         
-        const resulter = transformedWithUsers.map(val => {
+        const resulter = finalGamer.map(val => {
             if(val.lastMessage.user._id == userId){
                 return {
                     ...val, seen:true 
@@ -170,12 +183,27 @@ export function MatchChats({navigation}) {
           });
         });
       }));
-      function applyToIncluded(val){
-        return {...val, seen:true}  
-      }
-      const filterBySeen = filterGamer(transformedWithUsers, '_id', user.seenChats, null, applyToIncluded); 
-      const filterLatest = [...filterBySeen.excludedObjects, ...filterBySeen.includedObjects]; 
-      const resulter = filterLatest.map(val => {
+      let filteredSeenChats = transformedWithUsers.filter(
+        function(e) {
+    
+          return this.indexOf(e.lastMessage._id) < 0;
+        },
+       user.seenChats
+);
+let keys = filteredSeenChats.map(val => val.lastMessage._id); 
+const included =  transformedWithUsers.filter(
+function(e) {
+return this.indexOf(e.lastMessage._id) < 0;
+},
+keys
+);
+function applyToIncluded(val){
+return {...val, seen:true}  
+}
+
+const includedTransform = included.map(val => applyToIncluded(val)); 
+const finalGamer = [...filteredSeenChats, ...includedTransform]; 
+      const resulter = finalGamer.map(val => {
         if(val.lastMessage.user._id == userId){
             return {
                 ...val, seen:true 
