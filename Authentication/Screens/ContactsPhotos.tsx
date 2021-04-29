@@ -57,16 +57,12 @@ const ContactsPhotos = ({navigation}) => {
     
     
 
-    let pickerResult = await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.All});
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.Images});
     
-    if(pickerResult.type == 'image'){
-      const manipResult = await ImageManipulator.manipulateAsync(
-        pickerResult.uri,
-        [{resize:{width:200, height:200}}],
-        { compress: 0.1, format: ImageManipulator.SaveFormat.PNG,}
-      );
+    
       
-      const response = await fetch(manipResult.uri); 
+      
+      const response = await fetch(pickerResult.uri); 
         const blob = await response.blob(); 
         const namer = Math.random().toString(36).substring(2);
         const ref = firebase.storage().ref().child("images/"+ namer); 
@@ -80,11 +76,8 @@ const ContactsPhotos = ({navigation}) => {
         profilePic:result1   
         }
        db.collection('user').doc(obj.phoneNumber).set(serverObject, {merge:true}); 
-    }
-    if(pickerResult.type == 'video'){
-      alert('Video format not allowed')
-      return; 
-    }
+    
+    
     
   }
   return(

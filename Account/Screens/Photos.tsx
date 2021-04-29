@@ -6,6 +6,7 @@ import { Entypo, AntDesign, MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { uploadImage } from '../../networking'; 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {firebase} from '../../config'; 
 //@refresh reset
 import SettingsHome from './SettingsHome';
@@ -15,15 +16,23 @@ import AppContext from '../../AppContext';
 import {updateUser} from '../../networking';
 
 
+
 export default function Photos({navigation, route }){
   const myContext = useContext(AppContext); 
-    const {user, userId,} = myContext;     
+    const {user, userId,db} = myContext;     
+    const insets = useSafeAreaInsets();
     const [camera,setCamera] = useState(); 
     
     //const {page} = route.params; 
     
     
-    const [profilePic,setProfilePic] = useState(user.profilePic); 
+    const [profilePic,setProfilePic] = useState(null);
+    
+    useEffect(() => {
+      setProfilePic(user.profilePic)
+    }, [])
+    
+    
     
     async function updateProfilePicToServer(){
       
@@ -38,23 +47,13 @@ export default function Photos({navigation, route }){
       await ref.put(blob).catch(error => console.log(error))
       const result1 = await ref.getDownloadURL().catch(error => console.log(error))
       
-      updateUser(userId, {profilePic:result1}); 
+      db.collection('user').doc(userId).set({profilePic:result1}, {merge:true});  
       
       
       }
       useLayoutEffect(() => {
         navigation.setOptions({
-          headerRightStyle:() => (
-            {
-              marginRight:10
-            }
-          ), 
-          headerRight: () => (
-            <TouchableOpacity onPress = {() => {updateProfilePicToServer(),uploadPhotosToServer(),  navigation.navigate(SettingsHome)}}>
-   <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
-   </TouchableOpacity>
-
-          ),
+          headerShown:false,
         });
       }, [navigation]);
     
@@ -69,7 +68,7 @@ export default function Photos({navigation, route }){
           return;
         }
         
-        let pickerResult = await ImagePicker.launchImageLibraryAsync({base64:true});
+        let pickerResult = await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.Images});
         setProfilePic(pickerResult.uri) 
   }   
 
@@ -225,10 +224,14 @@ const row2 = <View style = {{flexDirection:"row",marginBottom:15, justifyContent
 </View>    
 
 return(
-<View style = {{flex:1,marginLeft:30, marginRight:30}}>
-<View style = {{flex:0.1}}> 
+<View style = {{flex:1,marginLeft:30, marginRight:30, paddingTop:insets.top}}>
+<View style = {{flex:0.2}}> 
+<TouchableOpacity onPress = {() => {updateProfilePicToServer(),uploadPhotosToServer(),  navigation.navigate(SettingsHome)}} style = {{alignItems:'flex-end', marginTop:10}}>
+   <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
+   </TouchableOpacity>
+   
 </View>
-<View style = {{flex:0.8}}>
+<View style = {{flex:0.7}}>
 
 {profileTemplate}
 <Text style = {{alignSelf:"center", fontStyle:'italic', fontWeight:"bold", marginTop:30}}>Add Multiple Photos to increase your chances </Text>

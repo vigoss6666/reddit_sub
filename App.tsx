@@ -124,6 +124,7 @@ import MatchMakeLatest from './Game/Screens/MatchMakeLatest';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from './AppContext'; 
 import GameEngine from './GameEngine'; 
+import {defaultDataObject} from './DefaultData'; 
 
 
 const db = firebase.firestore();
@@ -239,6 +240,7 @@ function stringifyNumber(n) {
   
   
   const globalObject = {
+    defaultDataObject, 
     sentFromBrowse, 
     setSentFromBrowse, 
     initialRouteName, 

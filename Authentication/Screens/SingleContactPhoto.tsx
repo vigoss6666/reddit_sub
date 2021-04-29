@@ -43,7 +43,7 @@ const SingleContactPhoto = ({navigation}) => {
     }
     namer()
     
- }, [])
+ }, [singleContact])
   
   let openImagePickerAsync = async (obj) => {
     console.log('the function was called')  
@@ -119,7 +119,7 @@ const SingleContactPhoto = ({navigation}) => {
             </ScrollView> 
     </View>
     <View style = {{flex:0.2, justifyContent:'center',marginTop:10 }}>
-    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {navigation.navigate('SingleContactLocation')}}></Button>   
+    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {navigation.navigate('SingleContactGender')}}></Button>   
 
     </View>
     </View>

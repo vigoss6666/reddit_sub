@@ -26,7 +26,7 @@ export default function MapViewMainer({navigation}){
   const [x, setX] = useState({latitude:37.768865, longitude:-122.475338});
   const [markers, setMarkers] = useState({latlng:{}});  
   const [location, setLocation] = useState({}); 
-  console.log(location.address)
+  console.log("gamer is")
   
 
   const handleServerLocation = () => {
@@ -77,6 +77,7 @@ return(
                 const result = details?.address_components.map(val => {
                    return val.types.map(val1 => {
                       if(val1 == 'administrative_area_level_1'){
+                         console.log("gamer is")
                          console.log(val.long_name)
                          setLocation({state: val.long_name, address:data.description})
                       }

@@ -27,7 +27,7 @@ mutation namer($userInputList:userInputList1!){
 
 export default function SingleContactAge({navigation,route}){
     const myContext = useContext(AppContext); 
-    const {user, userId,singleContact, CustomBackComponent} = myContext;
+    const {user, userId,singleContact, CustomBackComponent,defaultDataObject} = myContext;
     const [profiles, setProfiles] = useState([
    
         { 
@@ -88,14 +88,15 @@ useEffect(() => {
     }    
  }, [profiles, country])
  const updateToServer = () => {
-     const batch  = db.batch(); 
-     country.map(val => {
-          const ref = db.collection('user').doc(val._id); 
-          batch.set(ref, {minAge:val.minAge}, {merge:true}); 
-          batch.set(ref, {maxAge:val.maxAge}, {merge:true});
-          batch.set(ref, {age:parseInt((val.maxAge + val.minAge)/2)}, {merge:true});
-     })
-     batch.commit().then(() => console.log("documents have been added successfully"))
+   const user = Object.assign({},{...defaultDataObject}, {...singleContact})
+   db.collection('user').doc(singleContact.phoneNumber).set({...user}, {merge:true}).then(() => {
+   db.collection('user').doc(userId).update({contactList:firebase.firestore.FieldValue.arrayRemove(singleContact.phoneNumber)});
+   db.collection('user').doc(userId).update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(singleContact.phoneNumber)}).then(() => {
+     navigation.navigate('Homer');   
+   })
+   }) 
+   
+      
      
 }
 const updateCountryWrapper = (obj:any) => {
@@ -199,7 +200,7 @@ useEffect(() => {
         </ScrollView>        
         </View>
         <View style = {{flex:0.2, justifyContent:'center',marginTop:10}}>
-         <Button title = "Save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {updateToServer(), navigation.navigate('Homer')}} disabled = {gate}></Button>   
+         <Button title = "Save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {updateToServer()}} disabled = {gate}></Button>   
         </View>
         </SafeAreaView>
         )    

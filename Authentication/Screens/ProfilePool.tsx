@@ -37,7 +37,7 @@ const computeName = (obj) => {
 
 const useFetchContactPool = (navigation) => {
      const myContext = useContext(AppContext); 
-     const {user, userId, contactList, setContactList, setSingleContact} = myContext;
+     const {user, userId, contactList, setContactList, setSingleContact, defaultDataObject} = myContext;
      const KEYS_TO_FILTERS = ['name'];
      const [search, setSearch] = useState('');
      const [namer, setNamer] = useState(1);
@@ -73,13 +73,15 @@ const useFetchContactPool = (navigation) => {
 
 
      const _sendToServer = (val) => {
-               //     db.collection('user').doc(userId).update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}).then(() => {
-               //     db.collection('user').doc(userId).update({contactList:firebase.firestore.FieldValue.arrayRemove(val.phoneNumber)}).then(() => {
-               //     console.log("update have been made") 
-               // })
-          //  }) 
+          if(val.matchMaker == userId){
           setSingleContact(val); 
           navigation.navigate('SingleContactPhoto'); 
+          return; 
+          }
+          db.collection('user').doc(userId).update({contactList:firebase.firestore.FieldValue.arrayRemove(val.phoneNumber)});
+          db.collection('user').doc(userId).update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}); 
+
+          
              
            
      }
@@ -527,7 +529,7 @@ onChangeItem={namer => addAge(item, namer)}
           <View style = {{flexDirection:"row", justifyContent:'space-between'}}>
           <View style = {{flexDirection:"row", alignItems:"center"}}>
           {item.profilePic ? <Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
-          <Text style = {{marginLeft:10,marginBottom:10,fontWeight:"bold"}}>{computeName(item)}{"\n"} {item.votes.length} votes by {item.matchMakers.length} {item.matchMakers.length > 1 ? 'friends':'friend'}</Text>
+          <Text style = {{marginLeft:10,marginBottom:10,fontWeight:"bold"}}>{computeName(item)}{"\n"} {item.votes.length > 0 ? item.votes.length : 0} votes by {item.matchMakers.length} {item.matchMakers.length > 1 ? 'friends':'friend'}</Text>
           </View>
           {   
                item.caret ? 
