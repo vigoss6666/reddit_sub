@@ -23,6 +23,8 @@ import * as Print from 'expo-print';
 import {Input} from 'react-native-elements'; 
 import {transformCreativity, getDistanceFromLatLonInKm} from '../../networking';
 import AppContext from '../../AppContext'; 
+import { Modal } from 'react-native';
+import ImageViewer from 'react-native-image-zoom-viewer';
 // @refresh reset
 export function getBaseLog(x, y) {
   const result = Math.log(y) / Math.log(x);
@@ -844,6 +846,7 @@ export function ClientHeader({client, style}) {
 
  export function ClientPhotos({client}){
   const photosMainer = [null, null, null, null, null, null];
+  const [visible, setVisible] = useState(false); 
   const photos = photosMainer.slice(2)
   let template; 
   
@@ -858,12 +861,14 @@ export function ClientHeader({client, style}) {
    }
    if(checkNull.length > 0){
       template = checkNull.map(val => {
-         return <Image source = {{uri:val}} style = {{height:80, width:80, marginRight:10}}/>
+
+         return <TouchableOpacity onPress = {() => setVisible(true)}><Image source = {{uri:val}} style = {{height:80, width:80, marginRight:10}} onPress = {() => setVisible(true)}/></TouchableOpacity> 
       })
    }
    
    return <View>
    <View style = {{flexDirection:'row',marginTop:20, alignItems:'center',marginBottom:10}}>
+   <ImageView visible = {visible} imageUrls = {[{url:'https://avatars2.githubusercontent.com/u/7970947?v=3&s=460'}]} setVisible = {setVisible}/>  
    <AntDesign name="instagram" size={24} color="black" />
    <Text style = {[styles.iconNames, {fontWeight:'bold'}] }> Photos</Text>
    </View>
@@ -1132,6 +1137,12 @@ export function ClientHeader({client, style}) {
      <Image source = {{uri:'https://media.giphy.com/media/YpqWbjNDq8y4DVu4BO/giphy.gif'}} style = {{height:200, width:200}}/>  
      </View>
    )
+ }
+
+ export function ImageView({images, visible, setVisible}){
+  return <Modal visible={visible} transparent={true}>
+  <ImageViewer imageUrls={[{url:'https://avatars2.githubusercontent.com/u/7970947?v=3&s=460',}]} renderHeader = {() => <View style = {{backgroundColor:'red'}} ></View>} enableSwipeDown onSwipeDown = {() => setVisible(false)}/>
+</Modal> 
  }
 
 
