@@ -119,7 +119,8 @@ const useFetchContactPool = (navigation) => {
                               firstName:val.firstName, 
                               lastName:val.lastName,
                               formattedPhoneNumber:val.phoneNumbers[0].number, 
-                              phoneNumber:transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode)
+                              // phoneNumber:transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode)
+                              phoneNumber:val.phoneNumbers[0].digits
                           }
                      })
                    

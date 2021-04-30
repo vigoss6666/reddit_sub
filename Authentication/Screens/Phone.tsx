@@ -100,6 +100,7 @@ export default function App({navigation}) {
                   
 
                   showMessage({ text: 'Phone authentication successful 👍' })
+                  
                   navigation.navigate('Name'); 
                   
                }

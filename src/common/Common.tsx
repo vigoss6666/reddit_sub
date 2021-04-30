@@ -21,7 +21,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Foundation } from '@expo/vector-icons';
 import * as Print from 'expo-print';
 import {Input} from 'react-native-elements'; 
-import {transformCreativity} from '../../networking';
+import {transformCreativity, getDistanceFromLatLonInKm} from '../../networking';
 import AppContext from '../../AppContext'; 
 // @refresh reset
 export function getBaseLog(x, y) {
@@ -721,7 +721,7 @@ const computeName = (obj) => {
 }        
 export function ClientHeader({client, style}) {
   const {creativity, charisma, humor, honest, looks, empathetic, status, wealthy} = client; 
-   const newObject = {status}; 
+   const newObject = {creativity, charisma, humor, honest, looks, empathetic, status,wealthy}; 
    Object.keys(newObject).forEach(key => {
     if (!newObject[key]) delete newObject[key];
   });
@@ -785,9 +785,26 @@ export function ClientHeader({client, style}) {
    return null; 
  }
 
- export function ClientDetails({client}){
+ export function ClientDetails({client, client2 = null}){
+  
   const myContext = useContext(AppContext); 
   const {user, userId} = myContext;
+  const [distance, setDistance] = useState(0); 
+  useEffect(() => {
+   if(client2){
+    const distance = getDistanceFromLatLonInKm(client.latitude, client.longitude, client2.latitude, client2.longitude);
+    setDistance(distance);   
+   } 
+    
+  }, [])
+
+
+  const distanceTemplate = distance ? <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
+  <FontAwesome name="suitcase" size={24} color="black" />
+  <Text style = {styles.iconNames}>{distance} miles away</Text>
+
+  </View>:null; 
+
   const age = client.age ? <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
   <FontAwesome name="birthday-cake" size={24} color="black" />
   <Text style = {styles.iconNames}>{client.age} years old</Text>
@@ -806,14 +823,11 @@ export function ClientHeader({client, style}) {
   <Text style = {styles.iconNames}>Lives in {client.subLocality}</Text>
 
   </View>:null; 
-  const distanceTemplate = client.phoneNumber == user.phoneNumber ? null: <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
-  <Entypo name="location-pin" size={24} color="black" />
-  <Text style = {styles.iconNames}> {client.distance} miles away</Text>
-  </View>
+  
   return <View style = {{marginLeft:20, marginRight:20}}>
   <View style = {[styles.line, {marginTop:40}]}/>
                   
-  <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>{client.firstName}'s details</Text>
+  <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>{computeName(user)}'s details</Text>
 
   <View style = {styles.line}></View>
   {age}
@@ -859,6 +873,9 @@ export function ClientHeader({client, style}) {
    </View>
     
  }
+
+
+ 
 
  export function ClientMatchMakers({client}){
     

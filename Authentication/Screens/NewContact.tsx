@@ -87,6 +87,9 @@ const [image, setImage] = useState();
 if(data){
      
 }
+
+
+console.log(dialCode)
 console.log(countryCode); 
 console.log(digits)
 console.log(firstname)
@@ -100,6 +103,15 @@ console.log(addDatingPool)
 console.log(feet)
 console.log(inches)
 console.log(digits); 
+async function updateProfilePicToServer(){
+    const response = await fetch(image); 
+    const blob = await response.blob(); 
+    const namer = Math.random().toString(36).substring(2);
+    const ref = firebase.storage().ref().child("images/"+ namer); 
+    await ref.put(blob).catch(error => console.log(error))
+    const result1 = await ref.getDownloadURL().catch(error => console.log(error))
+    return result1; 
+ }
 
 
 useEffect(() => {
@@ -113,26 +125,31 @@ navigation.setOptions({
 }, [])
 
 
-const _sendToServer = () => {
+const _sendToServer = async () => {
+ const url = image ? await updateProfilePicToServer():"";    
  const serverObject = {
-     countryCode:route.params ? route.params.code : "US", 
-     digits:digits, 
-     fullName:firstname+lastname, 
+      
+     phoneNumber:dialCode+digits, 
+     name:firstname+lastname, 
      firstname:firstname, 
      gender:gender, 
-     orientation:orientation,
+     genderPreference:orientation,
      minAge:age.minAge, 
      maxAge:age.maxAge,
-     inches:inches, 
-     feet:feet, 
-     
- }   
- //addNewContact({variables:{userInput:serverObject},refetchQueries:[{query:GET_DATING_POOL}, {query:GET_CONTACT_POOL}]});
- const id = uuidv4()
- db.collection('user').doc(id).set(serverObject).then(() => console.log("server object set correctly")); 
- db.collection('user').doc('trial_user').update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(id)}); 
+     age:parseInt((age.minAge + age.maxAge)/2), 
+     inches:inches ? inches:0, 
+     feet:feet ? feet: 5, 
+     matchMaker:userId, 
+     matchMakers:[userId], 
+     profilePic:url
+    }
+   const finalObject = Object.assign({}, {...defaultDataObject}, {...serverObject}); 
+   db.collection('user').doc(dialCode+digits).set(finalObject, {merge:true}).then(() => console.log("server object set correctly")); 
+   db.collection('user').doc(userId).update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(dialCode+digits)})
+   
+ 
 
- navigation.navigate('ProfilePool')
+ navigation.navigate('Homer')
  
 //  navigation.goBack();       
 }

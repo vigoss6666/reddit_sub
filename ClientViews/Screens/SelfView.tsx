@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { Text, View, StyleSheet, Image,ScrollView, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, Image,ScrollView, TouchableOpacity, Share } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
@@ -9,14 +9,17 @@ import { MaterialIcons } from '@expo/vector-icons';
 import {Button} from 'react-native-elements';
 import Moment from 'react-moment';
 import {transformCreativity} from '../../networking'; 
-import {iconFactory} from '../../src/common/Common'; 
+import {iconFactory, LoadScreen} from '../../src/common/Common'; 
 import { logTen } from './logTen';
+import * as Sharing from 'expo-sharing';
 //@refresh reset
+import * as ImagePicker from 'expo-image-picker';
 import AppContext from '../../AppContext'; 
 import { formatDistanceToNow } from "date-fns";
 import { firebase } from '../../config'; 
 import { Octicons } from '@expo/vector-icons';
 import {ClientHeader, ClientDetails, ClientPhotos, ClientMatchMakers, ClientTraits, ClientVotes} from '../../src/common/Common'; 
+import * as Linking from 'expo-linking';
 
 
 
@@ -35,6 +38,16 @@ const SelfView = (props: ClientViewProps) => {
     const [selected, setSelected] = useState('traits');
     const myContext = useContext(AppContext);
     const {user, userId} = myContext;  
+
+
+
+    const share = async () => {
+      
+         
+
+        await Share.share({message:"https://friends-365d0.web.app/?name="+userId})
+      
+    }
     
     
      
@@ -113,22 +126,16 @@ const SelfView = (props: ClientViewProps) => {
                        </TouchableOpacity>
                    </View> 
                    {selected == 'traits' ? <ClientTraits client = {user} />:<ClientVotes client = {user}/>}
-                   <ClientDetails client = {user} />
+                   <ClientDetails client = {user} client2 = {{latitiude:32.735487, longitude:-117.149025}}/>
                   <ClientPhotos client = {user}/>
                   <ClientMatchMakers client = {user} />
                   
-                  <View style = {[styles.line, {marginTop:40}]}/>
-                  <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>{data.firstName.toUpperCase()}'s MATCHMAKERS</Text>
-                  <View style = {styles.line}></View>
-                  <View style = {{flexDirection:'row', justifyContent:'center', marginTop:30}}>
-                  <MaterialIcons name="account-circle" size={40} color="black" />
-                  <MaterialIcons name="account-circle" size={40} color="black" />
-                  <MaterialIcons name="account-circle" size={40} color="black" />
-                  <MaterialIcons name="account-circle" size={40} color="black" />
-                  <MaterialIcons name="account-circle" size={40} color="black" />
-                  </View>
-                  <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:20, fontStyle:'italic', marginTop:10}]}>David Boctor and {matchMaker.length} others</Text>
-                  <Button title = {"SHARE THIS PROFILE"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:100, marginBottom:200,}} buttonStyle = {{backgroundColor:'green',}}>
+                 
+                 
+                 
+                  
+                  
+                  <Button title = {"SHARE THIS PROFILE"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:100, marginBottom:200,}} buttonStyle = {{backgroundColor:'green',}} onPress = {share}>
   
                   </Button>
   
@@ -144,9 +151,7 @@ const SelfView = (props: ClientViewProps) => {
         );    
      }
      return (
-          <View style = {{flex:1, justifyContent:'center', alignItems:'center'}}>
-              <Text>Loading</Text>
-          </View>
+          <LoadScreen />
      ) 
     
   };
