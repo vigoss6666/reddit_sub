@@ -865,10 +865,15 @@ export function ClientHeader({client, style}) {
          return <TouchableOpacity onPress = {() => setVisible(true)}><Image source = {{uri:val}} style = {{height:80, width:80, marginRight:10}} onPress = {() => setVisible(true)}/></TouchableOpacity> 
       })
    }
+   const templateForImage = checkNull.map(val => {
+      return {
+        url:val
+      }
+   })
    
    return <View>
    <View style = {{flexDirection:'row',marginTop:20, alignItems:'center',marginBottom:10}}>
-   <ImageView visible = {visible} imageUrls = {[{url:'https://avatars2.githubusercontent.com/u/7970947?v=3&s=460'}]} setVisible = {setVisible}/>  
+   <ImageView visible = {visible} images = {templateForImage} setVisible = {setVisible}/>  
    <AntDesign name="instagram" size={24} color="black" />
    <Text style = {[styles.iconNames, {fontWeight:'bold'}] }> Photos</Text>
    </View>
@@ -937,7 +942,7 @@ export function ClientHeader({client, style}) {
     const [gender, setGender] = useState<string>(''); 
     
     useEffect(() => {
-          db.collection('user')
+          const unsubscribe = db.collection('user')
           .where('gender', '==', client.gender)
           .where('state', '==', client.state)
           .onSnapshot(result => {
@@ -946,6 +951,7 @@ export function ClientHeader({client, style}) {
                 setTraits(finaler); 
                 setGender(gender)
              })
+             return () => unsubscribe()
           
              
     },[client])
@@ -1141,7 +1147,7 @@ export function ClientHeader({client, style}) {
 
  export function ImageView({images, visible, setVisible}){
   return <Modal visible={visible} transparent={true}>
-  <ImageViewer imageUrls={[{url:'https://avatars2.githubusercontent.com/u/7970947?v=3&s=460',}]} renderHeader = {() => <View style = {{backgroundColor:'red'}} ></View>} enableSwipeDown onSwipeDown = {() => setVisible(false)}/>
+  <ImageViewer imageUrls={images} renderHeader = {() => <View style = {{backgroundColor:'red'}} ></View>} enableSwipeDown onSwipeDown = {() => setVisible(false)}/>
 </Modal> 
  }
 

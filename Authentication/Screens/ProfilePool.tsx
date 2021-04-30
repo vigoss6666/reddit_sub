@@ -9,13 +9,14 @@ import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
+
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {HeaderBar} from '../../src/common/Common';
+import {HeaderBar,ImageView} from '../../src/common/Common';
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';
 const contactList = [{name:"zaid shaikh", firstname:"zaid", _id:'123'},{name:"david", firstname:"zaid", _id:'1234'}];
@@ -39,7 +40,10 @@ const useFetchContactPool = (navigation) => {
      const myContext = useContext(AppContext); 
      const {user, userId, contactList, setContactList, setSingleContact, defaultDataObject} = myContext;
      const KEYS_TO_FILTERS = ['name'];
+     
      const [search, setSearch] = useState('');
+     const [currentUser, setCurrentUser] = useState(''); 
+     const [visible, setVisible] = useState(false); 
      const [namer, setNamer] = useState(1);
      const [data,setData] = useState({
           getContactPoolList:{
@@ -196,7 +200,8 @@ const useFetchContactPool = (navigation) => {
                     <View style = {{borderBottomWidth:1, borderBottomColor:"black", width:Dimensions.get('window').width - 60,marginBottom:10}}/>
                     <View style = {{flexDirection:"row", justifyContent:'space-between', marginBottom:5, marginTop:5}}>
                     <View style = {{flexDirection:"row", alignItems:"center"}}>
-                   {item.profilePic ? <Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
+                                                      
+                   {item.profilePic ? <TouchableOpacity onPress = {() => {setVisible(true), setCurrentUser(item.profilePic)}}><Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/></TouchableOpacity>:<MaterialIcons name="account-circle" size={30} color="black" />}
                     <Text style = {{marginLeft:10, marginBottom:5, fontWeight:"bold"}}>{computeName(item)}</Text>
                     </View>
                     {   
@@ -241,6 +246,7 @@ const useFetchContactPool = (navigation) => {
            return (
                <View style = {{flex:1}}>
            <View style = {{flex:0.3}}>
+           
           <View style = {{flexDirection:"row",alignItems:"center", justifyContent:"center",marginTop:30,marginBottom:15}}>         
          <Text  style = {{ fontWeight:'bold',  fontSize:17 }}>
              Click to View a Contact
@@ -275,7 +281,7 @@ const useFetchContactPool = (navigation) => {
       />  
 
        </View>
-       
+       <ImageView visible = {visible} images = {[{url:currentUser}]} setVisible = {setVisible}/>  
        </View>
        
      )
@@ -287,6 +293,8 @@ const useFetchDatingPool = (navigation) => {
      //const [removeDating] = useMutation(REMOVE_FROM_DATING); 
      const myContext = useContext(AppContext); 
      const {user, userId, contactList, setContactList} = myContext;
+     const [currentUser, setCurrentUser] = useState(''); 
+     const [visible, setVisible] = useState(false); 
      const [datingPoolList, setDatingPoolList] = useState([])
      const [country,selectCountry] = useState(['25 to 30']); 
      const KEYS_TO_FILTERS = ['fullName'];
@@ -331,11 +339,14 @@ namer()
                     <View style = {{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginTop:10,marginBottom:15}}>
                     <Text style = {{fontWeight:'bold'}}> View Profile </Text>
 
-                    <TouchableOpacity disabled = {user.points >= 20 ? false:true} onPress = {() => navigation.navigate('ClientView', {client:item})}>
+                    {/* <TouchableOpacity disabled = {user.points >= 20 ? false:true} onPress = {() => navigation.navigate('ClientView', {client:item})}>
                     <AntDesign name="eye" size={24} color="black" />
                {user.points <= 20 ? <TouchableOpacity style = {{backgroundColor:'grey', position:'absolute', left:7, bottom:35}}>
                <Entypo name="lock" size={20} color="red" style = {{position:'absolute', }}/>
                </TouchableOpacity>:null}
+                    </TouchableOpacity> */}
+                    <TouchableOpacity onPress = {() => navigation.navigate('ProfileClientView', {client:item.phoneNumber})}>
+                    <Text>CLick</Text>
                     </TouchableOpacity>
            
                    </View>
@@ -529,7 +540,7 @@ onChangeItem={namer => addAge(item, namer)}
           
           <View style = {{flexDirection:"row", justifyContent:'space-between'}}>
           <View style = {{flexDirection:"row", alignItems:"center"}}>
-          {item.profilePic ? <Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
+          {item.profilePic ?<TouchableOpacity onPress = {() => {setVisible(true), setCurrentUser(item.profilePic)}}><Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/></TouchableOpacity>:<MaterialIcons name="account-circle" size={30} color="black" />}
           <Text style = {{marginLeft:10,marginBottom:10,fontWeight:"bold"}}>{computeName(item)}{"\n"} {item.votes.length > 0 ? item.votes.length : 0} votes by {item.matchMakers.length} {item.matchMakers.length > 1 ? 'friends':'friend'}</Text>
           </View>
           {   
@@ -659,6 +670,7 @@ onChangeItem={namer => addAge(item, namer)}
             <Text h5 style = {{alignSelf:"center",marginTop:30,fontWeight:"bold",marginBottom:30}}> {datingPoolList.length} friends in your friends list </Text>
             </View>
             <View style = {{flex:0.7}}>
+            <ImageView visible = {visible} images = {[{url:currentUser}]} setVisible = {setVisible}/>  
                
             <FlatList
         data={datingPoolList}

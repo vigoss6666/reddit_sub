@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { View, Text,TouchableOpacity,ScrollView, StyleSheet, Share } from 'react-native'; 
-import {Button} from 'react-native-elements';  
-
+import { View, Text,TouchableOpacity,ScrollView, StyleSheet, Button } from 'react-native'; ; 
 import AppContext from '../../AppContext';
 import {ClientHeader, ClientDetails, ClientPhotos, ClientMatchMakers, ClientTraits, ClientVotes, LoadScreen} from '../../src/common/Common'; 
 
-export default function ProfileClientView({route, navigation}) {
+export default function ChatClientView({route, navigation}) {
     const myContext = useContext(AppContext);
-    const { db, CustomBackComponent, userId} = myContext;
+    const { db, CustomBackComponent} = myContext;
     useEffect(() => {
        navigation.setOptions({
            headerTitle:false, 
@@ -15,22 +13,17 @@ export default function ProfileClientView({route, navigation}) {
        }) 
         
     }, [])
-    const {intro} = route.params; 
+    const {client} = route.params; 
     const [user, setUser] = useState(); 
     
-    
-    const handleIntro = () => {
-      db.collection('user').doc(userId).set({introMatches:firebase.firestore.FieldValue.arrayUnion(intro._id)}, {merge:true});
-      db.collection('matches').doc(intro._id).set({client1:intro.client1, client2:intro.client2, createdAt:new Date()})
-      navigation.goBack()
-  }  
+      
 
 
     useEffect(() => {
-        db.collection('user').doc(intro.clientUser.phoneNumber).get().then(onDoc => {
+        db.collection('user').doc(client).get().then(onDoc => {
              setUser(onDoc.data())
         })
-    }, [intro.clientUser])
+    }, [client])
 
     if(user){
         return (
@@ -49,8 +42,6 @@ export default function ProfileClientView({route, navigation}) {
                      <ClientDetails client = {user} client2 = {{latitiude:32.735487, longitude:-117.149025}}/>
                     <ClientPhotos client = {user}/>
                     <ClientMatchMakers client = {user} />
-                    <Button title = {'Accept Introduction'} onPress = {handleIntro} style = {{marginTop:100, marginBottom:100}}/>
-
                     
                    
                    

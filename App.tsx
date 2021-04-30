@@ -49,6 +49,7 @@ import Playgame from './Game/Screens/Playgame';
 import PlayGameLatest from './Game/Screens/PlayGameLatest';
 import Play20 from './Game/Screens/Play20';
 import ProfilePool from './Authentication/Screens/ProfilePool';
+import ProfileClientView from './Authentication/Screens/ProfileClientView';
 import SingleContactPhoto from './Authentication/Screens/SingleContactPhoto';  
 import SingleContactLocation from './Authentication/Screens/SingleContactLocation';  
 import SingleContactGender from './Authentication/Screens/SingleContactGender';
@@ -80,6 +81,7 @@ import Endorsement from './Endorsement/Screens/Endorsements';
 import NoMatch from './Game/Screens/NoMatch'; 
 import Chat from './Chat/Screens/Chat'; 
 import ChatLatest from './Chat/Screens/ChatLatest';
+import ChatClientView from './Chat/Screens/ChatClientView';
 import MatchScreen from './Chat/Screens/MatchList'; 
 import Camera from './Chat/Screens/Camera'; 
 import ContextProvider from './src/provider'; 
@@ -426,6 +428,8 @@ const customHeader = () => {
         <Stack.Screen name="RequestIntro" component={RequestIntro} />
         <Stack.Screen name="ChatLatest" component={ChatLatest} options = {{headerShown:true, }}/>
         <Stack.Screen name="EndorsementClient" component={EndorsementClient} options = {{headerShown:true, }}/>
+        <Stack.Screen name="ChatClientView" component={ChatClientView} options = {{headerShown:true, }}/>
+        <Stack.Screen name="ProfileClientView" component={ProfileClientView} options = {{headerShown:true, }}/>
         
         
         

@@ -95,6 +95,8 @@ export function Introductions({ navigation, }) {
 
     db.collection('user').doc(userId).set({ seenIntros: firebase.firestore.FieldValue.arrayUnion(intro._id) }, { merge: true }).then(() => console.log("clientUser updated"));
     navigation.navigate('RequestIntro', { intro });
+    
+
   };
 
   const renderIntroList = ({ item }) => {

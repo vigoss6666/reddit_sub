@@ -7,7 +7,7 @@ import {ClientHeader, ClientDetails, ClientPhotos, ClientMatchMakers, ClientTrai
 
 export default function ProfileClientView({route, navigation}) {
     const myContext = useContext(AppContext);
-    const { db, CustomBackComponent, userId} = myContext;
+    const { db, CustomBackComponent} = myContext;
     useEffect(() => {
        navigation.setOptions({
            headerTitle:false, 
@@ -15,22 +15,24 @@ export default function ProfileClientView({route, navigation}) {
        }) 
         
     }, [])
-    const {intro} = route.params; 
+    const {client} = route.params; 
     const [user, setUser] = useState(); 
+    const share = async () => {
+      
+         
+
+        await Share.share({message:"https://friends-365d0.web.app/?name="+client})
+      
+    }
     
-    
-    const handleIntro = () => {
-      db.collection('user').doc(userId).set({introMatches:firebase.firestore.FieldValue.arrayUnion(intro._id)}, {merge:true});
-      db.collection('matches').doc(intro._id).set({client1:intro.client1, client2:intro.client2, createdAt:new Date()})
-      navigation.goBack()
-  }  
+      
 
 
     useEffect(() => {
-        db.collection('user').doc(intro.clientUser.phoneNumber).get().then(onDoc => {
+        db.collection('user').doc(client).get().then(onDoc => {
              setUser(onDoc.data())
         })
-    }, [intro.clientUser])
+    }, [client])
 
     if(user){
         return (
@@ -49,7 +51,7 @@ export default function ProfileClientView({route, navigation}) {
                      <ClientDetails client = {user} client2 = {{latitiude:32.735487, longitude:-117.149025}}/>
                     <ClientPhotos client = {user}/>
                     <ClientMatchMakers client = {user} />
-                    <Button title = {'Accept Introduction'} onPress = {handleIntro} style = {{marginTop:100, marginBottom:100}}/>
+                    <Button title = {"SHARE THIS PROFILE"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:100, marginBottom:200,}} buttonStyle = {{backgroundColor:'green',}} onPress = {share}></Button>
 
                     
                    

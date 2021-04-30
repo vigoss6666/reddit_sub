@@ -71,7 +71,7 @@ const [result, setResult] = useState('🔮');
       }, 
       headerTitle:() => {
         return <View style = {{marginTop:10, marginBottom:10, justifyContent:'center', alignItems:'center'}}>
-        <TouchableOpacity>{clientObj.clientUser.profilePic ? <Image source = {{uri:clientObj.clientUser.profilePic}} style = {{height:40, width:40, borderRadius:20}}></Image>:<MaterialIcons name="account-circle" size={50} color="black" />}</TouchableOpacity>  
+        <TouchableOpacity onPress = {() => navigation.navigate('ChatClientView', {client:clientObj.clientUser.phoneNumber})}>{clientObj.clientUser.profilePic ? <Image source = {{uri:clientObj.clientUser.profilePic}} style = {{height:40, width:40, borderRadius:20}}></Image>:<MaterialIcons name="account-circle" size={50} color="black" />}</TouchableOpacity>  
         <Text style = {{fontWeight:'bold', marginTop:5, marginBottom:5}}>{computeName(clientObj.clientUser)}</Text>
         </View>
       }, 
