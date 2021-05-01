@@ -1147,7 +1147,7 @@ export function ClientHeader({client, style}) {
 
  export function ImageView({images, visible, setVisible}){
   return <Modal visible={visible} transparent={true}>
-  <ImageViewer imageUrls={images} renderHeader = {() => <View style = {{backgroundColor:'red'}} ></View>} enableSwipeDown onSwipeDown = {() => setVisible(false)}/>
+  <ImageViewer imageUrls={images} renderHeader = {() => <View style = {{backgroundColor:'red'}} ></View>} enableSwipeDown onSwipeDown = {() => setVisible(false)} enableImageZoom/>
 </Modal> 
  }
 

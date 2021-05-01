@@ -37,6 +37,7 @@ import PhoneSuccess from './Authentication/Screens/PhoneSuccess';
 import LoadContacts from './Authentication/Screens/LoadContacts'; 
 import Try from './Authentication/Screens/Try'; 
 import Contacts from './Authentication/Screens/Contacts'; 
+import AuthPhotos from './Authentication/Screens/AuthPhotos';
 import ContactsSex from './Authentication/Screens/ContactsSex'; 
 import ContactsMenu from './Authentication/Screens/ContactsMenu'; 
 import ContactsPhotos from './Authentication/Screens/ContactsPhotos';
@@ -127,6 +128,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from './AppContext'; 
 import GameEngine from './GameEngine'; 
 import {defaultDataObject} from './DefaultData'; 
+import SignUp from './SignUp'; 
 
 
 const db = firebase.firestore();
@@ -146,7 +148,7 @@ export default function App() {
   console.disableYellowBox = true;
 
   const [expoPushToken, setExpoPushToken] = useState('');
-  const [currentUser, setCurrentUser] = useState('+917208110384'); 
+  const [currentUser, setCurrentUser] = useState(''); 
   const [contactList, setContactList] = useState([]); 
   const [countryCode, setCountryCode] = useState("US");
   const [dialCode, setDialCode] = useState("+1"); 
@@ -157,8 +159,10 @@ export default function App() {
   const [singleContact, setSingleContact] = useState();  
   const [notification, setNotification] = useState(false);
   const [sentFromBrowse, setSentFromBrowse] = useState(null); 
+  const [tempId, setTempId] = useState('+917208110384'); 
   const responseListener = useRef();
   const notificationListener = useRef();
+  const [profilePicLocal, setProfilePicLocal] = useState(null); 
   
   function CustomBackComponent({navigation}){
     return <TouchableOpacity style = {{marginLeft:10}} onPress = {() => navigation.goBack()}>
@@ -190,29 +194,33 @@ export default function App() {
   }]); 
 
   const [basicAuth, setBasicAuth] = useState(null); 
+  
   const [registeredUsers, setRegisteredUsers] = useState([]); 
   const [user, setUser] = useState({}); 
 
 
   useEffect(() => {
-     const subscribe = db.collection('user').doc('+917208110384').onSnapshot(doc => {
+    
+      const subscribe = currentUser ? db.collection('user').doc(currentUser).onSnapshot(doc => {
         if(doc.exists){
            setUser(doc.data())
         } 
-     })
+     }):() => console.log("no user")
+    
+     
      return () => subscribe(); 
-  }, [])
-//   useEffect(() => {
-//     async function namer(){
-//        const user = await AsyncStorage.getItem('user');  
-//        setCurrentUser(user); 
+  }, [currentUser])
+  
+  useEffect(() => {
+    async function namer(){
+       const user = await AsyncStorage.getItem('user');  
+       console.log(user)
+       setCurrentUser(user); 
        
-//        const basicAuth = await AsyncStorage.getItem('basicAuth')
        
-//        setBasicAuth(basicAuth);  
-//     }
-//     namer()
-//  },[])
+    }
+    namer()
+ },[])
 
 
 useEffect(() => {
@@ -239,7 +247,14 @@ function stringifyNumber(n) {
 }
 
 
-  
+  const tempObject = {
+    userId:tempId, 
+    setTempId, 
+    CustomBackComponent,
+    profilePicLocal,
+    setProfilePicLocal 
+
+  }
   
   const globalObject = {
     defaultDataObject, 
@@ -314,15 +329,12 @@ function stringifyNumber(n) {
 
 
  const checkHome = () => {
- if(currentUser && !basicAuth){
-    return Name; 
- }
- if(currentUser && basicAuth){
-    return Home; 
- }
- if(!currentUser && !basicAuth){
-    return Intro; 
- }
+
+   if(currentUser){
+     return <Home /> 
+    }
+    return <Intro />
+
 
 }
 
@@ -335,119 +347,146 @@ const customHeader = () => {
    )
 }
 
- if(Object.keys(user).length > 1){
-  return (
-    <AppContext.Provider value={globalObject}>
-      <SafeAreaProvider>
-      <NavigationContainer>
-       
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
-        <Stack.Screen name="Name" component={Name}/>
-        <Stack.Screen name="Birthday" component={BirthDay}/>
-        <Stack.Screen name="Gender" component={Gender}/>
-        <Stack.Screen name="GenderPreference" component={GenderPreference}/>
-        <Stack.Screen name="Height" component={Height}/>
-        <Stack.Screen name="Feet" component={Feet}/>
-        <Stack.Screen name="Inches" component={Inches}/>
-        <Stack.Screen name="EnableLocation" component={EnableLocation}/>
-        <Stack.Screen name="Tell" component={Tell}/>
-        <Stack.Screen name="Email" component={Email}/>
-        <Stack.Screen name="VerifyCode" component={VerifyCode}/>
-        <Stack.Screen name="Password" component={Password}/>
-        <Stack.Screen name="Posted" component={Posted}/>
-        <Stack.Screen name="ProfileHidden" component={ProfileHidden}/>
-        <Stack.Screen name="Phone" component={Phone}/>
-        <Stack.Screen name="CountryCodes" component={CountryCodes}/>
-        <Stack.Screen name="Intro" component={Intro}/>
-        <Stack.Screen name="Intro2" component={Intro2}/>
-        <Stack.Screen name="Intro3" component={Intro3}/>
-        <Stack.Screen name="Intro4" component={Intro4}/>
-        <Stack.Screen name="VerifyEmail" component={VerifyEmail}/>
-        <Stack.Screen name="EmailVerified" component={EmailVerified}/>
-        <Stack.Screen name="VerifyPhone" component={VerifyPhone}/>
-        <Stack.Screen name="PhoneSuccess" component={PhoneSuccess}/>
-        <Stack.Screen name="LoadContacts" component={LoadContacts}/>
-        <Stack.Screen name="ContactsSex" component={ContactsSex} options = {{headerTitle:false, headerLeft:false}}/>
-        <Stack.Screen name="ContactsAge" component={ContactsAge} options = {{headerTitle:false, headerLeft:false}}/>
-        <Stack.Screen name="ContactsLocation" component={ContactsLocation} options = {{headerTitle:false, headerLeft:false}}/>
-        <Stack.Screen name="ContactsPhotos" component={ContactsPhotos} options = {{headerTitle:false, headerLeft:false}}/>
-        <Stack.Screen name="Contacts" component={Contacts} options = {{headerTitle:false, headerLeft:false}}/>
-        <Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess} options = {{headerTitle:false, headerLeft:false}}/>
-        <Stack.Screen name="NewContact" component={NewContact}/>
-        <Stack.Screen name="Playgame" component={Playgame} options={{
-        animationEnabled: false,
-      }}/>
-      <Stack.Screen name="PlayGameLatest" component={PlayGameLatest} options={{
-        animationEnabled: false,
-      }}/>
-        <Stack.Screen name="Play20" component={Play20}/>
-        <Stack.Screen name="ProfilePool" component={ProfilePool} options = {{headerTitle:false, headerLeft:false}}/>
-        <Stack.Screen name="SettingsHome" component={SettingsHome} options = {{headerTitle:false}} />
-        <Stack.Screen name="AccountSettings" component={AccountSettings  }  />
-        <Stack.Screen name="MapVeiw" component={MapViewMainer}/>
-        <Stack.Screen name="ImageSlider" component={ImageSlider}/>
-        <Stack.Screen name="DetailsSettings" component={DetailsSettings} options = {{headerShown:false}} />
-        <Stack.Screen name="AddPhotos" component={Photos} options = {{headerTitle:false, headerLeft:null, headerRightContainerStyle:{marginRight:10}}}/>
-        <Stack.Screen name="MapViewMainer" component={MapViewMainer}/>
-        <Stack.Screen name="Login" component={Login}/>
-        <Stack.Screen name="Checker" component={Checker}/>
-        <Stack.Screen name="School" component={School}/>
-        <Stack.Screen name="Job" component={Job}/>
-        <Stack.Screen name="Hometown" component={Hometown}/>
-        <Stack.Screen name="AddPhoto" component={AddPhoto}/>
-        <Stack.Screen name="Loader" component={Loader} options = {{headerTitle:false, headerLeft:false}}/>
-        <Stack.Screen name="Trophy" component={Trophy}/>
-        <Stack.Screen name="GameHomepage" component={GameHomepage}/>
-        <Stack.Screen name="Matchmake" component={Matchmake}/>
-        <Stack.Screen name="MatchView" component={MatchView}/>
-        <Stack.Screen name="Endorsement" component={Endorsement}/>
-        <Stack.Screen name="NoMatch" component={NoMatch}/>
-        <Stack.Screen name="Tester1" component={Tester1}/>
-        <Stack.Screen name="VideoPlayer" component={VideoPlayer}/>
-        <Stack.Screen name="DocumentViewer" component={DocumentViewer}/>
-        <Stack.Screen name="Camera" component={Camera}/>
-        <Stack.Screen name="Chat" component={Chat} options = {({route}) => ({headerTitle:route.params.title,   headerRight:() => <Feather name="flag" size={20} color="red" style = {{marginRight:10}}/>})} />
-        <Stack.Screen name="MatchList" component={MatchList} options = {{headerShown:false}}/>
-        <Stack.Screen name="AttributeFilter" component={AttributeFilter}/>
-        <Stack.Screen name="AttributeFilterClient" component={AttributeFilterClient}/>
-        <Stack.Screen name="BrowseSettings" component={BrowseSettings}/>
-        <Stack.Screen name="SelfMatchView" component={SelfMatchView} options = {{headerTitle:false}}/>
-        <Stack.Screen name="SelfGame" component={SelfGame} />
-        <Stack.Screen name="BrowseMatchSettings" component={BrowseMatchSettings}/>
-        <Stack.Screen name="MatchMakeLatest" component={MatchMakeLatest}/>
-        <Stack.Screen name="MatchViewLatest" component={MatchViewLatest}/>
-        <Stack.Screen name="MatchMakeFinal" component={MatchMakeFinal} options = {{headerShown:false}}/>
-        <Stack.Screen name="Webber" component={Webber}/>
-        <Stack.Screen name="SingleContactPhoto" component={SingleContactPhoto}/>
-        <Stack.Screen name="SingleContactLocation" component={SingleContactLocation}/> 
-        <Stack.Screen name="SingleContactGender" component={SingleContactGender}/>
-        <Stack.Screen name="SingleContactAge" component={SingleContactAge}/>
-        <Stack.Screen name="Homer" component={Home} options = {{headerShown:false}}/>
-        <Stack.Screen name="ClientView" component={ClientView} />
-        <Stack.Screen name="RequestIntro" component={RequestIntro} />
-        <Stack.Screen name="ChatLatest" component={ChatLatest} options = {{headerShown:true, }}/>
-        <Stack.Screen name="EndorsementClient" component={EndorsementClient} options = {{headerShown:true, }}/>
-        <Stack.Screen name="ChatClientView" component={ChatClientView} options = {{headerShown:true, }}/>
-        <Stack.Screen name="ProfileClientView" component={ProfileClientView} options = {{headerShown:true, }}/>
+const basicAuthStack = <AppContext.Provider value={tempObject}>
+<SafeAreaProvider>
+<NavigationContainer>
+ <Stack.Navigator> 
+<Stack.Screen name="Home" component={Name} options = {{headerShown:false}}/>
+<Stack.Screen name="Phone" component={Phone}/>
+<Stack.Screen name="Name" component={Name}/>
+<Stack.Screen name="Birthday" component={BirthDay}/>
+<Stack.Screen name="Gender" component={Gender}/>
+<Stack.Screen name="GenderPreference" component={GenderPreference}/>
+<Stack.Screen name="Height" component={Height}/>
+<Stack.Screen name="AddPhoto" component={AddPhoto}/>
+<Stack.Screen name="AuthPhotos" component={AuthPhotos}/>
+<Stack.Screen name="School" component={School}/>
+
+
+
+</Stack.Navigator>
+</NavigationContainer>
+</SafeAreaProvider>
+</AppContext.Provider>  
+
+const mainHome = () => {
+  if(Object.keys(user).length){
+    return (
+      <AppContext.Provider value={globalObject}>
+        <SafeAreaProvider>
+        <NavigationContainer>
+         
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={Name} options = {{headerShown:false}}/>
+          <Stack.Screen name="Name" component={Name}/>
+          <Stack.Screen name="Birthday" component={BirthDay}/>
+          <Stack.Screen name="Gender" component={Gender}/>
+          <Stack.Screen name="GenderPreference" component={GenderPreference}/>
+          <Stack.Screen name="Height" component={Height}/>
+          <Stack.Screen name="Feet" component={Feet}/>
+          <Stack.Screen name="Inches" component={Inches}/>
+          <Stack.Screen name="EnableLocation" component={EnableLocation}/>
+          <Stack.Screen name="Tell" component={Tell}/>
+          <Stack.Screen name="Email" component={Email}/>
+          <Stack.Screen name="VerifyCode" component={VerifyCode}/>
+          <Stack.Screen name="Password" component={Password}/>
+          <Stack.Screen name="Posted" component={Posted}/>
+          <Stack.Screen name="ProfileHidden" component={ProfileHidden}/>
+          <Stack.Screen name="Phone" component={Phone}/>
+          <Stack.Screen name="CountryCodes" component={CountryCodes}/>
+          <Stack.Screen name="Intro" component={Intro}/>
+          <Stack.Screen name="Intro2" component={Intro2}/>
+          <Stack.Screen name="Intro3" component={Intro3}/>
+          <Stack.Screen name="Intro4" component={Intro4}/>
+          <Stack.Screen name="VerifyEmail" component={VerifyEmail}/>
+          <Stack.Screen name="EmailVerified" component={EmailVerified}/>
+          <Stack.Screen name="VerifyPhone" component={VerifyPhone}/>
+          <Stack.Screen name="PhoneSuccess" component={PhoneSuccess}/>
+          <Stack.Screen name="LoadContacts" component={LoadContacts}/>
+          <Stack.Screen name="ContactsSex" component={ContactsSex} options = {{headerTitle:false, headerLeft:false}}/>
+          <Stack.Screen name="ContactsAge" component={ContactsAge} options = {{headerTitle:false, headerLeft:false}}/>
+          <Stack.Screen name="ContactsLocation" component={ContactsLocation} options = {{headerTitle:false, headerLeft:false}}/>
+          <Stack.Screen name="ContactsPhotos" component={ContactsPhotos} options = {{headerTitle:false, headerLeft:false}}/>
+          <Stack.Screen name="Contacts" component={Contacts} options = {{headerTitle:false, headerLeft:false}}/>
+          <Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess} options = {{headerTitle:false, headerLeft:false}}/>
+          <Stack.Screen name="NewContact" component={NewContact}/>
+          <Stack.Screen name="Playgame" component={Playgame} options={{
+          animationEnabled: false,
+        }}/>
+        <Stack.Screen name="PlayGameLatest" component={PlayGameLatest} options={{
+          animationEnabled: false,
+        }}/>
+          <Stack.Screen name="Play20" component={Play20}/>
+          <Stack.Screen name="ProfilePool" component={ProfilePool} options = {{headerTitle:false, headerLeft:false}}/>
+          <Stack.Screen name="SettingsHome" component={SettingsHome} options = {{headerTitle:false}} />
+          <Stack.Screen name="AccountSettings" component={AccountSettings  }  />
+          <Stack.Screen name="MapVeiw" component={MapViewMainer}/>
+          <Stack.Screen name="ImageSlider" component={ImageSlider}/>
+          <Stack.Screen name="DetailsSettings" component={DetailsSettings} options = {{headerShown:false}} />
+          <Stack.Screen name="AddPhotos" component={Photos} options = {{headerTitle:false, headerLeft:null, headerRightContainerStyle:{marginRight:10}}}/>
+          <Stack.Screen name="MapViewMainer" component={MapViewMainer}/>
+          <Stack.Screen name="Login" component={Login}/>
+          <Stack.Screen name="Checker" component={Checker}/>
+          <Stack.Screen name="School" component={School}/>
+          <Stack.Screen name="Job" component={Job}/>
+          <Stack.Screen name="Hometown" component={Hometown}/>
+          <Stack.Screen name="AddPhoto" component={AddPhoto}/>
+          <Stack.Screen name="Loader" component={Loader} options = {{headerTitle:false, headerLeft:false}}/>
+          <Stack.Screen name="Trophy" component={Trophy}/>
+          <Stack.Screen name="GameHomepage" component={GameHomepage}/>
+          <Stack.Screen name="Matchmake" component={Matchmake}/>
+          <Stack.Screen name="MatchView" component={MatchView}/>
+          <Stack.Screen name="Endorsement" component={Endorsement}/>
+          <Stack.Screen name="NoMatch" component={NoMatch}/>
+          <Stack.Screen name="Tester1" component={Tester1}/>
+          <Stack.Screen name="VideoPlayer" component={VideoPlayer}/>
+          <Stack.Screen name="DocumentViewer" component={DocumentViewer}/>
+          <Stack.Screen name="Camera" component={Camera}/>
+          <Stack.Screen name="Chat" component={Chat} options = {({route}) => ({headerTitle:route.params.title,   headerRight:() => <Feather name="flag" size={20} color="red" style = {{marginRight:10}}/>})} />
+          <Stack.Screen name="MatchList" component={MatchList} options = {{headerShown:false}}/>
+          <Stack.Screen name="AttributeFilter" component={AttributeFilter}/>
+          <Stack.Screen name="AttributeFilterClient" component={AttributeFilterClient}/>
+          <Stack.Screen name="BrowseSettings" component={BrowseSettings}/>
+          <Stack.Screen name="SelfMatchView" component={SelfMatchView} options = {{headerTitle:false}}/>
+          <Stack.Screen name="SelfGame" component={SelfGame} />
+          <Stack.Screen name="BrowseMatchSettings" component={BrowseMatchSettings}/>
+          <Stack.Screen name="MatchMakeLatest" component={MatchMakeLatest}/>
+          <Stack.Screen name="MatchViewLatest" component={MatchViewLatest}/>
+          <Stack.Screen name="MatchMakeFinal" component={MatchMakeFinal} options = {{headerShown:false}}/>
+          <Stack.Screen name="Webber" component={Webber}/>
+          <Stack.Screen name="SingleContactPhoto" component={SingleContactPhoto}/>
+          <Stack.Screen name="SingleContactLocation" component={SingleContactLocation}/> 
+          <Stack.Screen name="SingleContactGender" component={SingleContactGender}/>
+          <Stack.Screen name="SingleContactAge" component={SingleContactAge}/>
+          <Stack.Screen name="Homer" component={Home} options = {{headerShown:false}}/>
+          <Stack.Screen name="ClientView" component={ClientView} />
+          <Stack.Screen name="RequestIntro" component={RequestIntro} />
+          <Stack.Screen name="ChatLatest" component={ChatLatest} options = {{headerShown:true, }}/>
+          <Stack.Screen name="EndorsementClient" component={EndorsementClient} options = {{headerShown:true, }}/>
+          <Stack.Screen name="ChatClientView" component={ChatClientView} options = {{headerShown:true, }}/>
+          <Stack.Screen name="ProfileClientView" component={ProfileClientView} options = {{headerShown:true, }}/>
+          
+          
+          
+          
+        </Stack.Navigator>
         
-        
-        
-        
-      </Stack.Navigator>
+      </NavigationContainer>
+      </SafeAreaProvider>
+      </AppContext.Provider>
       
-    </NavigationContainer>
-    </SafeAreaProvider>
-    </AppContext.Provider>
-    
-    
-     
-  );
-  }
-  return (
-    <LoadScreen />
-  )
- }
+      
+       
+    );
+    }
+    return (
+      <LoadScreen />
+    )
+}
+
+return Object.keys(user).length  ?  mainHome():basicAuthStack
+ 
+}
   
 
 const Tab = createMaterialTopTabNavigator();
@@ -630,6 +669,8 @@ function Home(props){
     </SafeAreaProvider>
     
   );
+
+   
 }
 
 const styles = StyleSheet.create({

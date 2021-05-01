@@ -12,8 +12,14 @@ import {updateUser} from '../../networking';
 
 export default function Gender({navigation, route}){
 const myContext = useContext(AppContext); 
-const {userId} = myContext; 
-const {page} = route.params;   
+const {userId, CustomBackComponent} = myContext; 
+const {page} = route.params; 
+useEffect(() => {
+   navigation.setOptions({
+     headerTitle:false, 
+     headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+   })
+ }, [])  
 
 const _handlePage = () => {
  if(page == "DetailsSettings"){
@@ -21,7 +27,7 @@ const _handlePage = () => {
     navigation.navigate("DetailsSettings")
     return; 
  }
- navigation.navigate('GenderPreference', {page:"something"})
+ navigation.navigate('Height', {page:"something"})
 
 }
 const _handleServer = () => {

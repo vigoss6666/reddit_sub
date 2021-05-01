@@ -9,7 +9,13 @@ import {updateUser} from '../../networking';
 export default function BirthDay({navigation, route}){
   const {page} = route.params; 
   const myContext = useContext(AppContext);
-  const {user, userId} = myContext; 
+  const {user, userId, CustomBackComponent} = myContext; 
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle:false, 
+      headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+    })
+  }, [])
   
   const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState('date');

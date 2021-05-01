@@ -1,11 +1,14 @@
 import  React, {useState,useRef,useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, StatusBar, PixelRatio} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, StatusBar, PixelRatio} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import {Continue} from '../../src/common/Common'; 
+import {Button} from 'react-native-elements'; 
 export default function Intro({navigation}){
     const [sliderState, setSliderState] = useState({ currentPage: 0 });
     const { width, height } = Dimensions.get('window');
+    const insets = useSafeAreaInsets();
   
     const setSliderPage = (event: any) => {
       const { currentPage } = sliderState;
@@ -31,9 +34,9 @@ export default function Intro({navigation}){
     return (
       <>
         <StatusBar barStyle="dark-content" />
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1, paddingTop:insets.top }}>
           <ScrollView
-            style={{ flex: 1,  }}
+            style={{ flex: 0.7,  }}
             horizontal={true}
             scrollEventThrottle={16}
             pagingEnabled={true}
@@ -68,11 +71,7 @@ export default function Intro({navigation}){
             </View>
             
           </ScrollView>
-          <TouchableOpacity style = {[styles.paginationWrapper1,{backgroundColor:"black",height:50, width:200, borderRadius:25, borderWidth:1}]}
-          onPress = {() => {navigation.navigate('Phone', {page:'Intro'})}}
-          >
-              <Text style = {{color:"white", fontWeight:"600"}}>Get Started</Text>
-          </TouchableOpacity>
+          
           
           <View style={styles.paginationWrapper}>
            
@@ -80,6 +79,12 @@ export default function Intro({navigation}){
               <View style={[styles.paginationDots, { opacity: pageIndex === index ? 1 : 0.2 }]} key={index} />
             ))}
             
+          </View>
+          <View style = {{flexDirection:'row', justifyContent:'space-around', flex:0.3, backgroundColor:"#ffffff"}}>
+          
+          <Button containerStyle = {{ width: 100,  }} title = {"SignIn"}/>
+          <Button containerStyle = {{ width: 100,  }} title = {"SignUp"} onPress = {() => navigation.navigate('Phone')}/>
+          
           </View>
           
         </SafeAreaView>
@@ -106,7 +111,7 @@ const styles = StyleSheet.create({
     },
     paginationWrapper: {
       position: 'absolute',
-      bottom: 200,
+      bottom: 300,
       left: 0,
       right: 0,
       justifyContent: 'center',

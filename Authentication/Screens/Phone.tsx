@@ -1,6 +1,7 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, AsyncStorageStatic} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AppContext from '../../AppContext';
 
 import { AntDesign } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
@@ -13,6 +14,8 @@ const db = firebase.firestore();
 const auth = firebase.auth(); 
 
 export default function App({navigation}) {
+  const myContext = useContext(AppContext);
+  const {CustomBackComponent, setTempId} = myContext;
   const recaptchaVerifier = React.useRef(null);
   const storeData = async (value:string) => {
     try {
@@ -21,7 +24,12 @@ export default function App({navigation}) {
       // saving error
     }
   }
-  
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle:false, 
+      headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+    })
+  }, []) 
   const [phoneNumber, setPhoneNumber] = React.useState();
   const [verificationId, setVerificationId] = React.useState();
   const [verificationCode, setVerificationCode] = React.useState();
@@ -96,10 +104,12 @@ export default function App({navigation}) {
 
             firebase.auth().signInWithCredential(credential).then(async onfulfilled => {
                if(onfulfilled.user){
-                  await AsyncStorage.setItem('user', phoneNumber);  
+                  
+                  setTempId(phoneNumber)
                   
 
                   showMessage({ text: 'Phone authentication successful 👍' })
+
                   
                   navigation.navigate('Name'); 
                   

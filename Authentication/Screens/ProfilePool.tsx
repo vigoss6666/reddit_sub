@@ -273,7 +273,7 @@ const useFetchContactPool = (navigation) => {
        </View>
             <View style = {{flex:0.7}}>   
             <FlatList
-        data={contactList}
+        data={filteredEmails}
         renderItem={renderItem}
         keyExtractor={(item) => item.phoneNumber}
         extraData={namer}
@@ -293,11 +293,12 @@ const useFetchDatingPool = (navigation) => {
      //const [removeDating] = useMutation(REMOVE_FROM_DATING); 
      const myContext = useContext(AppContext); 
      const {user, userId, contactList, setContactList} = myContext;
+     
      const [currentUser, setCurrentUser] = useState(''); 
      const [visible, setVisible] = useState(false); 
      const [datingPoolList, setDatingPoolList] = useState([])
      const [country,selectCountry] = useState(['25 to 30']); 
-     const KEYS_TO_FILTERS = ['fullName'];
+     const KEYS_TO_FILTERS = ['name'];
      const [search, setSearch] = useState('');
      const [caret, setCaret] = useState([{caret:false, _id:123}]); 
      const _sendToServer = (val) => {
@@ -317,6 +318,7 @@ const useFetchDatingPool = (navigation) => {
          
      const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get().then(onResult => {
         const data = onResult.docs.map(val => val.data());
+
             
         setDatingPoolList(data);
      }).catch(error => console.log(error.message))
@@ -330,6 +332,7 @@ const useFetchDatingPool = (navigation) => {
 }
 namer()
 },[user.datingPoolList])
+
 
 
      const renderIsUser = (item) => {
@@ -673,7 +676,7 @@ onChangeItem={namer => addAge(item, namer)}
             <ImageView visible = {visible} images = {[{url:currentUser}]} setVisible = {setVisible}/>  
                
             <FlatList
-        data={datingPoolList}
+        data={filteredEmails}
         renderItem={renderItem}
         keyExtractor={(item) => item.phoneNumber}
         contentInset={{  top: 0, left: 0, bottom: 200 }}

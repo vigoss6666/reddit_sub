@@ -13,8 +13,14 @@ const auth = firebase.auth();
 
 export default function Name({navigation}){
    const myContext = useContext(AppContext);   
-   const {user, userId  } = myContext; 
-   console.log(user.age)
+   const { userId, CustomBackComponent  } = myContext; 
+   useEffect(() => {
+    navigation.setOptions({
+      headerTitle:false, 
+      headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+    })
+  }, [])
+  
 
    
    
@@ -24,7 +30,7 @@ export default function Name({navigation}){
    const [color, setColor] = useState("white")
    const [currentUser, setCurrentUser] = useState(); 
    const fire = () => {
-    updateUser(userId, {firstName, lastName}); 
+    updateUser(userId, {firstName, lastName, name:firstName+lastName}); 
     navigation.navigate('Birthday', {page:"something"})
     } 
    

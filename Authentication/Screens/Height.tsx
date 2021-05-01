@@ -10,11 +10,26 @@ import {updateUser} from '../../networking';
 
 export default function Height({navigation,route}){
     const myContext = useContext(AppContext); 
-    const {userId} = myContext;
+    const {userId, CustomBackComponent} = myContext;
+    let [feet, setFeet] = useState(1); 
+     let [inches, setInches] = useState(1); 
+    const [gate, setGate] = useState(false); 
+    useEffect(() => {
+        navigation.setOptions({
+          headerTitle:false, 
+          headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+        })
+      }, [])
+    useEffect(() => {
+       if(feet && inches){
+           setGate(false)
+           return; 
+       } 
+       setGate(true); 
+    }, [feet, inches])  
     const { page } = route.params;  
 
-     let [feet, setFeet] = useState(); 
-     let [inches, setInches] = useState(); 
+     
 
 const _sendToServer = () => {
     updateUser(userId,{feet, inches} )
@@ -39,16 +54,16 @@ return(
 <View style = {{flex:0.5, marginLeft:30}}>
 <Header text = {"What's your height?"}/>
 <View style = {{borderBottomWidth:2, width:Dimensions.get('window').width - 60, marginTop:20}}/>
-<View style = {{flexDirection:"row", marginTop:30, zIndex:1000}}>
+<View style = {{flexDirection:"row", marginTop:30, zIndex:3000}}>
  
  <DropDownPicker
                     
                     items={[
-                        {label: "3 '", value: '3'},
-                        {label: "4 '", value: '4',},
-                        {label: "5 '", value: '5', },
-                        {label: "6 '", value: '6'},
-                        {label: "7 '", value: '7'},
+                        {label: "3 '", value: 3},
+                        {label: "4 '", value: 4,},
+                        {label: "5 '", value: 5, },
+                        {label: "6 '", value: 6},
+                        {label: "7 '", value: 7},
                 
                       ]}
                     onPress = {() => {console.log("pressed")}}
@@ -59,7 +74,8 @@ return(
                     placeholderStyle={{
                          fontWeight: 'bold',
                          textAlign: 'center', 
-                         fontSize:20
+                         fontSize:20,
+                         color:'grey'
                      }}
                     arrowStyle={{marginRight: 10, size:20}}
                     containerStyle={{height: 70, width:100, justifyContent:"center"}}
@@ -72,6 +88,14 @@ return(
                     }}
                     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
                     onChangeItem={item => setFeet(item.value)}
+                    selectedLabelStyle={{
+                        fontSize:20,
+                        backgroundColor:"white", 
+                        fontColor:"white",
+                        justifyContent: 'flex-start',
+                        fontWeight:'bold',
+                        
+                    }}
                     
                 />
  {/* <TouchableOpacity 
@@ -87,18 +111,18 @@ return(
  <DropDownPicker
                     
                     items={[
-                        {label: '0"', value: '0'},
-                        {label: '1"', value: '1',},
-                        {label: '2"', value: '2', },
-                        {label: '3"', value: '3'},
-                        {label: '4"', value: '4'},
-                        {label: '5"', value: '5'},
-                        {label: '6"', value: '6',},
-                        {label: '7"', value: '7', },
-                        {label: '8"', value: '8'},
-                        {label: '9"', value: '9'},
-                        {label: '10"', value: '10'},
-                        {label: '11"', value: '11',},
+                        {label: '0"', value: 0},
+                        {label: '1"', value: 1},
+                        {label: '2"', value: 2 },
+                        {label: '3"', value: 3},
+                        {label: '4"', value: 4},
+                        {label: '5"', value: 5},
+                        {label: '6"', value: 6},
+                        {label: '7"', value: 7 },
+                        {label: '8"', value: 8},
+                        {label: '9"', value: 9},
+                        {label: '10"', value: 10},
+                        {label: '11"', value: 11},
                         
                         
                         
@@ -113,21 +137,30 @@ return(
                     placeholderStyle={{
                          fontWeight: 'bold',
                          textAlign: 'center', 
-                         fontSize:20
+                         fontSize:20,
+                         color:'grey'
                      }}
                     arrowStyle={{marginRight: 10, size:20}}
                     containerStyle={{height: 70, width:100, justifyContent:"center"}}
-                    style={{fontSize:30}}
+                    style={{fontSize:40}}
                     itemStyle={{
-                        fontSize:30,
+                        fontSize:20,
                         backgroundColor:"white", 
                         fontColor:"white",
                         justifyContent: 'flex-start'
                     }}
-                    activeLabelStyle = {{fontSize:30}}
-                    activeItemStyle = {{fontSize:30}}
+                    activeLabelStyle = {{fontSize:20}}
+                    activeItemStyle = {{fontSize:20}}
                     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
                     onChangeItem={item => setInches(item.value)}
+                    selectedLabelStyle={{
+                        fontSize:20,
+                        backgroundColor:"white", 
+                        fontColor:"white",
+                        justifyContent: 'flex-start',
+                        fontWeight:'bold'
+                    }}
+                    
                     
                 />
 
@@ -145,6 +178,7 @@ return(
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   onPress = {() => {_sendToServer(), _handleNavigation() }}
+  disabled = {false}
 />
 </View>
 </View>

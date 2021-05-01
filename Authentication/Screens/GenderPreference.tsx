@@ -16,7 +16,7 @@ import {updateUser} from '../../networking';
 
 export default function GenderPreference({navigation,route}){
 const myContext = useContext(AppContext); 
-const {userId} = myContext; 
+const {userId, CustomBackComponent} = myContext; 
 const {page} = route.params;     
 const [man,setMan] = useState(false);
 const [woman, setWoman] = useState(false);
@@ -26,6 +26,12 @@ const womanWidthColor = woman ? "yellow":"black";
 const bothWidthColor = both ? "yellow":"black";  
 const gateColor = man || woman || both ? "green" : "white"; 
 const gateGuard = man || woman || both ? false: true; 
+useEffect(() => {
+     navigation.setOptions({
+       headerTitle:false, 
+       headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+     })
+   }, [])  
 
 const _handlePage = () => {
      if(page == "AccountSettings"){
