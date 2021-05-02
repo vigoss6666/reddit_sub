@@ -20,22 +20,22 @@ export default function Loader({navigation,route}){
     const imageTemplate = registeredUsers.length > 5 ? arr.map(val => {
          return registeredUsers[val].profilePic ? <View style = {{alignItems:'center', marginRight:10}} key = {registeredUsers[val].firstName+registeredUsers[val].lastName}>
          <Image source = {{uri:registeredUsers[val].profilePic}} style = {{height:50, width:50, borderRadius:25}}/>
-         <Text style = {{fontWeight:'bold', marginTop:5}}>{computeName(registeredUsers[val])}</Text>
+         <Text style = {{fontWeight:'bold', marginTop:5,maxWidth:50,maxHeight:50}}>{computeName(registeredUsers[val])}</Text>
          
          </View>:<View style = {{alignItems:'center', marginRight:10}} key = {registeredUsers[val].firstName+registeredUsers[val].lastName}>
          <MaterialIcons name="account-circle" size={50} color="black" />
-         <Text style = {{fontWeight:'bold', marginTop:5, }}>{computeName(registeredUsers[val])}</Text>
+         <Text style = {{fontWeight:'bold', marginTop:5, maxWidth:50,maxHeight:50 }}>{computeName(registeredUsers[val])}</Text>
          
          </View>
                   
     }):registeredUsers.map(val => {
         return val.profilePic ? <View style = {{alignItems:'center', marginRight:10}} key = {val.firstName+val.lastName}>
         <Image source = {{uri:val.profilePic}} style = {{height:60, width:60, borderRadius:30}}/>
-        <Text style = {{fontWeight:'bold', marginTop:5}}>{computeName(val)}</Text>
+        <Text style = {{fontWeight:'bold', marginTop:5,maxWidth:50, maxHeight:50}}>{computeName(val)}</Text>
          
         </View>:<View style = {{alignItems:'center', marginRight:10}} key = {val.firstName+val.lastName}>
         <MaterialIcons name="account-circle" size={60} color="black" />
-        <Text style = {{fontWeight:'bold', marginTop:5}}>{computeName(val)}</Text>
+        <Text style = {{fontWeight:'bold', marginTop:5,maxHeight:50, maxWidth:50}}>{computeName(val)}</Text>
          
         </View>
                  

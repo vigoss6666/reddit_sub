@@ -27,7 +27,13 @@ mutation namer($userInputList:userInputList1!){
 
 export default function ContactsAge({navigation,route}){
     const myContext = useContext(AppContext); 
-    const {user, userId} = myContext;
+    const { userId} = myContext;
+    const [user,setUser] = useState({});
+useEffect(() => {
+  db.collection('user').doc(userId).get().then(onDoc => {
+      setUser(onDoc.data())
+  })
+}, [])
     const [profiles, setProfiles] = useState([
    
         { 
@@ -51,15 +57,18 @@ export default function ContactsAge({navigation,route}){
          const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
          const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
          const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker]; 
-         const finalTransformed = finalUsers.map((val, index) => ( {...val, zIndex:index}));
+         const finalTransformed = profilesWithMatchMaker.map((val, index) => ( {...val, zIndex:index}));
          finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
           
          setProfiles(finalTransformed); 
      
         }
-        namer()
+        if(Object.keys(user).length){
+            namer()
+        }
         
-     }, [])
+        
+     }, [user])
 
 
 const data1 = [{ fullname:"zaid",min:15,max:19}, {fullname:"zaheer",min:20,max:24}, {zIndex:400, fullname:"nihal",ageRange:{min:25, max:29}},{fullname:"nihal",ageRange:{min:30, max:34}}]
@@ -163,7 +172,7 @@ useEffect(() => {
                     <View style = {{flexDirection:'row',alignItems:'center',}}>
                     {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
 
-                    <Text style = {{marginLeft:10, fontWeight:'bold'}}>{computeName(val)}</Text>
+                    <Text style = {{marginLeft:10, fontWeight:'bold', maxWidth:100,maxHeight:50}}>{computeName(val)}</Text>
                     </View>
                     <DropDownPicker
                     items={[

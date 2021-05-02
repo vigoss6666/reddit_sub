@@ -16,14 +16,27 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 export default function ContactsSex({navigation,route}){
 const myContext = useContext(AppContext); 
-const {user, userId} = myContext;   
+const { userId} = myContext;   
 const data1 = [{fullname:"Zaid shaikh", identification:'something',gender:'male', _id:1},{fullname:"ALi reza", identification:'something', _id:2},{fullname:"Huraira", identification:'something', _id:3},{fullname:"Samadh Khan",identification:'something', _id:4},{fullname:"Nihal Modal",identification:'somehting',_id:5},{fullname:"Rafiq modal", identification:'something', _id:6},{fullname:"Baiju Noyan", identification:'something', _id:7},{fullname:"Bilkis baji",identification:'something', _id:8},{fullname:"Bismil",identification:'something', gender:'female', _id:9}]
 const [fetchData,setFetchdata] = useState([]); 
 const [arr,addArr] = useState([]); 
 const [namer, setNamer] = useState(0); 
 const [gate, checkGate] = useState(true); 
 const [gender,addGender] = useState([]); 
-const [profiles, setProfiles] = useState([]);  
+const [profiles, setProfiles] = useState([]); 
+const [user,setUser] = useState({}); 
+
+
+useEffect(() => {
+   db.collection('user').doc(userId).get().then(onDoc => {
+       setUser(onDoc.data())
+   })
+ }, [])
+
+
+
+
+
 useEffect(() => {
    async function namer(){
     const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
@@ -31,14 +44,17 @@ useEffect(() => {
     const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
     const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
     const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker]; 
-    const finalTransformed = finalUsers.map((val, index) => ( {...val, zIndex:index}));
+    const finalTransformed = profilesWithMatchMaker.map((val, index) => ( {...val, zIndex:index}));
     finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
     setProfiles(finalTransformed); 
 
    }
-   namer()
+   if(Object.keys(user).length){
+      namer()
+  }
    
-}, [])
+   
+}, [user])
 
 const updateToServer = () => {
     const db = firebase.firestore(); 
@@ -126,7 +142,7 @@ const computeName = (obj) => {
                   >
                       <View style = {{flexDirection:'row', alignItems:'center', flex:0.9}}>
                       {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
-                      <Text style = {{marginLeft:10}}>{computeName(val)}</Text>
+                      <Text style = {{marginLeft:10,maxWidth:100,maxHeight:50}} numberOfLines = {2}>{computeName(val)}</Text>
 
                       </View>
                       <View style = {{alignItems:'center', justifyContent:'space-between', marginRight:10, flexDirection:'row',flex:0.2}}>

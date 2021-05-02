@@ -74,7 +74,7 @@ import Trophy from './Trophy/Screens/Trophy';
 import GameHomepage from './Game/Screens/GameHomepage'; 
 import Matchmake from './Game/Screens/Matchmake';
 import MatchMakeFinal from './Game/Screens/MatchMakeFinal';
-
+//@refresh reset
 import MatchView from './Game/Screens/MatchView'; 
 //import MatchView from './Game/MatchView/src/screens/MatchView';
 import CustomSlider from './Game/Screens/CustomSlider';
@@ -163,6 +163,7 @@ export default function App() {
   const responseListener = useRef();
   const notificationListener = useRef();
   const [profilePicLocal, setProfilePicLocal] = useState(null); 
+  console.log(currentUser+"currentUser")
   
   function CustomBackComponent({navigation}){
     return <TouchableOpacity style = {{marginLeft:10}} onPress = {() => navigation.goBack()}>
@@ -208,19 +209,20 @@ export default function App() {
      }):() => console.log("no user")
     
      
-     return () => subscribe(); 
+     
   }, [currentUser])
+  console.log("user is"+user.phoneNumber)
   
-  useEffect(() => {
-    async function namer(){
-       const user = await AsyncStorage.getItem('user');  
-       console.log(user)
-       setCurrentUser(user); 
+//   useEffect(() => {
+//     async function namer(){
+//        const user = await AsyncStorage.getItem('user');  
+//        console.log(user)
+//        setCurrentUser(user); 
        
        
-    }
-    namer()
- },[])
+//     }
+//     namer()
+//  },[])
 
 
 useEffect(() => {
@@ -256,7 +258,11 @@ function stringifyNumber(n) {
     setRegisteredUsers,
     registeredUsers,
     computeName,
-    db
+    db,
+    setCurrentUser,
+    setUser,
+    defaultDataObject,
+    firebase,
 
   }
   
@@ -351,37 +357,7 @@ const customHeader = () => {
    )
 }
 
-const basicAuthStack = <AppContext.Provider value={tempObject}>
-<SafeAreaProvider>
-<NavigationContainer>
- <Stack.Navigator> 
-<Stack.Screen name="Home" component={LoadContacts} options = {{headerShown:false}}/>
-<Stack.Screen name="Phone" component={Phone}/>
-<Stack.Screen name="Name" component={Name}/>
-<Stack.Screen name="Birthday" component={BirthDay}/>
-<Stack.Screen name="Gender" component={Gender}/>
-<Stack.Screen name="GenderPreference" component={GenderPreference}/>
-<Stack.Screen name="Height" component={Height}/>
-<Stack.Screen name="AddPhoto" component={AddPhoto}/>
-<Stack.Screen name="AuthPhotos" component={AuthPhotos}/>
-<Stack.Screen name="School" component={School}/>
-<Stack.Screen name="Job" component={Job}/>
-<Stack.Screen name="Hometown" component={Hometown}/>
-<Stack.Screen name="Posted" component={Posted}/>
-<Stack.Screen name="EnableLocation" component={EnableLocation}/>
-<Stack.Screen name="LoadContacts" component={LoadContacts}/>
-<Stack.Screen name="Tell" component={Tell}/>
-<Stack.Screen name="ProfileHidden" component={ProfileHidden}/>
-<Stack.Screen name="Loader" component={Loader} options = {{headerTitle:false, headerLeft:false}}/>
-<Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess} options = {{headerTitle:false, headerLeft:false}}/>
-<Stack.Screen name="Contacts" component={Contacts} options = {{headerTitle:false, headerLeft:false}}/>
-
-
-
-</Stack.Navigator>
-</NavigationContainer>
-</SafeAreaProvider>
-</AppContext.Provider>  
+  
 
 const mainHome = () => {
   if(Object.keys(user).length){
@@ -497,6 +473,43 @@ const mainHome = () => {
       <LoadScreen />
     )
 }
+const basicAuthStack = <AppContext.Provider value={tempObject}>
+<SafeAreaProvider>
+<NavigationContainer>
+ <Stack.Navigator> 
+<Stack.Screen name="Home" component={LoadContacts} options = {{headerShown:false}}/>
+<Stack.Screen name="Phone" component={Phone}/>
+<Stack.Screen name="Name" component={Name}/>
+<Stack.Screen name="Birthday" component={BirthDay}/>
+<Stack.Screen name="Gender" component={Gender}/>
+<Stack.Screen name="GenderPreference" component={GenderPreference}/>
+<Stack.Screen name="Height" component={Height}/>
+<Stack.Screen name="AddPhoto" component={AddPhoto}/>
+<Stack.Screen name="AuthPhotos" component={AuthPhotos}/>
+<Stack.Screen name="School" component={School}/>
+<Stack.Screen name="Job" component={Job}/>
+<Stack.Screen name="Hometown" component={Hometown}/>
+<Stack.Screen name="Posted" component={Posted}/>
+<Stack.Screen name="EnableLocation" component={EnableLocation}/>
+<Stack.Screen name="LoadContacts" component={LoadContacts}/>
+<Stack.Screen name="Tell" component={Tell}/>
+<Stack.Screen name="ProfileHidden" component={ProfileHidden}/>
+<Stack.Screen name="Loader" component={Loader} options = {{headerTitle:false, headerLeft:false}}/>
+<Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess} options = {{headerTitle:false, headerLeft:false}}/>
+<Stack.Screen name="Contacts" component={Contacts} options = {{headerTitle:false, headerLeft:false}}/>
+<Stack.Screen name="ContactsAge" component={ContactsAge} options = {{headerTitle:false, headerLeft:false}}/>
+<Stack.Screen name="ContactsSex" component={ContactsSex} options = {{headerTitle:false, headerLeft:false}}/>
+<Stack.Screen name="ContactsLocation" component={ContactsLocation} options = {{headerTitle:false, headerLeft:false}}/>
+<Stack.Screen name="ContactsPhotos" component={ContactsPhotos} options = {{headerTitle:false, }}/>
+<Stack.Screen name="Homer" component={mainHome}/>
+
+
+
+
+</Stack.Navigator>
+</NavigationContainer>
+</SafeAreaProvider>
+</AppContext.Provider>
 
 return Object.keys(user).length  ?  mainHome():basicAuthStack
  

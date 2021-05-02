@@ -12,7 +12,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 export default function Contacts({navigation,route}){
   
 const myContext = useContext(AppContext); 
-const {user, userId} = myContext;
+const { userId} = myContext;
 const db = firebase.firestore(); 
 const [indexer,setIndexer] = useState([]); 
 const [isSelected, setSelection] = useState(false);
@@ -21,6 +21,12 @@ const [search, setSearch] = useState('');
 const [selectAll, setSelectAll] = useState(true);
 const [serverData, addServerData] = useState([]); 
 const [profiles, setProfiles] = useState([]); 
+const [user,setUser] = useState({});
+useEffect(() => {
+  db.collection('user').doc(userId).get().then(onDoc => {
+      setUser(onDoc.data())
+  })
+}, [])
  
 
 useEffect(() => {
@@ -29,13 +35,24 @@ useEffect(() => {
     const users = onResult.docs.map(val => val.data()); 
     const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
     const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
-    const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker]
+    const withMatchPics = await Promise.all(profilesWithoutMatchmaker.map(async val => {
+      if(val.matchMaker){
+        return await db.collection('user').doc(val.matchMaker).get().then(onDoc => {
+          return {...val, matchMakerPic:onDoc.data().profilePic}
+        })
+      }
+      return {...val, matchMakerPic:null}
+    }))
+    const finalUsers = [...withMatchPics, ...profilesWithMatchMaker]
     setProfiles(finalUsers); 
 
    }
-   namer()
+   if(Object.keys(user).length){
+    namer()
+   }
    
-}, [])
+   
+}, [user])
 const sendToServer = async () => {
    const result = await db.collection('user').doc(userId).update({datingPoolList:indexer})
    navigation.navigate('ContactsAge') 
@@ -103,8 +120,9 @@ const addArray = (phoneNumber:string) => {
                 
                   <View style = {{flexDirection:'row', alignItems:'center', marginTop:5, marginBottom:5}}>
                   {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:60, width:60, borderRadius:30, }}/>:<MaterialIcons name="account-circle" size={60} color="black" />}  
-                  <Text style = {{marginLeft:10, fontSize:25}}>{computeName(val)}</Text>
+                  <Text style = {{marginLeft:10, fontSize:17,maxWidth:100,maxHeight:100}}>{computeName(val)}</Text>
                   <Text style = {{marginLeft:20}}>{val.matchMaker !== userId ? <Text style = {{fontWeight:'bold', fontSize:25}}> R </Text>:null}</Text>
+                  {val.matchMakerPic ? <Image source = {{uri:val.matchMakerPic}} style = {{height:30, width:30,borderRadius:15, marginLeft:10}}/>:null}
                   </View>
                   <View style = {{alignItems:'center', justifyContent:'center', marginRight:10}}>
                      <Icon name = {"check"} iconStyle = {{opacity:indexer.includes(val.phoneNumber) ? 1:0}}/> 

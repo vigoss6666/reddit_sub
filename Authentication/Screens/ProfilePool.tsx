@@ -202,7 +202,7 @@ const useFetchContactPool = (navigation) => {
                     <View style = {{flexDirection:"row", alignItems:"center"}}>
                                                       
                    {item.profilePic ? <TouchableOpacity onPress = {() => {setVisible(true), setCurrentUser(item.profilePic)}}><Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/></TouchableOpacity>:<MaterialIcons name="account-circle" size={30} color="black" />}
-                    <Text style = {{marginLeft:10, marginBottom:5, fontWeight:"bold"}}>{computeName(item)}</Text>
+                    <Text style = {{marginLeft:10, marginBottom:5, fontWeight:"bold", maxHeight:50,maxWidth:100}} numberOfLines = {2}>{computeName(item)}</Text>
                     </View>
                     {   
                          item.caret ? 
@@ -405,7 +405,7 @@ namer()
      marginTop: 10,
      }}/>
      <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
-     <Text style = {{fontWeight:'bold',}}>{computeName(item)}'s sex</Text>
+     <Text style = {{fontWeight:'bold',maxWidth:100,maxHeight:50}} numberOfLines = {2}>{computeName(item)}'s sex</Text>
      <View style = {{flexDirection:"row",justifyContent:"space-around"}}>
      <TouchableOpacity style = {{marginRight:20}} onPress = {() => {addMale(item)}} disabled = {item.matchMaker == userId ? false:true}>
      <FontAwesome name="male" size={30} color={item.gender == 'male' ? 'green':'black'} />
@@ -425,7 +425,7 @@ namer()
      marginTop: 10,
      }}/>
      <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
-     <Text style = {{fontWeight:'bold',}}>{computeName(item)}'s Orientation</Text>
+     <Text style = {{fontWeight:'bold',maxWidth:100,maxHeight:50}} numberOfLines = {2}>{computeName(item)}'s Orientation</Text>
      <View style = {{flexDirection:"row",justifyContent:"space-around"}}>
      <TouchableOpacity style = {{marginRight:20}} disabled = {item.matchMaker == userId ? false:true}>
      <FontAwesome name="male" size={30} color="green" />
@@ -544,7 +544,7 @@ onChangeItem={namer => addAge(item, namer)}
           <View style = {{flexDirection:"row", justifyContent:'space-between'}}>
           <View style = {{flexDirection:"row", alignItems:"center"}}>
           {item.profilePic ?<TouchableOpacity onPress = {() => {setVisible(true), setCurrentUser(item.profilePic)}}><Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/></TouchableOpacity>:<MaterialIcons name="account-circle" size={30} color="black" />}
-          <Text style = {{marginLeft:10,marginBottom:10,fontWeight:"bold"}}>{computeName(item)}{"\n"} {item.votes.length > 0 ? item.votes.length : 0} votes by {item.matchMakers.length} {item.matchMakers.length > 1 ? 'friends':'friend'}</Text>
+          <Text style = {{marginLeft:10,marginBottom:10,fontWeight:"bold",maxWidth:100,maxHeight:50}}>{computeName(item)}{"\n"} {item.votes.length > 0 ? item.votes.length : 0} votes by {item.matchMakers.length} {item.matchMakers.length > 1 ? 'friends':'friend'}</Text>
           </View>
           {   
                item.caret ? 

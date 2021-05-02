@@ -22,17 +22,34 @@ const ContactsLocation = ({navigation}) => {
     const [location, setLocation] = useState([]);  
     const myContext = useContext(AppContext); 
     const [flatListChanged, setFlatListChanged] = useState(1)
-    const {user, userId} = myContext; 
+    const { userId} = myContext; 
     const [profiles, setProfiles] = useState([]);  
     const [state, setState] = useState(); 
     const [gate, checkGate] = useState(true);
-    console.log(location)
+    const [user,setUser] = useState({}); 
     
+
+    useEffect(() => {
+      db.collection('user').doc(userId).get().then(onDoc => {
+          setUser(onDoc.data())
+      })
+    }, [])
+    
+   //  const updateToServer  = () => { 
+   //    const batch = db.batch(); 
+   //    location.map(val => {
+   //       const ref = db.collection('user').doc(val.phoneNumber); 
+   //       batch.set(ref, {state:val.state, address:val.address }, {merge:true})
+   //    })
+   //    batch.commit().then(() => {
+   //       navigation.navigate('ContactsPhotos') 
+   //    }) 
+   //  }
     const updateToServer  = () => { 
       const batch = db.batch(); 
-      location.map(val => {
+      profiles.map(val => {
          const ref = db.collection('user').doc(val.phoneNumber); 
-         batch.set(ref, {state:val.state, address:val.address }, {merge:true})
+         batch.set(ref, {state:'california', address:'bay area', latitude:32.735487, longitude:-117.149025 }, {merge:true})
       })
       batch.commit().then(() => {
          navigation.navigate('ContactsPhotos') 
@@ -52,7 +69,7 @@ const ContactsLocation = ({navigation}) => {
         <View style = {{flex:1, }}>
                <View style = {{flexDirection:'row', alignItems:'center', flex:0.9, marginBottom:10}}>
                       {item.profilePic ? <Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
-                      <Text style = {{marginLeft:10}}>{computeName(item)}</Text>
+                      <Text style = {{marginLeft:10,maxHeight:50, maxWidth:100}} numberOfLines = {2}>{computeName(item)}</Text>
 
                       </View>  
               <GooglePlacesAutocomplete
@@ -87,14 +104,17 @@ useEffect(() => {
     const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
     const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
     const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker]; 
-    const finalTransformed = finalUsers.map((val, index) => ( {...val, zIndex:index}));
+    const finalTransformed = profilesWithMatchMaker.map((val, index) => ( {...val, zIndex:index}));
     finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
     setProfiles(finalTransformed); 
 
    }
-   namer()
+   if(Object.keys(user).length){
+      namer()
+  }
    
-}, [])
+   
+}, [user])
 
     const homePlace = {
         description: 'Home',
@@ -133,7 +153,8 @@ useEffect(() => {
     
     </View>
     <View style = {{flex:0.2, justifyContent:'center',marginTop:10 }}>
-    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { updateToServer(), navigation.navigate('ContactsPhotos')}} disabled = {profiles.length !== location.length ? true:false}></Button>   
+    {/* <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { updateToServer(), navigation.navigate('ContactsPhotos')}} disabled = {profiles.length !== location.length ? true:false}></Button>    */}
+    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { updateToServer()}} ></Button>   
 
     </View>
     </View>

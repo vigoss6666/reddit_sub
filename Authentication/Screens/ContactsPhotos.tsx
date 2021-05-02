@@ -26,8 +26,16 @@ const computeName = (obj) => {
 const ContactsPhotos = ({navigation}) => {
   const [profiles, setProfiles] = useState([{firstName:"zaid"}]);   
   const myContext = useContext(AppContext); 
-  const {user, userId} = myContext;
+  const { userId, setCurrentUser,setUser,defaultDataObject,firebase} = myContext;
   const [gate, checkGate] = useState(true); 
+  const [user,setUser1] = useState({}); 
+    
+
+    useEffect(() => {
+      db.collection('user').doc(userId).get().then(onDoc => {
+          setUser1(onDoc.data())
+      })
+    }, [])
   useEffect(() => {
     
     async function namer(){
@@ -39,12 +47,31 @@ const ContactsPhotos = ({navigation}) => {
      const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
      const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker];
      
-     setProfiles(finalUsers); 
+     setProfiles([...profilesWithMatchMaker]); 
  
     }
-    namer()
+    if(Object.keys(user).length){
+      namer()
+  }
     
- }, [])
+    
+ }, [user])
+
+ const handleInit = () => {
+  const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
+  db.collection('user').doc(userId).update(userInit);
+  const batch = db.batch(); 
+  profiles.map(val => {
+   const friendInit = Object.assign({}, {...defaultDataObject}, {...val}) 
+   const ref = db.collection('user').doc(val.phoneNumber); 
+   batch.set(ref, {...friendInit})  
+  })
+  batch.commit().then(() => {
+    setUser(user); 
+    navigation.navigate('Homer')
+  })
+
+ }
   
   let openImagePickerAsync = async (obj) => {
     
@@ -100,7 +127,7 @@ const ContactsPhotos = ({navigation}) => {
                   >
                       <View style = {{flexDirection:'row', alignItems:'center', flex:0.9}}>
                       {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
-                      <Text style = {{marginLeft:10}}>{computeName(val)}</Text>
+                      <Text style = {{marginLeft:10,maxHeight:50, maxWidth:100}} numberOfLines = {2}>{computeName(val)}</Text>
 
                       </View>
                       <TouchableOpacity style = {{alignItems:'center', justifyContent:'center'}} onPress = {() => openImagePickerAsync(val)}>
@@ -112,7 +139,7 @@ const ContactsPhotos = ({navigation}) => {
             </ScrollView> 
     </View>
     <View style = {{flex:0.2, justifyContent:'center',marginTop:10 }}>
-    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {navigation.navigate('Homer')}}></Button>   
+    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {handleInit()}}></Button>   
 
     </View>
     </View>
