@@ -1,20 +1,38 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect,useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { AntDesign } from '@expo/vector-icons';
 import {Header} from '../../src/common/Common'; 
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking';
 import * as Location from 'expo-location';
 export default function Tell({navigation}){
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState("");
-    const handleLocation = async () => {
+    const myContext = useContext(AppContext);
+    const {userId, CustomBackComponent} = myContext;
+    useEffect(() => {
+        navigation.setOptions({
+          headerTitle:false, 
+          headerLeft:false,
+          
+        })
+      }, [])
+      const handleLocation = async () => {
         let { status } = await Location.requestPermissionsAsync();   
         if (status !== 'granted') {
             setErrorMsg('Permission to access location was denied');
           }
           let location = await Location.getCurrentPositionAsync({});
-          setLocation(location);
-          console.log(location)
+          
+            setLocation(location);
+            
+            updateUser(userId,{ latitude:location.coords.latitude, longitude:location.coords.longitude,state:"california", subLocality:"San Francisco"})
+            navigation.navigate('ProfileHidden'); 
+            
+            
+             
+         
           
     }
 return(

@@ -8,10 +8,24 @@ import {updateUser} from '../../networking';
 
 
 export default function Job({navigation, route}){
-    const [job, setJob] = useState();
+    const [job, setJob] = useState("");
     const myContext = useContext(AppContext); 
-    const {userId} = myContext; 
+    const [gate,setGate] = useState(true); 
+    const {userId,CustomBackComponent} = myContext; 
     const {page} = route.params; 
+    useEffect(() => {
+      navigation.setOptions({
+        headerTitle:false, 
+        headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+      })
+    }, [])
+    useEffect(() => {
+      if(job.length < 1){
+        setGate(true)
+        return
+      }
+      setGate(false)
+    }, [job])
     const _sendToServer = () => {
       updateUser(userId,{job})
     }
@@ -55,7 +69,7 @@ export default function Job({navigation, route}){
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  disabled = {false}
+  disabled = {gate}
   onPress = {() => { _sendToServer(),_handlePage() }}
 />
       </View>

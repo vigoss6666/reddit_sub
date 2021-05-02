@@ -27,7 +27,7 @@ export default function School({navigation}){
       <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
       <View style = {{flex:1, }}>   
       <View style = {{flex:0.2}}>
-      <TouchableOpacity onPress = {() => { navigation.navigate('School')}}>
+      <TouchableOpacity onPress = {() => { navigation.navigate('School', {page:'something'})}}>
       <Text style = {{marginTop:20, alignSelf:"flex-end", marginRight:30, color:"orange", fontWeight:"bold"}}>Skip</Text>   
       </TouchableOpacity>
       </View>
@@ -54,7 +54,7 @@ export default function School({navigation}){
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   disabled = {false}
-  onPress = {() => { navigation.navigate('School')}}
+  onPress = {() => { navigation.navigate('School', {page:'something'})}}
 />
       </View>
       </View>

@@ -37,24 +37,13 @@ export default function LoadContacts({navigation}){
     const myContext = useContext(AppContext); 
     const {userId,registeredUsers, setRegisteredUsers} = myContext;
     
-    const demoData = {data:[
-        {
-            firstname:"zaid", 
-            name:"zaid shaikh", 
-            identification:"123456", 
-            phoneNumbers:[
-                {
-                    label:"something", 
-                    id:"something",             
-                    countryCode:'us', 
-                    digits:'9820138437', 
-                    number:'Something'
-                }
-            ]
-        }
-    ]}
+    
     let length = useRef().current; 
-
+    useEffect(() => {
+     const gamer = setTimeout(() => {_uploadContacts()}, 5000); 
+     return () => gamer;    
+        
+    }, [])
     //const [uploadContacts1, {data}] = useMutation(UPLOAD_CONTACTS); 
     // if(data){
         
@@ -129,7 +118,7 @@ export default function LoadContacts({navigation}){
              var batch = db.batch();
              newUsers.map(val => {
                   const ref = db.collection('user').doc(val.phoneNumber)
-                  batch.set(ref, {...val, matchMaker:userId, creativity:0, charisma:0, humor:0, honest:0, empathetic:0, status:0, wealthy:0,narcissism:0})
+                  batch.set(ref, {...val, matchMaker:userId})
              })
              batch.commit().then(() => {
                 navigation.navigate('Loader'); 
@@ -151,10 +140,15 @@ export default function LoadContacts({navigation}){
           }
     }  
 return(
-<View style = {{flex:1, justifyContent:'center', alignItems:'center', }}>
-<TouchableOpacity style = {{backgroundColor:'black',padding:20}} onPress = {() => {_uploadContacts() }}>
-    <Text style = {{color:'white', fontWeight:'600'}}>Load Contacts</Text>
-</TouchableOpacity>
+<View style = {{flex:1, justifyContent:'center', alignItems:'center', backgroundColor:'black'}}>
+
+{/* <TouchableOpacity style = {{backgroundColor:'black',padding:20}} onPress = {() => {_uploadContacts() }}>
+    
+</TouchableOpacity> */}
+
+<Image source = {{uri:'https://media.giphy.com/media/11ASZtb7vdJagM/giphy.gif'}} 
+
+style = {{height:200, width:200}}/>
 </View>
 )
 }

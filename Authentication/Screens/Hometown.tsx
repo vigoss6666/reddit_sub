@@ -10,9 +10,24 @@ import {updateUser} from '../../networking';
 
 export default function Hometown({navigation, route}){
   const myContext = useContext(AppContext); 
-  const {userId} = myContext; 
+  const {userId,CustomBackComponent} = myContext; 
+  const [job, setJob] = useState("");
+  const [gate, setGate] = useState(true); 
+  useEffect(() => {
+    if(job.length < 1){
+      setGate(true)
+      return
+    }
+    setGate(false)
+  }, [job])
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle:false, 
+      headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+    })
+  }, [])
     const {page} = route.params; 
-    const [job, setJob] = useState();
+    
     const _sendToServer = () => {
       updateUser(userId, {hometown:job})
     }
@@ -57,7 +72,7 @@ export default function Hometown({navigation, route}){
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  disabled = {false}
+  disabled = {gate}
   onPress = {() => { _sendToServer() , _handlePage()}}
 />
       </View>

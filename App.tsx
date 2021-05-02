@@ -252,7 +252,11 @@ function stringifyNumber(n) {
     setTempId, 
     CustomBackComponent,
     profilePicLocal,
-    setProfilePicLocal 
+    setProfilePicLocal,
+    setRegisteredUsers,
+    registeredUsers,
+    computeName,
+    db
 
   }
   
@@ -351,7 +355,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Name} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={LoadContacts} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="Name" component={Name}/>
 <Stack.Screen name="Birthday" component={BirthDay}/>
@@ -361,6 +365,16 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <Stack.Screen name="AddPhoto" component={AddPhoto}/>
 <Stack.Screen name="AuthPhotos" component={AuthPhotos}/>
 <Stack.Screen name="School" component={School}/>
+<Stack.Screen name="Job" component={Job}/>
+<Stack.Screen name="Hometown" component={Hometown}/>
+<Stack.Screen name="Posted" component={Posted}/>
+<Stack.Screen name="EnableLocation" component={EnableLocation}/>
+<Stack.Screen name="LoadContacts" component={LoadContacts}/>
+<Stack.Screen name="Tell" component={Tell}/>
+<Stack.Screen name="ProfileHidden" component={ProfileHidden}/>
+<Stack.Screen name="Loader" component={Loader} options = {{headerTitle:false, headerLeft:false}}/>
+<Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess} options = {{headerTitle:false, headerLeft:false}}/>
+<Stack.Screen name="Contacts" component={Contacts} options = {{headerTitle:false, headerLeft:false}}/>
 
 
 

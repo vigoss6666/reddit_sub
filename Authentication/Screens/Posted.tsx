@@ -7,10 +7,16 @@ import AppContext from '../../AppContext';
 import {updateUser} from '../../networking';
 export default function Posted({navigation}){
     const myContext = useContext(AppContext); 
-    const {userId} = myContext;
+    const {userId, CustomBackComponent} = myContext;
     const _sendToServer = () => {
         updateUser(userId, { posted:true})
       }    
+      useEffect(() => {
+        navigation.setOptions({
+          headerTitle:false, 
+          headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+        })
+      }, [])
 return(
 <View style = {{flex:1, justifyContent:'center', alignItems:'center'}}>
 <View style = {{flex:0.2}}>
@@ -29,7 +35,7 @@ onPress = {() => {_sendToServer(),navigation.navigate('EnableLocation')}}
 </TouchableOpacity>
 <TouchableOpacity 
 style = {{padding:20,justifyContent:"center",alignItems:'center'}}
-onPress = {() => {navigation.navigate('EnableLocation')}}
+onPress = {() => {_sendToServer(),navigation.navigate('EnableLocation')}}
 >
     <Text style = {{ fontWeight:"600"}}>Not now</Text>
 </TouchableOpacity>

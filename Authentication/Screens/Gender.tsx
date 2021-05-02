@@ -32,11 +32,11 @@ const _handlePage = () => {
 }
 const _handleServer = () => {
    if(man){
-   updateUser(userId, {gender:"male"})  
+   updateUser(userId, {gender:"male",genderPreference:"female"})  
       
    }
    else if(woman){
-      updateUser(userId, {gender:"female"})  
+      updateUser(userId, {gender:"female", genderPreference:"male"})  
    }
 }
 
