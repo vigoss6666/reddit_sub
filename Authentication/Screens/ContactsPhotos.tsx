@@ -10,6 +10,7 @@ import { object } from 'underscore';
 import { MaterialIcons } from '@expo/vector-icons';
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const db = firebase.firestore(); 
 
 interface ContactsPhotosProps {}
@@ -66,8 +67,9 @@ const ContactsPhotos = ({navigation}) => {
    const ref = db.collection('user').doc(val.phoneNumber); 
    batch.set(ref, {...friendInit})  
   })
-  batch.commit().then(() => {
-    setUser(user); 
+  batch.commit().then(async () => {
+    setUser(user);
+    await AsyncStorage.setItem('user', userId);  
     navigation.navigate('Homer')
   })
 

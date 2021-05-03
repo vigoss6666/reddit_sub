@@ -82,7 +82,7 @@ export default function Intro({navigation}){
           </View>
           <View style = {{flexDirection:'row', justifyContent:'space-around', flex:0.3, backgroundColor:"#ffffff"}}>
           
-          <Button containerStyle = {{ width: 100,  }} title = {"SignIn"}/>
+          <Button containerStyle = {{ width: 100,  }} title = {"SignIn"} onPress = {() => navigation.navigate('SignIn')}/>
           <Button containerStyle = {{ width: 100,  }} title = {"SignUp"} onPress = {() => navigation.navigate('Phone')}/>
           
           </View>

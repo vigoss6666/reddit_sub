@@ -69,6 +69,7 @@ import School from './Authentication/Screens/School';
 import Job from './Authentication/Screens/Job';
 import AddPhoto from './Authentication/Screens/AddPhoto';
 import Hometown from './Authentication/Screens/Hometown';
+import SignIn from './Authentication/Screens/SignIn';
 import Loader from './Authentication/Screens/Loader';
 import Trophy from './Trophy/Screens/Trophy'; 
 import GameHomepage from './Game/Screens/GameHomepage'; 
@@ -164,6 +165,9 @@ export default function App() {
   const notificationListener = useRef();
   const [profilePicLocal, setProfilePicLocal] = useState(null); 
   console.log(currentUser+"currentUser")
+
+
+  
   
   function CustomBackComponent({navigation}){
     return <TouchableOpacity style = {{marginLeft:10}} onPress = {() => navigation.goBack()}>
@@ -198,31 +202,36 @@ export default function App() {
   
   const [registeredUsers, setRegisteredUsers] = useState([]); 
   const [user, setUser] = useState({}); 
+  const [_id]
 
 
+  // useEffect(() => {
+    
+  //     const subscribe = currentUser ? db.collection('user').doc(currentUser).onSnapshot(doc => {
+  //       if(doc.exists){
+  //          setUser(doc.data())
+  //       } 
+  //    }):() => console.log("no user")
+    
+     
+     
+  // }, [currentUser])
+  console.log("user is"+user.phoneNumber)
+  
   useEffect(() => {
     
-      const subscribe = currentUser ? db.collection('user').doc(currentUser).onSnapshot(doc => {
+    
+       
+        const subscribe = _id  ? db.collection('user').doc(_id).onSnapshot(doc => {
         if(doc.exists){
            setUser(doc.data())
         } 
      }):() => console.log("no user")
+       
+    return () => subscribe();  
     
-     
-     
-  }, [currentUser])
-  console.log("user is"+user.phoneNumber)
-  
-//   useEffect(() => {
-//     async function namer(){
-//        const user = await AsyncStorage.getItem('user');  
-//        console.log(user)
-//        setCurrentUser(user); 
-       
-       
-//     }
-//     namer()
-//  },[])
+    
+ },[])
 
 
 useEffect(() => {
@@ -367,7 +376,7 @@ const mainHome = () => {
         <NavigationContainer>
          
         <Stack.Navigator>
-          <Stack.Screen name="Home" component={Name} options = {{headerShown:false}}/>
+          <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="Birthday" component={BirthDay}/>
           <Stack.Screen name="Gender" component={Gender}/>
@@ -477,8 +486,9 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={LoadContacts} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
+<Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>
 <Stack.Screen name="Birthday" component={BirthDay}/>
 <Stack.Screen name="Gender" component={Gender}/>
