@@ -9,12 +9,13 @@ import {Text} from "react-native-elements";
 import { Ionicons } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import SwitchSelector from "react-native-switch-selector";
-import {Button} from 'react-native-elements'; 
+import {Button,Tooltip} from 'react-native-elements'; 
 import { gql } from 'apollo-boost';
 import { Platform } from 'react-native';
 import {GET_DATING_POOL,GET_CONTACT_POOL} from './ProfilePool'; 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import AppContext from '../../AppContext'; 
+import {HeaderBar,ImageView,ModalViewMap} from '../../src/common/Common';
 
 
 import {updateUser} from '../../networking';
@@ -62,6 +63,7 @@ const [height, setHeight] = useState();
 const [addDatingPool, setAddDatingPool] = useState();
 const [flatData,setFlatData] = useState([{}]); 
 const [image, setImage] = useState(); 
+const [visible, setVisible] = useState(false); 
 
 
 
@@ -170,10 +172,13 @@ const imageTemplate = image ? <View style = {{height:80, width:80, borderRadius:
 </TouchableOpacity> 
 
 return (
+    <View style = {{flex:1}}>
+    
     <FlatList
     data = {flatData}
     renderItem = {() => 
    <View style = {{flex:1, }}>
+      
     <View style = {{flex:0.1}}>
     
     </View>
@@ -220,22 +225,10 @@ return (
     </TextInput>
     </View>
     <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:30, marginBottom:30}}/>
-    <View style = {{  marginBottom:40, marginLeft:30}}>
-    <Text style = {{marginBottom:20}}>Location</Text>
-    <GooglePlacesAutocomplete
-                  styles = {{container:{  }}}
-                  placeholder = {"Type location"}
-                  fetchDetails = {true}  
-                  
-                  onPress={(data, details = null) => {
-                    // 'details' is provided when fetchDetails = true
-                    
-                  }}
-                  query={{
-                    key: 'AIzaSyBxsuj6tm1D5d3hEfG2ASfleUBIRREl15Y',
-                    language: 'en',
-                  }}
-            />
+    <View style = {{  marginBottom:20, marginLeft:30}}>
+    <TouchableOpacity onPress = {() => {setVisible(true)}}><Text>Location </Text></TouchableOpacity>
+    <ModalViewMap visible = {visible} setVisible = {setVisible} style = {{height:300, width:300,backgroundColor:'red'}}/>
+    
     </View>
     <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:30, marginBottom:30}}/>
     
@@ -386,6 +379,7 @@ return (
        
         </Button>} 
     />
+    </View>
 
     
 )

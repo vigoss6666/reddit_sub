@@ -16,7 +16,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {HeaderBar,ImageView} from '../../src/common/Common';
+import {HeaderBar,ImageView,ModalViewMap} from '../../src/common/Common';
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';
 const contactList = [{name:"zaid shaikh", firstname:"zaid", _id:'123'},{name:"david", firstname:"zaid", _id:'1234'}];
@@ -77,7 +77,7 @@ const useFetchContactPool = (navigation) => {
 
 
      const _sendToServer = (val) => {
-          if(val.matchMaker == userId){
+          if(!val.appUser && !val.latitude){
           setSingleContact(val); 
           navigation.navigate('SingleContactPhoto'); 
           return; 
@@ -124,7 +124,7 @@ const useFetchContactPool = (navigation) => {
                               lastName:val.lastName,
                               formattedPhoneNumber:val.phoneNumbers[0].number, 
                               // phoneNumber:transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode)
-                              phoneNumber:val.phoneNumbers[0].digits
+                              phoneNumber:transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode)
                           }
                      })
                    

@@ -539,6 +539,42 @@ export function Tester1({navigation,db,chatID,userId}){
 
  
      const styles = StyleSheet.create({
+      centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+      },
+      modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+      },
+      openButton: {
+        backgroundColor: '#F194FF',
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+      },
+      textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+      },
+      modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+      },
       textStyle:{fontWeight:'500', fontSize:30}, 
       line:{borderBottomWidth:3,}, 
       iconNames:{marginLeft:10, fontSize:17, fontWeight:'500'}, 
@@ -1150,6 +1186,50 @@ export function ClientHeader({client, style}) {
   <ImageViewer imageUrls={images} renderHeader = {() => <View style = {{backgroundColor:'red'}} ></View>} enableSwipeDown onSwipeDown = {() => setVisible(false)} enableImageZoom/>
 </Modal> 
  }
+ export function ModalViewMap({client, handleLocation,visible, setVisible}){
+
+  //const [modalVisible, setModalVisible] = useState(visible);
+  return (
+    
+      <View style={[styles.centeredView, {position:'absolute'}]}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={visible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+          }}>
+          <View style={[styles.centeredView, {height:300, width:300,position:'absolute'}]}>
+            <View style={[styles.modalView, {width:500, height:500}]}>
+              <Text style={styles.modalText}>Hello World!</Text>
+  
+              <TouchableOpacity
+                style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                onPress={() => {
+                  setVisible(!visible);
+                }}>
+                <Text style={styles.textStyle}>Hide Modal</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+  
+        <TouchableOpacity
+          style={styles.openButton}
+          onPress={() => {
+            setVisible(false);
+          }}>
+          <Text style={styles.textStyle}>Show Modal</Text>
+        </TouchableOpacity>
+      </View>
+    
+    
+
+    
+  );
+
+ }
+ 
 
 
  

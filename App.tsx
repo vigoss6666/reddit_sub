@@ -202,27 +202,26 @@ export default function App() {
   
   const [registeredUsers, setRegisteredUsers] = useState([]); 
   const [user, setUser] = useState({}); 
-  const [_id]
+  const [_id, setId] = useState(); 
+useEffect(() => {
+async function namer(){
+  const userGamer = await AsyncStorage.getItem('user'); 
+  
+  setId(userGamer); 
+}
+if(!Object.keys(user).length){
+  namer()
+}
 
+},[])
 
   // useEffect(() => {
     
-  //     const subscribe = currentUser ? db.collection('user').doc(currentUser).onSnapshot(doc => {
-  //       if(doc.exists){
-  //          setUser(doc.data())
-  //       } 
-  //    }):() => console.log("no user")
-    
-     
-     
-  // }, [currentUser])
-  console.log("user is"+user.phoneNumber)
+  
+  
   
   useEffect(() => {
-    
-    
-       
-        const subscribe = _id  ? db.collection('user').doc(_id).onSnapshot(doc => {
+      const subscribe = _id  ? db.collection('user').doc(_id).onSnapshot(doc => {
         if(doc.exists){
            setUser(doc.data())
         } 
@@ -231,7 +230,7 @@ export default function App() {
     return () => subscribe();  
     
     
- },[])
+ },[_id])
 
 
 useEffect(() => {
@@ -299,7 +298,7 @@ function stringifyNumber(n) {
     setChatterNotification,
     chatNotification, 
     setChatNotification, 
-    userId:currentUser, 
+    userId:user.phoneNumber, 
     user, 
     registeredUsers, 
     setRegisteredUsers, 
