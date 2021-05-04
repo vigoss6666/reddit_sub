@@ -52,11 +52,27 @@ return <View>
 
 
 export default function MatchList({navigation}){
+  const myContext = useContext(AppContext);
+  const { user, userId, setChatNotification, setChatterNotification } = myContext;
+
+const [MatchNotification, setMatchNotification] = useState(false);   
+const [IntroNotification, setIntroNotification] = useState(false);   
+const [ChatNotifcaiton1, setChatNotification1] = useState(false);
+
+console.log("Intro"+IntroNotification)
+
+useEffect(() => {
+if(MatchNotification || IntroNotification || ChatNotifcaiton1){
+  setChatNotification(true); 
+  return
+}
+setChatNotification(false); 
+}, [MatchNotification, IntroNotification, ChatNotifcaiton1])
 return(
 <SafeAreaView style = {{flex:1, marginTop:20, marginLeft:20, marginRight:20}}>
-<Introductions navigation = {navigation} />
-<MatchesList navigation = {navigation}/>
-<MatchChats navigation = {navigation}/>
+<Introductions navigation = {navigation} setIntroNotification = {setIntroNotification}/>
+<MatchesList navigation = {navigation} setMatchNotification = {setMatchNotification}/>
+<MatchChats navigation = {navigation} setChatNotification = {setChatNotification1}/>
 </SafeAreaView>
 )
 }

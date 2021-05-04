@@ -5,7 +5,7 @@ import AppContext from '../../AppContext';
 import { UserFactory, db } from './MatchList';
 import { filterGamer } from '../../networking';
 
-export function MatchesList({navigation}) {
+export function MatchesList({navigation, setMatchNotification}) {
   const myContext = useContext(AppContext);
   const { user, userId, setChatNotification, setChatterNotification, firebase } = myContext;
   const [matches, setMatches] = useState([]);
@@ -89,8 +89,11 @@ export function MatchesList({navigation}) {
 
       const clientObjects = onResultClient1.docs.map(val => Object.assign({}, val.data(), { _id: val.id }));
       const collective = [...transformed, ...clientObjects]; 
-      const finalCollective = collective.filter(val => val.discoveredBy !== userId); 
-      const transformedWithUsers1 = await Promise.all(finalCollective.map(async (val) => {
+      const finalCollective = collective.filter(val => val.discoveredBy !== userId);
+      const filterByChatted = finalCollective.filter(val => val.chatted !== true) 
+      const filterByReported = filterByChatted.filter(val => val.reported !== true); 
+      const filterByUnmatched = filterByReported.filter(val => val.unMatched !== true);
+      const transformedWithUsers1 = await Promise.all(filterByUnmatched.map(async (val) => {
         return await db.collection('user').doc(val.client2).get().then(result => Object.assign({}, val, { clientUser: result.data() }));
       }));
       
@@ -99,6 +102,9 @@ export function MatchesList({navigation}) {
           return {...val, seen:true}  
         }
       const filteredBySeen = filterGamer(transformedWithUsers1, '_id', user.seenMatches,null, applyToIncluded);       
+      filteredBySeen.excludedObjects.length > 0 ? setMatchNotification(true):setMatchNotification(false); 
+      console.log("length is")
+    console.log(filteredBySeen.excludedObjects.length) 
       const grandestArray = [...filteredBySeen.excludedObjects, ...filteredBySeen.includedObjects];
       const grandMason = grandestArray.filter(val => val.chatted !== true)
       
@@ -120,23 +126,30 @@ export function MatchesList({navigation}) {
       const diffClientUsers = diffClient.docs.map(val => Object.assign({}, val.data(),{_id:val.id} )); 
       const collective = [...diffClientUsers, ...transformed]; 
       const finalCollective = collective.filter(val => val.discoveredBy !== userId); 
+      const filterByChatted = finalCollective.filter(val => val.chatted !== true) 
+      const filterByReported = filterByChatted.filter(val => val.reported !== true); 
+      const filterByUnmatched = filterByReported.filter(val => val.unMatched !== true);
 
 
       
-      const transformedWithUsers1 = await Promise.all(finalCollective.map(async (val) => {
+      const transformedWithUsers1 = await Promise.all(filterByUnmatched.map(async (val) => {
         return await db.collection('user').doc(val.client2).get().then(result => Object.assign({}, val, { clientUser: result.data() }));
       }));
       function applyToIncluded(val){
         return {...val, seen:true}  
       }
-    const filteredBySeen = filterGamer(transformedWithUsers1, '_id', user.seenMatches,null, applyToIncluded);       
+    const filteredBySeen = filterGamer(transformedWithUsers1, '_id', user.seenMatches,null, applyToIncluded);
+    filteredBySeen.excludedObjects.length > 0 ? setMatchNotification(true):setMatchNotification(false); 
+    console.log("length is")
+    console.log(filteredBySeen.excludedObjects.length) 
+
     const grandestArray = [...filteredBySeen.excludedObjects, ...filteredBySeen.includedObjects];
     const grandMason = grandestArray.filter(val => val.chatted !== true)
     
     setMatches(grandMason);
     });
     return () => { unsubscribe1(), unsubscribe()};
-  }, [user.seenMatches, user.chatted, user.introMatches]);
+  }, [user.seenMatches, user.chatted, user.introMatches,user.unMatched, user.reported]);
   
   
   return (

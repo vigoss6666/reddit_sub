@@ -4,6 +4,7 @@ import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GiftedChat, Bubble, Time } from 'react-native-gifted-chat'
 import { format, formatDistance, formatRelative, subDays } from 'date-fns'
+import AppContext from '../../AppContext'; 
 import {firebase} from '../../config'; 
 const db = firebase.firestore(); 
 
@@ -20,6 +21,8 @@ const computeName = (obj) => {
 interface ChatLatestProps {}
 
 const ChatLatest = ({navigation, route}) => {
+  const myContext = useContext(AppContext);
+  const {  userId,  } = myContext;
 const [matchMaker, setMatchMaker] = useState({});   
 const insets = useSafeAreaInsets();
 const [messages, setMessages] = useState([]); 
@@ -72,7 +75,7 @@ const [result, setResult] = useState('🔮');
       headerTitle:() => {
         return <View style = {{marginTop:10, marginBottom:10, justifyContent:'center', alignItems:'center'}}>
         <TouchableOpacity onPress = {() => navigation.navigate('ChatClientView', {client:clientObj.clientUser.phoneNumber})}>{clientObj.clientUser.profilePic ? <Image source = {{uri:clientObj.clientUser.profilePic}} style = {{height:40, width:40, borderRadius:20}}></Image>:<MaterialIcons name="account-circle" size={50} color="black" />}</TouchableOpacity>  
-        <Text style = {{fontWeight:'bold', marginTop:5, marginBottom:5}}>{computeName(clientObj.clientUser)}</Text>
+        <Text style = {{fontWeight:'bold', marginTop:5, marginBottom:5, maxWidth:100, maxHeight:50}} numberOfLines = {1}>{computeName(clientObj.clientUser)}</Text>
         </View>
       }, 
       headerStyle:{height:120}, 
@@ -111,9 +114,27 @@ const [result, setResult] = useState('🔮');
       buttonIndex => {
         if(buttonIndex == 0){
            console.log("unmatch")
+           db.collection('matches').doc(clientObj._id).set({unMatched:true}, {merge:true}).then(() => {
+             db.collection('user').doc(userId).set({unMatched:firebase.firestore.FieldValue.arrayUnion(clientObj._id)}, {merge:true}).then(() => {
+              db.collection('user').doc(clientObj.clientUser.phoneNumber).set({unMatched:firebase.firestore.FieldValue.arrayUnion(clientObj._id)}, {merge:true}).then(() => {
+                navigation.navigate('MatchList')
+              }) 
+              
+             })
+             
+           })
         }
         else if(buttonIndex == 1){
            console.log("reporting")
+           db.collection('matches').doc(clientObj._id).set({reported:true}, {merge:true}).then(() => {
+            db.collection('user').doc(userId).set({reported:firebase.firestore.FieldValue.arrayUnion(clientObj._id)}, {merge:true}).then(() => {
+             db.collection('user').doc(clientObj.clientUser.phoneNumber).set({reported:firebase.firestore.FieldValue.arrayUnion(clientObj._id)}, {merge:true}).then(() => {
+               navigation.navigate('MatchList')
+             }) 
+             
+            })
+            
+          })
         }
       }
     );

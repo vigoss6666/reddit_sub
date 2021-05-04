@@ -7,7 +7,7 @@ import {ClientHeader, ClientDetails, ClientPhotos, ClientMatchMakers, ClientTrai
 
 export default function ProfileClientView({route, navigation}) {
     const myContext = useContext(AppContext);
-    const { db, CustomBackComponent, userId} = myContext;
+    const { db, CustomBackComponent, userId, firebase} = myContext;
     useEffect(() => {
        navigation.setOptions({
            headerTitle:false, 

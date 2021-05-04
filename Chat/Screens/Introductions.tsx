@@ -6,7 +6,7 @@ import AppContext from '../../AppContext';
 import { filterGamer } from '../../networking';
 import { db, UserFactory } from './MatchList';
 
-export function Introductions({ navigation, }) {
+export function Introductions({ navigation,setIntroNotification }) {
   const myContext = useContext(AppContext);
   const { user, userId, setChatNotification, setChatterNotification } = myContext;
   const [intros, setIntros] = useState([]); 
@@ -45,6 +45,9 @@ export function Introductions({ navigation, }) {
       }
       const seenIntrosChecker = user.seenIntros !== undefined && user.seenIntros.length ? user.seenIntros : [];
       const filtered = filterGamer(filterByintroMatches, '_id', seenIntrosChecker, null, namer);
+      
+      filtered.excludedObjects.length > 0 ? setIntroNotification(true):setIntroNotification(false); 
+
 
       setIntros([...filtered.excludedObjects, ...filtered.includedObjects,]);
     });
@@ -82,6 +85,8 @@ export function Introductions({ navigation, }) {
       }
       const seenIntrosChecker = user.seenIntros !== undefined && user.seenIntros.length ? user.seenIntros : [];
       const filtered = filterGamer(filterByintroMatches, '_id', seenIntrosChecker, null, namer);
+      filtered.excludedObjects.length > 0 ? setIntroNotification(true):setIntroNotification(false); 
+      
 
       setIntros([...filtered.excludedObjects, ...filtered.includedObjects, ]);
     });

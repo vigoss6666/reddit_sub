@@ -154,7 +154,7 @@ export default function App() {
   const [countryCode, setCountryCode] = useState("US");
   const [dialCode, setDialCode] = useState("+1"); 
   const [introNotification, setIntroNotification] = useState(); 
-  const [chatNotification, setChatNotification] = useState(false);  
+  const [chatNotification, setChatNotification] = useState(true);  
   const [chatterNotification, setChatterNotification] = useState(false);
   const [initialRouteName, setInitialRouteName] = useState('ProfilePool');  
   const [singleContact, setSingleContact] = useState();  
@@ -560,101 +560,52 @@ function Home(props){
       
       
       title: ({ focused, color, size }) => {
-        if(route.name === 'Matchlist'){
+        if(route.name === 'MatchList'){
           if(!focused){
             if(chatNotification == true){
-              if(!chatterNotification){
+              
                 return (
                   <View>
                  <View style = {{height:10,width:10, position:'absolute', left:-5, backgroundColor:'red', borderRadius:5,zIndex:100}}/>
                  <AntDesign name="wechat" size={24} color="black" />
                  </View> 
                  );
-              }
+              
            }
-           if(chatNotification == true){
-            if(chatterNotification){
+           if(chatNotification == false){
+            
               return (
                 <View>
-               <View style = {{height:10,width:10, position:'absolute', left:-5, backgroundColor:'red', borderRadius:5,zIndex:100}}/>
                <AntDesign name="wechat" size={24} color="black" />
-               <Entypo name="message" size={24} color="black" style = {{position:'absolute', top:5, right:5}}/>
                </View> 
                );
-            }
+            
          }
-         if(!chatNotification){
-          if(chatterNotification){
-            return (
-              <View>
-             
-             <AntDesign name="wechat" size={24} color="black" />
-             <Entypo name="message" size={12} color="red" style = {{position:'absolute', top:2, right:0}}/>
-             </View> 
-             );
-          }
-       }
-       return (
-        <View>
-        <AntDesign name="wechat" size={24} color="black" />
-       </View> 
-       );
-
-          } 
+        } 
           if(focused) {
             if(chatNotification == true){
-              if(!chatterNotification){
+              
                 return (
                   <View>
                  <View style = {{height:10,width:10, position:'absolute', left:-5, backgroundColor:'red', borderRadius:5,zIndex:100}}/>
                  <AntDesign name="wechat" size={24} color="black" />
                  </View> 
                  );
-              }
+              
            }
-           if(chatNotification == true){
-            if(chatterNotification){
+           if(chatNotification == false){
+            
               return (
                 <View>
-               <View style = {{height:10,width:10, position:'absolute', left:-5, backgroundColor:'red', borderRadius:5,zIndex:100}}/>
+               
                <AntDesign name="wechat" size={24} color="black" />
-               <Entypo name="message" size={24} color="black" style = {{position:'absolute', top:5, right:5}}/>
+             
                </View> 
                );
-            }
+            
          }
-         if(!chatNotification){
-          if(chatterNotification){
-            return (
-              <View>
-             
-             <AntDesign name="wechat" size={24} color="black" />
-             <Entypo name="message" size={12} color="red" style = {{position:'absolute', top:2, right:0}}/>
-             </View> 
-             );
-          }
-       }
-              return (
-              <View>
-              <AntDesign name="wechat" size={24} color="black" />
-             </View> 
-             );     
-               
-       }
-          if(chatNotification == false){
-            return (
-              <View>
-              <AntDesign name="wechat" size={24} color="black" />
-             </View> 
-             ); 
-          }
-          return (
-            <View>
-           <View style = {{height:10,width:10, position:'absolute', left:-5, backgroundColor:'red', borderRadius:5,zIndex:100}}/>
-           <AntDesign name="wechat" size={24} color="black" />
-           </View> 
-           );
-         }      
+        }
+       }      
         if(route.name === 'ProfilePool'){
           if(focused) {
             return <SimpleLineIcons name="people" size={24} color="orange" />;   
@@ -698,7 +649,7 @@ function Home(props){
       <Tab.Screen name="Game" component={GameHomepage} />
       <Tab.Screen name="Trophy" component={Trophy} />
       <Tab.Screen name="ProfilePool" component={ProfilePool}  />
-      <Tab.Screen name="Matchlist" component={MatchList}  /> 
+      <Tab.Screen name="MatchList" component={MatchList}  /> 
       <Tab.Screen name="Settings" component={SettingsHome} />
         
     </Tab.Navigator>

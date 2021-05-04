@@ -1,21 +1,22 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
-import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Modal} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5,AntDesign} from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import {Text} from "react-native-elements"; 
 import { Ionicons } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import SwitchSelector from "react-native-switch-selector";
-import {Button,Tooltip} from 'react-native-elements'; 
+import {Button} from 'react-native-elements'; 
 import { gql } from 'apollo-boost';
 import { Platform } from 'react-native';
 import {GET_DATING_POOL,GET_CONTACT_POOL} from './ProfilePool'; 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import AppContext from '../../AppContext'; 
 import {HeaderBar,ImageView,ModalViewMap} from '../../src/common/Common';
+import Tooltip from 'react-native-walkthrough-tooltip';
 
 
 import {updateUser} from '../../networking';
@@ -226,8 +227,8 @@ return (
     </View>
     <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:30, marginBottom:30}}/>
     <View style = {{  marginBottom:20, marginLeft:30}}>
-    <TouchableOpacity onPress = {() => {setVisible(true)}}><Text>Location </Text></TouchableOpacity>
-    <ModalViewMap visible = {visible} setVisible = {setVisible} style = {{height:300, width:300,backgroundColor:'red'}}/>
+     
+    
     
     </View>
     <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:30, marginBottom:30}}/>

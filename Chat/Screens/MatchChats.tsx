@@ -7,9 +7,9 @@ import {filterGamer} from '../../networking';
 
 //@refresh reset
 
-export function MatchChats({navigation}) {
+export function MatchChats({navigation, setChatNotification}) {
   const myContext = useContext(AppContext);
-  const { user, userId, setChatNotification, setChatterNotification, firebase, createChatThread, computeName } = myContext;
+  const { user, userId, firebase, createChatThread, computeName } = myContext;
   const [chatList, setChatList] = useState([]);
   const handleChatPressed = (doc) => {
     
@@ -23,7 +23,7 @@ export function MatchChats({navigation}) {
         
      <UserFactory user={item} onPress={handleChatPressed} />
      <View style = {{marginLeft:10}}>
-     <Text style = {{fontWeight:'bold'}}>{computeName(item.clientUser)}</Text>    
+     <Text style = {{fontWeight:'bold',maxWidth:100, maxHeight:50}} numberOfLines = {1}>{computeName(item.clientUser)}</Text>    
      {messageText}
      </View>
     </View>
@@ -112,7 +112,9 @@ export function MatchChats({navigation}) {
       const clientObjects = onResultClient1.docs.map(val => Object.assign({}, val.data(), { _id: val.id }));
       const collective = [...transformed, ...clientObjects]; 
       const finalCollective = collective.filter(val => val.discoveredBy !== userId); 
-      const transformedWithUsers = await Promise.all(finalCollective.map(async (val) => {
+      const filterByReported = finalCollective.filter(val => val.reported !== true); 
+      const filterByUnmatched = filterByReported.filter(val => val.unMatched !== true);
+      const transformedWithUsers = await Promise.all(filterByUnmatched.map(async (val) => {
           return await db.collection('user').doc(val.client2).get().then(async (result) => {
             return await db.collection('messages').doc(createChatThread(userId, result.data().phoneNumber)).collection('messages').orderBy('createdAt', 'desc').limit(1).get().then(onChatResult => {
               const lastNamer = onChatResult.docs.map(val => val.data());
@@ -128,6 +130,8 @@ export function MatchChats({navigation}) {
                     },
                    user.seenChats
           );
+        
+
         let keys = filteredSeenChats.map(val => val.lastMessage._id); 
         const included =  transformedWithUsers.filter(
           function(e) {
@@ -153,6 +157,9 @@ export function MatchChats({navigation}) {
             }
             return {...val}
         })
+
+        const checker = resulter.filter(val => val.seen !== true); 
+        checker.length ? setChatNotification(true):setChatNotification(false); 
       
 
         
@@ -175,7 +182,9 @@ export function MatchChats({navigation}) {
       const diffClientUsers = diffClient.docs.map(val => Object.assign({}, val.data(),{_id:val.id} )); 
       const collective = [...diffClientUsers, ...transformed]; 
       const finalCollective = collective.filter(val => val.discoveredBy !== userId); 
-      const transformedWithUsers = await Promise.all(finalCollective.map(async (val) => {
+      const filterByReported = finalCollective.filter(val => val.reported !== true); 
+      const filterByUnmatched = filterByReported.filter(val => val.unMatched !== true);
+      const transformedWithUsers = await Promise.all(filterByUnmatched.map(async (val) => {
         return await db.collection('user').doc(val.client2).get().then(async (result) => {
           return await db.collection('messages').doc(createChatThread(userId, result.data().phoneNumber)).collection('messages').orderBy('createdAt', 'desc').limit(1).get().then(onChatResult => {
             const lastNamer = onChatResult.docs.map(val => val.data());
@@ -190,6 +199,7 @@ export function MatchChats({navigation}) {
         },
        user.seenChats
 );
+
 let keys = filteredSeenChats.map(val => val.lastMessage._id); 
 const included =  transformedWithUsers.filter(
 function(e) {
@@ -211,10 +221,13 @@ const finalGamer = [...filteredSeenChats, ...includedTransform];
         }
         return {...val}
     })
+    const checker = resulter.filter(val => val.seen !== true); 
+    checker.length ? setChatNotification(true):setChatNotification(false); 
+  
       setChatList(resulter);
     });
     return () => { unsubscribe1(), unsubscribe()};
-  }, [user.lastMessage]);
+  }, [user.lastMessage, user.unMatched, user.reported]);
 
   return (
     <View>

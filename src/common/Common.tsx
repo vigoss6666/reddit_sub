@@ -785,7 +785,7 @@ export function ClientHeader({client, style}) {
       <View style = {style}>
       <View style = {{ justifyContent:'center', alignItems:'center', marginTop:30}}>
       <Text style = {{fontWeight:'bold',fontSize:30}}> {client.matchMakers.length} people said  </Text>
-      <Text style = {{fontWeight:'bold', fontSize:40, fontStyle:'italic'}}>{computeName(client)}</Text>
+      <Text style = {{fontWeight:'bold', fontSize:40, fontStyle:'italic', maxWidth:250, maxHeight:50}} numberOfLines = {1}>{computeName(client)}</Text>
       <Text style = {{fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}}> is {adjectives[0].toUpperCase()}, {adjectives[1].toUpperCase()} </Text>
       <Text style = {{fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}}> and {adjectives[2].toUpperCase()}</Text>
        </View>
@@ -965,7 +965,7 @@ export function ClientHeader({client, style}) {
     }
     return <View>
     <View style = {[styles.line, {marginTop:40}]}/>
-    <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>{computeName(client).toUpperCase()}'s MATCHMAKERS</Text>
+    <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25,maxWidth:250, maxHeight:50}]} numberOfLines = {2}>{computeName(client).toUpperCase()}'s MATCHMAKERS</Text>
     <View style = {styles.line}></View>
     {template}
     </View>
@@ -1191,16 +1191,16 @@ export function ClientHeader({client, style}) {
   //const [modalVisible, setModalVisible] = useState(visible);
   return (
     
-      <View style={[styles.centeredView, {position:'absolute'}]}>
+        <View> 
         <Modal
-          animationType="slide"
+          animationType="none"
           transparent={true}
           visible={visible}
           onRequestClose={() => {
             Alert.alert('Modal has been closed.');
           }}>
-          <View style={[styles.centeredView, {height:300, width:300,position:'absolute'}]}>
-            <View style={[styles.modalView, {width:500, height:500}]}>
+          <View style={{flex:0.5, backgroundColor:'red',position:'absolute', top:100}}>
+            <View style={{width:500, height:500}}>
               <Text style={styles.modalText}>Hello World!</Text>
   
               <TouchableOpacity
@@ -1213,15 +1213,9 @@ export function ClientHeader({client, style}) {
             </View>
           </View>
         </Modal>
+        </View>
   
-        <TouchableOpacity
-          style={styles.openButton}
-          onPress={() => {
-            setVisible(false);
-          }}>
-          <Text style={styles.textStyle}>Show Modal</Text>
-        </TouchableOpacity>
-      </View>
+      
     
     
 
