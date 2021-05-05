@@ -166,6 +166,8 @@ export default function App() {
   const [profilePicLocal, setProfilePicLocal] = useState(null); 
   console.log(currentUser+"currentUser")
 
+  
+
 
   
   
@@ -485,7 +487,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Name} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>

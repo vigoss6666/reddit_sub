@@ -1,6 +1,6 @@
 import  React, {useState,useRef,useEffect,useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, KeyboardAvoidingView, Platform} from 'react-native';
-import {Header,Continue} from '../../src/common/Common'; 
+import {Continue,Header} from '../../src/common/Common'; 
 import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { mutateSettings} from '../../networking';
 import {Button} from 'react-native-elements'; 
@@ -8,12 +8,13 @@ import { firebase } from '../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from '../../AppContext';
 import {updateUser} from '../../networking';  
+
 // @refresh reset
 const auth = firebase.auth(); 
 
 export default function Name({navigation}){
    const myContext = useContext(AppContext);   
-   const { userId, CustomBackComponent  } = myContext; 
+   const { userId, CustomBackComponent,db  } = myContext; 
    useEffect(() => {
     navigation.setOptions({
       headerTitle:false, 
@@ -30,6 +31,7 @@ export default function Name({navigation}){
    const [color, setColor] = useState("white")
    const [currentUser, setCurrentUser] = useState(); 
    const fire = () => {
+     
     updateUser(userId, {firstName, lastName, name:firstName+lastName}); 
     navigation.navigate('Birthday', {page:"something"})
     } 
@@ -81,12 +83,8 @@ export default function Name({navigation}){
         return <Text>App is loading</Text>;
       }    
 return(
-<KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
-<View style = {{flex:1,}}>
-<View style = {{flex:0.4}}>
-</View>
-<View style = {{flex:1}}>
-<Header text = "My name is....." style = {{justifyContent:"center", alignItems: 'flex-start',marginLeft:30}}/>
+<KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "padding"}>
+<Header text = "My name is....." style = {{justifyContent:"center", alignItems: 'flex-start',marginLeft:30,marginTop:60, }}/>
 <TextInput style = {{borderBottomWidth:0.5,opacity:0.3, borderColor:"grey",width:Dimensions.get('window').width -60, marginLeft:30 }}>
 
 </TextInput>
@@ -97,25 +95,25 @@ return(
 </TextInput>
 <TextInput style = {{fontSize:35, borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} placeholder = {"Last Name"} onChange = {async (text) => {await handleLastNameChange(text)} } autoCorrect = {false} value = {lastName}></TextInput>
 <TextInput style = {{borderBottomWidth:0.3, borderColor:"grey",opacity:0.5, width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} ></TextInput>
-</View>
 
-<View style = {{flex:0.6,}}>
- <View>
+
+
+ 
  <Button
   title="Continue"
 
   type="outline"
-  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
+  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30,}}
   disabled = {openGate}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   onPress = {() =>  fire()}
   
 />       
- </View>
-</View>
+ 
 
-</View>
+
+
 </KeyboardAvoidingView>  
 )
 }

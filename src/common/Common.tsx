@@ -25,6 +25,7 @@ import {transformCreativity, getDistanceFromLatLonInKm} from '../../networking';
 import AppContext from '../../AppContext'; 
 import { Modal } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import * as Notifications from 'expo-notifications';
 // @refresh reset
 export function getBaseLog(x, y) {
   const result = Math.log(y) / Math.log(x);

@@ -11,8 +11,8 @@ import {updateUser} from '../../networking';
 export default function Height({navigation,route}){
     const myContext = useContext(AppContext); 
     const {userId, CustomBackComponent} = myContext;
-    let [feet, setFeet] = useState(); 
-     let [inches, setInches] = useState(); 
+    let [feet, setFeet] = useState(3); 
+     let [inches, setInches] = useState(3); 
     const [gate, setGate] = useState(true); 
     useEffect(() => {
         navigation.setOptions({
@@ -178,7 +178,7 @@ return(
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   onPress = {() => {_sendToServer(), _handleNavigation() }}
-  disabled = {gate}
+  disabled = {false}
 />
 </View>
 </View>

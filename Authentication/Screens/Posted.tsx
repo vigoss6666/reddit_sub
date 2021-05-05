@@ -1,15 +1,57 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Platform} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
+import Constants from 'expo-constants';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {Header} from '../../src/common/Common'; 
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';
+import * as Notifications from 'expo-notifications';
+async function registerForPushNotificationsAsync() {
+  let token;
+  if (Constants.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  return token;
+}
+
 export default function Posted({navigation}){
     const myContext = useContext(AppContext); 
     const {userId, CustomBackComponent} = myContext;
-    const _sendToServer = () => {
-        updateUser(userId, { posted:true})
+    
+
+    const _sendToServer = async () => {
+        
+        const token  = await registerForPushNotificationsAsync(); 
+        if(token){
+          updateUser(userId, {posted:true, pushToken:token})
+          return; 
+        }
+        updateUser(userId, {posted:false})
+
       }    
       useEffect(() => {
         navigation.setOptions({
@@ -35,7 +77,7 @@ onPress = {() => {_sendToServer(),navigation.navigate('EnableLocation')}}
 </TouchableOpacity>
 <TouchableOpacity 
 style = {{padding:20,justifyContent:"center",alignItems:'center'}}
-onPress = {() => {_sendToServer(),navigation.navigate('EnableLocation')}}
+onPress = {() => {updateUser(userId, {posted:false}),navigation.navigate('EnableLocation')}}
 >
     <Text style = {{ fontWeight:"600"}}>Not now</Text>
 </TouchableOpacity>
