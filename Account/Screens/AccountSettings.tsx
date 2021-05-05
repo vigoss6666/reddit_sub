@@ -39,9 +39,12 @@ const [matchmaking, setMatchmaking] = useState();
 const [value, setValue] = useState(1);
 const [email, setEmail] = useState();
 const myContext = useContext(AppContext);
-const {user, userId} = myContext;
+const {user, userId,setInitialRouteName} = myContext;
 const [defaultDistance, setDefaultDistance] = useState(40)
 const [distancePreference, setDistancePreference] = useState(40);  
+const [minAgePreference, selectMinAgePreference] = useState(); 
+const [maxAgePreference, selectMaxAgePreference] = useState();
+const [defaultDating, setDefaultDating] = useState()
 
 const [genderPreference, setGenderPreference] = useState();  
 const [minAgePref, selectminAgePref] = useState(); 
@@ -51,7 +54,7 @@ useEffect(() => {
  navigation.setOptions({
     headerTitle:'AccountSettings', 
     headerLeft:false, 
-    headerShown:true,
+    headerShown:false,
     headerRight:() => <TouchableOpacity onPress = {() => {_sendToServer(),navigation.navigate('Homer')}} style = {{marginRight:10}}>
     <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
     </TouchableOpacity>
@@ -60,7 +63,12 @@ useEffect(() => {
 useEffect(() => {
 setDefaultDistance(user.distancePreference); 
 setDistancePreference(user.distancePreference); 
-}, [user.distancePreference])
+selectMinAgePreference(user.minAgePreference); 
+selectMaxAgePreference(user.maxAgePreference);
+setDefaultDating(user.dating ? 1:0)
+
+
+}, [user.distancePreference, user.minAgePreference, user.maxAgePreference, user.dating])
    //const {data, loading, error} = useQuery(GET_DETAILS);
    // if(data){
 
@@ -87,10 +95,10 @@ useEffect(() => {
    }) 
 }, [email])
 
-const initialValue = matchmaking == "yes" ? 0:1; 
+ 
     const options = [
-        { label: "yes", value: "yes" },
-        { label: "No", value: "no" },
+        { label: "yes", value: 1 },
+        { label: "No", value: 2 },
         
       ];
 
@@ -144,18 +152,20 @@ const _sendToServer = () => {
    else if(matchmaking == "no"){
       //mutateSettings({profileType:"matchmaking+dating"})
    }
+   updateUser(userId, {distancePreference,minAgePreference,maxAgePreference})
+
 }
  
-
+console.log(defaultDating+"defaultDating")
 
 return(
 <View style = {{flex:1,marginLeft:30, marginRight:30,marginTop:insets.top}}>
 
-<View style = {{flex:1, marginTop:40}}>
-<View style = {{flexDirection:'row', justifyContent:'space-between'}}>
+<View style = {{flex:1, }}>
+<View style = {{flexDirection:'row', justifyContent:'space-between',marginBottom:insets.top}}>
  <Text></Text>
- <Text>AccountSettings</Text>  
- <TouchableOpacity onPress = {() => {_sendToServer(),navigation.navigate('Homer')}} style = {{marginRight:10}}>
+ <Text style = {{fontWeight:'bold', fontSize:17}}>AccountSettings</Text>  
+ <TouchableOpacity onPress = {() => {_sendToServer(),setInitialRouteName('Settings'),navigation.navigate('Homer')}} style = {{marginRight:10}}>
     <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
     </TouchableOpacity>
 </View>   
@@ -243,32 +253,32 @@ return(
     marginBottom:15,
     marginTop: 10,
  }}/>
- <View style = {{flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
+ {/* <View style = {{flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
  <Text style = {{ fontWeight:"600"}}>SHOW ME</Text>
  {handleGenderPreference()}
  <TouchableOpacity onPress = {() => navigation.navigate('GenderPreference', {page:"AccountSettings"})}>
  <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
  </TouchableOpacity>
  
- </View>
- <View style={{
+ </View> */}
+ {/* <View style={{
     borderStyle: 'dotted',
     borderWidth: 1,
     borderRadius: 10,
     borderColor:'grey',
     marginBottom:10,
     marginTop: 10,
- }}/>
+ }}/> */}
  <Text style = {{fontWeight:"600", marginBottom:10, marginTop:10}}>AGE RANGE</Text> 
  <View style = {{flexDirection:"row", alignItems:"center", zIndex:600}}>
     
 
  <Text style = {{fontWeight:"600", marginRight:20}}>MIN</Text>
  <DropDownPicker
-    defaultValue = {minAgePref}                
+    defaultValue = {minAgePreference}                
     items={[
         
-        {label: '15', value: 15, selected:true},
+        {label: '15', value: 15, },
         {label: '16', value: 16},
         {label: '17', value: 17},
         {label: '18', value: 18},
@@ -328,16 +338,16 @@ return(
         justifyContent: 'flex-start'
     }}
     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-    onChangeItem={item => onMinChange(item.value)}
+    onChangeItem={item => selectMinAgePreference(item.value)}
     
 />
 
 <Text style = {{fontWeight:"600", marginRight:20, marginLeft:20}}>MAX</Text>
 <DropDownPicker
-    defaultValue = {maxAgePref}                
+    defaultValue = {maxAgePreference}                
     items={[
         
-        {label: '15', value: 15, selected:true},
+        {label: '15', value: 15, },
         {label: '16', value: 16},
         {label: '17', value: 17},
         {label: '18', value: 18},
@@ -399,7 +409,7 @@ return(
         fontWeight: '600',
     }}
     dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-    onChangeItem={item => onMaxChange(item.value)}
+    onChangeItem={item => selectMaxAgePreference(item.value)}
     
 />
 
@@ -416,7 +426,7 @@ return(
  <Text style = {{fontWeight:'600'}}>Matchmaking Only, No Dating.</Text>
  <SwitchSelector
   options={options}
-  initial={initialValue}
+  initial={user.dating ? 0: 1}
   onPress={value => {setMatchmaking(value), handleSwitch()}}
   style = {{width:100}}
 />
