@@ -6,6 +6,7 @@ import isPast from 'date-fns/isPast'
 import sub from 'date-fns/sub'
 import isAfter from 'date-fns/isAfter'
 import { filter } from 'underscore';
+import {SingleImageView} from '../../src/common/Common';
 
 
 
@@ -18,25 +19,11 @@ const Rank = (props: RankProps) => {
     const [monthly, setMonthly] = useState(0);
     const [templater, setTemplate] = useState([]); 
 
-    const arr = [
-        {
-            point:20, 
-            pointFor:'roundCompleted', 
-            createdAt: new Date(), 
-            user:'+15554787672', 
-        },
-        {
-            point:20, 
-            pointFor:'roundCompleted', 
-            createdAt: new Date(), 
-            user:'+15555228243', 
-        }
-
-    ]
+    
 
  useEffect(() => {
-    
-        const unsubscribe = db.collection('user').where('state', '==', user.state).onSnapshot(onResult => {
+        console.log("Points called")
+        const unsubscribe = db.collection('user').where('state', '==', user.state).limit(30).get().then(onResult => {
           const result = onResult.docs.map(val => val.data()); 
           const transfromWithPoints = result.map(val => {
                let aggregatePoint = 0; 
@@ -87,9 +74,9 @@ const Rank = (props: RankProps) => {
           
           }) 
     
-        return () => unsubscribe();     
+             
     
- },[])    
+ },[user.points])    
     
 
     const data = [
@@ -110,10 +97,10 @@ const Rank = (props: RankProps) => {
     const template = templater.map((val,index) => {
          return <View style = {{flexDirection:"row", alignItems:'center', borderBottomWidth:2, marginTop:15, justifyContent:'space-between'}}>
            <View style = {{flexDirection:'row', alignItems:'center'}}>
-           {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:40, width:40, borderRadius:20}}/> : <MaterialIcons name="account-circle" size={40} color="black" />}
+           {val.profilePic ? <SingleImageView image = {val.profilePic} style = {{height:40, width:40, borderRadius:20}}/> : <MaterialIcons name="account-circle" size={40} color="black" />}
            <View style = {{flexDirection:'row'}}>
            <Text style = {{marginLeft:20, fontSize:17, fontWeight:'bold'}}>{index + 1}.</Text>
-           <Text style = {{marginLeft:5, fontSize:17, fontWeight:'bold'}}>{computeName(val)}.</Text>
+           <Text style = {{marginLeft:5, fontSize:17, fontWeight:'bold',maxWidth:100,maxHeight:50}} numberOfLines = {2}>{computeName(val)}.</Text>
            </View>
            </View>
            <View style = {{ justifyContent:"center", alignItems:"center"}}>

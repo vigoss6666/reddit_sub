@@ -165,7 +165,9 @@ export default function App() {
   const notificationListener = useRef();
   const [profilePicLocal, setProfilePicLocal] = useState(null); 
   console.log(currentUser+"currentUser")
+  
 
+  
   
 
 
@@ -237,12 +239,14 @@ if(!Object.keys(user).length){
 
 useEffect(() => {
    Notifications.addNotificationReceivedListener(response => {
-     
+     console.log(response)
    })
    Notifications.addNotificationsDroppedListener(response => {
+    console.log(response)
       
    })
    Notifications.addNotificationResponseReceivedListener(response => {
+    console.log(response)
    
   });
 
@@ -487,7 +491,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Name} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>

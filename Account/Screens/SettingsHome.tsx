@@ -17,15 +17,16 @@ import { AntDesign } from '@expo/vector-icons';
 
 
 export default function SettingsHome({navigation}){
+    const myContext = useContext(AppContext); 
+    const {user, userId,setInitialRouteName} = myContext; 
     useEffect(() => {
          navigation.setOptions({
-             headerLeft:() => <TouchableOpacity onPress = {() => navigation.navigate('Homer')}>
+             headerLeft:() => <TouchableOpacity onPress = {() => {setInitialRouteName('Settings'),navigation.navigate('Homer')}}>
                  <Text style = {{fontWeight:'bold', color:'blue', marginLeft:10, }}> Back </Text>
              </TouchableOpacity>
          })
     })
-    const myContext = useContext(AppContext); 
-    const {user, userId,} = myContext;   
+      
     const [firstName, setFirstname] = useState(); 
     const [age, setAge] = useState(); 
     const [state, setState] = useState(); 
@@ -40,6 +41,7 @@ export default function SettingsHome({navigation}){
          
     
         var docRef = db.collection("user").doc('trialUser');
+
         docRef.onSnapshot((doc) => {
             
             let timestamp = doc.data().timeStamp;

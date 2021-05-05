@@ -7,6 +7,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import SwitchSelector from "react-native-switch-selector";
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 //import { mutateSettings } from '../../networking';
 import { firebase} from '../../config'; 
 import { gql } from 'apollo-boost';
@@ -33,11 +34,14 @@ export const GET_DETAILS = gql`
 
 
 export default function AccountSettings({navigation}){
+const insets = useSafeAreaInsets()   
 const [matchmaking, setMatchmaking] = useState();   
 const [value, setValue] = useState(1);
 const [email, setEmail] = useState();
 const myContext = useContext(AppContext);
-const {user, userId} = myContext; 
+const {user, userId} = myContext;
+const [defaultDistance, setDefaultDistance] = useState(40)
+const [distancePreference, setDistancePreference] = useState(40);  
 
 const [genderPreference, setGenderPreference] = useState();  
 const [minAgePref, selectminAgePref] = useState(); 
@@ -53,6 +57,10 @@ useEffect(() => {
     </TouchableOpacity>
    })
 }, [])
+useEffect(() => {
+setDefaultDistance(user.distancePreference); 
+setDistancePreference(user.distancePreference); 
+}, [user.distancePreference])
    //const {data, loading, error} = useQuery(GET_DETAILS);
    // if(data){
 
@@ -89,7 +97,7 @@ const initialValue = matchmaking == "yes" ? 0:1;
 
 const changeValue = (value) => {
      const changed = parseInt(value); 
-     setValue(changed); 
+     setDistancePreference(changed); 
 }
 
 const handleSwitch = () => {
@@ -141,9 +149,16 @@ const _sendToServer = () => {
 
 
 return(
-<View style = {{flex:1,marginLeft:30, marginRight:30}}>
+<View style = {{flex:1,marginLeft:30, marginRight:30,marginTop:insets.top}}>
 
 <View style = {{flex:1, marginTop:40}}>
+<View style = {{flexDirection:'row', justifyContent:'space-between'}}>
+ <Text></Text>
+ <Text>AccountSettings</Text>  
+ <TouchableOpacity onPress = {() => {_sendToServer(),navigation.navigate('Homer')}} style = {{marginRight:10}}>
+    <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
+    </TouchableOpacity>
+</View>   
 
 <View style = {{}}>
 <Text style = {styles.headerSection}>
@@ -206,7 +221,7 @@ return(
     marginBottom:15,
     marginTop: 10,
  }}/>
- <Text style = {{fontWeight:"bold",fontSize:15}}> MAX DISTANCE  {value} mi. </Text> 
+ <Text style = {{fontWeight:"bold",fontSize:15}}> MAX DISTANCE  {distancePreference} mi. </Text> 
  <Slider
     style={{width: Dimensions.get('window').width - 60, height: 40}}
     minimumValue={1}
@@ -214,7 +229,7 @@ return(
     minimumTrackTintColor="#FFFFFF"
     maximumTrackTintColor="#000000" 
     onValueChange = {changeValue}
-    value = {value} 
+    value = {defaultDistance} 
     onSlidingComplete = {onSlidingComplete}
     
 

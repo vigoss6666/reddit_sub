@@ -1,9 +1,11 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect,useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { FontAwesome } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
 import { firebase } from '../../config'; 
+import AppContext from '../../AppContext';
+import {format} from 'date-fns'; 
 
 //getSettingsMutation: AccountSettingsMutation!
 export const GET_DETAILS = gql`
@@ -28,17 +30,16 @@ const [data, setData] = useState(1);
 const [serverData, setServerData] = useState({}); 
 const [month, setMonth] = useState(); 
 const db = firebase.firestore(); 
-useEffect(() => {
-db.collection('user').doc('trialUser').onSnapshot((doc) => {
-   //console.log(doc.data().gender)
-     setServerData(doc.data()); 
-     const d = new Date(doc.data().timeStamp)
-     const month = d.toLocaleString('default', { month: 'long' }); 
-     setMonth(month); 
-})
-},[data])
+const myContext = useContext(AppContext); 
+const {user, userId,setInitialRouteName} = myContext; 
 
-if(data){
+useEffect(() => {
+const d = format(new Date(user.timeStamp), 'MMM'); 
+setMonth(d); 
+},[user.timeStamp])
+
+
+
    return(
       <View style = {{flex:1, marginLeft:30, marginRight:30}}>
       <View style = {{flex:0.2, marginTop:20}}>
@@ -49,7 +50,7 @@ if(data){
       <Text style = {{fontSize:20, fontWeight:"600"}}>
       Settings
       </Text>
-      <TouchableOpacity onPress = {() => navigation.navigate('SettingsHome')}>
+      <TouchableOpacity onPress = {() => {setInitialRouteName('Settings'),navigation.navigate('Homer')}}>
       <Text style = {{color:"orange", fontWeight:"600", fontSize:17}}>
           Done
       </Text>
@@ -68,7 +69,7 @@ if(data){
       <Text style = {{fontWeight:"600"}}>
           SEX
       </Text>
-      {serverData.gender == "male" ? <FontAwesome name="male" size={30} color="black" />:<FontAwesome name="female" size={30} color="black" />}
+      {user.gender == "male" ? <FontAwesome name="male" size={30} color="black" />:<FontAwesome name="female" size={30} color="black" />}
       
       <TouchableOpacity onPress= {() => navigation.navigate('Gender', {page:"DetailsSettings"})}>
       <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text> 
@@ -89,7 +90,7 @@ if(data){
          </Text> 
          
          <Text style = {{fontWeight:"bold",fontSize:15}}>
-          {month} {serverData.day},{serverData.year}  
+          {month} {user.day},{user.year}  
          </Text>
          <TouchableOpacity onPress = {() => navigation.navigate('Birthday', {page:"DetailsSettings"})}>
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
@@ -109,7 +110,7 @@ if(data){
          </Text> 
          
          <Text style = {{fontWeight:"bold",fontSize:15}}>
-           {serverData.feet}' {serverData.inches}"
+           {user.feet}' {user.inches}"
          </Text>
          <TouchableOpacity onPress = {() => navigation.navigate('Height', {page:"DetailsSettings"})}>
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
@@ -129,8 +130,8 @@ if(data){
             HOME TOWN
          </Text> 
          
-         <Text style = {{fontWeight:"bold",fontSize:15}}>
-         {serverData.hometown}
+         <Text style = {{fontWeight:"bold",fontSize:15,maxWidth:150,}} numberOfLines = {3}>
+         {user.hometown}
          </Text>
          <TouchableOpacity onPress = {() => navigation.navigate('Hometown',{page:"DetailsSettings"})}>
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
@@ -149,10 +150,30 @@ if(data){
             JOB
          </Text> 
           
-         <Text style = {{fontWeight:"bold",fontSize:15}}>
-           {serverData.job} 
+         <Text style = {{fontWeight:"bold",fontSize:15,maxWidth:150,}} numberOfLines = {3}>
+           {user.job} 
          </Text>
          <TouchableOpacity onPress = {() => navigation.navigate('Job', {page:"DetailsSettings"})}>
+         <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
+            </TouchableOpacity>
+      </View>
+      <View style={{
+          borderStyle: 'dotted',
+          borderWidth: 1,
+          borderRadius: 10,
+          borderColor:'grey',
+          marginBottom:15,
+          marginTop: 10,
+       }}/>
+      <View style = {{flexDirection:"row", justifyContent:"space-between",marginTop:20, alignItems:"center"}}>
+         <Text style = {{fontWeight:"600"}}>
+            School
+         </Text> 
+          
+         <Text style = {{fontWeight:"bold",fontSize:15,maxWidth:150,}} numberOfLines = {3}>
+           {user.school} 
+         </Text>
+         <TouchableOpacity onPress = {() => navigation.navigate('School', {page:"DetailsSettings"})}>
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
             </TouchableOpacity>
       </View>
@@ -170,7 +191,7 @@ if(data){
       </View>
       )
    
-}
+
 
 
 }

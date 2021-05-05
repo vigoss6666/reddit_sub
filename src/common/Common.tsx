@@ -1182,10 +1182,36 @@ export function ClientHeader({client, style}) {
    )
  }
 
- export function ImageView({images, visible, setVisible}){
-  return <Modal visible={visible} transparent={true}>
+ export function ImageView({images,}){
+
+  const [visible, setVisible] = useState(false); 
+   
+  return (
+  <View>
+  <Image />  
+  <Modal visible={visible} transparent={true}>
   <ImageViewer imageUrls={images} renderHeader = {() => <View style = {{backgroundColor:'red'}} ></View>} enableSwipeDown onSwipeDown = {() => setVisible(false)} enableImageZoom/>
-</Modal> 
+</Modal>
+</View>  
+
+) 
+ }
+ export function SingleImageView({image, style}){
+
+  const [visible, setVisible] = useState(false); 
+   
+  return (
+  <View>
+  <TouchableOpacity onPress = {() => setVisible(!visible)}>
+  <Image source = {{uri:image}} style = {[{height:30, width:30, borderRadius:15}, {...style}]}/>  
+  </TouchableOpacity>  
+
+  <Modal visible={visible} transparent={true}>
+  <ImageViewer imageUrls={[{url:image}]} renderHeader = {() => <View style = {{backgroundColor:'red'}} ></View>} enableSwipeDown onSwipeDown = {() => setVisible(!visible)} enableImageZoom/>
+</Modal>
+</View>  
+
+) 
  }
  export function ModalViewMap({client, handleLocation,visible, setVisible}){
 
