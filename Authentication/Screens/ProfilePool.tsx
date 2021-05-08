@@ -219,20 +219,20 @@ const useFetchContactPool = (navigation) => {
                      </TouchableOpacity>
             
                     </View>
-                    <View style={{
+                    {item.appUser ? null:<View style={{
                         borderStyle: 'dotted',
                         borderWidth: 2,
                         borderRadius: 1,
                         borderColor:'grey',
                          marginBottom:10,
                          marginTop: 10,
-                      }}/>
-                      <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
+                      }}/>}
+                      {item.appUser ? null : <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
                       <Text style = {{fontWeight:'bold',}}>INVITE TO PLAY</Text>
                       <TouchableOpacity onPress = {() => navigation.navigate('Invitetoplay', {client:item})}>
                       <Entypo name="mail" size={24} color="black" />
                       </TouchableOpacity>
-                      </View>
+                      </View>}
                       </View>
                       :null}    
                     </View> 
@@ -513,7 +513,11 @@ onChangeItem={namer => addAge(item, namer)}
      marginTop: 10,
      }}/>
         <View style = {{flexDirection:'row', justifyContent:'space-between', marginBottom:20, alignItems:'center',marginTop:20}}>
+                      <View style = {{flexDirection:'row',alignItems:'center'}}>
+                       {item.profilePic ? <SingleImageView image = {item.profilePic} style = {{marginRight:10}}/>:<MaterialIcons name = "account-circle" size = {24} color = "black" style = {{marginRight:10}}/>}    
+                       
                       {nameComputer(item, 'Photo')}
+                      </View>   
                       <TouchableOpacity onPress = {() => addPhoto(item)}>
                       <Text style = {{fontWeight:'bold'}}>Add Photo</Text>
                       </TouchableOpacity>
@@ -645,14 +649,9 @@ onChangeItem={namer => addAge(item, namer)}
 
     let pickerResult = await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.All});
     
-    if(pickerResult.type == 'image'){
-      const manipResult = await ImageManipulator.manipulateAsync(
-        pickerResult.uri,
-        [{resize:{width:200, height:200}}],
-        { compress: 0.1, format: ImageManipulator.SaveFormat.PNG,}
-      );
+    
       
-      const response = await fetch(manipResult.uri); 
+      const response = await fetch(pickerResult.uri); 
         const blob = await response.blob(); 
         const namer = Math.random().toString(36).substring(2);
         const ref = firebase.storage().ref().child("images/"+ namer); 
@@ -664,18 +663,16 @@ onChangeItem={namer => addAge(item, namer)}
         setDatingPoolList(cloner); 
         
        db.collection('user').doc(obj.phoneNumber).update({profilePic:result1}); 
-    }
-    if(pickerResult.type == 'video'){
-      alert('Video format not allowed')
-      return; 
-    }
+    
+    
     })
                const addAge = ((obj, item) => {
                      const data = datingPoolList.concat(); 
                      const index = data.findIndex(val => val.phoneNumber == obj.phoneNumber); 
                      data[index].minAge = item.value.minAge; 
                      data[index].maxAge = item.value.maxAge; 
-                     db.collection('user').doc(obj.phoneNumber).update({minAge:item.value.minAge, maxAge:item.value.maxAge})
+                     const age = (item.value.maxAge + item.value.minAge)/2; 
+                     db.collection('user').doc(obj.phoneNumber).update({minAge:item.value.minAge, maxAge:item.value.maxAge,age})
                      
                })
           
@@ -707,137 +704,7 @@ onChangeItem={namer => addAge(item, namer)}
 
         extraData={namer}
       />  
-                {/* {filteredEmails.map((val,index) => (
-                  <View key = {index.toString()} style = {{ marginLeft:30, marginRight:30}}>
-                  <View style = {{borderBottomWidth:1, borderBottomColor:"black", width:Dimensions.get('window').width - 60,marginBottom:10}}/>
-                  
-                  <View style = {{flexDirection:"row", justifyContent:'space-between'}}>
-                  <View style = {{flexDirection:"row", alignItems:"center"}}>
-                  <MaterialIcons name="account-circle" size={24} color="black" />
-                  <Text style = {{marginLeft:10,marginBottom:10,fontWeight:"bold"}}>{computeName(val)}{"\n"} 0 votes by 0 friends</Text>
-                  </View>
-                  {   
-                       val.caret ? 
-                  <TouchableOpacity onPress = {() => setCaretFalse(val)}><AntDesign name="caretup" size={24} color="black" /></TouchableOpacity>:<TouchableOpacity onPress = {() => setCaretTrue(val)}><AntDesign name="caretdown" size={24} color="black" /></TouchableOpacity>}
-
-                  </View>
-                  { val.caret ? 
-                  <View>
-                  <View style = {{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginTop:10,marginBottom:15}}>
-                   <Text style = {{fontWeight:'bold'}}> View Profile </Text>
-                   <TouchableOpacity>
-                   <AntDesign name="eye" size={24} color="black" />
-                   </TouchableOpacity>
-          
-                  </View>
-                  <View style={{
-                      borderStyle: 'dotted',
-                      borderWidth: 2,
-                      borderRadius: 1,
-                      borderColor:'grey',
-                       marginBottom:10,
-                       marginTop: 10,
-                    }}/>
-                    <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
-                    <Text style = {{fontWeight:'bold',}}>Remove from Dating Pool</Text>
-                    <TouchableOpacity onPress = {() => {_sendToServer(val)}}>
-                    <FontAwesome name="trash" size={24} color="black" />
-                    </TouchableOpacity>
-                    </View>
-                    <View style={{
-                      borderStyle: 'dotted',
-                      borderWidth: 2,
-                      borderRadius: 1,
-                      borderColor:'grey',
-                       marginBottom:10,
-                       marginTop: 10,
-                    }}/>
-                    <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
-                    <Text style = {{fontWeight:'bold',}}>{val.fullName || val.firstname}'s sex</Text>
-                    <View style = {{flexDirection:"row",justifyContent:"space-around"}}>
-                    <TouchableOpacity style = {{marginRight:20}} onPress = {() => {addMale(val)}}>
-                    <FontAwesome name="male" size={30} color={val.gender == 'male' ? 'green':'black'} />
-
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress = {() => {addFemale(val)}}>  
-                    <FontAwesome name="female" size={30} color={val.gender == 'female' ? 'green':'black'}  />
-                    </TouchableOpacity>
-                    </View>
-                    </View>
-                    <View style={{
-                      borderStyle: 'dotted',
-                      borderWidth: 2,
-                      borderRadius: 1,
-                      borderColor:'grey',
-                       marginBottom:10,
-                       marginTop: 10,
-                    }}/>
-                    <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
-                    <Text style = {{fontWeight:'bold',}}>{val.name || val.firstname}'s Orientation</Text>
-                    <View style = {{flexDirection:"row",justifyContent:"space-around"}}>
-                    <TouchableOpacity style = {{marginRight:20}}>
-                    <FontAwesome name="male" size={30} color="green" />
-                    </TouchableOpacity>
-                    <TouchableOpacity style = {{marginRight:20}}>
-                    <FontAwesome name="female" size={30} color="black" />
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                    <Ionicons name="ios-people" size={30} color="black" />
-                    </TouchableOpacity>
-                    </View>
-                    </View>
-                    <View style={{
-                      borderStyle: 'dotted',
-                      borderWidth: 2,
-                      borderRadius: 1,
-                      borderColor:'grey',
-                       marginBottom:10,
-                       marginTop: 10,
-                    }}/>
-                    <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20, zIndex:1000}}>
-                    <Text style = {{fontWeight:'bold',}}>{val.name || val.firstname}'s Age</Text>
-                    <TouchableOpacity>
-                    <DropDownPicker
-    items={[
-        
-        {label: '15 to 19 years', value: {minAge:15, maxAge:19}, selected:val.minAge == 15 && val.maxAge == 19 ? true : false},
-        {label: '20 to 24 years', value: {minAge:20, maxAge:24}, selected:val.minAge == 20 && val.maxAge == 24 ? true : false},
-        {label: '25 to 29 years', value: {minAge:25, maxAge:29}, selected:val.minAge == 25 && val.maxAge == 29 ? true : false},
-        {label: '30 to 34 years', value: {minAge:30, maxAge:34}, selected:val.minAge == 30 && val.maxAge == 34 ? true : false},
-        {label: '35 to 39 years', value: {minAge:35, maxAge:39}, selected:val.minAge == 35 && val.maxAge == 39 ? true : false},
-        {label: '40 to 44 years', value: {minAge:40, maxAge:44},selected:val.minAge == 40 && val.maxAge == 44 ? true : false}, 
-        {label: '45 to 49 years', value: {minAge:45, maxAge:49},selected:val.minAge == 45 && val.maxAge == 49 ? true : false},
-        {label: '50 to 54 years', value: {minAge:50, maxAge:54}, selected:val.minAge == 50 && val.maxAge == 54 ? true : false},
-
-      ]}
-    onPress = {() => {console.log("pressed")}}
-    
-    containerStyle={{height: 40, width:200, }}
-    style={{}}
-    itemStyle={{
-        
-        backgroundColor:"white", 
-        fontColor:"white",
-        justifyContent: 'flex-start'
-    }}
-    dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-    onChangeItem={item => selectCountry([...country,{...item.value, _id:val._id}])}
-    
-/>
-                    </TouchableOpacity>
-                    </View>
-                    <View style={{
-                      borderStyle: 'dotted',
-                      borderWidth: 2,
-                      borderRadius: 1,
-                      borderColor:'grey',
-                       marginBottom:10,
-                       marginTop: 10,
-                    }}/>
-                    </View>
-                    :null}    
-                  </View>
-             ))} */}
+                
              
              </View>
              
