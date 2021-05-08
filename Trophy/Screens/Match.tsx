@@ -33,7 +33,9 @@ function MatchFactory({match, computeName, handleTouch}){
             return <Text style = {{fontWeight:'bold', marginLeft:10}}>Endorsed by you </Text>
         }
          if(!matchInstance.endorsementFlag && matchInstance.endorsements.length == 0){
-             return <Text style = {{fontWeight:'bold', marginLeft:10}}> Endorsed by {computeName(matchInstance.discoveredClient)} </Text>
+          <Text style = {{fontWeight:'bold', marginLeft:10}}> Discovered by {computeName(matchInstance.discoveredClient)}</Text>
+
+            
          }
          if(!matchInstance.endorsementFlag && matchInstance.endorsements.length == 1){
             return <Text style = {{fontWeight:'bold', marginLeft:10}}> Endorsed by {computeName(matchInstance.endorsementClients[0])} </Text>
@@ -42,7 +44,8 @@ function MatchFactory({match, computeName, handleTouch}){
             return <Text style = {{fontWeight:'bold', marginLeft:10}}> Endorsed by {matchInstance.endorsements.length} People </Text>
         }
         if(matchInstance.endorsements.length == 0){
-            return <Text style = {{fontWeight:'bold', marginLeft:10}}> Discovered by {computeName(matchInstance.discoveredClient)} People </Text>
+             return <Text style = {{fontWeight:'bold', marginLeft:10}}> Discovered by {computeName(matchInstance.discoveredClient)}</Text>
+            
         }
     } 
     if(match.endorsementFlag){
@@ -116,6 +119,7 @@ const Match = ({navigation}) => {
   const myContext = useContext(AppContext); 
   const [client1Template, setClient1Template] = useState([]); 
   const [client2Template, setClient2Template] = useState([]); 
+  const [matches,setMatches] = useState([]); 
   const { user,userId, selfFilter, setSelfFilter,computeName,db, firebase, stringifyNumber, } = myContext;
 
   const handleTouch = (matchInstance) => {
@@ -123,67 +127,137 @@ const Match = ({navigation}) => {
     navigation.navigate('EndorsementClient', {matchInstance})
   }
   
-
-
   useEffect(() => {
-  
-    const unsubscribe = db.collection('matches').where('client1', 'in', user.datingPoolList).onSnapshot(async onResult => {
-        const result = onResult.docs.map(val => Object.assign({}, val.data(), {_id:val.id}));
-        const finalResult = await Promise.all( result.map( async val1 => {
-           return db.collection('user').doc(val1.client1).get().then(onDoc => {
-                return db.collection('user').doc(val1.client2).get().then(onDoc2 => {
-                     return {
-                       ...val1, 
-                       client1User:onDoc.data(), 
-                       client2User:onDoc2.data()   
-                     }
-                }) 
-           })  
-        }))
-        const getDiscoveredBy = await Promise.all( finalResult.map(async val => {
-           return  Object.assign({}, val, {discoveredClient:await getObjectFromDatabase("+917208110384", db)})
-        }))
-        const getEndorsements = await Promise.all(getDiscoveredBy.map(async val => {
-          return db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', val.endorsements).get().then(onResult => {
-              return Object.assign({}, val, {endorsementClients:onResult.docs.map(val => val.data())})
-          })
-        }))
-        
+    const unsubscribe1 = db.collection('matches').where('client1', 'in', user.datingPoolList).onSnapshot(async (onResultClient1) => {
+      const diffClient = await db.collection('matches').where('client2', 'in', user.datingPoolList).get(); 
+      const diffClientUsers = diffClient.docs.map(val => Object.assign({}, val.data(),{_id:val.id} )); 
+       const transformed = diffClientUsers.map(val => {
+        let a = val.client1;
+        let b = val.client2;
+        let temp;
+        temp = a;
+        a = b;
+        b = temp;
+        return { ...val, client1: a, client2: b };
+      });
 
+      const clientObjects = onResultClient1.docs.map(val => Object.assign({}, val.data(), { _id: val.id }));
+      const collective = [...transformed, ...clientObjects]; 
+      
+      const filterByReported = collective.filter(val => val.reported !== true); 
+      const filterByUnmatched = filterByReported.filter(val => val.unMatched !== true);
+      const transformedWithUsers1 = await Promise.all(filterByUnmatched.map(async (val) => {
+        return await db.collection('user').doc(val.client2).get().then(result => Object.assign({}, val, { client2User: result.data() }));
+      }));
+       const transformedWithUsers2 = await Promise.all(transformedWithUsers1.map(async (val) => {
+        return await db.collection('user').doc(val.client1).get().then(result => Object.assign({}, val, { client1User: result.data() }));
+      }));
+      const getDiscoveredBy = await Promise.all( transformedWithUsers2.map(async val => {
+        return Object.assign({}, val, {discoveredClient:await getObjectFromDatabase(val.discoveredBy, db)})
+     }))
+     const getEndorsements = await Promise.all(getDiscoveredBy.map(async val => {
+       if(val.endorsements.length){
+        return db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', val.endorsements).get().then(onResult => {
+          return Object.assign({}, val, {endorsementClients:onResult.docs.map(val => val.data())})
+         })
+       }
+       return Object.assign({}, val, {endorsementClients:[]})
         
-        
+     })) 
+     
+
+      
+      
 
         function applyToIncluded(val){
-            return Object.assign({}, val, {seen:true}); 
+          return {...val, seen:true}  
         }
-        const filterBySeen = filterGamer(getEndorsements, '_id', user.seenClientMatches, null, applyToIncluded);
-        const combinedArray = [...filterBySeen.excludedObjects, ...filterBySeen.includedObjects];
+      const filteredBySeen = filterGamer(getEndorsements, '_id', user.seenClientMatches,null, applyToIncluded);       
+      const grandestArray = [...filteredBySeen.excludedObjects, ...filteredBySeen.includedObjects];
+      const endorsementAdder = grandestArray.map(val => {
+        let endorsementFlag = false; 
+        if(val.endorsements.length){
+            val.endorsements.map(val1 => {
+                if(val1 == userId){
+                    endorsementFlag = true; 
+                }
+           })
+        }
+        
+        return {...val, endorsementFlag}
+    });
+      
+      
+      setMatches(endorsementAdder);
+    });
+     
+    
+    return () => { unsubscribe1()};
+  }, [user.seenClientMatches]);
+
+  
+  
+
+
+  // useEffect(() => {
+  
+  //   const unsubscribe = db.collection('matches').where('client1', 'in', user.datingPoolList).onSnapshot(async onResult => {
+  //       const result = onResult.docs.map(val => Object.assign({}, val.data(), {_id:val.id}));
+  //       const finalResult = await Promise.all( result.map( async val1 => {
+  //          return db.collection('user').doc(val1.client1).get().then(onDoc => {
+  //               return db.collection('user').doc(val1.client2).get().then(onDoc2 => {
+  //                    return {
+  //                      ...val1, 
+  //                      client1User:onDoc.data(), 
+  //                      client2User:onDoc2.data()   
+  //                    }
+  //               }) 
+  //          })  
+  //       }))
+  //       const getDiscoveredBy = await Promise.all( finalResult.map(async val => {
+  //          return  Object.assign({}, val, {discoveredClient:await getObjectFromDatabase("+917208110384", db)})
+  //       }))
+  //       const getEndorsements = await Promise.all(getDiscoveredBy.map(async val => {
+  //         return db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', val.endorsements).get().then(onResult => {
+  //             return Object.assign({}, val, {endorsementClients:onResult.docs.map(val => val.data())})
+  //         })
+  //       }))
+        
+
         
         
-        const endorsementAdder = combinedArray.map(val => {
-            let endorsementFlag = false; 
-            if(val.endorsements){
-                val.endorsements.map(val1 => {
-                    if(val1 == userId){
-                        endorsementFlag = true; 
-                    }
-               })
-            }
+
+  //       function applyToIncluded(val){
+  //           return Object.assign({}, val, {seen:true}); 
+  //       }
+  //       const filterBySeen = filterGamer(getEndorsements, '_id', user.seenClientMatches, null, applyToIncluded);
+  //       const combinedArray = [...filterBySeen.excludedObjects, ...filterBySeen.includedObjects];
+        
+        
+  //       const endorsementAdder = combinedArray.map(val => {
+  //           let endorsementFlag = false; 
+  //           if(val.endorsements){
+  //               val.endorsements.map(val1 => {
+  //                   if(val1 == userId){
+  //                       endorsementFlag = true; 
+  //                   }
+  //              })
+  //           }
             
-            return {...val, endorsementFlag}
-        }); 
-        const checker = endorsementAdder.map(val => val.seen); 
+  //           return {...val, endorsementFlag}
+  //       }); 
+  //       const checker = endorsementAdder.map(val => val.seen); 
         
        
-        setClient1Template(endorsementAdder); 
+  //       setClient1Template(endorsementAdder); 
     
-      })
+  //     })
        
       
   
   
-  return () => unsubscribe(); 
-  }, [user.seenClientMatches])
+  // return () => unsubscribe(); 
+  // }, [user.seenClientMatches])
 
   
 
@@ -196,7 +270,7 @@ const Match = ({navigation}) => {
 
   }, [])
 
-  const template = client1Template.map(val => {
+  const template = matches.map(val => {
       
       return <MatchFactory match = {val} key = {val._id} computeName = {computeName} handleTouch = {handleTouch}/>
   })

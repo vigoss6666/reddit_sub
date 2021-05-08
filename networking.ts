@@ -502,6 +502,23 @@ function deg2rad(deg) {
 
 
 
+export function computePoints(points){
+  let aggregatePoint = 0;
+  if(points.length){
+    points.map(val => {
+      aggregatePoint += val.point; 
+    })
+    return aggregatePoint; 
+  }
+  return 0; 
+  
+
+}
+
+
+
+
+
 
 
 

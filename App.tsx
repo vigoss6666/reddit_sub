@@ -31,6 +31,7 @@ import Intro2 from './Authentication/Screens/Intro2';
 import Intro3 from './Authentication/Screens/Intro3';
 import Intro4 from './Authentication/Screens/Intro4'; 
 import VerifyEmail from './Authentication/Screens/VerifyEmail'; 
+import ChangeNumber from './Account/Screens/ChangeNumber'; 
 import EmailVerified from './Authentication/Screens/EmailVerified';
 import VerifyPhone from './Authentication/Screens/VerifyPhone'; 
 import PhoneSuccess from './Authentication/Screens/PhoneSuccess'; 
@@ -67,6 +68,7 @@ import Login from './Authentication/Screens/Login';
 import Checker from './Authentication/Screens/Checker';
 import School from './Authentication/Screens/School'; 
 import Job from './Authentication/Screens/Job';
+import Invitetoplay from './Authentication/Screens/Invitetoplay';
 import AddPhoto from './Authentication/Screens/AddPhoto';
 import Hometown from './Authentication/Screens/Hometown';
 import SignIn from './Authentication/Screens/SignIn';
@@ -106,7 +108,7 @@ import { ApolloProvider } from 'react-apollo';
 const localhost: string = 'http://192.168.43.7:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 import { gql } from 'apollo-boost'; 
-//import { client , mutateSettings}  from './networking'; 
+import { computePoints}  from './networking'; 
 import {firebase} from './config'; 
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications'; 
@@ -137,10 +139,10 @@ const db = firebase.firestore();
 const Stack = createStackNavigator();
 const computeName = (obj) => {
   if(obj.name){
-     return obj.name
+     return obj.name.length > 18 ?  obj.name.substring(0,18):obj.name
   }
   if(obj.firstName && obj.lastName){
-     return obj.firstName+obj.lastName
+     return (obj.firstName+obj.lastName).length > 18 ? (obj.firstName+obj.lastName).substring(0,18):obj.firstName+obj.lastName
   }
   return obj.firstName
 }
@@ -219,6 +221,8 @@ if(!Object.keys(user).length){
 
 },[])
 
+
+
   // useEffect(() => {
     
   
@@ -281,6 +285,7 @@ function stringifyNumber(n) {
   }
   
   const globalObject = {
+    computePoints,
     defaultDataObject, 
     sentFromBrowse, 
     setSentFromBrowse, 
@@ -414,6 +419,7 @@ const mainHome = () => {
           <Stack.Screen name="Contacts" component={Contacts} options = {{headerTitle:false, headerLeft:false}}/>
           <Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess} options = {{headerTitle:false, headerLeft:false}}/>
           <Stack.Screen name="NewContact" component={NewContact}/>
+          <Stack.Screen name="Invitetoplay" component={Invitetoplay}/>
           <Stack.Screen name="Playgame" component={Playgame} options={{
           animationEnabled: false,
         }}/>
@@ -431,6 +437,7 @@ const mainHome = () => {
           <Stack.Screen name="MapViewMainer" component={MapViewMainer}/>
           <Stack.Screen name="Login" component={Login}/>
           <Stack.Screen name="Checker" component={Checker}/>
+          <Stack.Screen name="ChangeNumber" component={ChangeNumber}/>
           <Stack.Screen name="School" component={School}/>
           <Stack.Screen name="Job" component={Job}/>
           <Stack.Screen name="Hometown" component={Hometown}/>

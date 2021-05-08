@@ -925,13 +925,26 @@ export function ClientHeader({client, style}) {
  
 
  export function ClientMatchMakers({client}){
-    
+    const [matchMakers, setMatchMakers] = useState([]); 
+    useEffect(() => {
+      async function namer(){
+        if(client.matchMakers.length){
+           const finalResult = await Promise.all(client.matchMakers.map(async val => {
+              return await db.collection('user').doc(val).get().then(onDoc => {
+                 return onDoc.data()
+              })
+           }))
+           setMatchMakers(finalResult); 
+        }
+      }
+      namer()
+    }, [])
     
     let template; 
-    if(client.matchMakers.length > 5){
-       const result = client.matchMakers.slice(5); 
-       let icons = client.matchMakers.map(val => {
-        return <MaterialIcons name="account-circle" size={50} color="black" />
+    if(matchMakers.length > 5){
+       const result = matchMakers.slice(5); 
+       let icons = matchMakers.map(val => {
+        return (val.profilePic ? <Image source = {{uri:val.profilePic}}/>: <MaterialIcons name="account-circle" size={50} color="black" />)
      })
      template = <View>
           <View style = {{flexDirection:'row'}}>
@@ -941,10 +954,10 @@ export function ClientHeader({client, style}) {
        </View>
 
     }
-    if(client.matchMakers.length == 1){
+    if(matchMakers.length == 1){
        template = <View style = {{justifyContent:'center', alignItems:'center', marginTop:20}}>
-        <MaterialIcons name="account-circle" size={50} color="black" />
-        <Text style = {{marginTop:10, fontWeight:'bold', fontSize:20}}>{client.matchMaker}</Text> 
+        {matchMakers[0].profilePic ? <SingleImageView image = {matchMakers[0].profilePic} style = {{height:50, width:50, borderRadius:25}}/>: <MaterialIcons name="account-circle" size={50} color="black" />}
+        <Text style = {{marginTop:10, fontWeight:'bold', fontSize:20}}>{computeName(matchMakers[0])}</Text> 
        </View>
     }
     if(client.matchMakers.length > 1 && client.matchMakers.length < 5){
@@ -966,7 +979,7 @@ export function ClientHeader({client, style}) {
     }
     return <View>
     <View style = {[styles.line, {marginTop:40}]}/>
-    <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25,maxWidth:250, maxHeight:50}]} numberOfLines = {2}>{computeName(client).toUpperCase()}'s MATCHMAKERS</Text>
+    <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25,maxWidth:250, }]} numberOfLines = {2}>{computeName(client).toUpperCase()}'s MATCHMAKERS</Text>
     <View style = {styles.line}></View>
     {template}
     </View>

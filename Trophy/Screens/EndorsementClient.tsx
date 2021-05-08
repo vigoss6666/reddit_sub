@@ -12,8 +12,13 @@ const EndorsementClient = ({route, navigation}) => {
   const { user,userId, selfFilter, setSelfFilter,computeName,db, firebase, stringifyNumber, CustomBackComponent } = myContext;
   const {matchInstance} = route.params; 
   function endorse(){
-    db.collection('matches').doc(matchInstance._id).set({endorsements:firebase.firestore.FieldValue.arrayUnion(userId)}, {merge:true})
-    navigation.goBack(); 
+    db.collection('matches').doc(matchInstance._id).set({endorsements:firebase.firestore.FieldValue.arrayUnion(userId)}, {merge:true}).then(() => {
+      db.collection('user').doc(matchInstance.discoveredBy).set({points:firebase.firestore.FieldValue.arrayUnion({pointFor:'matchEndorsed', point:20, createdAt:new Date, client:userId})}, {merge:true}).then(() => {
+        navigation.goBack(); 
+      })
+    })
+
+    
   }
     useEffect(() => {
         navigation.setOptions({
