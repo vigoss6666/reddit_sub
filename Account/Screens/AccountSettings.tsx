@@ -71,8 +71,7 @@ setDefaultDating(user.dating ? 0:1)
 
 
 }, [user.distancePreference, user.minAgePreference, user.maxAgePreference, user.dating])
-console.log("defaulter is"+defaultDating)
-console.log(user.dating)
+
    //const {data, loading, error} = useQuery(GET_DETAILS);
    // if(data){
 
@@ -150,7 +149,7 @@ const _sendToServer = () => {
 
 }
  
-console.log(defaultDating+"defaultDating")
+
 
 if(defaultDating || defaultDating == 0){
 

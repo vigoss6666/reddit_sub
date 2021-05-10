@@ -12,28 +12,15 @@ import { iconFactory, LoadScreen} from '../../src/common/Common';
 import {transformCreativity, computeSimDimension, computeSectionLabel, filterGamer, getDistanceFromLatLonInKm} from '../../networking'; 
 const db = firebase.firestore(); 
 interface MatchMakeFinalProps {}
-const computeName = (obj) => {
-    if(obj.name){
-       return obj.name
-    }
-    if(obj.firstName && obj.lastName){
-       return obj.firstName+obj.lastName
-    }
-    return obj.firstName
-}
-function applyFilters(filter:filter,arr:serverDataObjectDimension[], client):serverDataObjectDimension[]{
-    
-    console.log('client')
-    console.log(client)
-    const finalObject:any = []; 
+
+async function applyFilters(filter:filter,arr:serverDataObjectDimension[], client, createChatThread):serverDataObjectDimension[]{
     
     
-      
+    const finalObject:any = [];     
       arr.map(val => {
-        console.log(val.narcissism)
+        
         const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude); 
-        
-        
+                
         if(val.creativity >= filter.creativity 
           && val.charisma >= filter.charisma 
           && val.narcissism <= filter.narcissism 
@@ -55,14 +42,24 @@ function applyFilters(filter:filter,arr:serverDataObjectDimension[], client):ser
           ){
              finalObject.push(val); 
         }
-   }) 
+   })
+   const gamer = await Promise.all(finalObject.map(async val => {
+    const id = createChatThread(val.phoneNumber, client.phoneNumber); 
+    
+    return await db.collection('introductions').doc(id).get().then(onDoc => {
+       if(onDoc.exists == false){
+         return val; 
+       }
+    })
+  }))
+  const later = gamer.filter(val => val !== undefined); 
    
-   return finalObject;  
+   return later;  
    }
 
 const MatchMakeFinal = ({navigation, route}) => {
     const myContext = useContext(AppContext); 
-    const {user, userId, clientFilter, setClientFilter,sentFromBrowse} = myContext;
+    const {user, userId, clientFilter, setClientFilter,sentFromBrowse, computeName, createChatThread} = myContext;
     const [sliderState, setSliderState] = useState({ currentPage:0  });
     const insets = useSafeAreaInsets();
     const [sectionData,setSectionData] = useState([]); 
@@ -80,15 +77,22 @@ const MatchMakeFinal = ({navigation, route}) => {
   
     useEffect(() => {
       async function namer(){
-        console.log("filter use effect caled")
-        const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get({source:'server'}); 
-      const client = await result.docs.map(val => val.data());
+        
+      const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get(); 
+      const client = result.docs.map(val => val.data());
       const copy = clientFilter.concat();           
-const clientNumber = copy.map(val1 => val1.client); 
+      const clientNumber = copy.map(val1 => val1.client); 
+      console.log(client.length)    
+      //const resulter = await filterGamer(client, 'phoneNumber', clientNumber, null, null); 
+      var filteredIntros = [].filter(
+        function(e) {
+    
+          return this.indexOf(e.phoneNumber) < 0;
+        },
+       clientNumber
+    );
 
-const resulter = await filterGamer(client, 'phoneNumber', clientNumber, null, null); 
-
-await resulter.excludedObjects.map(val2 => {
+await filteredIntros.map(val2 => {
  copy.push({
  client:val2.phoneNumber, 
  filter:{
@@ -149,33 +153,8 @@ await resulter.excludedObjects.map(val2 => {
           }
 
            
-const copy = clientFilter.concat();           
-const clientNumber = copy.map(val1 => val1.client); 
-
-// const resulter = await filterGamer(client, 'phoneNumber', clientNumber, null, null); 
-
-// await resulter.excludedObjects.map(val2 => {
-//  copy.push({
-//  client:val2.phoneNumber, 
-//  filter:{
-//         charisma:0, 
-//         creativity:0, 
-//         honest:0, 
-//         looks:0, 
-//         empathetic:0, 
-//         status:0, 
-//         humor:0, 
-//         wealthy:0, 
-//         narcissism:0,
-//         minAge:val2.minAge == 15 ? 15: val2.minAge, 
-//         maxAge:val2.maxAge == 60 ? 60:val2.maxAge,
-//         dimension:0,
-//         distancePreference:val2.distancePreference == 40 ? 40: val2.distancePreference, 
-
-//       }
-//  })
-// })
-//            setClientFilter(copy); 
+// const copy = clientFilter.concat();           
+// const clientNumber = copy.map(val1 => val1.client); 
 
           const finalResult = Promise.all(client.map(async val => {
                const gender = val.gender; 
@@ -198,16 +177,16 @@ const clientNumber = copy.map(val1 => val1.client);
           
           const simDimensionTransform = transformedpointstoscores.map(val => {
               const simDimension = computeSimDimension(val.client, val.users);
-              console.log(simDimension)
+              const filterBySim = simDimension.filter(val => val.simDimension)
               
               if(clientFilter.length){
                   if(clientFilter.filter(gamer => gamer.client == val.client.phoneNumber).length){
                       const index = clientFilter.findIndex(val1 => val1.client == val.client.phoneNumber); 
-                      const filters = applyFilters(clientFilter[index].filter, simDimension, val.client);
+                      const filters = applyFilters(clientFilter[index].filter, filterBySim, val.client,createChatThread);
                       return {client:val.client, users:filters};
                   }
               }
-              return {client:val.client, users:simDimension}
+              return {client:val.client, users:filterBySim}
                       
           })
           

@@ -415,9 +415,14 @@ export const updateUser = (user, obj) => {
 
 
 export function filterGamer(arr, indexValue, arrFilter, applyToExcluded, applyToIncluded){
+console.log("status"); 
+console.log(arr.length)
+
+
  if(arrFilter == undefined){
     arrFilter = []; 
  } 
+ 
 
   let excludedTransform; 
   let includedTransform; 

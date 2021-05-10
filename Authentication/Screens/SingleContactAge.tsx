@@ -70,10 +70,10 @@ const [zIndex, setIndex] = useState(1000);
 const [gate, checkGate] = useState(true);
 
 
-console.log(country)
+
 
 const changeArray = (arr, obj) => {
-console.log(arr) 
+ 
 
 
 return arr; 

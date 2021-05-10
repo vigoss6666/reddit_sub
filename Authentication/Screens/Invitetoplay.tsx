@@ -16,7 +16,7 @@ const Invitetoplay = ({navigation,route}) => {
     https://exp.host/@votexclient/friends_help_friends_chat
     username:votexclient 
     password:chemistry1Zu!2     
-    `}).then(result => {
+    `, url:undefined}).then(result => {
         console.log(result)
     })
     

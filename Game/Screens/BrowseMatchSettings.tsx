@@ -39,8 +39,7 @@ const [distance, setDistance] = useState();
 const [traits, setTraits] = useState([]);
 const [defaultDistance, setDefaultDistance] = useState();  
 
-console.log("initalValue")
-console.log(matchmaking)
+
 
 useEffect(() => {
   
@@ -51,8 +50,7 @@ useEffect(() => {
   setMaxAge(currentClientFilter.maxAgePreference)
   setDefaultDistance(currentClientFilter.distancePreference); 
   setDistance(currentClientFilter.distancePreference);
-  console.log("matchProifles"); 
-  console.log(currentClientFilter.matchMakerProfiles)
+  
   
   
 }, [])

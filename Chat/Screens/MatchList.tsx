@@ -59,7 +59,7 @@ const [MatchNotification, setMatchNotification] = useState(false);
 const [IntroNotification, setIntroNotification] = useState(false);   
 const [ChatNotifcaiton1, setChatNotification1] = useState(false);
 
-console.log("Intro"+IntroNotification)
+
 
 useEffect(() => {
 if(MatchNotification || IntroNotification || ChatNotifcaiton1){

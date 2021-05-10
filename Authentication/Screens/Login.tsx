@@ -47,12 +47,12 @@ const _sendToServer = async () => {
      login({variables:{userInput:serverObject},
       update:((cache, {data}) => {
             if(data.login.error){
-                console.log("error")
+                
                 setError("Phone number didnt match")
                 return; 
             }
             else if(data.login.error == false){
-                 console.log(data)
+                 
                  AsyncStorage.setItem('_id', data.login._id)
                  navigation.navigate('Endorsement')
             }

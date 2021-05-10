@@ -94,13 +94,7 @@ async function applyFilters(filter:filter, arr:serverDataObjectDimension[], clie
       }
  })
 
-const ageInit = finalObject.map(val => {
-   if(val.appUser == true){
-     return val
-   }
-})
-
-const ageFilterFinal = ageInit.filter(val => val !== undefined); 
+ 
 
 const gamer = await Promise.all(finalObject.map(async val => {
   const id = createChatThread(val.phoneNumber, client.phoneNumber); 

@@ -166,7 +166,7 @@ export default function App() {
   const responseListener = useRef();
   const notificationListener = useRef();
   const [profilePicLocal, setProfilePicLocal] = useState(null); 
-  console.log(currentUser+"currentUser")
+  
   
 
   
@@ -203,6 +203,7 @@ export default function App() {
     client:"something", 
     filter:{}
   }]); 
+  // const [clientFilter, setClientFilter] = useState([]); 
 
   const [basicAuth, setBasicAuth] = useState(null); 
   
@@ -243,14 +244,14 @@ if(!Object.keys(user).length){
 
 useEffect(() => {
    Notifications.addNotificationReceivedListener(response => {
-     console.log(response)
+     
    })
    Notifications.addNotificationsDroppedListener(response => {
-    console.log(response)
+    
       
    })
    Notifications.addNotificationResponseReceivedListener(response => {
-    console.log(response)
+    
    
   });
 
@@ -386,7 +387,7 @@ const mainHome = () => {
         <NavigationContainer>
          
         <Stack.Navigator>
-          <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
+          <Stack.Screen name="Home" component={MatchMakeFinal} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="Birthday" component={BirthDay}/>
           <Stack.Screen name="Gender" component={Gender}/>
@@ -445,7 +446,7 @@ const mainHome = () => {
           <Stack.Screen name="Loader" component={Loader} options = {{headerTitle:false, headerLeft:false}}/>
           <Stack.Screen name="Trophy" component={Trophy}/>
           <Stack.Screen name="GameHomepage" component={GameHomepage}/>
-          <Stack.Screen name="Matchmake" component={Matchmake}/>
+          
           <Stack.Screen name="MatchView" component={MatchView}/>
           <Stack.Screen name="Endorsement" component={Endorsement}/>
           <Stack.Screen name="NoMatch" component={NoMatch}/>
@@ -453,7 +454,7 @@ const mainHome = () => {
           <Stack.Screen name="VideoPlayer" component={VideoPlayer}/>
           <Stack.Screen name="DocumentViewer" component={DocumentViewer}/>
           <Stack.Screen name="Camera" component={Camera}/>
-          <Stack.Screen name="Chat" component={Chat} options = {({route}) => ({headerTitle:route.params.title,   headerRight:() => <Feather name="flag" size={20} color="red" style = {{marginRight:10}}/>})} />
+          {/* <Stack.Screen name="Chat" component={Chat} options = {({route}) => ({headerTitle:route.params.title,   headerRight:() => <Feather name="flag" size={20} color="red" style = {{marginRight:10}}/>})} /> */}
           <Stack.Screen name="MatchList" component={MatchList} options = {{headerShown:false}}/>
           <Stack.Screen name="AttributeFilter" component={AttributeFilter}/>
           <Stack.Screen name="AttributeFilterClient" component={AttributeFilterClient}/>
