@@ -16,7 +16,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 export default function ContactsSex({navigation,route}){
 const myContext = useContext(AppContext); 
-const { userId} = myContext;   
+const { userId, profileAuth, setProfilesAuth,computeName} = myContext;   
 const data1 = [{fullname:"Zaid shaikh", identification:'something',gender:'male', _id:1},{fullname:"ALi reza", identification:'something', _id:2},{fullname:"Huraira", identification:'something', _id:3},{fullname:"Samadh Khan",identification:'something', _id:4},{fullname:"Nihal Modal",identification:'somehting',_id:5},{fullname:"Rafiq modal", identification:'something', _id:6},{fullname:"Baiju Noyan", identification:'something', _id:7},{fullname:"Bilkis baji",identification:'something', _id:8},{fullname:"Bismil",identification:'something', gender:'female', _id:9}]
 const [fetchData,setFetchdata] = useState([]); 
 const [arr,addArr] = useState([]); 
@@ -37,30 +37,30 @@ useEffect(() => {
 
 
 
-useEffect(() => {
-   async function namer(){
-    const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
-    const users = onResult.docs.map(val => val.data()); 
-    const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
-    const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
-    const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker]; 
-    const finalTransformed = profilesWithMatchMaker.map((val, index) => ( {...val, zIndex:index}));
-    finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
-    setProfiles(finalTransformed); 
+// useEffect(() => {
+//    async function namer(){
+//     const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
+//     const users = onResult.docs.map(val => val.data()); 
+    
+//     const finalTransformed = users.map((val, index) => ( {...val, zIndex:index}));
+//     finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
+//     const filterByApp = finalTransformed.filter(val => val.appUser == false);
+//      const filterBySetter = filterByApp.filter(val => val.latitude == 0);
+//      setProfiles(filterBySetter); 
 
-   }
-   if(Object.keys(user).length){
-      namer()
-  }
+//    }
+//    if(Object.keys(user).length){
+//       namer()
+//   }
    
    
-}, [user])
+// }, [user])
 
 const updateToServer = () => {
     const db = firebase.firestore(); 
     let batch = db.batch(); 
     db.collection('user')
-    profiles.map(val => {
+    profileAuth.map(val => {
       const ref = db.collection('user').doc(val.phoneNumber); 
       batch.set(ref, {gender:val.gender}, {merge:true});   
     })
@@ -69,26 +69,26 @@ const updateToServer = () => {
 
 const addMale = (obj => {
    
-const data = profiles.concat(); 
+const data = profileAuth.concat(); 
 const result = data.filter(val => {
     return val.phoneNumber == obj.phoneNumber 
 })
 result[0].gender = "male"; 
-setProfiles(data); 
+setProfilesAuth(data); 
 })
 const addFemale = (obj => {
-  const data = profiles.concat(); 
+  const data = profileAuth.concat(); 
    
    
 const result = data.filter(val => {
     return val.phoneNumber == obj.phoneNumber 
 })
 result[0].gender = "female"; 
-setProfiles(data); 
+setProfilesAuth(data); 
 })
 
 useEffect(() => {
-   profiles.map(val => {
+   profileAuth.map(val => {
        if(val.gender == undefined){
           checkGate(true); 
           return; 
@@ -96,7 +96,7 @@ useEffect(() => {
       checkGate(false); 
       
   })    
-}, [profiles])
+}, [profileAuth])
 
 
 
@@ -107,15 +107,7 @@ const _sendToServer = () => {
  
  updateContactsGender({variables:{userInputList:{data:finaler}}});   
 }
-const computeName = (obj) => {
-   if(obj.name){
-      return obj.name
-   }
-   if(obj.firstName && obj.lastName){
-      return obj.firstName+obj.lastName
-   }
-   return obj.firstName
-}
+
 
    var radio_props = [
       {label: 'param1', value: 0 },
@@ -134,7 +126,7 @@ const computeName = (obj) => {
     </View>
     <View style = {{flex:0.6}}>
     <ScrollView>
-              {profiles.map((val,index) => {
+              {profileAuth.map((val,index) => {
                 return (
                   <View key={index} 
                   style = {{borderWidth:1, height:50,flexDirection:"row",  justifyContent:'space-between', marginLeft:20, marginRight:20, borderLeftWidth:0, borderRightWidth:0,}}
@@ -160,7 +152,7 @@ const computeName = (obj) => {
             </ScrollView> 
     </View>
     <View style = {{flex:0.2, justifyContent:'center',marginTop:10 }}>
-    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { updateToServer(), navigation.navigate('ContactsLocation')}} disabled = {gate}></Button>   
+    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { updateToServer(), navigation.navigate('ContactsLocationLatest')}} disabled = {gate}></Button>   
 
     </View>
     </View>

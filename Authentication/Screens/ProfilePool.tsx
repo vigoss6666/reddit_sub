@@ -704,7 +704,7 @@ onChangeItem={namer => addAge(item, namer)}
         keyExtractor={(item) => item.phoneNumber}
         contentInset={{  top: 0, left: 0, bottom: 200 }}
 
-        extraData={namer}
+        extraData={user.datingPoolList}
       />  
                 
              

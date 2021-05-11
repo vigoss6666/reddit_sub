@@ -60,19 +60,20 @@ export default function School({navigation,route}){
          value = {Email}
          onChangeText = {(text) => { setEmail(text)}}
         ></TextInput>
-        <View style = {{borderBottomWidth:1, width:Dimensions.get('window').width - 60, marginTop:40, borderBottomColor:"grey"}}/> 
-      </View>
-      <View style = {{flex:0.3,justifyContent:"center", }}>
-       {/* <Continue  onPress = {() => {_handleEmail(), mutateSettings({email:Email}) }}/>     */}
-       <Button
+             <Button
   title="Continue"
   type="outline"
-  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
+  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30,marginTop:100}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   disabled = {gate}
   onPress = {() => { _sendToServer(), _handlePage()}}
 />
+        
+      </View>
+      <View style = {{flex:0.3,justifyContent:"center", }}>
+       {/* <Continue  onPress = {() => {_handleEmail(), mutateSettings({email:Email}) }}/>     */}
+  
       </View>
       </View>
       </KeyboardAvoidingView>

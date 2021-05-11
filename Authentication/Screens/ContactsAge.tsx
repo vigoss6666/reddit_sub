@@ -27,7 +27,7 @@ mutation namer($userInputList:userInputList1!){
 
 export default function ContactsAge({navigation,route}){
     const myContext = useContext(AppContext); 
-    const { userId} = myContext;
+    const { userId, setProfilesAuth,computeName} = myContext;
     const [user,setUser] = useState({});
 useEffect(() => {
   db.collection('user').doc(userId).get().then(onDoc => {
@@ -42,11 +42,7 @@ useEffect(() => {
      
         firstname:"zaid"
        }, 
-       { 
-        _id:"4qaBwvr4RTZSYbvwDgGx", 
-        name:"sameer niwas", 
-        firstname:"sameer"
-       },
+       
      ])     
 
 
@@ -54,13 +50,13 @@ useEffect(() => {
         async function namer(){
          const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
          const users = onResult.docs.map(val => val.data()); 
-         const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
-         const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
-         const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker]; 
-         const finalTransformed = profilesWithMatchMaker.map((val, index) => ( {...val, zIndex:index}));
+         
+         const finalTransformed = users.map((val, index) => ( {...val, zIndex:index}));
          finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
-          
-         setProfiles(finalTransformed); 
+         const filterByApp = finalTransformed.filter(val => val.appUser == false);
+         const filterBySetter = filterByApp.filter(val => val.latitude == 0);
+         setProfilesAuth(filterBySetter) 
+         setProfiles(filterBySetter); 
      
         }
         if(Object.keys(user).length){
@@ -142,15 +138,15 @@ useEffect(() => {
      setNamer(namer + 1); 
      setIndex(zIndex + 10) 
  } 
- function computeName(obj) {
-        if (obj.name) {
-            return obj.name;
-        }
-        if (obj.firstName && obj.lastName) {
-            return obj.firstName + obj.lastName;
-        }
-        return obj.firstName;
-    }
+//  function computeName(obj) {
+//         if (obj.name) {
+//             return obj.name;
+//         }
+//         if (obj.firstName && obj.lastName) {
+//             return obj.firstName + obj.lastName;
+//         }
+//         return obj.firstName;
+//     }
   
 
     return(

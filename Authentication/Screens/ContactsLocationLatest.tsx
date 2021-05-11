@@ -6,6 +6,7 @@ import {updateUser} from '../../networking';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MapView, { Marker } from 'react-native-maps';
 // @refresh reset 
+import {MaterialIcons} from '@expo/vector-icons'; 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import {Button} from 'react-native-elements'; 
 const db = firebase.firestore(); 
@@ -15,7 +16,7 @@ interface ContactsLocationLatestProps {}
 const ContactsLocationLatest = ({navigation, route}) => {
   const [sliderState, setSliderState] = useState({ currentPage: 1 });
   const myContext = useContext(AppContext); 
-  const {user, userId} = myContext;
+  const {profileAuth, userId,computeName,CustomBackComponent} = myContext;
 
   const [flatListChanged, setFlatListChanged] = useState(1)
   const [profiles, setProfiles] = useState([]);  
@@ -24,14 +25,24 @@ const ContactsLocationLatest = ({navigation, route}) => {
   const [markers, setMarkers] = useState([]);  
   const [location, setLocation] = useState({}); 
   const [gate, setGate] = useState(true); 
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle:false, 
+      headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+      
+    })
+  }, [])
   
-  const handleServerLocation = () => {
+  const handleServerLocation = async () => {
      const marker1 = Array.from(markers);  
      const batch = db.batch(); 
-     marker1.map(val => {
+     const lamer = firebase.functions().httpsCallable('batman');
+     await Promise.all(marker1.map(async val => {
+          const result = await lamer({lat:val.latlng.latitude, lon:val.latlng.longitude });
           const ref = db.collection('user').doc(val.client); 
-          batch.set(ref, {latitude:val.latlng.latitude, longitude:val.latlng.longitude}, {merge:true}); 
-     })
+          batch.set(ref, {latitude:val.latlng.latitude, longitude:val.latlng.longitude,state:result.data.state, subLocality:result.data.sublocality}, {merge:true}); 
+     }))
      batch.commit().then(console.log("documents have been updated"))
   }
 
@@ -43,7 +54,7 @@ const handleMarker = (marker) => {
 
 
   useEffect(() => {
-    if(profiles.length > 0){
+    if(profileAuth.length > 0){
     const filter = markers.map(val => val.client); 
     
     
@@ -51,7 +62,7 @@ const handleMarker = (marker) => {
         setGate(true); 
         return; 
     }
-    var filtered = profiles.filter(
+    var filtered = profileAuth.filter(
         function(e) {
           return this.indexOf(e.phoneNumber) < 0;
         },
@@ -67,9 +78,7 @@ const handleMarker = (marker) => {
 
   }, [markers])
 
-  useEffect(() => {
-       
-  }, [])
+  
   const window = Dimensions.get('window');
             const { width, height }  = window
             const LATITUD_DELTA = 0.0922
@@ -79,21 +88,21 @@ const handleMarker = (marker) => {
   
   
   
-  useEffect(() => {
-    async function namer(){
-     const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
-     const users = onResult.docs.map(val => val.data()); 
-     const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
-     const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
-     const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker]; 
-     const finalTransformed = finalUsers.map((val, index) => ( {...val, zIndex:index}));
-     finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
-     setProfiles(finalTransformed); 
+//   useEffect(() => {
+//     async function namer(){
+//      const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
+//      const users = onResult.docs.map(val => val.data()); 
+//      const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
+//      const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
+//      const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker]; 
+//      const finalTransformed = finalUsers.map((val, index) => ( {...val, zIndex:index}));
+//      finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
+//      setProfiles(finalTransformed); 
  
-    }
-    namer()
+//     }
+//     namer()
     
- }, [])
+//  }, [])
  
   const setSliderPage = (event: any) => {
     const { currentPage } = sliderState;
@@ -110,17 +119,9 @@ const handleMarker = (marker) => {
       });
     }
   };
-  const computeName = (obj) => {
-    if(obj.name){
-       return obj.name
-    }
-    if(obj.firstName && obj.lastName){
-       return obj.firstName+obj.lastName
-    }
-    return obj.firstName
- }
-  const sliderTemplate = profiles.map(val => (
-    <View style={{ width,  height,}} key = {val._id}>
+  
+  const sliderTemplate = profileAuth.map(val => (
+    <View style={{ width,  height,}} key = {val.phoneNumber}>
     <View style = {{ alignItems:"center",marginBottom:10}}>
     
     {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:80, width:80, borderRadius:40}}/>:<MaterialIcons name="account-circle" size={75} color="black" />}
@@ -135,7 +136,7 @@ const handleMarker = (marker) => {
      style = {{width: Dimensions.get('window').width,
      height: Dimensions.get('window').height, }} 
      mapType = "standard"
-     onPress={(e) => handleMarker({latlng: e.nativeEvent.coordinate, client:profiles[sliderState.currentPage].phoneNumber })}
+     onPress={(e) => handleMarker({latlng: e.nativeEvent.coordinate, client:profileAuth[sliderState.currentPage].phoneNumber })}
      
      region={{
       latitude: x.latitude,
@@ -196,7 +197,7 @@ onScroll={(event: any) => {
 {sliderTemplate}
 </ScrollView>
 <View style = {{marginTop:40, marginLeft:30, marginRight:30 }}>
-<Button title = {"Done"} disabled = {gate} onPress = {() => {handleServerLocation(), navigation.navigate('Homer')}} />
+<Button title = {"Done"} disabled = {gate} onPress = {() => {handleServerLocation()}} />
 </View>
 </View>
 

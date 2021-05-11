@@ -7,12 +7,13 @@ import { firebase } from '../../config';
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';  
 import { MaterialIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function Contacts({navigation,route}){
   
 const myContext = useContext(AppContext); 
-const { userId} = myContext;
+const { userId,defaultDataObject,setUser} = myContext;
 const db = firebase.firestore(); 
 const [indexer,setIndexer] = useState([]); 
 const [isSelected, setSelection] = useState(false);
@@ -21,10 +22,10 @@ const [search, setSearch] = useState('');
 const [selectAll, setSelectAll] = useState(true);
 const [serverData, addServerData] = useState([]); 
 const [profiles, setProfiles] = useState([]); 
-const [user,setUser] = useState({});
+const [user,setUser1] = useState({});
 useEffect(() => {
   db.collection('user').doc(userId).get().then(onDoc => {
-      setUser(onDoc.data())
+      setUser1(onDoc.data())
   })
 }, [])
  
@@ -54,8 +55,30 @@ useEffect(() => {
    
 }, [user])
 const sendToServer = async () => {
-   const result = await db.collection('user').doc(userId).update({datingPoolList:indexer})
-   navigation.navigate('ContactsAge') 
+    
+  console.log(indexer)
+
+   
+   db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', indexer).get().then(async onResult => {
+     const result = onResult.docs.map(val => val.data());
+     const filterByApp = result.filter(val => val.appUser == false);
+     const filterBySetter = filterByApp.filter(val => val.latitude == 0);
+     if(filterBySetter.length < 1){
+      const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
+      db.collection('user').doc(userId).set(userInit, {merge:true});
+
+    
+    await db.collection('user').doc(userId).set({datingPoolList:indexer}, {merge:true}); 
+    await AsyncStorage.setItem('user', userId);  
+    setUser(user);
+    
+     return;    
+     }
+     await db.collection('user').doc(userId).set({datingPoolList:indexer}, {merge:true}); 
+     navigation.navigate('ContactsAge') 
+
+   })
+   
 }
 
 

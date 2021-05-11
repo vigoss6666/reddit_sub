@@ -148,10 +148,14 @@ const computeName = (obj) => {
   }
   return obj.firstName
 }
+
 export default function App() {
 
+  // useEffect(() => {
+  //   AsyncStorage.setItem('user', '')
+  // }, [])
   console.disableYellowBox = true;
-
+  const [profileAuth, setProfilesAuth] = useState([]); 
   const [xClient, setXClient] = useState({latitude:null, longitude:null});
   const [contactLocation, setContactLocation] = useState({state:null, subLocality:null})
   const [expoPushToken, setExpoPushToken] = useState('');
@@ -276,6 +280,8 @@ function stringifyNumber(n) {
 
 
   const tempObject = {
+    profileAuth, 
+    setProfilesAuth,
     userId:tempId, 
     setTempId, 
     CustomBackComponent,
@@ -293,6 +299,7 @@ function stringifyNumber(n) {
   }
   
   const globalObject = {
+    
     setContactLocation, 
     contactLocation, 
     xClient, 
@@ -512,12 +519,14 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Contacts} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>
 <Stack.Screen name="Birthday" component={BirthDay}/>
+
 <Stack.Screen name="Gender" component={Gender}/>
+<Stack.Screen name="ContactsLocationLatest" component={ContactsLocationLatest}/>
 <Stack.Screen name="GenderPreference" component={GenderPreference}/>
 <Stack.Screen name="Height" component={Height}/>
 <Stack.Screen name="AddPhoto" component={AddPhoto}/>
