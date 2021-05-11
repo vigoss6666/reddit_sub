@@ -2,7 +2,7 @@ import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Modal} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import * as ImagePicker from 'expo-image-picker';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialIcons, MaterialCommunityIcons,Entypo } from '@expo/vector-icons';
 import { FontAwesome5,AntDesign} from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import {Text} from "react-native-elements"; 
@@ -38,7 +38,10 @@ const ADD_NEW_CONTACT = gql`
 
 export default function NewContact({navigation,route}){
     const myContext = useContext(AppContext); 
-    const {user, userId, countryCode, dialCode, defaultDataObject} = myContext;     
+    const {user, userId, countryCode, dialCode, defaultDataObject, clientLocation, setContactLocation, 
+        contactLocation, 
+        xClient, 
+        setXClient} = myContext;     
  
  const data1 = {name:"zaid shaikh", firstname:"zaid", countryCode:"+1", gender: "male", orientation:"male",minAge:24, maxAge:24,inches:"11", feet:"5", addToDatingPool:'yes', number:"2103888163"}   
  //const [addNewContact, {data}] = useMutation(ADD_NEW_CONTACT);
@@ -129,6 +132,12 @@ navigation.setOptions({
 
 
 const _sendToServer = async () => {
+ const result = await db.collection('user').doc(dialCode+digits).get(); 
+ if(result.exists){
+     db.collection('user').doc(userId).update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(dialCode+digits)}) 
+     navigation.navigate('Homer') 
+     return; 
+ }   
  const url = image ? await updateProfilePicToServer():"";    
  const serverObject = {
       
@@ -136,7 +145,6 @@ const _sendToServer = async () => {
      name:firstname+lastname, 
      firstname:firstname, 
      gender:gender, 
-     genderPreference:orientation,
      minAge:age.minAge, 
      maxAge:age.maxAge,
      age:parseInt((age.minAge + age.maxAge)/2), 
@@ -144,7 +152,11 @@ const _sendToServer = async () => {
      feet:feet ? feet: 5, 
      matchMaker:userId, 
      matchMakers:[userId], 
-     profilePic:url
+     profilePic:url, 
+     latitude:xClient.latitude, 
+     longitude:xClient.longitude, 
+     state:contactLocation.state, 
+     subLocality:contactLocation.subLocality
     }
    const finalObject = Object.assign({}, {...defaultDataObject}, {...serverObject}); 
    db.collection('user').doc(dialCode+digits).set(finalObject, {merge:true}).then(() => console.log("server object set correctly")); 
@@ -162,7 +174,7 @@ const _uploadContact = () => {
 
 }
 const _checkDisable = () => {
-     if(firstname && lastname && digits && gender && age && orientation){
+     if(firstname && lastname && digits && gender && age && xClient.latitude && xClient.longitude){
           return false; 
      }
      return true; 
@@ -226,9 +238,11 @@ return (
     </TextInput>
     </View>
     <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:30, marginBottom:30}}/>
-    <View style = {{  marginBottom:20, marginLeft:30}}>
-     
-    
+    <View style = {{  marginBottom:20, marginLeft:30, flexDirection:'row', alignItems:'center'}}>
+    <Entypo name="location" size={24} color="black" />
+    <TouchableOpacity onPress = {() => navigation.navigate('NewContactLocation')}>
+        <Text style = {{fontWeight:'bold', marginLeft:10}}>Add location</Text>
+    </TouchableOpacity>
     
     </View>
     <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:30, marginBottom:30}}/>
@@ -253,7 +267,7 @@ return (
       }}>
       
     </View>
-    <View style = {{flexDirection:'row', marginLeft:30,justifyContent:'space-between',marginRight:30,alignItems:'center',marginBottom:30}}>
+    {/* <View style = {{flexDirection:'row', marginLeft:30,justifyContent:'space-between',marginRight:30,alignItems:'center',marginBottom:30}}>
     <Text style = {{flex:0.6,fontWeight:'bold'}}>Orientation</Text>
     <View style = {{flexDirection:'row',justifyContent:'space-between',flex:0.4,alignItems:'center'}}>
     <TouchableOpacity onPress = {() => {setOrientation('female')}} style = {{borderWidth:orientation == 'female' ? 3:0, borderRadius:10,borderColor:'green' }}>
@@ -266,16 +280,16 @@ return (
     <Ionicons name="ios-people" size={35} color="black" />
     </TouchableOpacity>
     </View>
-    </View>
-    <View style={{
+    </View> */}
+    {/* <View style={{
         borderStyle: 'dotted',
         borderWidth: 2,
         borderRadius: 1,
         borderColor:'grey',
          marginBottom:30
-      }}>
+      }}> */}
       
-    </View>
+    {/* </View> */}
     <View style = {{flexDirection:'row', marginLeft:30, justifyContent:'space-between', alignItems:'center',marginBottom:30, zIndex:1000}}>
     <Text style = {{fontWeight:'bold'}}>Age </Text>
     <DropDownPicker

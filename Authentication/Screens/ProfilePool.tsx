@@ -532,8 +532,10 @@ onChangeItem={namer => addAge(item, namer)}
      marginTop: 10,
      }}/>
      <View style = {{flexDirection:'row', alignItems:'center',  marginBottom:20, marginTop:15,justifyContent:'space-between'}}>
-                      
+                      <View>
                       {nameComputer(item, 'location')}
+                      <Text style = {{fontSize:10,fontStyle:'italic', maxWidth:200,marginTop:5}}>{item.subLocality} {item.subLocality ? ",":null} {item.state}</Text>
+                      </View>
                       <TouchableOpacity onPress = {() => addPhoto(item)}>
                       <Text style = {{fontWeight:'bold'}}>Change Location</Text>
                       </TouchableOpacity>

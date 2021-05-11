@@ -46,6 +46,7 @@ import ContactsAge from './Authentication/Screens/ContactsAge';
 import ContactsLocation from './Authentication/Screens/ContactsLocation';
 import ContactsLocationLatest from './Authentication/Screens/ContactsLocationLatest';
 import NewContact from './Authentication/Screens/NewContact'; 
+import NewContactLocation from './Authentication/Screens/NewContactLocation';
 import ContactLoadSuccess from './Authentication/Screens/ContactLoadSuccess';
 import Playgame from './Game/Screens/Playgame'; 
 import PlayGameLatest from './Game/Screens/PlayGameLatest';
@@ -68,6 +69,7 @@ import Login from './Authentication/Screens/Login';
 import Checker from './Authentication/Screens/Checker';
 import School from './Authentication/Screens/School'; 
 import Job from './Authentication/Screens/Job';
+import FriendsLocation from './Authentication/Screens/FriendsLocation';
 import Invitetoplay from './Authentication/Screens/Invitetoplay';
 import AddPhoto from './Authentication/Screens/AddPhoto';
 import Hometown from './Authentication/Screens/Hometown';
@@ -150,6 +152,8 @@ export default function App() {
 
   console.disableYellowBox = true;
 
+  const [xClient, setXClient] = useState({latitude:null, longitude:null});
+  const [contactLocation, setContactLocation] = useState({state:null, subLocality:null})
   const [expoPushToken, setExpoPushToken] = useState('');
   const [currentUser, setCurrentUser] = useState(''); 
   const [contactList, setContactList] = useState([]); 
@@ -289,6 +293,10 @@ function stringifyNumber(n) {
   }
   
   const globalObject = {
+    setContactLocation, 
+    contactLocation, 
+    xClient, 
+    setXClient, 
     computePoints,
     defaultDataObject, 
     sentFromBrowse, 
@@ -393,11 +401,13 @@ const mainHome = () => {
           <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="Birthday" component={BirthDay}/>
+          <Stack.Screen name="NewContactLocation" component={NewContactLocation}/>
           <Stack.Screen name="Gender" component={Gender}/>
           <Stack.Screen name="GenderPreference" component={GenderPreference}/>
           <Stack.Screen name="Height" component={Height}/>
           <Stack.Screen name="Feet" component={Feet}/>
           <Stack.Screen name="Inches" component={Inches}/>
+          <Stack.Screen name="FriendsLocation" component={FriendsLocation}/>
           <Stack.Screen name="EnableLocation" component={EnableLocation}/>
           <Stack.Screen name="Tell" component={Tell}/>
           <Stack.Screen name="Email" component={Email}/>
