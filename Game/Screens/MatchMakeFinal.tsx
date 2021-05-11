@@ -10,11 +10,12 @@ import { logTen } from './logTen';
 import { iconFactory, LoadScreen} from '../../src/common/Common';
 
 import {transformCreativity, computeSimDimension, computeSectionLabel, filterGamer, getDistanceFromLatLonInKm} from '../../networking'; 
+import { filter } from 'underscore';
 const db = firebase.firestore(); 
 interface MatchMakeFinalProps {}
 
-async function applyFilters(filter:filter,arr:serverDataObjectDimension[], client, createChatThread):serverDataObjectDimension[]{
-    
+async function applyFilters(filter:any,arr:any,client, createChatThread):serverDataObjectDimension[]{
+
     
     const finalObject:any = [];     
       arr.map(val => {
@@ -40,21 +41,13 @@ async function applyFilters(filter:filter,arr:serverDataObjectDimension[], clien
            
           
           ){
+             
              finalObject.push(val); 
         }
    })
-   const gamer = await Promise.all(finalObject.map(async val => {
-    const id = createChatThread(val.phoneNumber, client.phoneNumber); 
-    
-    return await db.collection('introductions').doc(id).get().then(onDoc => {
-       if(onDoc.exists == false){
-         return val; 
-       }
-    })
-  }))
-  const later = gamer.filter(val => val !== undefined); 
+  
    
-   return later;  
+   return finalObject;  
    }
 
 const MatchMakeFinal = ({navigation, route}) => {
@@ -67,61 +60,156 @@ const MatchMakeFinal = ({navigation, route}) => {
     const [userDisplay, setUserDisplay] = useState([]); 
     const [clienter, setClienter] = useState(null); 
     
+    const [flat, setFlat] = useState(null)
+
+
+    
+    
     useEffect(() => {
       if(route.params){
         const {clientFrom} = route.params;     
         setClienter(clientFrom)
       }
     }, [])
+    // useEffect(() => {
+      
+      
+      
+    // }, [clienter, sliderState.currentPage])
+    
+  async function getDatingPool(){
+    
+      const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get({source:'server'}); 
+      const client = await result.docs.map(val => val.data());
+      return client; 
+  }    
+    
 
   
-    useEffect(() => {
-      async function namer(){
-        
-      const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get(); 
-      const client = result.docs.map(val => val.data());
+    async function setFilter(datingPoolList){
+      console.log("jumper called")
       const copy = clientFilter.concat();           
       const clientNumber = copy.map(val1 => val1.client); 
-      console.log(client.length)    
-      //const resulter = await filterGamer(client, 'phoneNumber', clientNumber, null, null); 
-      var filteredIntros = [].filter(
-        function(e) {
+      let freshCopy = []
+      const result = filterGamer(datingPoolList,'phoneNumber', clientNumber, null, null)
+      const finalGamer = result.excludedObjects.map(val2 => {
+        
+        return {client:val2.phoneNumber, 
+        filter:{
+               charisma:0, 
+               creativity:0, 
+               honest:0, 
+               looks:0, 
+               empathetic:0, 
+               status:0, 
+               humor:0, 
+               wealthy:0, 
+               narcissism:10,
+               minAgePreference:val2.minAgePreference == 15 ? 15: val2.minAgePreference, 
+               maxAgePreference:val2.maxAgePreference == 60 ? 60:val2.maxAgePreference,
+               dimension:0,
+               distancePreference:val2.distancePreference == 40 ? 40: val2.distancePreference, 
+               matchMakerProfiles:false, 
+               appUsers:true, 
+       
+             }}
+        
+       })
+       console.log("clientFirlter is"); 
+       console.log(clientFilter)
+       
+       //setClientFilter(clientFilter => [finalGamer])
+       setClientFilter(clientFilter => [...clientFilter, ...finalGamer]);
+       
+   }
+
+   async function setPage(datingPoolList){
     
-          return this.indexOf(e.phoneNumber) < 0;
-        },
-       clientNumber
-    );
-
-await filteredIntros.map(val2 => {
- copy.push({
- client:val2.phoneNumber, 
- filter:{
-        charisma:0, 
-        creativity:0, 
-        honest:0, 
-        looks:0, 
-        empathetic:0, 
-        status:0, 
-        humor:0, 
-        wealthy:0, 
-        narcissism:10,
-        minAgePreference:val2.minAgePreference == 15 ? 15: val2.minAgePreference, 
-        maxAgePreference:val2.maxAgePreference == 60 ? 60:val2.maxAgePreference,
-        dimension:0,
-        distancePreference:val2.distancePreference == 40 ? 40: val2.distancePreference, 
-        matchMakerProfiles:false, 
-        appUsers:true, 
-
+      if(clienter){
+        const index = datingPoolList.findIndex(val => val.phoneNumber == clienter.phoneNumber);
+        setSliderState({
+          ...sliderState,
+          currentPage: index,
+      }); 
       }
- })
-})
-           setClientFilter(copy); 
-      }
-      namer()
+
+       
+
+
+      const finalResult = await Promise.all(datingPoolList.map(async val => {
+           const gender = val.gender; 
+           return await db.collection('user').where('gender', '==', gender == 'male'? 'female':'male')
+           .where('state', '==', val.state)
+           .get({source:'server'})
+           .then(onResult => {
+                return {client:val, users:onResult.docs.map(val => val.data())}
+           })
+      }))
       
-    }, [])
-    
+      const transformedpointstoscores = await Promise.all(finalResult.map(async val => {
+          const clientLogged = await logTen(val.client); 
+          const userLogged = await logTen(val.users);
+          return {
+               client:clientLogged, 
+               users:userLogged
+          } 
+      }))
+      
+      const simDimensionTransform = await Promise.all(transformedpointstoscores.map(async val => {
+          const simDimension =  await computeSimDimension(val.client, val.users);
+          const filterBySim = await simDimension.filter(val => val.simDimension)
+          
+          //console.log(simDimension)
+          
+          
+          if(clientFilter.length){
+              if(clientFilter.filter(gamer => gamer.client == val.client.phoneNumber).length){
+                  const index = clientFilter.findIndex(val1 => val1.client == val.client.phoneNumber); 
+                  
+                  
+                  
+                   const filters = await applyFilters(clientFilter[index].filter, filterBySim,val.client, createChatThread);
+                   return {client:val.client, users:filters};
+              }
+          }
+          return {client:val.client, users:filterBySim}
+                  
+      }))
+      
+      
 
+      const forNextPage = simDimensionTransform.map(val => {
+           return {
+               client:val.client, 
+               data:val.users
+           }
+      })
+      
+      setUserDisplay(forNextPage)
+
+      const sectionDataTransform = simDimensionTransform.map(val => {
+           return {
+             client:val.client, 
+             sectionData:computeSectionLabel(val.users)
+           }
+      }) 
+      
+      setSectionData(sectionDataTransform); 
+
+     
+   }
+   
+    
+   useEffect(() => {
+    async function namer(){
+     const datingPool = await getDatingPool();  
+     await setFilter(datingPool)
+     await setPage(datingPool)
+    } 
+    namer() 
+      
+      
+  }, [])
     
     
         
@@ -137,88 +225,15 @@ await filteredIntros.map(val2 => {
         </View>
        })
     
+
+
     
     useEffect(() => {
-       console.log(" i am the mainer called")
-        async function namer(){
-          console.log("called")
-          const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get({source:'server'}); 
-          const client = await result.docs.map(val => val.data());
-          if(clienter){
-            const index = client.findIndex(val => val.phoneNumber == clienter.phoneNumber);
-            setSliderState({
-              ...sliderState,
-              currentPage: index,
-          }); 
-          }
-
-           
-// const copy = clientFilter.concat();           
-// const clientNumber = copy.map(val1 => val1.client); 
-
-          const finalResult = Promise.all(client.map(async val => {
-               const gender = val.gender; 
-               return await db.collection('user').where('gender', '==', gender == 'male'? 'female':'male')
-               .where('state', '==', val.state)
-               .get({source:'server'})
-               .then(onResult => {
-                    return {client:val, users:onResult.docs.map(val => val.data())}
-               })
-          }))
-          const firstData = await finalResult; 
-          const transformedpointstoscores = firstData.map(val => {
-              const clientLogged = logTen(val.client); 
-              const userLogged = logTen(val.users);
-              return {
-                   client:clientLogged, 
-                   users:userLogged
-              } 
-          })
-          
-          const simDimensionTransform = transformedpointstoscores.map(val => {
-              const simDimension = computeSimDimension(val.client, val.users);
-              const filterBySim = simDimension.filter(val => val.simDimension)
-              
-              if(clientFilter.length){
-                  if(clientFilter.filter(gamer => gamer.client == val.client.phoneNumber).length){
-                      const index = clientFilter.findIndex(val1 => val1.client == val.client.phoneNumber); 
-                      const filters = applyFilters(clientFilter[index].filter, filterBySim, val.client,createChatThread);
-                      return {client:val.client, users:filters};
-                  }
-              }
-              return {client:val.client, users:filterBySim}
-                      
-          })
-          
-          
-
-          const forNextPage = simDimensionTransform.map(val => {
-               return {
-                   client:val.client, 
-                   data:val.users
-               }
-          })
-          
-          setUserDisplay(forNextPage)
-
-          const sectionDataTransform = simDimensionTransform.map(val => {
-               return {
-                 client:val.client, 
-                 sectionData:computeSectionLabel(val.users)
-               }
-          }) 
-          
-          setSectionData(sectionDataTransform); 
-
-          
-          
-          
-
-        } 
-        namer()
+       
         
         
-    }, [clienter, clientFilter])
+        
+    }, [clienter, clientFilter,flat])
     
     const setSliderPage = (event: any) => {
         const { currentPage } = sliderState;

@@ -202,7 +202,10 @@ export default function App() {
   const [clientFilter, setClientFilter] = useState([{
     client:"something", 
     filter:{}
-  }]); 
+  }, 
+  
+
+]); 
   // const [clientFilter, setClientFilter] = useState([]); 
 
   const [basicAuth, setBasicAuth] = useState(null); 
@@ -387,7 +390,7 @@ const mainHome = () => {
         <NavigationContainer>
          
         <Stack.Navigator>
-          <Stack.Screen name="Home" component={MatchMakeFinal} options = {{headerShown:false}}/>
+          <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="Birthday" component={BirthDay}/>
           <Stack.Screen name="Gender" component={Gender}/>

@@ -33,32 +33,8 @@ export default function SettingsHome({navigation}){
     const [subLocality, setSubLocality] = useState(); 
     
     const db = firebase.firestore();
-    var docRef = db.collection("user").doc('trialUser');
-    useEffect(() => {
-        const currentUser = firebase.auth().currentUser; 
-         
-        
-         
     
-        var docRef = db.collection("user").doc('trialUser');
-
-        docRef.onSnapshot((doc) => {
-            
-            let timestamp = doc.data().timeStamp;
-            const d = new Date(timestamp);
-            var ageDifMs = Date.now() - d.getTime();
-            var ageDate = new Date(ageDifMs);
-            const finalAge = Math.abs(ageDate.getUTCFullYear() - 1970); 
-            setAge(finalAge);
-            setSubLocality(doc.data().subLocality)
-            setState(doc.data().state); 
-             
-        },)
-
-
-        
-        
- },[state, subLocality])
+    
  const computeName = (obj) => {
     if(obj.name){
        return obj.name
@@ -69,19 +45,7 @@ export default function SettingsHome({navigation}){
     return obj.firstName
 }
 
-useEffect(() => {
- docRef.get().then(function(doc) {
-    if (doc.exists) {
-        
-        
-    } else {
-        // doc.data() will be undefined in this case
-        
-    }
-}).catch(function(error) {
-    
-});    
-}, [state, subLocality])
+
 
 const _firebaseCaller = () => { 
      const lamer = firebase.functions().httpsCallable('batman');
@@ -105,7 +69,7 @@ return(
     {user.age} years old
 </Text>
 <Text style = {{fontWeight:"bold", fontSize:15, marginTop:5}}>
-    {user.subLocality},{user.state}
+    {user.subLocality}{user.subLocality ? ',':null}{user.state}
 </Text>
 </View>
 <View style = {{flexDirection:"row",justifyContent:"space-around"}}>

@@ -13,27 +13,32 @@ const db = firebase.firestore();
 export default function MapViewMainer({navigation}){
   useEffect(() => {
     navigation.setOptions({
-      headerTitle:() => <Text>Select a Location</Text>, 
-      headerLeft:false, 
-      headerRight:() => <TouchableOpacity onPress = {() => {handleServerLocation(), navigation.navigate('AccountSettings')} }>  
-      <Text style = {{alignSelf:"flex-end", marginRight:10, marginTop:10, color:"orange", fontWeight:"bold"}}>Done</Text>  
-      </TouchableOpacity>
+      headerShown:false, 
+      // headerTitle:() => <Text>Select a Location</Text>, 
+      // headerLeft:false, 
+      // headerRight:() => <TouchableOpacity onPress = {() => {handleServerLocation(), navigation.navigate('AccountSettings')} }>  
+      // <Text style = {{alignSelf:"flex-end", marginRight:10, marginTop:10, color:"orange", fontWeight:"bold"}}>Done</Text>  
+      // </TouchableOpacity>
       
     })
   }, [])
   const myContext = useContext(AppContext);
   const {user, userId} = myContext; 
-  const [x, setX] = useState({latitude:37.768865, longitude:-122.475338});
+  const [x, setX] = useState({latitude:user.latitude, longitude:user.longitude});
   const [markers, setMarkers] = useState({latlng:{}});  
   const [location, setLocation] = useState({}); 
+  
   console.log("gamer is")
   
 
-  const handleServerLocation = () => {
+  const handleServerLocation = async () => {
+    const lamer = firebase.functions().httpsCallable('batman');
      if(Object.keys(markers.latlng) == 0){
       return; 
-     }       
-     db.collection('user').doc(userId).set({latitude:markers.latlng.latitude, longitude:markers.latlng.longitude}, {merge:true})
+     }
+     const result = await lamer({lat:markers.latlng.latitude, lon:markers.latlng.longitude });       
+     
+     db.collection('user').doc(userId).set({latitude:markers.latlng.latitude, longitude:markers.latlng.longitude,state:result.data.state, subLocality:result.data.sublocality}, {merge:true})
       .then(() => console.log("location added"))
       .catch(() => console.log("location update failed"))
      
@@ -47,7 +52,19 @@ export default function MapViewMainer({navigation}){
             const LATITUD_DELTA = 0.0922
             const LONGITUDE_DELTA = LATITUD_DELTA * (width / height)
 return(
-<View style = {{flex:1}}>
+<View style = {{flex:1, marginTop:60}}>
+<View style = {{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:40}}>
+  <Text>
+
+  </Text>
+  <Text>
+    Select a Location
+  </Text>
+  <TouchableOpacity onPress = {() => {handleServerLocation(), navigation.navigate('AccountSettings')}}>
+    <Text style = {{color:'orange', marginRight:10}}>Done</Text>
+  </TouchableOpacity>
+  
+  </View>  
 
 <MapView
      style = {{width: Dimensions.get('window').width,
@@ -77,10 +94,15 @@ return(
                 const result = details?.address_components.map(val => {
                    return val.types.map(val1 => {
                       if(val1 == 'administrative_area_level_1'){
-                         console.log("gamer is")
                          
-                         setLocation({state: val.long_name, address:data.description})
+                         
+                         //setState(val.long_name)
                       }
+                      if(val1 == 'administrative_area_level_2'){
+                        
+                        
+                        //setSubLocality(val.long_name)
+                     }
                    })
                 })
                  
