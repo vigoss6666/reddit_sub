@@ -10,7 +10,8 @@ import {updateUser} from '../../networking';
 const db = firebase.firestore(); 
 
 
-export default function NewContactLocation({navigation}){
+export default function NewContactLocation({navigation, route}){
+  const {client} = route.params;   
   useEffect(() => {
     navigation.setOptions({
       headerShown:false, 
@@ -27,7 +28,7 @@ export default function NewContactLocation({navigation}){
     contactLocation, 
     xClient, 
     setXClient} = myContext; 
-  
+  const [x, setX] = useState({latitude:client.latitude, longitude:client.longitude});
   const [markers, setMarkers] = useState({latlng:{}});  
   const [location, setLocation] = useState({}); 
   
@@ -37,15 +38,15 @@ export default function NewContactLocation({navigation}){
   const handleServerLocation = async () => {
     const lamer = firebase.functions().httpsCallable('batman');
      if(Object.keys(markers.latlng) == 0){
+       navigation.goBack()  
       return; 
      }
      const result = await lamer({lat:markers.latlng.latitude, lon:markers.latlng.longitude });       
-     setXClient({latitude:markers.latlng.latitude, longitude:markers.latlng.longitude})
-     setContactLocation({state:result.data.state, subLocality:result.data.sublocality})
-     navigation.navigate('NewContact')
-    //  db.collection('user').doc(userId).set({latitude:markers.latlng.latitude, longitude:markers.latlng.longitude,state:result.data.state, subLocality:result.data.sublocality}, {merge:true})
-    //   .then(() => console.log("location added"))
-    //   .catch(() => console.log("location update failed"))
+     
+     
+     db.collection('user').doc(client.phoneNumber).set({latitude:markers.latlng.latitude, longitude:markers.latlng.longitude,state:result.data.state, subLocality:result.data.sublocality}, {merge:true})
+      .then(() => console.log("location added")).then(() => navigation.navigate('Homer'))
+      .catch(() => console.log("location update failed"))
      
   }
 
@@ -77,8 +78,8 @@ return(
      mapType = "standard"
      onPress={(e) => setMarkers({ latlng: e.nativeEvent.coordinate })}
      region={{
-      latitude:39.72806655640531 ,
-      longitude: -121.83803400265697,
+      latitude:x.latitude,
+      longitude: x.longitude,
       latitudeDelta: LATITUD_DELTA,
       longitudeDelta: LONGITUDE_DELTA,
     }}

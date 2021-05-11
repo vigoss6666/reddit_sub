@@ -536,7 +536,7 @@ onChangeItem={namer => addAge(item, namer)}
                       {nameComputer(item, 'location')}
                       <Text style = {{fontSize:10,fontStyle:'italic', maxWidth:200,marginTop:5}}>{item.subLocality} {item.subLocality ? ",":null} {item.state}</Text>
                       </View>
-                      <TouchableOpacity onPress = {() => addPhoto(item)}>
+                      <TouchableOpacity onPress = {() => navigation.navigate('FriendsLocation', {client:item})}>
                       <Text style = {{fontWeight:'bold'}}>Change Location</Text>
                       </TouchableOpacity>
 
