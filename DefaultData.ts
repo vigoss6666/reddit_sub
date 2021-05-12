@@ -110,8 +110,6 @@ export const defaultDataObject:database = {
  job:"", 
  lastMessage:[], 
  lastName:"", 
- latitude:0, 
- longitude:0, 
  matchMaker:"", 
  matchMakers:[], 
  maxAge:0, 

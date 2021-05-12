@@ -46,15 +46,14 @@ const ContactsLocationLatest = ({navigation, route}) => {
      const marker1 = Array.from(markers);  
      const batch = db.batch(); 
      const lamer = firebase.functions().httpsCallable('batman');
-     await Promise.all(marker1.map(async val => {
+     await Promise.all(markers.map(async val => {
           const result = await lamer({lat:val.latlng.latitude, lon:val.latlng.longitude });
           const ref = db.collection('user').doc(val.client.phoneNumber); 
           batch.set(ref, {latitude:val.latlng.latitude, longitude:val.latlng.longitude,state:result.data.state, subLocality:result.data.sublocality}, {merge:true}); 
      }))
 
-     batch.commit().then(() => {
-       handleInit()
-     })
+     await batch.commit()
+     handleInit()
   }
 
 
@@ -80,12 +79,10 @@ const handleInit = async () => {
    const ref = db.collection('user').doc(val.phoneNumber); 
    await batch.set(ref, {...friendInit})  
   }))
-  batch.commit().then(async () => {
-    navigation.navigate('Homer')
+  await batch.commit()
     // setUser(user);
     // await AsyncStorage.setItem('user', userId);  
-    
-  })
+    // navigation.navigate('Homer')
 
  }
 

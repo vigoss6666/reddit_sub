@@ -88,14 +88,14 @@ setProfilesAuth(data);
 })
 
 useEffect(() => {
-   profileAuth.map(val => {
+   profileAuth !== undefined ? profileAuth.map(val => {
        if(val.gender == undefined){
           checkGate(true); 
           return; 
       }
       checkGate(false); 
       
-  })    
+  }):null    
 }, [profileAuth])
 
 
@@ -126,7 +126,7 @@ const _sendToServer = () => {
     </View>
     <View style = {{flex:0.6}}>
     <ScrollView>
-              {profileAuth.map((val,index) => {
+              {profileAuth !== undefined ? profileAuth.map((val,index) => {
                 return (
                   <View key={index} 
                   style = {{borderWidth:1, height:50,flexDirection:"row",  justifyContent:'space-between', marginLeft:20, marginRight:20, borderLeftWidth:0, borderRightWidth:0,}}
@@ -148,7 +148,7 @@ const _sendToServer = () => {
                       </View>
                   </View>
                 )
-              })}
+              }):null}
             </ScrollView> 
     </View>
     <View style = {{flex:0.2, justifyContent:'center',marginTop:10 }}>
