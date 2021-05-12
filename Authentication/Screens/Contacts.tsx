@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Contacts({navigation,route}){
   
 const myContext = useContext(AppContext); 
-const { userId,defaultDataObject,setUser} = myContext;
+const { userId,defaultDataObject,setUser,computeName} = myContext;
 const db = firebase.firestore(); 
 const [indexer,setIndexer] = useState([]); 
 const [isSelected, setSelection] = useState(false);
@@ -61,7 +61,7 @@ const sendToServer = async () => {
    
    db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', indexer).get().then(async onResult => {
      const result = onResult.docs.map(val => val.data());
-     const filterByApp = result.filter(val => val.appUser == false);
+     const filterByApp = result.filter(val => !val.appUser);
      const filterBySetter = filterByApp.filter(val => val.latitude == 0);
      if(filterBySetter.length < 1){
       const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
@@ -95,15 +95,7 @@ const addArray = (phoneNumber:string) => {
 }
 
 
- const computeName = (obj) => {
-      if(obj.name){
-         return obj.name
-      }
-      if(obj.firstName && obj.lastName){
-         return obj.firstName+obj.lastName
-      }
-      return obj.firstName
- }
+ 
 
 
     

@@ -14,22 +14,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const db = firebase.firestore(); 
 
 interface ContactsPhotosProps {}
-const computeName = (obj) => {
-    if(obj.name){
-       return obj.name
-    }
-    if(obj.firstName && obj.lastName){
-       return obj.firstName+obj.lastName
-    }
-    return obj.firstName
- }
+
 
 const ContactsPhotos = ({navigation}) => {
   const [profiles, setProfiles] = useState([{firstName:"zaid"}]);   
   const myContext = useContext(AppContext); 
-  const { userId, setCurrentUser,setUser,defaultDataObject,firebase} = myContext;
+  const { userId, setCurrentUser,setUser,defaultDataObject,firebase,profileAuth,setProfilesAuth,computeName} = myContext;
   const [gate, checkGate] = useState(true); 
   const [user,setUser1] = useState({}); 
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft:false
+    })
+  }, [])
     
 
     useEffect(() => {
@@ -37,26 +35,26 @@ const ContactsPhotos = ({navigation}) => {
           setUser1(onDoc.data())
       })
     }, [])
-  useEffect(() => {
+//   useEffect(() => {
     
-    async function namer(){
+//     async function namer(){
       
-     const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
-     const users = onResult.docs.map(val => val.data());
+//      const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
+//      const users = onResult.docs.map(val => val.data());
      
-     const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
-     const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
-     const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker];
+//      const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
+//      const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
+//      const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker];
      
-     setProfiles([...profilesWithMatchMaker]); 
+//      setProfiles([...profilesWithMatchMaker]); 
  
-    }
-    if(Object.keys(user).length){
-      namer()
-  }
+//     }
+//     if(Object.keys(user).length){
+//       namer()
+//   }
     
     
- }, [user])
+//  }, [user])
 
  const handleInit = () => {
   const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
@@ -97,10 +95,10 @@ const ContactsPhotos = ({navigation}) => {
         const ref = firebase.storage().ref().child("images/"+ namer); 
         await ref.put(blob)
         const result1 = await ref.getDownloadURL();
-        const cloner = profiles.concat();  
+        const cloner = profileAuth.concat();  
         const objIndex = cloner.findIndex(val => val.phoneNumber == obj.phoneNumber);
         cloner[objIndex].profilePic = result1;  
-        setProfiles(cloner); 
+        setProfilesAuth(cloner); 
         const serverObject = {
         profilePic:result1   
         }
@@ -116,12 +114,12 @@ const ContactsPhotos = ({navigation}) => {
     </View>
     <View style = {{flex:0.1}}>
     <Text h4 style = {{alignSelf:'center', fontWeight:"600"}}>Tell us about your friends</Text>
-    <Text h5 style = {{alignSelf:'center', fontWeight:"600"}}>Add a photo for each friend</Text>
+    <Text h5 style = {{alignSelf:'center', fontWeight:"600"}}>Add a photo for each friend (optional)</Text>
    
     </View>
     <View style = {{flex:0.6}}>
     <ScrollView>
-              {profiles.map((val,index) => {
+              {profileAuth.map((val,index) => {
                 return (
                   <View key={index} 
                   style = {{borderWidth:1, height:50,flexDirection:"row",  justifyContent:'space-between', marginLeft:20, marginRight:20, borderLeftWidth:0, borderRightWidth:0,}}
@@ -141,7 +139,7 @@ const ContactsPhotos = ({navigation}) => {
             </ScrollView> 
     </View>
     <View style = {{flex:0.2, justifyContent:'center',marginTop:10 }}>
-    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {handleInit()}}></Button>   
+    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {navigation.navigate('ContactsLocationLatest')}}></Button>   
 
     </View>
     </View>

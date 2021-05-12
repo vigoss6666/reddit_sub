@@ -26,6 +26,7 @@ import AppContext from '../../AppContext';
 import { Modal } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import * as Notifications from 'expo-notifications';
+import * as Progress from 'react-native-progress';
 // @refresh reset
 export function getBaseLog(x, y) {
   const result = Math.log(y) / Math.log(x);
@@ -784,6 +785,10 @@ export function ClientHeader({client, style}) {
    if(keysSorted.length >= 3){
     return (
       <View style = {style}>
+       <View style = {{marginTop:10,marginLeft:10}}>
+       <Progress.Bar progress={client.matchMakers.length*0.1} width={100} />
+       
+        </View> 
       <View style = {{ justifyContent:'center', alignItems:'center', marginTop:30}}>
       <Text style = {{fontWeight:'bold',fontSize:30}}> {client.matchMakers.length} people said  </Text>
       <Text style = {{fontWeight:'bold', fontSize:40, fontStyle:'italic', maxWidth:250, maxHeight:50}} numberOfLines = {1}>{computeName(client)}</Text>

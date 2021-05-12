@@ -53,7 +53,7 @@ useEffect(() => {
          
          const finalTransformed = users.map((val, index) => ( {...val, zIndex:index}));
          finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
-         const filterByApp = finalTransformed.filter(val => val.appUser == false);
+         const filterByApp = finalTransformed.filter(val => !val.appUser );
          const filterBySetter = filterByApp.filter(val => val.latitude == 0);
          setProfilesAuth(filterBySetter) 
          setProfiles(filterBySetter); 
@@ -207,7 +207,7 @@ useEffect(() => {
         </ScrollView>        
         </View>
         <View style = {{flex:0.2, justifyContent:'center',marginTop:10}}>
-         <Button title = "Save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {updateToServer(), navigation.navigate('ContactsSex')}} disabled = {gate}></Button>   
+         <Button title = "Save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {updateToServer(), navigation.navigate('ContactsSex')}} disabled = {false}></Button>   
         </View>
         </SafeAreaView>
         )    

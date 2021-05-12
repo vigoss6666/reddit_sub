@@ -5,6 +5,7 @@ import AppContext from '../../AppContext';
 import {updateUser} from '../../networking';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MapView, { Marker } from 'react-native-maps';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // @refresh reset 
 import {MaterialIcons} from '@expo/vector-icons'; 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -16,8 +17,9 @@ interface ContactsLocationLatestProps {}
 const ContactsLocationLatest = ({navigation, route}) => {
   const [sliderState, setSliderState] = useState({ currentPage: 1 });
   const myContext = useContext(AppContext); 
-  const {profileAuth, userId,computeName,CustomBackComponent} = myContext;
-
+  const {profileAuth, userId,computeName,CustomBackComponent,setUser,defaultDataObject,setProfilesAuth} = myContext;
+  console.log("profileAuth is")
+  console.log(profileAuth)
   const [flatListChanged, setFlatListChanged] = useState(1)
   const [profiles, setProfiles] = useState([]);  
   const insets = useSafeAreaInsets();
@@ -25,12 +27,18 @@ const ContactsLocationLatest = ({navigation, route}) => {
   const [markers, setMarkers] = useState([]);  
   const [location, setLocation] = useState({}); 
   const [gate, setGate] = useState(true); 
+  const [user,setUser1] = useState({}); 
 
   useEffect(() => {
     navigation.setOptions({
       headerTitle:false, 
       headerLeft:() => <CustomBackComponent navigation = {navigation}/>
       
+    })
+  }, [])
+  useEffect(() => {
+    db.collection('user').doc(userId).get().then(onDoc => {
+        setUser1(onDoc.data())
     })
   }, [])
   
@@ -40,22 +48,51 @@ const ContactsLocationLatest = ({navigation, route}) => {
      const lamer = firebase.functions().httpsCallable('batman');
      await Promise.all(marker1.map(async val => {
           const result = await lamer({lat:val.latlng.latitude, lon:val.latlng.longitude });
-          const ref = db.collection('user').doc(val.client); 
+          const ref = db.collection('user').doc(val.client.phoneNumber); 
           batch.set(ref, {latitude:val.latlng.latitude, longitude:val.latlng.longitude,state:result.data.state, subLocality:result.data.sublocality}, {merge:true}); 
      }))
-     batch.commit().then(console.log("documents have been updated"))
+
+     batch.commit().then(() => {
+       handleInit()
+     })
   }
 
 
 const handleMarker = (marker) => {
+     console.log(marker) 
+    const copy = markers.concat(); 
+    const index = copy.findIndex(val => val.client.phoneNumber == marker.client.phoneNumber); 
+    if(index !== -1){
+      copy[index] = marker; 
+      setMarkers(copy); 
+      return; 
+    } 
     setMarkers([...markers, marker])
     
 }
+const handleInit = async () => {
+  const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
+  db.collection('user').doc(userId).set(userInit,{merge:true});
+  const batch = db.batch(); 
+  console.log(profileAuth)
+  await Promise.all(profileAuth.map(async val => {
+   const friendInit = Object.assign({}, {...defaultDataObject}, {...val}) 
+   const ref = db.collection('user').doc(val.phoneNumber); 
+   await batch.set(ref, {...friendInit})  
+  }))
+  batch.commit().then(async () => {
+    navigation.navigate('Homer')
+    // setUser(user);
+    // await AsyncStorage.setItem('user', userId);  
+    
+  })
+
+ }
 
 
   useEffect(() => {
     if(profileAuth.length > 0){
-    const filter = markers.map(val => val.client); 
+    const filter = markers.map(val => val.client.phoneNumber); 
     
     
     if(markers.length < 1){
@@ -120,7 +157,7 @@ const handleMarker = (marker) => {
     }
   };
   
-  const sliderTemplate = profileAuth.map(val => (
+  const sliderTemplate = profileAuth !== undefined ? profileAuth.map(val => (
     <View style={{ width,  height,}} key = {val.phoneNumber}>
     <View style = {{ alignItems:"center",marginBottom:10}}>
     
@@ -136,7 +173,7 @@ const handleMarker = (marker) => {
      style = {{width: Dimensions.get('window').width,
      height: Dimensions.get('window').height, }} 
      mapType = "standard"
-     onPress={(e) => handleMarker({latlng: e.nativeEvent.coordinate, client:profileAuth[sliderState.currentPage].phoneNumber })}
+     onPress={(e) => handleMarker({latlng: e.nativeEvent.coordinate, client:profileAuth[sliderState.currentPage] })}
      
      region={{
       latitude: x.latitude,
@@ -148,7 +185,10 @@ const handleMarker = (marker) => {
   
      
         {/* {markers.length > 0 ?  <Marker  coordinate = {markers[0].latlng}></Marker>:null } */}
-        {markers.map(val => <Marker coordinate = {val.latlng}/>)}
+        {markers.map(val => <Marker coordinate = {val.latlng}>
+          
+          {val.client.profilePic ? <Image source={{uri:val.client.profilePic}} style={{ height: 40, width:40, borderRadius:20 }} />:<MaterialIcons name = "account-circle" size = {40} color = "black"/>}
+        </Marker>)}
      
   
         <GooglePlacesAutocomplete
@@ -180,7 +220,7 @@ const handleMarker = (marker) => {
     </MapView>
   
     </View>
-))
+)):null
   return (
       <View style = {{flex:1, paddingBottom:insets.bottom}}>
       <ScrollView

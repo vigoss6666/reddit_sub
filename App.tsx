@@ -155,7 +155,7 @@ export default function App() {
   //   AsyncStorage.setItem('user', '')
   // }, [])
   console.disableYellowBox = true;
-  const [profileAuth, setProfilesAuth] = useState([]); 
+  const [profileAuth, setProfilesAuth] = useState([{name:"zaid shaikh", phoneNumber:'+917208110384'}]); 
   const [xClient, setXClient] = useState({latitude:null, longitude:null});
   const [contactLocation, setContactLocation] = useState({state:null, subLocality:null})
   const [expoPushToken, setExpoPushToken] = useState('');
