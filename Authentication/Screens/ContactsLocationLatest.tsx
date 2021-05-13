@@ -17,9 +17,9 @@ interface ContactsLocationLatestProps {}
 const ContactsLocationLatest = ({navigation, route}) => {
   const [sliderState, setSliderState] = useState({ currentPage: 1 });
   const myContext = useContext(AppContext); 
-  const {profileAuth, userId,computeName,CustomBackComponent,setUser,defaultDataObject,setProfilesAuth} = myContext;
-  console.log("profileAuth is")
-  console.log(profileAuth)
+  const { userId,computeName,CustomBackComponent,setUser,defaultDataObject,setProfilesAuth} = myContext;
+  
+  
   const [flatListChanged, setFlatListChanged] = useState(1)
   const [profiles, setProfiles] = useState([]);  
   const insets = useSafeAreaInsets();
@@ -28,6 +28,33 @@ const ContactsLocationLatest = ({navigation, route}) => {
   const [location, setLocation] = useState({}); 
   const [gate, setGate] = useState(true); 
   const [user,setUser1] = useState({}); 
+   
+  useEffect(() => {
+    db.collection('user').doc(userId).get().then(onDoc => {
+        setUser1(onDoc.data())
+    })
+  }, [])
+
+
+  useEffect(() => {
+    async function namer(){
+     const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
+     const users = onResult.docs.map(val => val.data()); 
+     
+     const finalTransformed = users.map((val, index) => ( {...val, zIndex:index}));
+     finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
+     const filterByApp = finalTransformed.filter(val => !val.appUser );
+     const filterBySetter = filterByApp.filter(val => val.latitude == 0);
+     
+     setProfiles(filterBySetter); 
+ 
+    }
+    if(Object.keys(user).length){
+        namer()
+    }
+    
+    
+ }, [user])
 
   useEffect(() => {
     navigation.setOptions({
@@ -36,11 +63,7 @@ const ContactsLocationLatest = ({navigation, route}) => {
       
     })
   }, [])
-  useEffect(() => {
-    db.collection('user').doc(userId).get().then(onDoc => {
-        setUser1(onDoc.data())
-    })
-  }, [])
+  
   
   const handleServerLocation = async () => {
      const marker1 = Array.from(markers);  
@@ -52,8 +75,8 @@ const ContactsLocationLatest = ({navigation, route}) => {
           batch.set(ref, {latitude:val.latlng.latitude, longitude:val.latlng.longitude,state:result.data.state, subLocality:result.data.sublocality}, {merge:true}); 
      }))
 
-     await batch.commit()
-     handleInit()
+     batch.commit().then()
+     
   }
 
 
@@ -73,22 +96,26 @@ const handleInit = async () => {
   const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
   db.collection('user').doc(userId).set(userInit,{merge:true});
   const batch = db.batch(); 
-  console.log(profileAuth)
-  await Promise.all(profileAuth.map(async val => {
+  
+  await Promise.all(profiles.map(async val => {
    const friendInit = Object.assign({}, {...defaultDataObject}, {...val}) 
    const ref = db.collection('user').doc(val.phoneNumber); 
-   await batch.set(ref, {...friendInit})  
+    batch.update(ref, {...friendInit})  
   }))
-  await batch.commit()
-    // setUser(user);
-    // await AsyncStorage.setItem('user', userId);  
-    // navigation.navigate('Homer')
+   batch.commit().then(async() => {
+    await AsyncStorage.setItem('user', userId);  
+
+    setUser(user);
+    
+   })
+    
+    //navigation.navigate('Homer')
 
  }
 
 
   useEffect(() => {
-    if(profileAuth.length > 0){
+    if(profiles.length > 0){
     const filter = markers.map(val => val.client.phoneNumber); 
     
     
@@ -96,7 +123,7 @@ const handleInit = async () => {
         setGate(true); 
         return; 
     }
-    var filtered = profileAuth.filter(
+    var filtered = profiles.filter(
         function(e) {
           return this.indexOf(e.phoneNumber) < 0;
         },
@@ -154,7 +181,7 @@ const handleInit = async () => {
     }
   };
   
-  const sliderTemplate = profileAuth !== undefined ? profileAuth.map(val => (
+  const sliderTemplate = profiles !== undefined ? profiles.map(val => (
     <View style={{ width,  height,}} key = {val.phoneNumber}>
     <View style = {{ alignItems:"center",marginBottom:10}}>
     
@@ -170,7 +197,7 @@ const handleInit = async () => {
      style = {{width: Dimensions.get('window').width,
      height: Dimensions.get('window').height, }} 
      mapType = "standard"
-     onPress={(e) => handleMarker({latlng: e.nativeEvent.coordinate, client:profileAuth[sliderState.currentPage] })}
+     onPress={(e) => handleMarker({latlng: e.nativeEvent.coordinate, client:profiles[sliderState.currentPage] })}
      
      region={{
       latitude: x.latitude,

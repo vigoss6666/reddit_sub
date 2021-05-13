@@ -151,9 +151,9 @@ const computeName = (obj) => {
 
 export default function App() {
 
-  // useEffect(() => {
-  //   AsyncStorage.setItem('user', '')
-  // }, [])
+  useEffect(() => {
+    AsyncStorage.setItem('user', '')
+  }, [])
   console.disableYellowBox = true;
   const [profileAuth, setProfilesAuth] = useState([{name:"zaid shaikh", phoneNumber:'+917208110384'}]); 
   const [xClient, setXClient] = useState({latitude:null, longitude:null});
@@ -436,7 +436,7 @@ const mainHome = () => {
           <Stack.Screen name="ContactsSex" component={ContactsSex} options = {{headerTitle:false, headerLeft:false}}/>
           <Stack.Screen name="ContactsAge" component={ContactsAge} options = {{headerTitle:false, headerLeft:false}}/>
           <Stack.Screen name="ContactsLocation" component={ContactsLocation} options = {{headerTitle:false, headerLeft:false}}/>
-          <Stack.Screen name="ContactsPhotos" component={ContactsPhotos} options = {{headerTitle:false, headerLeft:false}}/>
+          {/* <Stack.Screen name="ContactsPhotos" component={ContactsPhotos} options = {{headerTitle:false, headerLeft:false}}/> */}
           <Stack.Screen name="Contacts" component={Contacts} options = {{headerTitle:false, headerLeft:false}}/>
           <Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess} options = {{headerTitle:false, headerLeft:false}}/>
           <Stack.Screen name="NewContact" component={NewContact}/>

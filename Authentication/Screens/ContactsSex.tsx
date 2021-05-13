@@ -120,7 +120,7 @@ const _sendToServer = () => {
     
     </View>
     <View style = {{flex:0.1}}>
-    <Text h4 style = {{alignSelf:'center', fontWeight:"600"}}>Tell us about your friends</Text>
+    <Text h4 style = {{alignSelf:'center', fontWeight:"600"}}>Tel us about your friends</Text>
     <Text h5 style = {{alignSelf:'center', fontWeight:"600"}}>Confirm the sex and age of each friend</Text>
    
     </View>
