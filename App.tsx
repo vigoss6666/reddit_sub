@@ -151,9 +151,10 @@ const computeName = (obj) => {
 
 export default function App() {
 
-  useEffect(() => {
-    AsyncStorage.setItem('user', '')
-  }, [])
+  // useEffect(() => {
+  //   AsyncStorage.setItem('user', '')
+    
+  // }, [])
   console.disableYellowBox = true;
   const [profileAuth, setProfilesAuth] = useState([{name:"zaid shaikh", phoneNumber:'+917208110384'}]); 
   const [xClient, setXClient] = useState({latitude:null, longitude:null});
@@ -250,7 +251,7 @@ if(!Object.keys(user).length){
     return () => subscribe();  
     
     
- },[_id])
+ },[])
 
 
 useEffect(() => {

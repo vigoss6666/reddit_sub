@@ -62,7 +62,7 @@ const sendToServer = async () => {
    db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', indexer).get().then(async onResult => {
      const result = onResult.docs.map(val => val.data());
      const filterByApp = result.filter(val => !val.appUser);
-     const filterBySetter = filterByApp.filter(val => val.latitude == 0);
+     const filterBySetter = filterByApp.filter(val => !val.latitude);
      if(filterBySetter.length < 1){
       const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
       db.collection('user').doc(userId).set(userInit, {merge:true});

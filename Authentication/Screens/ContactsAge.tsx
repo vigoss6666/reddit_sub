@@ -54,7 +54,7 @@ useEffect(() => {
          const finalTransformed = users.map((val, index) => ( {...val, zIndex:index}));
          finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
          const filterByApp = finalTransformed.filter(val => !val.appUser );
-         const filterBySetter = filterByApp.filter(val => val.latitude == 0);
+         const filterBySetter = filterByApp.filter(val => !val.latitude );
          setProfilesAuth(filterBySetter) 
          setProfiles(filterBySetter); 
      

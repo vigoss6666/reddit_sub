@@ -10,6 +10,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MaterialIcons} from '@expo/vector-icons'; 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import {Button} from 'react-native-elements'; 
+import {addUsers} from '../../networking'; 
+import {NavigationAction} from '@react-navigation/native'; 
 const db = firebase.firestore(); 
 
 interface ContactsLocationLatestProps {}
@@ -18,6 +20,7 @@ const ContactsLocationLatest = ({navigation, route}) => {
   const [sliderState, setSliderState] = useState({ currentPage: 1 });
   const myContext = useContext(AppContext); 
   const { userId,computeName,CustomBackComponent,setUser,defaultDataObject,setProfilesAuth} = myContext;
+  const [finalUser, setFinalUser] = useState({}); 
   
   
   const [flatListChanged, setFlatListChanged] = useState(1)
@@ -28,10 +31,13 @@ const ContactsLocationLatest = ({navigation, route}) => {
   const [location, setLocation] = useState({}); 
   const [gate, setGate] = useState(true); 
   const [user,setUser1] = useState({}); 
+  
    
   useEffect(() => {
     db.collection('user').doc(userId).get().then(onDoc => {
         setUser1(onDoc.data())
+        
+        
     })
   }, [])
 
@@ -44,7 +50,7 @@ const ContactsLocationLatest = ({navigation, route}) => {
      const finalTransformed = users.map((val, index) => ( {...val, zIndex:index}));
      finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
      const filterByApp = finalTransformed.filter(val => !val.appUser );
-     const filterBySetter = filterByApp.filter(val => val.latitude == 0);
+     const filterBySetter = filterByApp.filter(val => !val.latitude);
      
      setProfiles(filterBySetter); 
  
@@ -56,32 +62,42 @@ const ContactsLocationLatest = ({navigation, route}) => {
     
  }, [user])
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerTitle:false, 
-      headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+  // useEffect(() => {
+  //   navigation.setOptions({
+  //     headerTitle:false, 
+  //     headerLeft:() => <CustomBackComponent navigation = {navigation}/>
       
-    })
-  }, [])
+  //   })
+  // }, [])
   
   
   const handleServerLocation = async () => {
      const marker1 = Array.from(markers);  
      const batch = db.batch(); 
+     const copy = profiles.concat()
      const lamer = firebase.functions().httpsCallable('batman');
      await Promise.all(markers.map(async val => {
+          
+          const index = copy.findIndex(val1 => val1.phoneNumber == val.client.phoneNumber); 
           const result = await lamer({lat:val.latlng.latitude, lon:val.latlng.longitude });
+          copy[index].latitude = val.latlng.latitude;  
+          copy[index].longitude = val.latlng.longitude;
+          copy[index].state = result.data.state; 
+          copy[index].subLocality = result.data.sublocality;
+          
+
+          
           const ref = db.collection('user').doc(val.client.phoneNumber); 
           batch.set(ref, {latitude:val.latlng.latitude, longitude:val.latlng.longitude,state:result.data.state, subLocality:result.data.sublocality}, {merge:true}); 
      }))
-
-     batch.commit().then()
+     setProfiles(copy); 
+     batch.commit().then(() => handleInit())
      
   }
 
 
 const handleMarker = (marker) => {
-     console.log(marker) 
+      
     const copy = markers.concat(); 
     const index = copy.findIndex(val => val.client.phoneNumber == marker.client.phoneNumber); 
     if(index !== -1){
@@ -95,21 +111,10 @@ const handleMarker = (marker) => {
 const handleInit = async () => {
   const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
   db.collection('user').doc(userId).set(userInit,{merge:true});
-  const batch = db.batch(); 
-  
-  await Promise.all(profiles.map(async val => {
-   const friendInit = Object.assign({}, {...defaultDataObject}, {...val}) 
-   const ref = db.collection('user').doc(val.phoneNumber); 
-    batch.update(ref, {...friendInit})  
-  }))
-   batch.commit().then(async() => {
-    await AsyncStorage.setItem('user', userId);  
-
-    setUser(user);
-    
-   })
-    
-    //navigation.navigate('Homer')
+  setFinalUser(userInit)
+  await addUsers(profiles, userId);
+  navigation.reset({index:0, routes:[{name:"Homer"}]})
+  setUser(userInit) 
 
  }
 

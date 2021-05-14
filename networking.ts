@@ -4,6 +4,8 @@ import ApolloClient, { gql, InMemoryCache } from 'apollo-boost';
 import {firebase} from './config'; 
 import { Foundation } from '@expo/vector-icons';
 import { merge } from 'src/common/helper';
+import { isArray } from 'underscore';
+import {defaultDataObject} from './DefaultData'; 
 
 
 
@@ -517,6 +519,21 @@ export function computePoints(points){
   return 0; 
   
 
+}
+
+
+export async function addUsers(user,matchMaker){
+  const db = firebase.firestore(); 
+  const batch = db.batch(); 
+  if(Array.isArray(user)){
+    await Promise.all(user.map(async val => {
+      const friendInit = Object.assign({}, {...defaultDataObject},{...val}) 
+      
+       const ref = db.collection('user').doc(val.phoneNumber); 
+       batch.set(ref, {...friendInit, matchMakers:firebase.firestore.FieldValue.arrayUnion(matchMaker)})  
+     }))
+     await batch.commit()
+  }
 }
 
 
