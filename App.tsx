@@ -251,7 +251,7 @@ if(!Object.keys(user).length){
     return () => subscribe();  
     
     
- },[])
+ },[_id])
 
 
 useEffect(() => {
@@ -281,6 +281,8 @@ function stringifyNumber(n) {
 
 
   const tempObject = {
+    _id,
+    setId,
     profileAuth, 
     setProfilesAuth,
     userId:tempId, 

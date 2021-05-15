@@ -62,13 +62,13 @@ const ContactsLocationLatest = ({navigation, route}) => {
     
  }, [user])
 
-  // useEffect(() => {
-  //   navigation.setOptions({
-  //     headerTitle:false, 
-  //     headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle:false, 
+      headerLeft:() => <CustomBackComponent navigation = {navigation}/>
       
-  //   })
-  // }, [])
+    })
+  }, [])
   
   
   const handleServerLocation = async () => {
@@ -113,8 +113,10 @@ const handleInit = async () => {
   db.collection('user').doc(userId).set(userInit,{merge:true});
   setFinalUser(userInit)
   await addUsers(profiles, userId);
+  setUser(userInit)
   navigation.reset({index:0, routes:[{name:"Homer"}]})
-  setUser(userInit) 
+  AsyncStorage.setItem('user', userInit.phoneNumber)
+   
 
  }
 

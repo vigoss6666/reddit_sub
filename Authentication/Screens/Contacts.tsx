@@ -5,15 +5,16 @@ import { Divider,Header,Text, SearchBar,Avatar,Icon,Button,CheckBox} from 'react
 import { createFilter } from 'react-native-search-filter';
 import { firebase } from '../../config'; 
 import AppContext from '../../AppContext'; 
-import {updateUser} from '../../networking';  
+import {updateUser,filterGamer} from '../../networking';  
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { filter } from 'underscore';
 
 
 export default function Contacts({navigation,route}){
   
 const myContext = useContext(AppContext); 
-const { userId,defaultDataObject,setUser,computeName} = myContext;
+const { userId,defaultDataObject,setUser,computeName, setId} = myContext;
 const db = firebase.firestore(); 
 const [indexer,setIndexer] = useState([]); 
 const [isSelected, setSelection] = useState(false);
@@ -67,15 +68,27 @@ const sendToServer = async () => {
       const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
       db.collection('user').doc(userId).set(userInit, {merge:true});
 
+      var filteredIntros = user.contactList.filter(
+        function(e) {
     
+          return this.indexOf(e) < 0;
+        },
+       indexer
+    );
+    
+
+    await updateUser(userId, {contactList:filteredIntros})
     await db.collection('user').doc(userId).set({datingPoolList:indexer}, {merge:true}); 
     await AsyncStorage.setItem('user', userId);  
-    setUser(user);
+    setId(userId);
+    console.log(result); 
     
      return;    
      }
+     
+     updateUser(userId, {contactList:filteredIntros})
      await db.collection('user').doc(userId).set({datingPoolList:indexer}, {merge:true}); 
-     navigation.navigate('ContactsAge') 
+     //navigation.navigate('ContactsAge') 
 
    })
    
