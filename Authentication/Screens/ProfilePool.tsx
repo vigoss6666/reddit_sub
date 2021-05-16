@@ -38,7 +38,7 @@ const computeName = (obj) => {
 
 const useFetchContactPool = (navigation) => {
      const myContext = useContext(AppContext); 
-     const {user, userId, contactList, setContactList, setSingleContact, defaultDataObject} = myContext;
+     const {user, userId, contactList, setContactList, setSingleContact, defaultDataObject, datingFlatList} = myContext;
      const KEYS_TO_FILTERS = ['name'];
      
      const [search, setSearch] = useState('');
@@ -705,7 +705,7 @@ onChangeItem={namer => addAge(item, namer)}
         keyExtractor={(item) => item.phoneNumber}
         contentInset={{  top: 0, left: 0, bottom: 200 }}
 
-        extraData={user.datingPoolList}
+        extraData={datingPoolList}
       />  
                 
              

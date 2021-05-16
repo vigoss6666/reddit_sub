@@ -124,7 +124,7 @@ useEffect(() => {
 navigation.setOptions({
     headerTitle:false,
     headerLeft:false, 
-    headerRight:() => <TouchableOpacity style = {{marginRight:20}} onPress = {() => navigation.goBack()}>
+    headerRight:() => <TouchableOpacity style = {{marginRight:20}} onPress = {() => {setToDefaults(),navigation.goBack()}}>
         <Text style = {{fontWeight:'bold', color:'orange'}}>Cancel</Text>
     </TouchableOpacity> 
 })
@@ -135,6 +135,7 @@ const _sendToServer = async () => {
  const result = await db.collection('user').doc(dialCode+digits).get(); 
  if(result.exists){
      db.collection('user').doc(userId).update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(dialCode+digits)}) 
+     setToDefaults()
      navigation.navigate('Homer') 
      return; 
  }   
@@ -142,7 +143,7 @@ const _sendToServer = async () => {
  const serverObject = {
       
      phoneNumber:dialCode+digits, 
-     name:firstname+lastname, 
+     name:firstname+""+lastname, 
      firstName:firstname,
      lastName:lastname, 
      gender:gender, 
@@ -164,7 +165,7 @@ const _sendToServer = async () => {
    db.collection('user').doc(userId).update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(dialCode+digits)})
    
  
- setToDefaults()
+ await setToDefaults()
  navigation.navigate('Homer')
  
 //  navigation.goBack();       
@@ -188,7 +189,7 @@ const _uploadContact = () => {
 
 }
 const _checkDisable = () => {
-     if(firstname && lastname && digits && gender && age && xClient.latitude && xClient.longitude){
+     if(firstname && lastname && digits && gender && age.maxAge && age.minAge && xClient.latitude && xClient.longitude){
           return false; 
      }
      return true; 
@@ -203,6 +204,7 @@ return (
     
     <FlatList
     data = {flatData}
+    key = {"namer"}
     renderItem = {() => 
    <View style = {{flex:1, }}>
       
@@ -216,12 +218,12 @@ return (
     <View style = {{flexDirection:'row',justifyContent:'space-around',alignItems:'center',marginBottom:30}}>
     <Text style = {{fontWeight:"bold"}}>FIRSTNAME</Text>
     
-    <TextInput style = {{borderWidth:3,width:200, padding:10}} onChangeText = {(text) => setFirstname(text)} autoCorrect = {false} autoCapitalize = {'none'}></TextInput>
+    <TextInput style = {{borderWidth:3,width:200, padding:10}} onChangeText = {(text) => setFirstname(text)} autoCorrect = {false} autoCapitalize = {'words'} value = {firstname} ></TextInput>
     
     </View>
     <View style = {{flexDirection:'row',justifyContent:'space-around',alignItems:'center', marginBottom:30}}>
     <Text style = {{fontWeight:"bold"}}>LASTNAME </Text>
-    <TextInput style = {{borderWidth:3,width:200,padding:10}} onChangeText = {(text) => setLastname(text)} autoCorrect = {false} autoCapitalize = {'none'}></TextInput>
+    <TextInput style = {{borderWidth:3,width:200,padding:10}} onChangeText = {(text) => setLastname(text)} autoCorrect = {false} autoCapitalize = {'words'} value = {lastname}></TextInput>
     </View>
     <View style={{
         borderStyle: 'dotted',
@@ -247,7 +249,7 @@ return (
     
     
     </TouchableOpacity>
-    <TextInput style = {{width:'40%', borderWidth:1, marginRight:20,height:'100%',padding:10}} onChangeText = {(text) => setDigits(text)} keyboardType = {"numeric"}>
+    <TextInput style = {{width:'40%', borderWidth:1, marginRight:20,height:'100%',padding:10}} onChangeText = {(text) => setDigits(text)} keyboardType = {"numeric"} value = {digits}>
     
     </TextInput>
     </View>

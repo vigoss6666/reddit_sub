@@ -27,7 +27,7 @@ export default function NewContactLocation({navigation, route}){
   const {user, userId, setContactLocation, 
     contactLocation, 
     xClient, 
-    setXClient} = myContext; 
+    setXClient, datingFlatList,setDatingFlatlist} = myContext; 
   const [x, setX] = useState({latitude:client.latitude, longitude:client.longitude});
   const [markers, setMarkers] = useState({latlng:{}});  
   const [location, setLocation] = useState({}); 
@@ -45,7 +45,7 @@ export default function NewContactLocation({navigation, route}){
      
      
      db.collection('user').doc(client.phoneNumber).set({latitude:markers.latlng.latitude, longitude:markers.latlng.longitude,state:result.data.state, subLocality:result.data.sublocality}, {merge:true})
-      .then(() => console.log("location added")).then(() => navigation.navigate('Homer'))
+      .then(() => console.log("location added")).then(() => navigation.goBack())
       .catch(() => console.log("location update failed"))
      
   }
@@ -66,7 +66,7 @@ return(
   <Text>
     Select a Location
   </Text>
-  <TouchableOpacity onPress = {() => {handleServerLocation() }}>
+  <TouchableOpacity onPress = {() => {setDatingFlatlist(datingFlatList+1),handleServerLocation() }}>
     <Text style = {{color:'orange', marginRight:10}}>Done</Text>
   </TouchableOpacity>
   

@@ -158,6 +158,7 @@ export default function App() {
   console.disableYellowBox = true;
   const [profileAuth, setProfilesAuth] = useState([{name:"zaid shaikh", phoneNumber:'+917208110384'}]); 
   const [xClient, setXClient] = useState({latitude:null, longitude:null});
+  const [datingFlatList, setDatingFlatlist] = useState(1); 
   const [contactLocation, setContactLocation] = useState({state:null, subLocality:null})
   const [expoPushToken, setExpoPushToken] = useState('');
   const [currentUser, setCurrentUser] = useState(''); 
@@ -302,7 +303,8 @@ function stringifyNumber(n) {
   }
   
   const globalObject = {
-    
+    datingFlatList, 
+    setDatingFlatlist,  
     setContactLocation, 
     contactLocation, 
     xClient, 
