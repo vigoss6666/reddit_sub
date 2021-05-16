@@ -19,7 +19,7 @@ interface ContactsLocationLatestProps {}
 const ContactsLocationLatest = ({navigation, route}) => {
   const [sliderState, setSliderState] = useState({ currentPage: 1 });
   const myContext = useContext(AppContext); 
-  const { userId,computeName,CustomBackComponent,setUser,defaultDataObject,setProfilesAuth} = myContext;
+  const { userId,computeName,CustomBackComponent,setUser,defaultDataObject,setProfilesAuth, setId} = myContext;
   const [finalUser, setFinalUser] = useState({}); 
   
   
@@ -113,9 +113,9 @@ const handleInit = async () => {
   db.collection('user').doc(userId).set(userInit,{merge:true});
   setFinalUser(userInit)
   await addUsers(profiles, userId);
-  setUser(userInit)
+  setId(userId)
   navigation.reset({index:0, routes:[{name:"Homer"}]})
-  AsyncStorage.setItem('user', userInit.phoneNumber)
+  AsyncStorage.setItem('user', userId)
    
 
  }

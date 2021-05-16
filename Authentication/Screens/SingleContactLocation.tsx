@@ -2,10 +2,11 @@ import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { Text, View, StyleSheet,Dimensions, ScrollView, Image } from 'react-native';
 import {firebase} from '../../config'; 
 import AppContext from '../../AppContext'; 
-import {updateUser} from '../../networking';
+import {updateUser,getObjectFromDatabase} from '../../networking';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MapView, { Marker } from 'react-native-maps';
 // @refresh reset 
+import { MaterialIcons } from '@expo/vector-icons';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import {Button} from 'react-native-elements'; 
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -14,9 +15,9 @@ const db = firebase.firestore();
 interface ContactsLocationLatestProps {}
 
 const SingleContactLocation = ({navigation, route}) => {
-  const [sliderState, setSliderState] = useState({ currentPage: 1 });
+  const [sliderState, setSliderState] = useState({ currentPage: 0 });
   const myContext = useContext(AppContext); 
-  const {user, userId, singleContact, CustomBackComponent} = myContext;
+  const {user, userId, singleContact, CustomBackComponent,defaultDataObject,setSingleContact,computeName} = myContext;
 
 
   const [flatListChanged, setFlatListChanged] = useState(1)
@@ -33,23 +34,53 @@ const SingleContactLocation = ({navigation, route}) => {
         headerLeft: () => <CustomBackComponent navigation = {navigation}/>
     })
   }, [])
-  const handleServerLocation = () => {
+  const handleServerLocation = async () => {
      const marker1 = Array.from(markers);  
-     const batch = db.batch(); 
-     marker1.map(val => {
+     const lamer = firebase.functions().httpsCallable('batman');
+     const batch = db.batch();
+     const clientUser = await db.collection('user').doc(singleContact.phoneNumber).get();  
+     await Promise.all(marker1.map(async val => {
+          const result = await lamer({lat:val.latlng.latitude, lon:val.latlng.longitude });
+          //setSingleContact(Object.assign({}, {...clientUser.data()}, {latitude:val.latlng.latitude, longitude:val.latlng.longitude, state:result.data.state, subLocality:result.data.sublocality})); 
+          const obj = Object.assign({}, defaultDataObject, clientUser.data(),{latitude:val.latlng.latitude, longitude:val.latlng.longitude,state:result.data.state, subLocality:result.data.sublocality})
+          console.log("objecter"); 
+          console.log(obj)
           const ref = db.collection('user').doc(val.client); 
-          batch.set(ref, {latitude:val.latlng.latitude, longitude:val.latlng.longitude}, {merge:true}); 
+          batch.set(ref, {...obj, matchMakers:firebase.firestore.FieldValue.arrayUnion(userId)}); 
+     }))
+     await batch.commit()
+     db.collection('user').doc(userId).update({contactList:firebase.firestore.FieldValue.arrayRemove(singleContact.phoneNumber)});
+     db.collection('user').doc(userId).update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(singleContact.phoneNumber)}).then(() => {
+       navigation.navigate('Homer');   
      })
-     batch.commit().then(console.log("documents have been updated"))
-  }
-console.log("markers is")  
 
-const handleMarker = (marker) => {
+     
+  }
+
+const updateToServer = async () => {
+     const getUser = await db.collection('user').doc(singleContact.phoneNumber).get();  
+     const user = Object.assign({},{...defaultDataObject}, {...getUser.data()})
+     db.collection('user').doc(singleContact.phoneNumber).set({...user, matchMakers:firebase.firestore.FieldValue.arrayUnion(userId)}, {merge:true}).then(() => {
+     db.collection('user').doc(userId).update({contactList:firebase.firestore.FieldValue.arrayRemove(singleContact.phoneNumber)});
+     db.collection('user').doc(userId).update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(singleContact.phoneNumber)}).then(() => {
+       navigation.navigate('Homer');   
+     })
+     }) 
+  }
+  const handleMarker = (marker) => {
+      
+    const copy = markers.concat(); 
+    const index = copy.findIndex(val => val.client == marker.client); 
+    if(index !== -1){
+      copy[index] = marker; 
+      setMarkers(copy); 
+      return; 
+    } 
     setMarkers([...markers, marker])
     
 }
 
-console.log(markers)
+
   useEffect(() => {
     if(profiles.length > 0){
     const filter = markers.map(val => val.client); 
@@ -113,15 +144,7 @@ console.log(markers)
       });
     }
   };
-  const computeName = (obj) => {
-    if(obj.name){
-       return obj.name
-    }
-    if(obj.firstName && obj.lastName){
-       return obj.firstName+obj.lastName
-    }
-    return obj.firstName
- }
+  
   const sliderTemplate = profiles.map(val => (
     <View style={{ width,  height,}} key = {val._id}>
     <View style = {{ alignItems:"center",marginBottom:10}}>
@@ -187,7 +210,7 @@ console.log(markers)
       <View style = {{flex:1, paddingBottom:insets.bottom}}>
       <ScrollView
       keyboardShouldPersistTaps = {'always'}
-contentOffset = {{x:414, y:0}}
+
 style = {{flex:1, paddingTop:insets.top }} 
 horizontal = {true}
 pagingEnabled = {true}
@@ -198,8 +221,9 @@ onScroll={(event: any) => {
 >
 {sliderTemplate}
 </ScrollView>
+
 <View style = {{marginTop:40, marginLeft:30, marginRight:30 }}>
-<Button title = {"Done"} disabled = {gate} onPress = {() => {handleServerLocation(), navigation.navigate('SingleContactGender')}} />
+<Button title = {"Done"} disabled = {gate} onPress = {() => handleServerLocation()} />
 </View>
 </View>
 

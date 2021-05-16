@@ -76,8 +76,8 @@ const sendToServer = async () => {
        indexer
     );
     
-
-    await updateUser(userId, {contactList:filteredIntros})
+          
+    updateUser(userId, {contactList:filteredIntros})
     await db.collection('user').doc(userId).set({datingPoolList:indexer}, {merge:true}); 
     await AsyncStorage.setItem('user', userId);  
     setId(userId);
@@ -85,10 +85,17 @@ const sendToServer = async () => {
     
      return;    
      }
+     var filteredIntros = user.contactList.filter(
+      function(e) {
+  
+        return this.indexOf(e) < 0;
+      },
+     indexer
+  );
      
      updateUser(userId, {contactList:filteredIntros})
      await db.collection('user').doc(userId).set({datingPoolList:indexer}, {merge:true}); 
-     //navigation.navigate('ContactsAge') 
+     navigation.navigate('ContactsAge') 
 
    })
    

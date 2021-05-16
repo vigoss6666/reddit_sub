@@ -29,7 +29,8 @@ export default function NewContactLocation({navigation}){
     setXClient} = myContext; 
   
   const [markers, setMarkers] = useState({latlng:{}});  
-  const [location, setLocation] = useState({}); 
+  const [location, setLocation] = useState({});
+  const [x, setX] = useState({latitude:37.768865, longitude:-122.475338}); 
   
   console.log("gamer is")
   
@@ -77,8 +78,8 @@ return(
      mapType = "standard"
      onPress={(e) => setMarkers({ latlng: e.nativeEvent.coordinate })}
      region={{
-      latitude:39.72806655640531 ,
-      longitude: -121.83803400265697,
+      latitude:x.latitude,
+      longitude: x.longitude,
       latitudeDelta: LATITUD_DELTA,
       longitudeDelta: LONGITUDE_DELTA,
     }}

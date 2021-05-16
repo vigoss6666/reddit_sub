@@ -16,7 +16,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 export default function SingleContactGender({navigation,route}){
 const myContext = useContext(AppContext); 
-const {user, userId, singleContact, CustomBackComponent} = myContext;   
+const {user, userId, singleContact, CustomBackComponent,computeName} = myContext;   
 const data1 = [{fullname:"Zaid shaikh", identification:'something',gender:'male', _id:1},{fullname:"ALi reza", identification:'something', _id:2},{fullname:"Huraira", identification:'something', _id:3},{fullname:"Samadh Khan",identification:'something', _id:4},{fullname:"Nihal Modal",identification:'somehting',_id:5},{fullname:"Rafiq modal", identification:'something', _id:6},{fullname:"Baiju Noyan", identification:'something', _id:7},{fullname:"Bilkis baji",identification:'something', _id:8},{fullname:"Bismil",identification:'something', gender:'female', _id:9}]
 const [fetchData,setFetchdata] = useState([]); 
 const [arr,addArr] = useState([]); 
@@ -91,15 +91,7 @@ const _sendToServer = () => {
  console.log({data:finaler})
  updateContactsGender({variables:{userInputList:{data:finaler}}});   
 }
-const computeName = (obj) => {
-   if(obj.name){
-      return obj.name
-   }
-   if(obj.firstName && obj.lastName){
-      return obj.firstName+obj.lastName
-   }
-   return obj.firstName
-}
+
 
    var radio_props = [
       {label: 'param1', value: 0 },
@@ -113,7 +105,7 @@ const computeName = (obj) => {
     </View>
     <View style = {{flex:0.1}}>
     <Text h4 style = {{alignSelf:'center', fontWeight:"600"}}>Tell us about your friends</Text>
-    <Text h5 style = {{alignSelf:'center', fontWeight:"600"}}>Confirm the sex and age of each friend</Text>
+    <Text h5 style = {{alignSelf:'center', fontWeight:"600"}}>Confirm the gender of your friend</Text>
    
     </View>
     <View style = {{flex:0.6}}>

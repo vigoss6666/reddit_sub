@@ -27,7 +27,7 @@ mutation namer($userInputList:userInputList1!){
 
 export default function SingleContactAge({navigation,route}){
     const myContext = useContext(AppContext); 
-    const {user, userId,singleContact, CustomBackComponent,defaultDataObject} = myContext;
+    const {user, userId,singleContact, CustomBackComponent,defaultDataObject,computeName} = myContext;
     const [profiles, setProfiles] = useState([
    
         { 
@@ -88,13 +88,17 @@ useEffect(() => {
     }    
  }, [profiles, country])
  const updateToServer = () => {
-   const user = Object.assign({},{...defaultDataObject}, {...singleContact})
-   db.collection('user').doc(singleContact.phoneNumber).set({...user}, {merge:true}).then(() => {
-   db.collection('user').doc(userId).update({contactList:firebase.firestore.FieldValue.arrayRemove(singleContact.phoneNumber)});
-   db.collection('user').doc(userId).update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(singleContact.phoneNumber)}).then(() => {
-     navigation.navigate('Homer');   
-   })
-   }) 
+//    const user = Object.assign({},{...defaultDataObject}, {...singleContact,})
+//    db.collection('user').doc(singleContact.phoneNumber).set({...user}, {merge:true}).then(() => {
+//    db.collection('user').doc(userId).update({contactList:firebase.firestore.FieldValue.arrayRemove(singleContact.phoneNumber)});
+//    db.collection('user').doc(userId).update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(singleContact.phoneNumber)}).then(() => {
+//      //navigation.navigate('Homer');   
+//    })
+//    }) 
+
+db.collection('user').doc(country[0]._id).set({minAge:country[0].minAge, maxAge:country[0].maxAge, age:parseInt((country[0].minAge + country[0].maxAge)/2)}, {merge:true}); 
+navigation.navigate('SingleContactLocation')
+
    
       
      
@@ -131,15 +135,7 @@ useEffect(() => {
      setNamer(namer + 1); 
      setIndex(zIndex + 10) 
  } 
- function computeName(obj) {
-        if (obj.name) {
-            return obj.name;
-        }
-        if (obj.firstName && obj.lastName) {
-            return obj.firstName + obj.lastName;
-        }
-        return obj.firstName;
-    }
+ 
   
 
     return(
@@ -150,7 +146,7 @@ useEffect(() => {
             Tell us about your friends
         </Text>
         <Text h6 style = {{alignSelf:'center', fontWeight:'600'}}>
-            Confirm the age of each friend
+            Confirm the age of your friend
         </Text>
         </View>
         <View style = {{flex:0.6}}>

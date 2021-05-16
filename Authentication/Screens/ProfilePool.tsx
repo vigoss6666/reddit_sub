@@ -10,7 +10,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
@@ -77,6 +77,7 @@ const useFetchContactPool = (navigation) => {
 
 
      const _sendToServer = (val) => {
+          
           if(!val.appUser && !val.latitude){
           setSingleContact(val); 
           navigation.navigate('SingleContactPhoto'); 

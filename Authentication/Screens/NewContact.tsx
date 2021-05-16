@@ -143,7 +143,8 @@ const _sendToServer = async () => {
       
      phoneNumber:dialCode+digits, 
      name:firstname+lastname, 
-     firstname:firstname, 
+     firstName:firstname,
+     lastName:lastname, 
      gender:gender, 
      minAge:age.minAge, 
      maxAge:age.maxAge,
@@ -163,10 +164,23 @@ const _sendToServer = async () => {
    db.collection('user').doc(userId).update({datingPoolList:firebase.firestore.FieldValue.arrayUnion(dialCode+digits)})
    
  
-
+ setToDefaults()
  navigation.navigate('Homer')
  
 //  navigation.goBack();       
+}
+
+function setToDefaults(){
+    setFirstname(null); 
+    setLastname(null); 
+    setDigits(null); 
+    setGender(null); 
+    selectFeet(null); 
+    setInches(null); 
+    setXClient({latitude:null, longitude:null});
+    setImage(null); 
+    
+    
 }
 
 const _uploadContact = () => {
@@ -329,11 +343,11 @@ return (
     <View style = {{flexDirection:'row',}}>
     <DropDownPicker
         items={[
-            {label: "4'", value: '4', },
-            {label: "5'", value: '5', },
-            {label: "6'", value: '6', },
-            {label: "7'", value: '7', },
-            {label: "8'", value: '8', },
+            {label: "4'", value: 4, },
+            {label: "5'", value: 5, },
+            {label: "6'", value: 6, },
+            {label: "7'", value: 7, },
+            {label: "8'", value: 8, },
         ]}
         placeholder = {"5'"}
         containerStyle={{height: 40,width:75}}
@@ -348,18 +362,18 @@ return (
     />
     <DropDownPicker
         items={[
-            {label: '0"', value: '0', },
-            {label: '1"', value: '1', },
-            {label: '2"', value: '2', },
-            {label: '3"', value: '3', },
-            {label: '4"', value: '4', },
-            {label: '5"', value: '5', },
-            {label: '6"', value: '6', },
-            {label: '7"', value: '7', },
-            {label: '8"', value: '8', },
-            {label: '9"', value: '9', },
-            {label: '10"', value: '10', },
-            {label: '11"', value: '11', },
+            {label: '0"', value: 0, },
+            {label: '1"', value: 1, },
+            {label: '2"', value: 2, },
+            {label: '3"', value: 3, },
+            {label: '4"', value: 4, },
+            {label: '5"', value: 5, },
+            {label: '6"', value: 6, },
+            {label: '7"', value: 7, },
+            {label: '8"', value: 8, },
+            {label: '9"', value: 9, },
+            {label: '10"', value: 10, },
+            {label: '11"', value: 11, },
             
         ]}
         placeholder = {'0"'}

@@ -13,20 +13,12 @@ import {updateUser} from '../../networking';
 const db = firebase.firestore(); 
 
 interface ContactsPhotosProps {}
-const computeName = (obj) => {
-    if(obj.name){
-       return obj.name
-    }
-    if(obj.firstName && obj.lastName){
-       return obj.firstName+obj.lastName
-    }
-    return obj.firstName
- }
+
 
 const SingleContactPhoto = ({navigation}) => {
   const [profiles, setProfiles] = useState([{firstName:"zaid"}]);   
   const myContext = useContext(AppContext); 
-  const {user, userId, singleContact, CustomBackComponent} = myContext;
+  const {user, userId, singleContact, CustomBackComponent,computeName} = myContext;
   const [gate, checkGate] = useState(true); 
   useEffect(() => {
     navigation.setOptions({
