@@ -57,6 +57,7 @@ import SingleContactPhoto from './Authentication/Screens/SingleContactPhoto';
 import SingleContactLocation from './Authentication/Screens/SingleContactLocation';  
 import SingleContactGender from './Authentication/Screens/SingleContactGender';
 import SingleContactAge from './Authentication/Screens/SingleContactAge';
+import PointsRequired from './Authentication/Screens/PointsRequired';
 import SettingsHome from './Account/Screens/SettingsHome';  
 import AccountSettings from './Account/Screens/AccountSettings';
 import MapViewMainer from './Account/Screens/MapViewMainer';
@@ -418,6 +419,7 @@ const mainHome = () => {
         <Stack.Navigator>
           <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
+          <Stack.Screen name="PointsRequired" component={PointsRequired}/>
           <Stack.Screen name="Birthday" component={BirthDay}/>
           <Stack.Screen name="NewContactLocation" component={NewContactLocation}/>
           <Stack.Screen name="Gender" component={Gender}/>

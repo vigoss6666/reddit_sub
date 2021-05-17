@@ -438,7 +438,7 @@ useFocusEffect(
 
                     <TouchableOpacity disabled = {computePoints(user.points) >= 100 ? false:true} onPress = {() => navigation.navigate('ClientView', {client:item})}>
                     <AntDesign name="eye" size={24} color="black" />
-               {computePoints(user.points) <= 100 ? <TouchableOpacity style = {{backgroundColor:'grey', position:'absolute', left:7, bottom:35}}>
+               {computePoints(user.points) <= 100 ? <TouchableOpacity style = {{backgroundColor:'grey', position:'absolute', left:7, bottom:35}} onPress = {() => navigation.navigate('PointsRequired')}>
                <Entypo name="lock" size={20} color="red" style = {{position:'absolute', }}/>
                </TouchableOpacity>:null}
                     </TouchableOpacity>
