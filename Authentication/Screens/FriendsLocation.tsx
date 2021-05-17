@@ -33,16 +33,17 @@ export default function NewContactLocation({navigation, route}){
   const [location, setLocation] = useState({}); 
   
   console.log("gamer is")
+ 
   
 
   const handleServerLocation = async () => {
     const lamer = firebase.functions().httpsCallable('batman');
      if(Object.keys(markers.latlng) == 0){
        navigation.goBack()  
-      return; 
+       return; 
      }
      const result = await lamer({lat:markers.latlng.latitude, lon:markers.latlng.longitude });       
-     
+     setDatingFlatlist({client:client.phoneNumber, state:result.data.state, subLocality:result.data.sublocality});    
      
      db.collection('user').doc(client.phoneNumber).set({latitude:markers.latlng.latitude, longitude:markers.latlng.longitude,state:result.data.state, subLocality:result.data.sublocality}, {merge:true})
       .then(() => console.log("location added")).then(() => navigation.goBack())
@@ -66,7 +67,7 @@ return(
   <Text>
     Select a Location
   </Text>
-  <TouchableOpacity onPress = {() => {setDatingFlatlist(datingFlatList+1),handleServerLocation() }}>
+  <TouchableOpacity onPress = {() => {handleServerLocation() }}>
     <Text style = {{color:'orange', marginRight:10}}>Done</Text>
   </TouchableOpacity>
   
@@ -76,7 +77,7 @@ return(
      style = {{width: Dimensions.get('window').width,
      height: Dimensions.get('window').height, }} 
      mapType = "standard"
-     onPress={(e) => setMarkers({ latlng: e.nativeEvent.coordinate })}
+     onPress={(e) => setMarkers({latlng: e.nativeEvent.coordinate, client:client.phoneNumber })}
      region={{
       latitude:x.latitude,
       longitude: x.longitude,

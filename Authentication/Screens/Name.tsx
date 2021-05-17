@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect,useContext} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, KeyboardAvoidingView, Platform} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, KeyboardAvoidingView, Platform, Alert} from 'react-native';
 import {Continue,Header} from '../../src/common/Common'; 
 import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { mutateSettings} from '../../networking';
@@ -18,7 +18,7 @@ export default function Name({navigation}){
    useEffect(() => {
     navigation.setOptions({
       headerTitle:false, 
-      headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+      headerLeft:false, 
     })
   }, [])
   
@@ -32,20 +32,18 @@ export default function Name({navigation}){
    const [currentUser, setCurrentUser] = useState(); 
    const fire = () => {
      
-    updateUser(userId, {firstName, lastName, name:firstName+lastName}); 
-    navigation.navigate('Birthday', {page:"something"})
+    
+    db.collection('user').doc(userId).set({firstName, lastName, name:firstName+lastName}, {merge:true}).then(() => {
+      
+      navigation.navigate('Birthday', {page:"something"})
+      
+    })
+    
+    
     } 
    
     
-  useEffect(() => {
-    async function namer(){
-      const user = await AsyncStorage.getItem('user'); 
-       
-    }
-    namer()
-    
-    
-  }, [])
+  
 
   
 
@@ -107,7 +105,8 @@ return(
   disabled = {openGate}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  onPress = {() =>  fire()}
+  // onPress = {() =>  fire()}
+  onPress = {() => fire()}
   
 />       
  

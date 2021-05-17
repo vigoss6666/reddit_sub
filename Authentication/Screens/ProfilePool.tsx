@@ -8,6 +8,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 import { FontAwesome, } from '@expo/vector-icons';
@@ -295,7 +296,7 @@ const useFetchDatingPool = (navigation) => {
      //const {data,loading,error} = useQuery(GET_DATING_POOL); 
      //const [removeDating] = useMutation(REMOVE_FROM_DATING); 
      const myContext = useContext(AppContext); 
-     const {user, userId, contactList, setContactList,computePoints} = myContext;
+     const {user, userId, contactList, setContactList,computePoints,datingFlatList,setDatingFlatlist} = myContext;
      
      const [currentUser, setCurrentUser] = useState(''); 
      const [visible, setVisible] = useState(false); 
@@ -340,6 +341,30 @@ const useFetchDatingPool = (navigation) => {
 }
 namer()
 },[user.datingPoolList])
+
+
+const updateLocationList = () => {
+  if(Object.keys(datingFlatList).length){
+      const copy = datingPoolList.concat();  
+      const index = copy.findIndex(val => val.phoneNumber == datingFlatList.client); 
+      if(index !== -1){
+       copy[index].state = datingFlatList.state; 
+       copy[index].subLocality = datingFlatList.subLocality; 
+       setDatingPoolList(copy)
+       //setDatingFlatlist({})   
+          
+
+      } 
+  }    
+}
+
+useFocusEffect(
+     React.useCallback(() => {
+       console.log("i was called")   
+       updateLocationList()
+     }, [datingFlatList])
+   );
+
 
 
 
@@ -705,7 +730,7 @@ onChangeItem={namer => addAge(item, namer)}
         keyExtractor={(item) => item.phoneNumber}
         contentInset={{  top: 0, left: 0, bottom: 200 }}
 
-        extraData={datingPoolList}
+         //extraData={datingFlatList}
       />  
                 
              

@@ -524,7 +524,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Contacts} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Name} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>
