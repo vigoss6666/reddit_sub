@@ -176,6 +176,8 @@ export default function App() {
   const responseListener = useRef();
   const notificationListener = useRef();
   const [profilePicLocal, setProfilePicLocal] = useState(null); 
+  const [inviteToPlay, setInvitetoplay] = useState(null); 
+  const [inviteToPlayContacts, setInvitetoplayContacts] = useState(null); 
   
   
 
@@ -303,6 +305,10 @@ function stringifyNumber(n) {
   }
   
   const globalObject = {
+    inviteToPlayContacts, 
+    setInvitetoplayContacts, 
+    inviteToPlay, 
+    setInvitetoplay,
     datingFlatList, 
     setDatingFlatlist,  
     setContactLocation, 
@@ -524,7 +530,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Name} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>

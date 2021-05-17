@@ -9,25 +9,34 @@ interface InvitetoplayProps {}
 
 const Invitetoplay = ({navigation,route}) => {
  const myContext = useContext(AppContext); 
- const { computeName,db,userId,firebase } = myContext;
+ const { computeName,db,userId,firebase,user,setInvitetoplay,inviteToPlay,setInvitetoplayContacts, inviteToPlayContacts } = myContext;
   const {client} = route.params;  
   const invite = () => {
     Share.share({message:`Inviting you to try Friends Help Friends app
-    https://exp.host/@votexclient/friends_help_friends_chat
+    https://expo.io/@votexclient/projects/laniister
     username:votexclient 
     password:chemistry1Zu!2     
     `, url:undefined}).then(result => {
-        console.log(result)
+        if(result.action == "sharedAction"){
+          db.collection('invitationSent').add({client:client.phoneNumber, matchMaker:userId}).then(() => {
+            db.collection('user').doc(userId).set({invitations:firebase.firestore.FieldValue.arrayUnion(client.phoneNumber)}, {merge:true}).then(() => {
+              
+                setInvitetoplay(client.phoneNumber)
+                navigation.goBack()
+                return; 
+              
+
+              
+                
+                 
+            })   
+              
+           })
+        }
     })
     
     // if(Share.sharedAction){
-    //     db.collection('invitationSent').add({client:client.phoneNumber, matchMaker:userId}).then(() => {
-    //         db.collection('user').doc(userId).set({invitations:firebase.firestore.FieldValue.arrayUnion(client.phoneNumber)}, {merge:true}).then(() => {
                 
-    //              navigation.goBack()
-    //         })   
-              
-    //        })        
     // }
     
 

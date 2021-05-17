@@ -19,7 +19,7 @@ import { gql } from 'apollo-boost';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {HeaderBar,ImageView,ModalViewMap, SingleImageView} from '../../src/common/Common';
 import AppContext from '../../AppContext'; 
-import {updateUser} from '../../networking';
+import {filterGamer, updateUser} from '../../networking';
 const contactList = [{name:"zaid shaikh", firstname:"zaid", _id:'123'},{name:"david", firstname:"zaid", _id:'1234'}];
 const friendsList = [{}];
 import * as Contacts from 'expo-contacts';
@@ -39,7 +39,7 @@ const computeName = (obj) => {
 
 const useFetchContactPool = (navigation) => {
      const myContext = useContext(AppContext); 
-     const {user, userId, contactList, setContactList, setSingleContact, defaultDataObject, datingFlatList} = myContext;
+     const {user, userId, contactList, setContactList, setSingleContact, defaultDataObject, datingFlatList,inviteToPlay, setInvitetoplay} = myContext;
      const KEYS_TO_FILTERS = ['name'];
      
      const [search, setSearch] = useState('');
@@ -51,6 +51,29 @@ const useFetchContactPool = (navigation) => {
                data:[]
           }
      })
+     const updateInvitation = () => {
+          if(inviteToPlay){
+              const copy = contactList.concat();  
+              const index = copy.findIndex(val => val.phoneNumber == inviteToPlay); 
+              if(index !== -1){
+               copy[index].invitationSent = true;  
+                
+               setContactList(copy)
+               //setDatingFlatlist({})   
+                  
+        
+              } 
+          }    
+        }
+        useFocusEffect(
+          React.useCallback(() => {
+            console.log("i was called")   
+            
+            updateInvitation()
+          }, [inviteToPlay])
+        );
+
+        
      
      
      
@@ -60,8 +83,16 @@ const useFetchContactPool = (navigation) => {
           
        const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.contactList).get().then(onResult => {
           const data = onResult.docs.map(val => val.data());
+          function applyToIncluded(val){
+               return {...val, invitationSent:true}
+         }
+         const result = filterGamer(data, 'phoneNumber', user.invitations, null,applyToIncluded)
+ 
+ 
              
-          setContactList(data);
+         setContactList([...result.excludedObjects, ...result.includedObjects]);
+             
+          
        }).catch(error => console.log(error.message))
        }
        if(user.contactList.length == 0){
@@ -230,10 +261,10 @@ const useFetchContactPool = (navigation) => {
                          marginTop: 10,
                       }}/>}
                       {item.appUser ? null : <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
-                      <Text style = {{fontWeight:'bold',}}>INVITE TO PLAY</Text>
-                      <TouchableOpacity onPress = {() => navigation.navigate('Invitetoplay', {client:item})}>
+                      {item.invitationSent ? <Text style = {{fontWeight:'bold',}}>INVITATION SENT</Text>:<Text style = {{fontWeight:'bold',}}>INVITE TO PLAY</Text>}
+                      {item.invitationSent ? <View><AntDesign name="checkcircle" size={24} color="black" /></View>:<TouchableOpacity onPress = {() => navigation.navigate('Invitetoplay',{client:item, page:'friends'})}>
                       <Entypo name="mail" size={24} color="black" />
-                      </TouchableOpacity>
+                      </TouchableOpacity>}
                       </View>}
                       </View>
                       :null}    
@@ -296,7 +327,7 @@ const useFetchDatingPool = (navigation) => {
      //const {data,loading,error} = useQuery(GET_DATING_POOL); 
      //const [removeDating] = useMutation(REMOVE_FROM_DATING); 
      const myContext = useContext(AppContext); 
-     const {user, userId, contactList, setContactList,computePoints,datingFlatList,setDatingFlatlist} = myContext;
+     const {user, userId, contactList, setContactList,computePoints,datingFlatList,setDatingFlatlist,inviteToPlay} = myContext;
      
      const [currentUser, setCurrentUser] = useState(''); 
      const [visible, setVisible] = useState(false); 
@@ -327,9 +358,14 @@ const useFetchDatingPool = (navigation) => {
          
      const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get().then(onResult => {
         const data = onResult.docs.map(val => val.data());
+        function applyToIncluded(val){
+              return {...val, invitationSent:true}
+        }
+        const result = filterGamer(data, 'phoneNumber', user.invitations, null,applyToIncluded)
+
 
             
-        setDatingPoolList(data);
+        setDatingPoolList([...result.excludedObjects, ...result.includedObjects]);
      }).catch(error => console.log(error.message))
      }
      if(user.datingPoolList.length == 0){
@@ -358,11 +394,28 @@ const updateLocationList = () => {
   }    
 }
 
+const updateInvitation = () => {
+     if(inviteToPlay){
+         const copy = datingPoolList.concat();  
+         const index = copy.findIndex(val => val.phoneNumber == inviteToPlay); 
+         if(index !== -1){
+          copy[index].invitationSent = true;  
+           
+          setDatingPoolList(copy)
+          //setDatingFlatlist({})   
+             
+   
+         } 
+     }    
+   }
+   
+
 useFocusEffect(
      React.useCallback(() => {
        console.log("i was called")   
        updateLocationList()
-     }, [datingFlatList])
+       updateInvitation()
+     }, [datingFlatList,inviteToPlay])
    );
 
 
@@ -577,10 +630,10 @@ onChangeItem={namer => addAge(item, namer)}
      marginTop: 10,
      }}/>
                       <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20,marginTop:20}}>
-                      <Text style = {{fontWeight:'bold',}}>INVITE TO PLAY</Text>
-                      <TouchableOpacity onPress = {() => navigation.navigate('Invitetoplay',{client:item})}>
+                      {item.invitationSent ? <Text style = {{fontWeight:'bold',}}>INVITATION SENT</Text>:<Text style = {{fontWeight:'bold',}}>INVITE TO PLAY</Text>}
+                      {item.invitationSent ? <View><AntDesign name="checkcircle" size={24} color="black" /></View>:<TouchableOpacity onPress = {() => navigation.navigate('Invitetoplay',{client:item, page:'friends'})}>
                       <Entypo name="mail" size={24} color="black" />
-                      </TouchableOpacity>
+                      </TouchableOpacity>}
                       </View>
            
 
@@ -730,7 +783,7 @@ onChangeItem={namer => addAge(item, namer)}
         keyExtractor={(item) => item.phoneNumber}
         contentInset={{  top: 0, left: 0, bottom: 200 }}
 
-         //extraData={datingFlatList}
+        //extraData={inviteToPlay}
       />  
                 
              
