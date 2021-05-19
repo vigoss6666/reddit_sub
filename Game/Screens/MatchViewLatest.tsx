@@ -15,7 +15,8 @@ const MatchViewLatest = ({navigation, route}) => {
     const [hidden, setHidden]= useState(false);
     const insets = useSafeAreaInsets();
     const myContext = useContext(AppContext); 
-    const {user, userId, db, createChatThread, firebase} = myContext;
+    const {user, userId, db, createChatThread, firebase, computeName} = myContext;
+    const expoToken = 'ExponentPushToken[W-LwjHLivbcjOyOCbGIUve]'; 
     
     
     const tester = route.params.pageData; 
@@ -24,6 +25,9 @@ const MatchViewLatest = ({navigation, route}) => {
     console.log("userIndex"+userIndex) 
     const [sliderState, setSliderState] = useState({ currentPage: clientIndex });
     const [sliderState1, setSliderState1] = useState({ currentPage: userIndex });
+
+    console.log("dater is")
+    console.log(tester[sliderState.currentPage].data)
 
 
     const setEvent = () => {
@@ -35,12 +39,33 @@ const MatchViewLatest = ({navigation, route}) => {
       db.collection('user').doc(userId).set({points:firebase.firestore.FieldValue.arrayUnion({
         pointFor:'matchDiscovered', 
         point:50, 
-        createdAt: new Date()  
-      })}, {merge:true}) 
+        createdAt: new Date(), 
+        client:client.phoneNumber
+      })}, {merge:true}).then(() => {
+          sendPushNotification(expoToken)
+      }) 
 
     }
 
-
+    async function sendPushNotification(expoPushToken) {
+        const message = {
+          to: expoPushToken,
+          sound: 'default',
+          title: 'Introduction Received',
+          body: 'Introduction received',
+          data: { someData: 'goes here' },
+        };
+      
+        await fetch('https://exp.host/--/api/v2/push/send', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Accept-encoding': 'gzip, deflate',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(message),
+        });
+      }
 
 
 
@@ -122,15 +147,7 @@ const MatchViewLatest = ({navigation, route}) => {
 ])
 
 
-const computeName = (obj) => {
-    if(obj.name){
-       return obj.name
-    }
-    if(obj.firstName && obj.lastName){
-       return obj.firstName+obj.lastName
-    }
-    return obj.firstName
-}
+
     const textTemplate = hidden ? null: <View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
           {iconFactory('humor', 20)}
@@ -182,7 +199,7 @@ showsHorizontalScrollIndicator={false}
 style = {{zIndex:1,}} 
 horizontal = {true}
 pagingEnabled = {true}
-scrollEventThrottle={8}
+scrollEventThrottle={100}
 onScroll={(event: any) => {
   setSliderPage(event);
 }}
@@ -197,7 +214,7 @@ showsHorizontalScrollIndicator={false}
 style = {{position:'absolute', top:150, left:50, zIndex:2000}} 
 horizontal = {true}
 pagingEnabled = {true}
-scrollEventThrottle={8}
+scrollEventThrottle={400}
 onScroll={(event: any) => {
   setSliderPage1(event);
 }}

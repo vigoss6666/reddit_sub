@@ -66,8 +66,10 @@ const Points = (props: RankProps) => {
          if(val.pointFor == 'roundCompleted'){
              return val; 
          }
-         if(val.pointFor == 'matchAccepted'){
-            return val; 
+         if(val.pointFor == 'matchDiscovered'){
+            return await db.collection('user').doc(val.client).get().then(onDoc => {
+                return Object.assign({}, {...val},{clientPhoto:onDoc.data().profilePic})
+            })
         }
            return val;      
         }))
@@ -97,6 +99,7 @@ const Points = (props: RankProps) => {
                   <Text style = {{fontWeight:"bold", }}>+{val.point} pts</Text>
                   <Text style = {{fontWeight:"bold", }}>Match discovered</Text>
                   </View>
+                  {val.clientPhoto ? <SingleImageView image = {val.clientPhoto} style = {{marginLeft:20}}/>:null}
               </View>
         }
         if(val.pointFor == 'matchEndorsed'){

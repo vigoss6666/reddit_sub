@@ -15,29 +15,31 @@ const db = firebase.firestore();
 interface MatchMakeFinalProps {}
 
 async function applyFilters(filter:any,arr:any,client, createChatThread):serverDataObjectDimension[]{
-
+     console.log("filter is") 
+     console.log(filter) 
     
     const finalObject:any = [];     
       arr.map(val => {
         
         const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude); 
                 
-        if(val.creativity >= filter.creativity 
-          && val.charisma >= filter.charisma 
-          && val.narcissism <= filter.narcissism 
-          && val.humor >= filter.humor
-          && val.honest >= filter.honest
-          && val.looks >= filter.looks
-          && val.empathetic >= filter.empathetic
-          && val.status >= filter.status
-          && val.wealthy >= filter.wealthy
-          && filter.appUsers ? val.appUser == true:true
-          && filter.matchMakerProfiles ? true: val.matchMaker == client.matchMaker ? false:true
-          
-          && val.dimension >= filter.dimension
-          && distance < filter.distancePreference
-          && val.age >= filter.minAgePreference
-          && val.age <= filter.maxAgePreference
+        if(
+          // val.creativity >= filter.creativity 
+          // && val.charisma >= filter.charisma 
+          // && val.narcissism <= filter.narcissism 
+          // && val.humor >= filter.humor
+          // && val.honest >= filter.honest
+          // && val.looks >= filter.looks
+          // && val.empathetic >= filter.empathetic
+          // && val.status >= filter.status
+          // && val.wealthy >= filter.wealthy
+          // && filter.appUsers ? val.appUser == true:true
+          //filter.matchMakerProfiles ? true: val.matchMaker == client.matchMaker ? false:true
+          1 == 1
+          // && val.dimension >= filter.dimension
+          // && distance < filter.distancePreference
+          // && val.age >= filter.minAgePreference
+          // && val.age <= filter.maxAgePreference
            
           
           ){
@@ -52,13 +54,14 @@ async function applyFilters(filter:any,arr:any,client, createChatThread):serverD
 
 const MatchMakeFinal = ({navigation, route}) => {
     const myContext = useContext(AppContext); 
-    const {user, userId, clientFilter, setClientFilter,sentFromBrowse, computeName, createChatThread} = myContext;
+    const {CustomBackComponent,user, userId, clientFilter, setClientFilter,sentFromBrowse, computeName, createChatThread} = myContext;
     const [sliderState, setSliderState] = useState({ currentPage:0  });
     const insets = useSafeAreaInsets();
     const [sectionData,setSectionData] = useState([]); 
     const {width, height} = Dimensions.get('window'); 
     const [userDisplay, setUserDisplay] = useState([]); 
     const [clienter, setClienter] = useState(null); 
+    const [loader, setLoader] = useState(true); 
     
     const [flat, setFlat] = useState(null)
 
@@ -109,7 +112,7 @@ const MatchMakeFinal = ({navigation, route}) => {
                maxAgePreference:val2.maxAgePreference == 60 ? 60:val2.maxAgePreference,
                dimension:0,
                distancePreference:val2.distancePreference == 40 ? 40: val2.distancePreference, 
-               matchMakerProfiles:false, 
+               matchMakerProfiles:true, 
                appUsers:true, 
        
              }}
@@ -125,6 +128,7 @@ const MatchMakeFinal = ({navigation, route}) => {
 
    async function setPage(datingPoolList){
     
+
       if(clienter){
         const index = datingPoolList.findIndex(val => val.phoneNumber == clienter.phoneNumber);
         setSliderState({
@@ -135,7 +139,7 @@ const MatchMakeFinal = ({navigation, route}) => {
 
        
 
-
+      setLoader(true)
       const finalResult = await Promise.all(datingPoolList.map(async val => {
            const gender = val.gender; 
            return await db.collection('user').where('gender', '==', gender == 'male'? 'female':'male')
@@ -162,16 +166,16 @@ const MatchMakeFinal = ({navigation, route}) => {
           //console.log(simDimension)
           
           
-          if(clientFilter.length){
-              if(clientFilter.filter(gamer => gamer.client == val.client.phoneNumber).length){
-                  const index = clientFilter.findIndex(val1 => val1.client == val.client.phoneNumber); 
+          // if(clientFilter.length){
+          //     if(clientFilter.filter(gamer => gamer.client == val.client.phoneNumber).length){
+          //         const index = clientFilter.findIndex(val1 => val1.client == val.client.phoneNumber); 
                   
                   
                   
-                   const filters = await applyFilters(clientFilter[index].filter, filterBySim,val.client, createChatThread);
-                   return {client:val.client, users:filters};
-              }
-          }
+          //          const filters = await applyFilters(clientFilter[index].filter, filterBySim,val.client, createChatThread);
+          //          return {client:val.client, users:filters};
+          //     }
+          // }
           return {client:val.client, users:filterBySim}
                   
       }))
@@ -184,8 +188,9 @@ const MatchMakeFinal = ({navigation, route}) => {
                data:val.users
            }
       })
+      const forNextPageFilter = forNextPage.filter(val => val.data.length !== 0); 
       
-      setUserDisplay(forNextPage)
+      setUserDisplay(forNextPageFilter)
 
       const sectionDataTransform = simDimensionTransform.map(val => {
            return {
@@ -193,7 +198,7 @@ const MatchMakeFinal = ({navigation, route}) => {
              sectionData:computeSectionLabel(val.users)
            }
       }) 
-      
+      setLoader(false)
       setSectionData(sectionDataTransform); 
 
      
@@ -283,8 +288,9 @@ const MatchMakeFinal = ({navigation, route}) => {
          
     }
 
- if(sectionData.length){
-    return (
+ if(loader == false && sectionData.length){
+     
+      return (
         <View style={{flex:1, paddingTop:insets.top}}>
           <View style = {{flexDirection:'row', justifyContent:'space-between',alignItems:'center', backgroundColor:'grey',flex:'6%'}}>
              <TouchableOpacity onPress = {() => {setClientFilter([{client:'something', filter:{}}]), navigation.navigate('Homer') }} >
@@ -296,13 +302,13 @@ const MatchMakeFinal = ({navigation, route}) => {
             </View>
             <View style = {{flex:'16%'}}>
             <ScrollView
-            contentOffset = {{x:414*sliderState.currentPage, y:0}}
+            //contentOffset = {{x:414*sliderState.currentPage, y:0}}
            style = {{ }} 
            
     horizontal = {true}
     pagingEnabled = {true}
     showsHorizontalScrollIndicator={false}
-    scrollEventThrottle={8}
+    scrollEventThrottle={16}
     onScroll={(event: any) => {
         setSliderPage(event);
     }}
@@ -325,8 +331,31 @@ const MatchMakeFinal = ({navigation, route}) => {
         </View>
         </View>
       );
+      
+
+   
+   
+    
  }
- return <LoadScreen />
+ if(loader == false && !sectionData.length){
+  return <View style = {{flex:1,justifyContent:'center', alignItems:'center', backgroundColor:'black'}}>
+
+<Text style = {{color:'white', fontSize:20, fontWeight:'bold', fontStyle:'italic'}}>Your friends currently have no matches</Text>
+<View style = {{flexDirection:'row', justifyContent:'space-between', marginTop:50}}>
+
+ <CustomBackComponent navigation = {navigation}/>
+ <Text>
+
+ </Text>
+ <Text></Text>
+</View>
+</View>
+  
+}
+if(loader == true){
+  return <LoadScreen />
+}
+ 
  
   
 };

@@ -179,6 +179,7 @@ export default function App() {
   const [profilePicLocal, setProfilePicLocal] = useState(null); 
   const [inviteToPlay, setInvitetoplay] = useState(null); 
   const [inviteToPlayContacts, setInvitetoplayContacts] = useState(null); 
+  const [loader, setLoader] = useState(true); 
   
   
 
@@ -242,15 +243,20 @@ if(!Object.keys(user).length){
 
   // useEffect(() => {
     
-  
+  useEffect(() => {
+    setLoader(true)
+  }, [_id])
   
   
   useEffect(() => {
-      const subscribe = _id  ? db.collection('user').doc(_id).onSnapshot(doc => {
+     
+      const subscribe = _id  ?  db.collection('user').doc(_id).onSnapshot(doc => {
         if(doc.exists){
+           setLoader(false)
            setUser(doc.data())
         } 
-     }):() => console.log("no user")
+     }):() => setLoader(false)
+     //setLoader(false)
        
     return () => subscribe();  
     
@@ -568,7 +574,9 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 </NavigationContainer>
 </SafeAreaProvider>
 </AppContext.Provider>
-
+if(loader){
+  return <LoadScreen />
+}
 return Object.keys(user).length  ?  mainHome():basicAuthStack
  
 }
