@@ -532,10 +532,12 @@ export function Tester1({navigation,db,chatID,userId}){
        )
     }
 
-    export function Line(){
+    export function Line({style}){
        
        return (
-          <View style = {{ borderColor:'black', borderWidth:1}}/>
+          
+          <View style = {{ borderColor:'black', borderWidth:1, ...style}}/>
+          
        ) 
     }
 
