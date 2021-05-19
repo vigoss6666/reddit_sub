@@ -587,7 +587,7 @@ function jsUcfirst(str)
  <Text></Text>
  </View>
 
- <Text style = {{marginTop:20, fontSize:18, fontWeight:'bold', marginLeft:10, }}>Height</Text>
+ {/* <Text style = {{marginTop:20, fontSize:18, fontWeight:'bold', marginLeft:10, }}>Height</Text>
  <View style = {{flexDirection:"row", marginTop:15, zIndex:1000}}>
  
  <DropDownPicker
@@ -673,7 +673,7 @@ function jsUcfirst(str)
                     
 
 
-</View>    
+</View>     */}
 {distanceTemplate()}
    
 <View style={{

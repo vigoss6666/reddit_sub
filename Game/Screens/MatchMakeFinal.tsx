@@ -15,7 +15,7 @@ const db = firebase.firestore();
 interface MatchMakeFinalProps {}
 
 async function applyFilters(filter:any,arr:any,client, createChatThread):serverDataObjectDimension[]{
-     console.log("filter is") 
+     console.log(client.name) 
      console.log(filter) 
     
     const finalObject:any = [];     
@@ -34,8 +34,8 @@ async function applyFilters(filter:any,arr:any,client, createChatThread):serverD
           // && val.status >= filter.status
           // && val.wealthy >= filter.wealthy
           // && filter.appUsers ? val.appUser == true:true
-          //filter.matchMakerProfiles ? true: val.matchMaker == client.matchMaker ? false:true
-          1 == 1
+          filter.matchMakerProfiles ? true: val.matchMaker == client.matchMaker ? false:true
+          
           // && val.dimension >= filter.dimension
           // && distance < filter.distancePreference
           // && val.age >= filter.minAgePreference
@@ -166,17 +166,17 @@ const MatchMakeFinal = ({navigation, route}) => {
           //console.log(simDimension)
           
           
-          // if(clientFilter.length){
-          //     if(clientFilter.filter(gamer => gamer.client == val.client.phoneNumber).length){
-          //         const index = clientFilter.findIndex(val1 => val1.client == val.client.phoneNumber); 
+          if(clientFilter.length){
+              if(clientFilter.filter(gamer => gamer.client == val.client.phoneNumber).length){
+                  const index = clientFilter.findIndex(val1 => val1.client == val.client.phoneNumber); 
                   
                   
                   
-          //          const filters = await applyFilters(clientFilter[index].filter, filterBySim,val.client, createChatThread);
-          //          return {client:val.client, users:filters};
-          //     }
-          // }
-          return {client:val.client, users:filterBySim}
+                   const filters = await applyFilters(clientFilter[index].filter, filterBySim,val.client, createChatThread);
+                   return {client:val.client, users:filters};
+              }
+          }
+          //return {client:val.client, users:filterBySim}
                   
       }))
       

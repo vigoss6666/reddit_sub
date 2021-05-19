@@ -423,7 +423,7 @@ const mainHome = () => {
         <NavigationContainer>
          
         <Stack.Navigator>
-          <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
+          <Stack.Screen name="Home" component={MatchMakeFinal} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="PointsRequired" component={PointsRequired}/>
           <Stack.Screen name="Birthday" component={BirthDay}/>
