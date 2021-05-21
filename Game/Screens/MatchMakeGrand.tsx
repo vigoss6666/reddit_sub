@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, createContext, useContext, useCallback  } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { Text, View, StyleSheet,TouchableOpacity, Dimensions, Image,ScrollView,SectionList, FlatList } from 'react-native';
-import {Entypo, Feather, MaterialIcons} from '@expo/vector-icons';
+import {Entypo, Feather, FontAwesome, MaterialIcons} from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {firebase} from '../../config'; 
 import AppContext from '../../AppContext'; 
@@ -79,23 +79,23 @@ const MatchMakeFinal = ({navigation, route}) => {
     
     useEffect(() => {
       async function namer(){
-        if(changedClient){
-          console.log("apply Filter called")
-          console.log("checking the forFilters values after returning from settings page")
-          console.log("for filters"); 
-          forFilters.map(val => console.log("length is"+val.users.length))
+        
+          // console.log("apply Filter called")
+          // console.log("checking the forFilters values after returning from settings page")
+          // console.log("for filters"); 
+          // forFilters.map(val => console.log("length is"+val.users.length))
           const plane = []
           const copy = JSON.parse(JSON.stringify(forFilters)); 
           const filterCopy = clientFilter.concat(); 
-          const mainArrayIndex = copy.findIndex(val => val.client.phoneNumber == changedClient.phoneNumber); 
-          const filterIndex = filterCopy.findIndex(val => val.client == changedClient.phoneNumber);
+          //const mainArrayIndex = copy.findIndex(val => val.client.phoneNumber == changedClient.phoneNumber); 
+          //const filterIndex = filterCopy.findIndex(val => val.client == changedClient.phoneNumber);
           // console.log("checking filters")
           // console.log(clientFilter[filterIndex].client)
           // console.log(clientFilter[filterIndex].filter)
-          console.log("checking the CLientName for the filter");
-          console.log(changedClient.name) 
-          console.log("checking the filter snapshot value"); 
-          console.log(filterCopy[filterIndex].filter) 
+          // console.log("checking the CLientName for the filter");
+          // console.log(changedClient.name) 
+          // console.log("checking the filter snapshot value"); 
+          // console.log(filterCopy[filterIndex].filter) 
           await Promise.all(clientFilter.map(async val => {
             const checkMainIndex = copy.findIndex(val1 => val1.client.phoneNumber == val.client); 
             console.log("main Index is")
@@ -127,14 +127,39 @@ const MatchMakeFinal = ({navigation, route}) => {
        setChangedClient(null)
   
          
-        }
+        
       }
       namer()
 
     }, [clientFilter])
 
 
-    
+    async function refreshFilter(){
+     const copy = clientFilter.concat();
+     const currentCLient = profiles[sliderState.currentPage]; 
+     
+      const index = copy.findIndex(val => val.client == currentCLient.phoneNumber);
+      
+     copy[index].filter = {
+      charisma:0, 
+      creativity:0, 
+      honest:0, 
+      looks:0, 
+      empathetic:0, 
+      status:0, 
+      humor:0, 
+      wealthy:0, 
+      narcissism:10,
+      minAgePreference:15, 
+      maxAgePreference:60,
+      dimension:0, 
+      distancePreference:40
+      }
+      setClientFilter(copy);  
+      //console.log(clientFilter)
+
+      
+    }
 
   //  console.log("chnaged client is"); 
   //  console.log(sectionData[0])
@@ -383,10 +408,16 @@ const MatchMakeFinal = ({navigation, route}) => {
           <View style = {{flexDirection:'row', justifyContent:'space-between',alignItems:'center', backgroundColor:'grey',flex:'6%'}}>
              <TouchableOpacity onPress = {() => {setClientFilter([{client:'something', filter:{}}]), navigation.navigate('Homer') }} >
             <Entypo name="controller-play" size={35} style = {{marginLeft:20}} />                    
-            </TouchableOpacity>   
+            </TouchableOpacity>
+            <View style = {{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+            <TouchableOpacity onPress = {() => refreshFilter()} style = {{marginRight:10}}>
+            <FontAwesome name="refresh" size={30} color="black" />
+            </TouchableOpacity>
+               
             <TouchableOpacity onPress = {() => navigation.navigate('BrowseMatchSettings', {client:profiles[sliderState.currentPage]})}>
             <Feather name="settings" size={30} color="black" style = {{marginRight:20, marginBottom:5, marginTop:5}}/>
             </TouchableOpacity>
+            </View>   
             </View>
             <View style = {{flex:'16%'}}>
             <ScrollView
