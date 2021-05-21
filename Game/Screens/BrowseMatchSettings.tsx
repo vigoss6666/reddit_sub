@@ -52,6 +52,9 @@ useEffect(() => {
   setMaxAge(currentClientFilter.maxAgePreference)
   setDefaultDistance(currentClientFilter.distancePreference); 
   setDistance(currentClientFilter.distancePreference);
+  setMatchmaking(currentClientFilter.matchMakerProfiles);
+  setAppUsers(currentClientFilter.appUsers)   
+
   
   
   

@@ -34,10 +34,10 @@ async function applyFilters(filter:any,arr:any,client, createChatThread):serverD
           && val.empathetic >= filter.empathetic
           && val.status >= filter.status
           && val.wealthy >= filter.wealthy
-          // && filter.appUsers ? val.appUser == true:true
-          //filter.matchMakerProfiles ? true: val.matchMaker == client.matchMaker ? false:true
+          && filter.appUsers ? val.appUser == true:true
+          && filter.matchMakerProfiles ? true: val.matchMaker == client.matchMaker ? false:true
           //1 ==1 
-          // && val.dimension >= filter.dimension
+          && val.dimension >= filter.dimension
           // && distance < filter.distancePreference
           // && val.age >= filter.minAgePreference
           // && val.age <= filter.maxAgePreference
@@ -86,12 +86,12 @@ const MatchMakeFinal = ({navigation, route}) => {
           // forFilters.map(val => console.log("length is"+val.users.length))
           const plane = []
           const copy = JSON.parse(JSON.stringify(forFilters)); 
-          const filterCopy = clientFilter.concat(); 
+          // const filterCopy = clientFilter.concat(); 
           //const mainArrayIndex = copy.findIndex(val => val.client.phoneNumber == changedClient.phoneNumber); 
-          //const filterIndex = filterCopy.findIndex(val => val.client == changedClient.phoneNumber);
+          // const filterIndex = filterCopy.findIndex(val => val.client == changedClient.phoneNumber);
           // console.log("checking filters")
           // console.log(clientFilter[filterIndex].client)
-          // console.log(clientFilter[filterIndex].filter)
+          //  console.log(clientFilter[filterIndex].filter)
           // console.log("checking the CLientName for the filter");
           // console.log(changedClient.name) 
           // console.log("checking the filter snapshot value"); 
@@ -153,7 +153,9 @@ const MatchMakeFinal = ({navigation, route}) => {
       minAgePreference:15, 
       maxAgePreference:60,
       dimension:0, 
-      distancePreference:40
+      distancePreference:40,
+      appUsers:false, 
+      matchMakerProfiles:true
       }
       setClientFilter(copy);  
       //console.log(clientFilter)
