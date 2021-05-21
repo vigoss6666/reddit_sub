@@ -19,11 +19,13 @@ const BrowseMatchSettings = ({navigation, route}) => {
 const [selected, setSelected] = useState('filter'); 
 const [counter, setCounter] = useState(1); 
 const myContext = useContext(AppContext); 
-const {user, userId, selfFilter, setSelfFilter, clientFilter, firebase, db, setSentFromBrowse, setClientFilter} = myContext;
+const {user, userId, selfFilter, setSelfFilter, clientFilter, firebase, db, setSentFromBrowse, setClientFilter, setChangedClient} = myContext;
 const [potentialMatches, setPotentialMatches] = useState(0); 
 const [clientIndex, setClientIndex] = useState(); 
 
-const {client} = route.params; 
+const {client} = route.params;
+console.log("client from mainPage"); 
+console.log(client.name) 
 const index = clientFilter.findIndex(val => val.client == client.phoneNumber); 
 const currentClientFilter = clientFilter[index].filter
 
@@ -236,7 +238,8 @@ function jsUcfirst(str)
   return (
     <SafeAreaView style={{flex:1}}>
         
-        <TouchableOpacity  style = {{marginRight:10, alignSelf:'flex-end'}} onPress = {() => {addClientFilter(),navigation.navigate('MatchMakeFinal', {clientFrom:client})}}>
+        {/* <TouchableOpacity  style = {{marginRight:10, alignSelf:'flex-end'}} onPress = {() => {setChangedClient(client.phoneNumber),addClientFilter(),navigation.goBack()}}> */}
+        <TouchableOpacity  style = {{marginRight:10, alignSelf:'flex-end'}} onPress = {() => {setChangedClient(client),addClientFilter(),navigation.goBack()}}>
       <Text style = {{color:'orange', fontWeight:'bold'}}>Done</Text>
   </TouchableOpacity>
         <ScrollView style = {{flex:0.9, marginBottom:20 }}>

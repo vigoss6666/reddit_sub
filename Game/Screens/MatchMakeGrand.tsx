@@ -9,33 +9,34 @@ import AppContext from '../../AppContext';
 import { logTen } from './logTen';
 import { iconFactory, LoadScreen} from '../../src/common/Common';
 
+
 import {transformCreativity, computeSimDimension, computeSectionLabel, filterGamer, getDistanceFromLatLonInKm} from '../../networking'; 
 import { filter } from 'underscore';
 const db = firebase.firestore(); 
 interface MatchMakeFinalProps {}
 
 async function applyFilters(filter:any,arr:any,client, createChatThread):serverDataObjectDimension[]{
-     console.log(client.name) 
-     console.log(filter) 
+    //  console.log(client.name) 
+    //  console.log(filter) 
     
     const finalObject:any = [];     
       arr.map(val => {
         
-        const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude); 
+        //const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude); 
                 
         if(
-          // val.creativity >= filter.creativity 
-          // && val.charisma >= filter.charisma 
-          // && val.narcissism <= filter.narcissism 
-          // && val.humor >= filter.humor
-          // && val.honest >= filter.honest
-          // && val.looks >= filter.looks
-          // && val.empathetic >= filter.empathetic
-          // && val.status >= filter.status
-          // && val.wealthy >= filter.wealthy
+          val.creativity >= filter.creativity 
+          && val.charisma >= filter.charisma 
+          && val.narcissism <= filter.narcissism 
+          && val.humor >= filter.humor
+          && val.honest >= filter.honest
+          && val.looks >= filter.looks
+          && val.empathetic >= filter.empathetic
+          && val.status >= filter.status
+          && val.wealthy >= filter.wealthy
           // && filter.appUsers ? val.appUser == true:true
-          filter.matchMakerProfiles ? true: val.matchMaker == client.matchMaker ? false:true
-          
+          //filter.matchMakerProfiles ? true: val.matchMaker == client.matchMaker ? false:true
+          //1 ==1 
           // && val.dimension >= filter.dimension
           // && distance < filter.distancePreference
           // && val.age >= filter.minAgePreference
@@ -54,7 +55,7 @@ async function applyFilters(filter:any,arr:any,client, createChatThread):serverD
 
 const MatchMakeFinal = ({navigation, route}) => {
     const myContext = useContext(AppContext); 
-    const {changedClient,CustomBackComponent,user, userId, clientFilter, setClientFilter,sentFromBrowse, computeName, createChatThread} = myContext;
+    const {setChangedClient,changedClient,CustomBackComponent,user, userId, clientFilter, setClientFilter,sentFromBrowse, computeName, createChatThread} = myContext;
     const [sliderState, setSliderState] = useState({ currentPage:0  });
     const insets = useSafeAreaInsets();
     const [sectionData,setSectionData] = useState([]); 
@@ -62,38 +63,105 @@ const MatchMakeFinal = ({navigation, route}) => {
     const [userDisplay, setUserDisplay] = useState([]); 
     const [clienter, setClienter] = useState(null); 
     const [loader, setLoader] = useState(true); 
+    const [forFilters, setForFilters] = useState([])
+    //let forFilters = useRef([]).current; 
+    const [profiles, setProfiles] = useState([]); 
+    const [tempCopy, setTempCopy] = useState([]); 
     
     const [flat, setFlat] = useState(null)
-
+    
 
 
     useEffect(() => {
-      if(changedClient){
+      console.log("SOmething changed forFilters")
+    }, [forFilters])
+  
+    
+    useEffect(() => {
+      async function namer(){
+        if(changedClient){
+          console.log("apply Filter called")
+          console.log("checking the forFilters values after returning from settings page")
+          console.log("for filters"); 
+          forFilters.map(val => console.log("length is"+val.users.length))
+          const plane = []
+          const copy = JSON.parse(JSON.stringify(forFilters)); 
+          const filterCopy = clientFilter.concat(); 
+          const mainArrayIndex = copy.findIndex(val => val.client.phoneNumber == changedClient.phoneNumber); 
+          const filterIndex = filterCopy.findIndex(val => val.client == changedClient.phoneNumber);
+          // console.log("checking filters")
+          // console.log(clientFilter[filterIndex].client)
+          // console.log(clientFilter[filterIndex].filter)
+          console.log("checking the CLientName for the filter");
+          console.log(changedClient.name) 
+          console.log("checking the filter snapshot value"); 
+          console.log(filterCopy[filterIndex].filter) 
+          await Promise.all(clientFilter.map(async val => {
+            const checkMainIndex = copy.findIndex(val1 => val1.client.phoneNumber == val.client); 
+            console.log("main Index is")
+            console.log(checkMainIndex)
+            console.log(copy[checkMainIndex].client.phoneNumber)
+            const filters = await applyFilters(val.filter, copy[checkMainIndex].users,copy[checkMainIndex].client, createChatThread ); 
+            copy[checkMainIndex].users = filters; 
+
+          }))
+          // const filters =  await applyFilters(filterCopy[filterIndex].filter, copy[mainArrayIndex].users,changedClient, createChatThread);
+          // console.log("checking array sent to filters"); 
+          // copy[mainArrayIndex].users.map(val => console.log(val.name))
+
+          // console.log("checking returned filter value"); 
+          // filters.map(val => console.log(val.name))
+
+
+          
+          //copy[mainArrayIndex].users = filters; 
+          const sectionDataTransform = await Promise.all(copy.map(val => {
+            return {
+              client:val.client, 
+              sectionData:computeSectionLabel(val.users)
+            }
+       })) 
        
+      
+       setSectionData(sectionDataTransform)
+       setChangedClient(null)
+  
+         
+        }
       }
+      namer()
 
     }, [clientFilter])
 
-   console.log("chnaged client is"); 
-   console.log(sectionData[0])
+
+    
+
+  //  console.log("chnaged client is"); 
+  //  console.log(sectionData[0])
     
     
-    useEffect(() => {
-      if(route.params){
-        const {clientFrom} = route.params;     
-        setClienter(clientFrom)
-      }
-    }, [])
+    // useEffect(() => {
+    //   if(route.params){
+    //     const {clientFrom} = route.params;     
+    //     setClienter(clientFrom)
+    //   }
+    // }, [])
     // useEffect(() => {
       
       
       
     // }, [clienter, sliderState.currentPage])
+    // userDisplay.length ? userDisplay.map(val => console.log(val.client.name)):null
+    console.log(sliderState.currentPage)
+    profiles.length ? console.log(profiles[sliderState.currentPage].name):null
     
   async function getDatingPool(){
     
-      const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get({source:'server'}); 
+      const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get(); 
       const client = await result.docs.map(val => val.data());
+      setProfiles(client)
+      console.log("clientVIew")
+      client.map(val => console.log(val.name))
       return client; 
   }    
     
@@ -128,8 +196,7 @@ const MatchMakeFinal = ({navigation, route}) => {
              }}
         
        })
-       console.log("clientFirlter is"); 
-       console.log(clientFilter)
+       
        
        //setClientFilter(clientFilter => [finalGamer])
        setClientFilter(clientFilter => [...clientFilter, ...finalGamer]);
@@ -137,15 +204,15 @@ const MatchMakeFinal = ({navigation, route}) => {
    }
 
    async function setPage(datingPoolList){
-    
+     console.log("mainer fired")     
 
-      if(clienter){
-        const index = datingPoolList.findIndex(val => val.phoneNumber == clienter.phoneNumber);
-        setSliderState({
-          ...sliderState,
-          currentPage: index,
-      }); 
-      }
+      // if(clienter){
+      //   const index = datingPoolList.findIndex(val => val.phoneNumber == clienter.phoneNumber);
+      //   setSliderState({
+      //     ...sliderState,
+      //     currentPage: index,
+      // }); 
+      // }
 
        
 
@@ -154,11 +221,13 @@ const MatchMakeFinal = ({navigation, route}) => {
            const gender = val.gender; 
            return await db.collection('user').where('gender', '==', gender == 'male'? 'female':'male')
            .where('state', '==', val.state)
-           .get({source:'server'})
+           .get()
            .then(onResult => {
                 return {client:val, users:onResult.docs.map(val => val.data())}
            })
       }))
+      console.log("finalResult"); 
+      finalResult.map(val => console.log(val.client.name))
       
       const transformedpointstoscores = await Promise.all(finalResult.map(async val => {
           const clientLogged = await logTen(val.client); 
@@ -168,6 +237,8 @@ const MatchMakeFinal = ({navigation, route}) => {
                users:userLogged
           } 
       }))
+      console.log("PointsTranform"); 
+      transformedpointstoscores.map(val => console.log(val.client.name))
       
       const simDimensionTransform = await Promise.all(transformedpointstoscores.map(async val => {
           const simDimension =  await computeSimDimension(val.client, val.users);
@@ -176,21 +247,25 @@ const MatchMakeFinal = ({navigation, route}) => {
           //console.log(simDimension)
           
           
-          if(clientFilter.length){
-              if(clientFilter.filter(gamer => gamer.client == val.client.phoneNumber).length){
-                  const index = clientFilter.findIndex(val1 => val1.client == val.client.phoneNumber); 
+          // if(clientFilter.length){
+          //     if(clientFilter.filter(gamer => gamer.client == val.client.phoneNumber).length){
+          //         const index = clientFilter.findIndex(val1 => val1.client == val.client.phoneNumber); 
                   
                   
                   
-                   const filters = await applyFilters(clientFilter[index].filter, filterBySim,val.client, createChatThread);
-                   return {client:val.client, users:filters};
-              }
-          }
-          //return {client:val.client, users:filterBySim}
+          //          const filters = await applyFilters(clientFilter[index].filter, filterBySim,val.client, createChatThread);
+          //          return {client:val.client, users:filters};
+          //     }
+          // }
+          return {client:val.client, users:filterBySim}
                   
       }))
       
       
+      //setForFilters(simDimensionTransform); 
+       
+      setForFilters(simDimensionTransform)
+
 
       const forNextPage = simDimensionTransform.map(val => {
            return {
@@ -207,7 +282,9 @@ const MatchMakeFinal = ({navigation, route}) => {
              client:val.client, 
              sectionData:computeSectionLabel(val.users)
            }
-      }) 
+      })
+      console.log("sectionChecker"); 
+      sectionDataTransform.map(val => console.log(val.client.name)) 
       setLoader(false)
       setSectionData(sectionDataTransform); 
 
@@ -217,6 +294,7 @@ const MatchMakeFinal = ({navigation, route}) => {
     
    useEffect(() => {
     async function namer(){
+     console.log("i was Mainer boy") 
      const datingPool = await getDatingPool();  
      await setFilter(datingPool)
      await setPage(datingPool)
@@ -231,11 +309,11 @@ const MatchMakeFinal = ({navigation, route}) => {
     
 
     const [clients, setClients] = useState([]); 
-    const sliderTemplate =  sectionData.map((val,index) => {
-        return <View style={{ width}} id = {val.client.phoneNumber}>
+    const sliderTemplate =  profiles.map((val,index) => {
+        return <View style={{ width}} id = {val.phoneNumber}>
         <View style = {{ alignItems:"center", marginTop:20}}>
-        {val.client.profilePic ?<Image source = {{uri:val.client.profilePic}} style = {{height:60, width:60, borderRadius:30}}/> :<MaterialIcons name="account-circle" size={75} color="black" />}
-        <Text style = {{fontWeight:"bold", marginTop:10}}>{ computeName(val.client) }</Text>
+        {val.profilePic ?<Image source = {{uri:val.profilePic}} style = {{height:60, width:60, borderRadius:30}}/> :<MaterialIcons name="account-circle" size={75} color="black" />}
+        <Text style = {{fontWeight:"bold", marginTop:10}}>{ computeName(val) }</Text>
         </View>
         </View>
        })
@@ -274,7 +352,7 @@ const MatchMakeFinal = ({navigation, route}) => {
 
          return <FlatList
         data={section.data}
-        
+        extraData = {sectionData} 
         renderItem={renderFlatlist}
         keyExtractor={item => item.phoneNumber}
         numColumns = {5}
@@ -306,7 +384,7 @@ const MatchMakeFinal = ({navigation, route}) => {
              <TouchableOpacity onPress = {() => {setClientFilter([{client:'something', filter:{}}]), navigation.navigate('Homer') }} >
             <Entypo name="controller-play" size={35} style = {{marginLeft:20}} />                    
             </TouchableOpacity>   
-            <TouchableOpacity onPress = {() => navigation.navigate('BrowseMatchSettings', {client:userDisplay[sliderState.currentPage].client})}>
+            <TouchableOpacity onPress = {() => navigation.navigate('BrowseMatchSettings', {client:profiles[sliderState.currentPage]})}>
             <Feather name="settings" size={30} color="black" style = {{marginRight:20, marginBottom:5, marginTop:5}}/>
             </TouchableOpacity>
             </View>
@@ -330,6 +408,7 @@ const MatchMakeFinal = ({navigation, route}) => {
     </View>
     <View style = {{flex:'78%'}}>
     <SectionList
+          extraData = {clientFilter}
           style = {{marginTop:10, marginRight:15, marginLeft:15, flex:0.9}}
           sections={sectionData[sliderState.currentPage].sectionData}
           keyExtractor={(item, index) => item.phoneNumber}

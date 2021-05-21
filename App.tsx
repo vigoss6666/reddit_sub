@@ -80,6 +80,7 @@ import Trophy from './Trophy/Screens/Trophy';
 import GameHomepage from './Game/Screens/GameHomepage'; 
 import Matchmake from './Game/Screens/Matchmake';
 import MatchMakeFinal from './Game/Screens/MatchMakeFinal';
+import MatchMakeGrand from './Game/Screens/MatchMakeGrand';
 //@refresh reset
 import MatchView from './Game/Screens/MatchView'; 
 //import MatchView from './Game/MatchView/src/screens/MatchView';
@@ -180,7 +181,7 @@ export default function App() {
   const [inviteToPlay, setInvitetoplay] = useState(null); 
   const [inviteToPlayContacts, setInvitetoplayContacts] = useState(null); 
   const [loader, setLoader] = useState(true); 
-  
+  const [changedClient, setChangedClient] = useState(null);  
   
 
   
@@ -213,13 +214,7 @@ export default function App() {
     appUsers:false, 
     matchMakerContact:true
   })
-  const [clientFilter, setClientFilter] = useState([{
-    client:"something", 
-    filter:{}
-  }, 
-  
-
-]); 
+  const [clientFilter, setClientFilter] = useState([]); 
   // const [clientFilter, setClientFilter] = useState([]); 
 
   const [basicAuth, setBasicAuth] = useState(null); 
@@ -312,6 +307,8 @@ function stringifyNumber(n) {
   }
   
   const globalObject = {
+    changedClient, 
+    setChangedClient, 
     inviteToPlayContacts, 
     setInvitetoplayContacts, 
     inviteToPlay, 
@@ -423,7 +420,7 @@ const mainHome = () => {
         <NavigationContainer>
          
         <Stack.Navigator>
-          <Stack.Screen name="Home" component={MatchMakeFinal} options = {{headerShown:false}}/>
+          <Stack.Screen name="Home" component={MatchMakeGrand} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="PointsRequired" component={PointsRequired}/>
           <Stack.Screen name="Birthday" component={BirthDay}/>
