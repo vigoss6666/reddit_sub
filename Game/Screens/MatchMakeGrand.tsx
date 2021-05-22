@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, createContext, useContext, useCallback  } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { Text, View, StyleSheet,TouchableOpacity, Dimensions, Image,ScrollView,SectionList, FlatList } from 'react-native';
-import {Entypo, Feather, FontAwesome, MaterialIcons} from '@expo/vector-icons';
+import {Entypo, Feather, FontAwesome, FontAwesome5, Foundation, MaterialIcons} from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {firebase} from '../../config'; 
 import AppContext from '../../AppContext'; 
@@ -10,7 +10,7 @@ import { logTen } from './logTen';
 import { iconFactory, LoadScreen} from '../../src/common/Common';
 
 
-import {transformCreativity, computeSimDimension, computeSectionLabel, filterGamer, getDistanceFromLatLonInKm} from '../../networking'; 
+import {transformCreativity, computeSimDimension, computeSectionLabel, filterGamer, getDistanceFromLatLonInKm, clientSort} from '../../networking'; 
 import { filter } from 'underscore';
 const db = firebase.firestore(); 
 interface MatchMakeFinalProps {}
@@ -98,13 +98,21 @@ const MatchMakeFinal = ({navigation, route}) => {
           // console.log(filterCopy[filterIndex].filter) 
           await Promise.all(clientFilter.map(async val => {
             const checkMainIndex = copy.findIndex(val1 => val1.client.phoneNumber == val.client); 
-            console.log("main Index is")
-            console.log(checkMainIndex)
-            console.log(copy[checkMainIndex].client.phoneNumber)
-            const filters = await applyFilters(val.filter, copy[checkMainIndex].users,copy[checkMainIndex].client, createChatThread ); 
+            
+            const filters = await applyFilters(val.filter, copy[checkMainIndex].users,copy[checkMainIndex].client, createChatThread); 
             copy[checkMainIndex].users = filters; 
+            console.log("length checker"); 
+            
+            
+            
+            const result = await clientSort(copy[checkMainIndex].users, val.sortOrder); 
+            
+            copy[checkMainIndex].users = result; 
+            
+            //copy[0].users = gamer; 
 
           }))
+          
           // const filters =  await applyFilters(filterCopy[filterIndex].filter, copy[mainArrayIndex].users,changedClient, createChatThread);
           // console.log("checking array sent to filters"); 
           // copy[mainArrayIndex].users.map(val => console.log(val.name))
@@ -202,7 +210,8 @@ const MatchMakeFinal = ({navigation, route}) => {
       const result = filterGamer(datingPoolList,'phoneNumber', clientNumber, null, null)
       const finalGamer = result.excludedObjects.map(val2 => {
         
-        return {client:val2.phoneNumber, 
+        return {client:val2.phoneNumber,
+        sortOrder:['creativity', 'charisma', 'honest', 'empathetic', 'looks', 'humor', 'status', 'wealthy'],    
         filter:{
                charisma:0, 
                creativity:0, 
@@ -408,10 +417,16 @@ const MatchMakeFinal = ({navigation, route}) => {
       return (
         <View style={{flex:1, paddingTop:insets.top}}>
           <View style = {{flexDirection:'row', justifyContent:'space-between',alignItems:'center', backgroundColor:'grey',flex:'6%'}}>
-             <TouchableOpacity onPress = {() => {setClientFilter([{client:'something', filter:{}}]), navigation.navigate('Homer') }} >
+             <TouchableOpacity onPress = {() => { navigation.navigate('Homer')}}>
             <Entypo name="controller-play" size={35} style = {{marginLeft:20}} />                    
             </TouchableOpacity>
             <View style = {{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+            <TouchableOpacity onPress = {() => navigation.navigate('MapViewClientGame',{client:profiles[sliderState.currentPage], pageData:userDisplay})} style = {{marginRight:15}}>
+            <Foundation name="map" size={24} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress = {() => navigation.navigate('Sort',{client:profiles[sliderState.currentPage]})} style = {{marginRight:15}}>
+            <FontAwesome5 name="sort-numeric-down" size={24} color="black" />
+            </TouchableOpacity>
             <TouchableOpacity onPress = {() => refreshFilter()} style = {{marginRight:10}}>
             <FontAwesome name="refresh" size={30} color="black" />
             </TouchableOpacity>

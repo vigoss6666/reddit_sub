@@ -659,7 +659,7 @@ onChangeItem={namer => addAge(item, namer)}
           <TouchableOpacity onPress = {() => setCaretFalse(item)}><AntDesign name="up" size={24} color="black" /></TouchableOpacity>:<TouchableOpacity onPress = {() => setCaretTrue(item)}><AntDesign name="down" size={24} color="black" /></TouchableOpacity>}
 
           </View>
-          <Text style = {{alignSelf:'center',fontWeight:'bold',marginBottom:10}}> {item.votes.length > 0 ? item.votes.length : 0} votes by {item.matchMakers.length} {item.matchMakers.length > 1 ? 'friends':'friend'}</Text>
+          {/* <Text style = {{alignSelf:'center',fontWeight:'bold',marginBottom:10}}> {item.votes.length > 0 ? item.votes.length : 0} votes by {item.matchMakers.length} {item.matchMakers.length > 1 ? 'friends':'friend'}</Text> */}
           { item.caret ? 
           <View>
            {renderIsUser(item)}

@@ -50,6 +50,7 @@ import NewContactLocation from './Authentication/Screens/NewContactLocation';
 import ContactLoadSuccess from './Authentication/Screens/ContactLoadSuccess';
 import Playgame from './Game/Screens/Playgame'; 
 import PlayGameLatest from './Game/Screens/PlayGameLatest';
+import MapViewClientGame from './Game/Screens/MapViewClientGame';
 import Play20 from './Game/Screens/Play20';
 import ProfilePool from './Authentication/Screens/ProfilePool';
 import ProfileClientView from './Authentication/Screens/ProfileClientView';
@@ -423,6 +424,7 @@ const mainHome = () => {
           <Stack.Screen name="Home" component={MatchMakeGrand} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="PointsRequired" component={PointsRequired}/>
+          <Stack.Screen name="Sort" component={Sort}/>
           <Stack.Screen name="Birthday" component={BirthDay}/>
           <Stack.Screen name="NewContactLocation" component={NewContactLocation}/>
           <Stack.Screen name="Gender" component={Gender}/>
@@ -464,6 +466,7 @@ const mainHome = () => {
           animationEnabled: false,
         }}/>
           <Stack.Screen name="Play20" component={Play20}/>
+          <Stack.Screen name="MapViewClientGame" component={MapViewClientGame}/>
           <Stack.Screen name="ProfilePool" component={ProfilePool} options = {{headerTitle:false, headerLeft:false}}/>
           <Stack.Screen name="SettingsHome" component={SettingsHome} options = {{headerTitle:false}} />
           <Stack.Screen name="AccountSettings" component={AccountSettings  }  />

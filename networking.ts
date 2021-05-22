@@ -535,6 +535,14 @@ export async function addUsers(user,matchMaker){
      await batch.commit()
   }
 }
+export async function clientSort(users, sortedArray){
+  const finalResult = []
+  sortedArray.map(val => {
+     const result = users.filter(val1 => val1.simDimension == val)
+     finalResult.push(...result); 
+  })
+  return finalResult; 
+}
 
 
 

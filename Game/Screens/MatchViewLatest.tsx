@@ -74,7 +74,7 @@ const MatchViewLatest = ({navigation, route}) => {
     useEffect(() => {
        navigation.setOptions({
            headerTitle:false, 
-           headerLeft:() => (<TouchableOpacity onPress = {() => navigation.navigate('MatchMakeFinal')} style = {{marginLeft:10}}><Text style = {{fontWeight:'bold', color:'blue', fontSize:20}}>Back</Text></TouchableOpacity>)
+           headerLeft:() => (<TouchableOpacity onPress = {() => navigation.goBack()} style = {{marginLeft:10}}><Text style = {{fontWeight:'bold', color:'blue', fontSize:20}}>Back</Text></TouchableOpacity>)
        }) 
     }, [])
 

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, createContext, useContext, useCallback  } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import AppContext from '../../AppContext';
 // @refresh reset
 import DraggableFlatList, {
     RenderItemParams,
@@ -67,8 +68,59 @@ type Item = {
   backgroundColor: string;
 };
 
-const Sort = (props: SortProps) => {
+const Sort = ({navigation, route}) => {
+    const myContext = useContext(AppContext);
+    const {client} = route.params; 
+    const {clientFilter, setClientFilter, CustomBackComponent} = myContext;
     const [data, setData] = useState(exampleData);
+    const [currentClientFilter, setCurrentClientFilter] = useState({});
+    const [sortData, setSortData] = useState([]); 
+    const [clientIndex, setClientIndex] = useState(); 
+    
+    
+    console.log(sortData[0])
+
+
+    useEffect(() => {
+      const index = clientFilter.findIndex(val => val.client == client.phoneNumber); 
+      setClientIndex(index); 
+      setCurrentClientFilter(clientFilter[index]); 
+      const result = clientFilter[index].sortOrder.map(val => {
+         return Object.assign({}, {key:val,label:val, backgroundColor:'black' }) 
+         
+      })
+      setSortData(result); 
+
+    }, [client])
+
+
+    useEffect(() => {
+      navigation.setOptions({
+        headerTitle:false, 
+        headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+      })
+    }, [])
+
+    useEffect(() => {
+       if(sortData.length){
+        const result = sortData.map(val => val.label); 
+        const copy = JSON.parse(JSON.stringify(clientFilter)); 
+        copy[clientIndex].sortOrder = result; 
+        setClientFilter(copy);
+
+       }
+       
+
+    }, [sortData])
+
+
+    const setClientSort = () => {
+       const result = sortData.map(val => val.label); 
+       const copy = JSON.parse(JSON.stringify(clientFilter)); 
+       copy[clientIndex].sortOrder = result; 
+       setClientFilter(copy); 
+
+    }
 
     const renderItem = useCallback(
       ({ item, index, drag, isActive }: RenderItemParams<Item>) => {
@@ -98,10 +150,10 @@ const Sort = (props: SortProps) => {
     return (
       <View style={{ flex: 1 }}>
         <DraggableFlatList
-          data={data}
+          data={sortData}
           renderItem={renderItem}
           keyExtractor={(item, index) => `draggable-item-${item.key}`}
-          onDragEnd={({ data }) => setData(data)}
+          onDragEnd={({ data }) => setSortData(data)}
         />
       </View>
     );
