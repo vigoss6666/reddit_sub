@@ -183,6 +183,7 @@ export default function App() {
   const [inviteToPlayContacts, setInvitetoplayContacts] = useState(null); 
   const [loader, setLoader] = useState(true); 
   const [changedClient, setChangedClient] = useState(null);  
+  const [generatedMatch, setGeneratedMatch] = useState({});
   
 
   
@@ -287,6 +288,7 @@ function stringifyNumber(n) {
 
 
   const tempObject = {
+
     _id,
     setId,
     profileAuth, 
@@ -308,6 +310,8 @@ function stringifyNumber(n) {
   }
   
   const globalObject = {
+    generatedMatch, 
+    setGeneratedMatch, 
     changedClient, 
     setChangedClient, 
     inviteToPlayContacts, 

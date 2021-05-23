@@ -184,9 +184,9 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
   const dimensions =  ['creativity', 'charisma', 'honest', 'looks', 'empathetic', 'humor', 'status', 'wealthy']; 
   const mainerObj = [];
   
-  // if(arr1[0].gender !== obj1.gender){
-  //    arr1.push(obj1); 
-  // }
+  if(arr1[0].gender !== obj1.gender){
+     arr1.push(obj1); 
+  }
   
   
   
@@ -303,12 +303,12 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
       return b.wealthy - a.wealthy;
   });
   const index = result.findIndex(x => x.phoneNumber == obj1.phoneNumber); 
-  const sub = ((result.length -1 ) - index); 
+  const sub = ((result.length) - index); 
   if(sub == 0){
     mainerObj.push({ trait:'wealthy', aheadOf:0, votes:obj1.wealthy}) 
     return   
   } 
-  const percent = (sub/ (result.length - 1))*100;
+  const percent = (sub/ (result.length))*100;
   mainerObj.push({ trait:'wealthy', aheadOf:Math.floor(percent), votes:obj1.wealthy}) 
   }
   function narcissism(){

@@ -171,16 +171,18 @@ const distanceTemplate = () => {
 
 const addClientFilter = () => {
 
-  const indexer = clientFilter.findIndex(val => val.client == client.phoneNumber); 
+  const copy = JSON.parse(JSON.stringify(clientFilter)); 
+  const indexer = copy.findIndex(val => val.client == client.phoneNumber); 
+  copy[indexer].filter = Object.assign({}, copy[indexer].filter,{dimension:compatibility, distancePreference:distance, minAgePreference:minAge, maxAgePreference:maxAge, matchMakerProfiles:matchmaking, appUsers})
   
-  const result = clientFilter.map((val, index) => {
-     if(index == indexer){
-       return {client:val.client, filter:Object.assign({},val.filter, {dimension:compatibility, distancePreference:distance, minAgePreference:minAge, maxAgePreference:maxAge, matchMakerProfiles:matchmaking, appUsers})} 
-     }
-     return val; 
-  })
+  // const result = clientFilter.map((val, index) => {
+  //    if(index == indexer){
+  //      return {client:val.client, filter:Object.assign({},val.filter, {dimension:compatibility, distancePreference:distance, minAgePreference:minAge, maxAgePreference:maxAge, matchMakerProfiles:matchmaking, appUsers})} 
+  //    }
+  //    return val; 
+  // })
   
-  setClientFilter(result); 
+  setClientFilter(copy); 
    
 }
  

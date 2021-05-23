@@ -5,7 +5,7 @@ import {firebase } from '../../config';
 import {Button} from 'react-native-elements'; 
 import {iconFactory} from '../../src/common/Common'; 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { client } from 'networking';
+
 ;
 import AppContext from '../../AppContext'; 
 interface MatchViewLatestProps {}
@@ -15,7 +15,7 @@ const MatchViewLatest = ({navigation, route}) => {
     const [hidden, setHidden]= useState(false);
     const insets = useSafeAreaInsets();
     const myContext = useContext(AppContext); 
-    const {user, userId, db, createChatThread, firebase, computeName} = myContext;
+    const {user, userId, db, createChatThread, firebase, computeName, setGeneratedMatch} = myContext;
     const expoToken = 'ExponentPushToken[W-LwjHLivbcjOyOCbGIUve]'; 
     
     
@@ -26,13 +26,13 @@ const MatchViewLatest = ({navigation, route}) => {
     const [sliderState, setSliderState] = useState({ currentPage: clientIndex });
     const [sliderState1, setSliderState1] = useState({ currentPage: userIndex });
 
-    console.log("dater is")
-    console.log(tester[sliderState.currentPage].data)
+    
 
 
     const setEvent = () => {
       const client = tester[sliderState.currentPage].client; 
       const user = tester[sliderState.currentPage].data[sliderState1.currentPage];
+      setGeneratedMatch({client:tester[sliderState.currentPage].client, user:tester[sliderState.currentPage].data[sliderState1.currentPage]})
       const _id = createChatThread(client.phoneNumber, user.phoneNumber);
       console.log("id is"+_id)   
       db.collection('introductions').doc(_id).set({client1:client.phoneNumber, client2:user.phoneNumber, createdAt:new Date(), discoveredBy:userId}, {merge:true});
@@ -43,6 +43,7 @@ const MatchViewLatest = ({navigation, route}) => {
         client:client.phoneNumber
       })}, {merge:true}).then(() => {
           sendPushNotification(expoToken)
+          navigation.goBack()
       }) 
 
     }

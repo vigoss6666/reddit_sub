@@ -10,7 +10,7 @@ import {firebase} from '../../config';
 import { getBaseLog} from './getBaseLog'; 
 import { transformCreativity} from '../../networking'; 
 import AppContext from '../../AppContext'; 
-import {updateUser} from '../../networking';
+import {updateUser, getDistanceFromLatLonInKm} from '../../networking';
 const db = firebase.firestore();
 
 // @refresh reset
@@ -120,6 +120,28 @@ const AttributeFilterCLient = ({navigation, route}) => {
 
   
   ]
+  const computeNarc = (obj1, arr1) => {
+    if(arr1[0].gender !== obj1.gender){
+      arr1.push(obj1); 
+    }
+    
+      const mainerObj = [];   
+      const dup = JSON.parse(JSON.stringify(arr1));    
+      const result = dup.sort((a, b) => {
+          return a.narcissism - b.narcissism;
+      });
+      
+      const index = result.findIndex(x => x.phoneNumber == obj1.phoneNumber); 
+      const sub = ((result.length) - index);
+      if(sub == 0){
+        mainerObj.push({ trait:'narcissism', aheadOf:0, votes:obj1.narcissism}) 
+        return   
+      }  
+      const percent = (sub/ (result.length))*100;
+      mainerObj.push({ trait:'narcissism', aheadOf:Math.floor(percent), votes:obj1.narcissism}) 
+      
+      return mainerObj; 
+   }
    
    
    useEffect(() => {
@@ -141,37 +163,89 @@ const AttributeFilterCLient = ({navigation, route}) => {
    },[])     
 
 
-useEffect(() => {
-if(attribute){
-  db.collection('user')
-  .where('state', '==', client.state)
-  .where('gender', '==', 'male')
-  .get()
-  .then(onResult => {
-     if(onResult.empty){
-        setMaleAhead('100')
-        return; 
-     }
-     const users = onResult.docs.map(val => val.data()); 
-     const listWithoutUser = users.filter(val => val.phoneNumber !== userId);
-     if(listWithoutUser.length < 1) {
-       setMaleAhead('100'); 
-       return; 
-     } 
+// useEffect(() => {
+// if(attribute){
+//   db.collection('user')
+//   .where('state', '==', client.state)
+//   .where('gender', '==', 'male')
+//   .get()
+//   .then(onResult => {
+//      if(onResult.empty){
+//         setMaleAhead('100')
+//         return; 
+//      }
+//      const users = onResult.docs.map(val => val.data()); 
+//      const listWithoutUser = users.filter(val => val.phoneNumber !== userId);
+//      if(listWithoutUser.length < 1) {
+//        setMaleAhead('100'); 
+//        return; 
+//      } 
      
-     const userLogged = logTen(user); 
-     const result = transformCreativity(client, usersLogged); 
-     const getAttribute = result.filter(val => val.trait == attribute); 
-     setMaleAhead(getAttribute[0].aheadOf); 
+//      const usersLogged = logTen(user); 
+//      const result = transformCreativity(client, usersLogged); 
+//      const getAttribute = result.filter(val => val.trait == attribute); 
+//      setMaleAhead(getAttribute[0].aheadOf); 
      
-  })
-}  
-}, [attribute])
+//   })
+// }  
+// }, [attribute])
 
 
+// useEffect(() => {
+//   if(attribute){
+//     db.collection('user')
+//   .where('state', '==', client.state)
+//   .where('gender', '==', 'female')
+//   .get()
+//   .then(onResult => {
+//      if(onResult.empty){
+//         setFemaleAhead(100)
+//         return; 
+//      }
+//     const users = onResult.docs.map(val => val.data());
+//     const listWithoutUser = users.filter(val => val.phoneNumber !== userId); 
+     
+//      if(listWithoutUser.length < 1){
+//        setFemaleAhead(100)
+//        return; 
+//      }
+//      const usersLogged = logTen(users); 
+      
+     
+     
+//    const result = transformCreativity(client, usersLogged); 
+//    const getAttribute = result.filter(val => val.trait == attribute); 
+   
+//    setFemaleAhead(getAttribute[0].aheadOf); 
+//   })
+//   }
+  
+//   }, [attribute])
 useEffect(() => {
   if(attribute){
     db.collection('user')
+    .where('state', '==', client.state)
+    .where('gender', '==', 'male')
+    .get()
+    .then(onResult => {
+       if(onResult.empty){
+          setMaleAhead('100')
+          return; 
+       }
+       const users = onResult.docs.map(val => val.data()); 
+  
+      
+       const usersLogged = logTen(users); 
+       
+       const result = attribute == 'narcissism' ? computeNarc(client, usersLogged): transformCreativity(client, usersLogged); 
+       const getAttribute = result.filter(val => val.trait == attribute); 
+       setMaleAhead(getAttribute[0].aheadOf); 
+    })
+  }  
+  }, [attribute,clientFilter])
+useEffect(() => {
+  if(attribute){
+  db.collection('user')
   .where('state', '==', client.state)
   .where('gender', '==', 'female')
   .get()
@@ -180,37 +254,52 @@ useEffect(() => {
         setFemaleAhead(100)
         return; 
      }
-    const users = onResult.docs.map(val => val.data());
-    const listWithoutUser = users.filter(val => val.phoneNumber !== userId); 
      
-     if(listWithoutUser.length < 1){
-       setFemaleAhead(100)
-       return; 
-     }
+     const users = onResult.docs.map(val => val.data());
      const usersLogged = logTen(users); 
-      
      
      
-   const result = transformCreativity(client, usersLogged); 
+     
+   const result = attribute == 'narcissism' ? computeNarc(client, usersLogged): transformCreativity(client, usersLogged);  
    const getAttribute = result.filter(val => val.trait == attribute); 
    
    setFemaleAhead(getAttribute[0].aheadOf); 
   })
   }
   
-  }, [attribute])
+  }, [attribute, clientFilter])
 
 useEffect(() => {
+  
   if(attValue){
+    if(attribute == 'narcissism'){
+    console.log("Att value"+attValue)
+      db.collection('user')
+      .where('gender', '==', 'female')
+      .where('state', '==', client.state)
+      .where(attribute, "<", Math.pow(5, attValue)) 
+      .get()
+      .then(onResult => {
+         const finalResult = onResult.docs.map(val => val.data());
+         console.log("Femlae checkerx"); 
+         console.log(finalResult.length)
+  
+       
+         const listWithoutUser = finalResult.filter(val => val.phoneNumber !== client.phoneNumber); 
+         setFemaleMatches(listWithoutUser.length) 
+         return;
+     })
+      return   
+    }
   
   db.collection('user')
   .where('gender', '==', 'female')
-  .where('state', '==', user.state)
+  .where('state', '==', client.state)
   .where(attribute, ">", Math.pow(5, attValue)) 
   .get()
   .then(onResult => {
      const finalResult = onResult.docs.map(val => val.data());
-     const listWithoutUser = finalResult.filter(val => val.phoneNumber !== userId); 
+     const listWithoutUser = finalResult.filter(val => val.phoneNumber !== client.phoneNumber); 
      setFemaleMatches(listWithoutUser.length) 
  })
   }
@@ -219,14 +308,31 @@ useEffect(() => {
 
 useEffect(() => {
   if(attValue){
+    if(attribute == 'narcissism'){
+      db.collection('user')
+      .where('gender', '==', 'male')
+      .where('state', '==', client.state)
+      .where(attribute, "<", Math.pow(5, attValue)) 
+      .get()
+      .then(onResult => {
+         const finalResult = onResult.docs.map(val => val.data());
+
+         const listWithoutUser = finalResult.filter(val => val.phoneNumber !== client.phoneNumber); 
+         setMaleMatches(listWithoutUser.length) 
+         return
+     })
+     return;   
+    }
     db.collection('user')
   .where('gender', '==', 'male')
-  .where('state', '==', user.state)
+  .where('state', '==', client.state)
   .where(attribute, ">", Math.pow(5, attValue)) 
   .get()
   .then(onResult => {
      const finalResult = onResult.docs.map(val => val.data()); 
-     const listWithoutUser = finalResult.filter(val => val.phoneNumber !== userId);  
+     console.log("FInal result is")
+     console.log(finalResult.length)
+    const listWithoutUser = finalResult.filter(val => val.phoneNumber !== client.phoneNumber);  
      setMaleMatches(listWithoutUser.length)
  })
  }
@@ -265,18 +371,12 @@ useEffect(() => {
 // }
 
 const addClientFilter = () => {
-
-  const indexer = clientFilter.findIndex(val => val.client == client.phoneNumber); 
-  // const currentClientFilter = clientFilter[index].filter;
-  // clientFilter[index].filter = Object.assign({}, clientFilter[index].filter, { [attribute]:attValue})
-  const result = clientFilter.map((val, index) => {
-     if(index == indexer){
-       return {client:val.client, filter:Object.assign({},val.filter, {[attribute]:attValue} )} 
-     }
-     return val; 
-  })
+  const copy = JSON.parse(JSON.stringify(clientFilter)); 
+  const indexer = copy.findIndex(val => val.client == client.phoneNumber); 
   
-  setClientFilter(result); 
+  copy[indexer].filter = Object.assign({},copy[indexer].filter, {[attribute]:attValue})
+  
+  setClientFilter(copy); 
    
 }
 

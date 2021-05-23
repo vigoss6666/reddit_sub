@@ -55,7 +55,7 @@ async function applyFilters(filter:any,arr:any,client, createChatThread):serverD
 
 const MatchMakeFinal = ({navigation, route}) => {
     const myContext = useContext(AppContext); 
-    const {setChangedClient,changedClient,CustomBackComponent,user, userId, clientFilter, setClientFilter,sentFromBrowse, computeName, createChatThread} = myContext;
+    const {setChangedClient,changedClient,CustomBackComponent,user, userId, clientFilter, setClientFilter,sentFromBrowse, computeName, createChatThread, generatedMatch, setGeneratedMatch} = myContext;
     const [sliderState, setSliderState] = useState({ currentPage:0  });
     const insets = useSafeAreaInsets();
     const [sectionData,setSectionData] = useState([]); 
@@ -79,6 +79,8 @@ const MatchMakeFinal = ({navigation, route}) => {
     
     useEffect(() => {
       async function namer(){
+        console.log("generatedMatchclient"+generatedMatch.client.phoneNumber)
+        console.log("generatedMatchuser"+generatedMatch.user.phoneNumber)
         
           // console.log("apply Filter called")
           // console.log("checking the forFilters values after returning from settings page")
@@ -98,8 +100,10 @@ const MatchMakeFinal = ({navigation, route}) => {
           // console.log(filterCopy[filterIndex].filter) 
           await Promise.all(clientFilter.map(async val => {
             const checkMainIndex = copy.findIndex(val1 => val1.client.phoneNumber == val.client); 
-            
+            console.log("checking sorted Array")
+            console.log(val.sortedArray)
             const filters = await applyFilters(val.filter, copy[checkMainIndex].users,copy[checkMainIndex].client, createChatThread); 
+            console.log(val)
             copy[checkMainIndex].users = filters; 
             console.log("length checker"); 
             
@@ -108,6 +112,13 @@ const MatchMakeFinal = ({navigation, route}) => {
             const result = await clientSort(copy[checkMainIndex].users, val.sortOrder); 
             
             copy[checkMainIndex].users = result; 
+
+            if(Object.keys(generatedMatch)){
+              const matchClientIndex = copy.findIndex(val => val.client.phoneNumber == generatedMatch.client.phoneNumber); 
+              const result = copy[matchClientIndex].users.filter(val => val.phoneNumber !== generatedMatch.user.phoneNumber); 
+              copy[matchClientIndex].users = result; 
+            }
+            
             
             //copy[0].users = gamer; 
 
@@ -139,14 +150,14 @@ const MatchMakeFinal = ({navigation, route}) => {
       }
       namer()
 
-    }, [clientFilter])
+    }, [clientFilter,generatedMatch])
 
 
     async function refreshFilter(){
-     const copy = clientFilter.concat();
+     const copy = JSON.parse(JSON.stringify(clientFilter));
      const currentCLient = profiles[sliderState.currentPage]; 
      
-      const index = copy.findIndex(val => val.client == currentCLient.phoneNumber);
+     const index = copy.findIndex(val => val.client == currentCLient.phoneNumber);
       
      copy[index].filter = {
       charisma:0, 
@@ -203,16 +214,11 @@ const MatchMakeFinal = ({navigation, route}) => {
 
   
     async function setFilter(datingPoolList){
-      console.log("jumper called")
-      const copy = clientFilter.concat();           
-      const clientNumber = copy.map(val1 => val1.client); 
-      let freshCopy = []
-      const result = filterGamer(datingPoolList,'phoneNumber', clientNumber, null, null)
-      const finalGamer = result.excludedObjects.map(val2 => {
-        
-        return {client:val2.phoneNumber,
-        sortOrder:['creativity', 'charisma', 'honest', 'empathetic', 'looks', 'humor', 'status', 'wealthy'],    
-        filter:{
+      const finalGamer = datingPoolList.map(val => {
+        return {
+          client:val.phoneNumber, 
+          sortOrder:['creativity', 'charisma', 'honest', 'empathetic', 'looks', 'humor', 'status', 'wealthy'],    
+          filter:{
                charisma:0, 
                creativity:0, 
                honest:0, 
@@ -222,20 +228,50 @@ const MatchMakeFinal = ({navigation, route}) => {
                humor:0, 
                wealthy:0, 
                narcissism:10,
-               minAgePreference:val2.minAgePreference == 15 ? 15: val2.minAgePreference, 
-               maxAgePreference:val2.maxAgePreference == 60 ? 60:val2.maxAgePreference,
+               minAgePreference:val.minAgePreference == 15 ? 15: val.minAgePreference, 
+               maxAgePreference:val.maxAgePreference == 60 ? 60:val.maxAgePreference,
                dimension:0,
-               distancePreference:val2.distancePreference == 40 ? 40: val2.distancePreference, 
+               distancePreference:val.distancePreference == 40 ? 40: val.distancePreference, 
                matchMakerProfiles:true, 
                appUsers:true, 
        
-             }}
+             }
+        }
+      })
+      setClientFilter(finalGamer); 
+      // console.log("jumper called")
+      // const copy = clientFilter.concat();           
+      // const clientNumber = copy.map(val1 => val1.client); 
+      // let freshCopy = []
+      // const result = filterGamer(datingPoolList,'phoneNumber', clientNumber, null, null)
+      // const finalGamer = result.excludedObjects.map(val2 => {
         
-       })
+      //   return {client:val2.phoneNumber,
+      //   sortOrder:['creativity', 'charisma', 'honest', 'empathetic', 'looks', 'humor', 'status', 'wealthy'],    
+      //   filter:{
+      //          charisma:0, 
+      //          creativity:0, 
+      //          honest:0, 
+      //          looks:0, 
+      //          empathetic:0, 
+      //          status:0, 
+      //          humor:0, 
+      //          wealthy:0, 
+      //          narcissism:10,
+      //          minAgePreference:val2.minAgePreference == 15 ? 15: val2.minAgePreference, 
+      //          maxAgePreference:val2.maxAgePreference == 60 ? 60:val2.maxAgePreference,
+      //          dimension:0,
+      //          distancePreference:val2.distancePreference == 40 ? 40: val2.distancePreference, 
+      //          matchMakerProfiles:true, 
+      //          appUsers:true, 
+       
+      //        }}
+        
+      //  })
        
        
-       //setClientFilter(clientFilter => [finalGamer])
-       setClientFilter(clientFilter => [...clientFilter, ...finalGamer]);
+      //  //setClientFilter(clientFilter => [finalGamer])
+      //  setClientFilter(clientFilter => [...clientFilter, ...finalGamer]);
        
    }
 

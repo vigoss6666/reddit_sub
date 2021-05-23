@@ -216,6 +216,7 @@ useEffect(() => {
 useEffect(() => {
   if(attValue){
   if(attribute == 'narcissism'){
+    
     db.collection('user')
     .where('gender', '==', 'female')
     .where('state', '==', user.state)
