@@ -15,7 +15,7 @@ const MatchViewLatest = ({navigation, route}) => {
     const [hidden, setHidden]= useState(false);
     const insets = useSafeAreaInsets();
     const myContext = useContext(AppContext); 
-    const {user, userId, db, createChatThread, firebase, computeName, setGeneratedMatch} = myContext;
+    const {user, userId, db, createChatThread, firebase, computeName, setGeneratedMatch, generatedMatch} = myContext;
     const expoToken = 'ExponentPushToken[W-LwjHLivbcjOyOCbGIUve]'; 
     
     
@@ -32,7 +32,7 @@ const MatchViewLatest = ({navigation, route}) => {
     const setEvent = () => {
       const client = tester[sliderState.currentPage].client; 
       const user = tester[sliderState.currentPage].data[sliderState1.currentPage];
-      setGeneratedMatch({client:tester[sliderState.currentPage].client, user:tester[sliderState.currentPage].data[sliderState1.currentPage]})
+      setGeneratedMatch((generatedMatch) => [...generatedMatch, {client:tester[sliderState.currentPage].client, user:tester[sliderState.currentPage].data[sliderState1.currentPage]}])
       const _id = createChatThread(client.phoneNumber, user.phoneNumber);
       console.log("id is"+_id)   
       db.collection('introductions').doc(_id).set({client1:client.phoneNumber, client2:user.phoneNumber, createdAt:new Date(), discoveredBy:userId}, {merge:true});

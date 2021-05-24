@@ -62,7 +62,7 @@ useEffect(() => {
 
 
 
-console.log(counter)
+
 useEffect(() => {
   setCounter(counter + 1); 
   const index = clientFilter.findIndex(val => val.client == client.phoneNumber); 
@@ -171,9 +171,9 @@ const distanceTemplate = () => {
 
 const addClientFilter = () => {
 
-  const copy = JSON.parse(JSON.stringify(clientFilter)); 
-  const indexer = copy.findIndex(val => val.client == client.phoneNumber); 
-  copy[indexer].filter = Object.assign({}, copy[indexer].filter,{dimension:compatibility, distancePreference:distance, minAgePreference:minAge, maxAgePreference:maxAge, matchMakerProfiles:matchmaking, appUsers})
+  // const copy = JSON.parse(JSON.stringify(clientFilter)); 
+  // const indexer = copy.findIndex(val => val.client == client.phoneNumber); 
+  // copy[indexer].filter = Object.assign({}, copy[indexer].filter,{dimension:compatibility, distancePreference:distance, minAgePreference:minAge, maxAgePreference:maxAge, matchMakerProfiles:matchmaking, appUsers})
   
   // const result = clientFilter.map((val, index) => {
   //    if(index == indexer){
@@ -182,7 +182,7 @@ const addClientFilter = () => {
   //    return val; 
   // })
   
-  setClientFilter(copy); 
+  // setClientFilter(copy); 
    
 }
  
@@ -206,7 +206,7 @@ const changeOtherFilter = () => {
         
       ];
       const changeValue = (value) => {
-        console.log("valer called")
+        
         
         setCompatibility(value.toFixed(1));
         
@@ -228,7 +228,7 @@ const changeOtherFilter = () => {
 }
 
 
-console.log("component mounted"); 
+
 
 
 function jsUcfirst(str) 
@@ -366,7 +366,7 @@ function jsUcfirst(str)
 
       ]}
     labelStyle = {{fontSize:20, fontWeight:'bold'}}
-    onPress = {() => {console.log("pressed")}}
+    
     containerStyle={{height: 40, width:100, }}
     style={{}}
     itemStyle={{
@@ -434,7 +434,7 @@ function jsUcfirst(str)
 
       ]}
     labelStyle = {{fontSize:20, fontWeight:'bold'}}
-    onPress = {() => {console.log("pressed")}}
+    
     containerStyle={{height: 40, width:100, }}
     style={{}}
     itemStyle={{
@@ -504,7 +504,7 @@ function jsUcfirst(str)
         
 
       ]}
-    onPress = {() => {console.log("pressed")}}
+    
     containerStyle={{height: 40, width:100, }}
     style={{}}
     itemStyle={{
@@ -573,7 +573,7 @@ function jsUcfirst(str)
         
 
       ]}
-    onPress = {() => {console.log("pressed")}}
+    
     containerStyle={{height: 40, width:100, }}
     style={{}}
     itemStyle={{

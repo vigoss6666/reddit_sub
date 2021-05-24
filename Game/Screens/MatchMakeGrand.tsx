@@ -26,18 +26,18 @@ async function applyFilters(filter:any,arr:any,client, createChatThread):serverD
                 
         if(
           val.creativity >= filter.creativity 
-          && val.charisma >= filter.charisma 
-          && val.narcissism <= filter.narcissism 
-          && val.humor >= filter.humor
-          && val.honest >= filter.honest
-          && val.looks >= filter.looks
-          && val.empathetic >= filter.empathetic
-          && val.status >= filter.status
-          && val.wealthy >= filter.wealthy
-          && filter.appUsers ? val.appUser == true:true
-          && filter.matchMakerProfiles ? true: val.matchMaker == client.matchMaker ? false:true
-          //1 ==1 
-          && val.dimension >= filter.dimension
+          // && val.charisma >= filter.charisma 
+          // && val.narcissism <= filter.narcissism 
+          // && val.humor >= filter.humor
+          // && val.honest >= filter.honest
+          // && val.looks >= filter.looks
+          // && val.empathetic >= filter.empathetic
+          // && val.status >= filter.status
+          // && val.wealthy >= filter.wealthy
+          // && filter.appUsers ? val.appUser == true:true
+          // && filter.matchMakerProfiles ? true: val.matchMaker == client.matchMaker ? false:true
+          
+          // && val.dimension >= filter.dimension
           // && distance < filter.distancePreference
           // && val.age >= filter.minAgePreference
           // && val.age <= filter.maxAgePreference
@@ -79,61 +79,45 @@ const MatchMakeFinal = ({navigation, route}) => {
     
     useEffect(() => {
       async function namer(){
-        console.log("generatedMatchclient"+generatedMatch.client.phoneNumber)
-        console.log("generatedMatchuser"+generatedMatch.user.phoneNumber)
         
-          // console.log("apply Filter called")
-          // console.log("checking the forFilters values after returning from settings page")
-          // console.log("for filters"); 
-          // forFilters.map(val => console.log("length is"+val.users.length))
-          const plane = []
+        
+          // const plane = []
           const copy = JSON.parse(JSON.stringify(forFilters)); 
-          // const filterCopy = clientFilter.concat(); 
-          //const mainArrayIndex = copy.findIndex(val => val.client.phoneNumber == changedClient.phoneNumber); 
-          // const filterIndex = filterCopy.findIndex(val => val.client == changedClient.phoneNumber);
-          // console.log("checking filters")
-          // console.log(clientFilter[filterIndex].client)
-          //  console.log(clientFilter[filterIndex].filter)
-          // console.log("checking the CLientName for the filter");
-          // console.log(changedClient.name) 
-          // console.log("checking the filter snapshot value"); 
-          // console.log(filterCopy[filterIndex].filter) 
+          console.log("copy length checker")
+          console.log(copy[0].users.length)
+          
+          
           await Promise.all(clientFilter.map(async val => {
-            const checkMainIndex = copy.findIndex(val1 => val1.client.phoneNumber == val.client); 
-            console.log("checking sorted Array")
-            console.log(val.sortedArray)
+            const checkMainIndex = copy.findIndex(val1 => val1.client.phoneNumber == val.client);
+            console.log("checkMainIndex"+checkMainIndex)
             const filters = await applyFilters(val.filter, copy[checkMainIndex].users,copy[checkMainIndex].client, createChatThread); 
-            console.log(val)
+            console.log("filters length is"+filters.length)
             copy[checkMainIndex].users = filters; 
-            console.log("length checker"); 
-            
-            
-            
             const result = await clientSort(copy[checkMainIndex].users, val.sortOrder); 
             
             copy[checkMainIndex].users = result; 
-
-            if(Object.keys(generatedMatch)){
-              const matchClientIndex = copy.findIndex(val => val.client.phoneNumber == generatedMatch.client.phoneNumber); 
-              const result = copy[matchClientIndex].users.filter(val => val.phoneNumber !== generatedMatch.user.phoneNumber); 
-              copy[matchClientIndex].users = result; 
-            }
-            
-            
-            //copy[0].users = gamer; 
-
           }))
           
-          // const filters =  await applyFilters(filterCopy[filterIndex].filter, copy[mainArrayIndex].users,changedClient, createChatThread);
-          // console.log("checking array sent to filters"); 
-          // copy[mainArrayIndex].users.map(val => console.log(val.name))
-
-          // console.log("checking returned filter value"); 
-          // filters.map(val => console.log(val.name))
+          if(generatedMatch.length){
+            
+            await Promise.all(generatedMatch.map(val => {
+               const  mainerIndex = copy.findIndex(copyValue => copyValue.client.phoneNumber == val.client.phoneNumber); 
 
 
+               
+
+               const result1 = copy[mainerIndex].users.filter(copyUser => copyUser.phoneNumber !== val.user.phoneNumber); 
+               
+              copy[mainerIndex].users = result1; 
+
+            })) 
+          }
           
-          //copy[mainArrayIndex].users = filters; 
+          
+          //copy[0].users = gamer; 
+
+        
+          
           const sectionDataTransform = await Promise.all(copy.map(val => {
             return {
               client:val.client, 
@@ -143,14 +127,14 @@ const MatchMakeFinal = ({navigation, route}) => {
        
       
        setSectionData(sectionDataTransform)
-       setChangedClient(null)
+       
   
          
         
       }
       namer()
 
-    }, [clientFilter,generatedMatch])
+    }, [generatedMatch,clientFilter])
 
 
     async function refreshFilter(){
@@ -198,7 +182,7 @@ const MatchMakeFinal = ({navigation, route}) => {
       
     // }, [clienter, sliderState.currentPage])
     // userDisplay.length ? userDisplay.map(val => console.log(val.client.name)):null
-    console.log(sliderState.currentPage)
+    
     profiles.length ? console.log(profiles[sliderState.currentPage].name):null
     
   async function getDatingPool(){
@@ -298,8 +282,7 @@ const MatchMakeFinal = ({navigation, route}) => {
                 return {client:val, users:onResult.docs.map(val => val.data())}
            })
       }))
-      console.log("finalResult"); 
-      finalResult.map(val => console.log(val.client.name))
+      
       
       const transformedpointstoscores = await Promise.all(finalResult.map(async val => {
           const clientLogged = await logTen(val.client); 
@@ -309,8 +292,7 @@ const MatchMakeFinal = ({navigation, route}) => {
                users:userLogged
           } 
       }))
-      console.log("PointsTranform"); 
-      transformedpointstoscores.map(val => console.log(val.client.name))
+      
       
       const simDimensionTransform = await Promise.all(transformedpointstoscores.map(async val => {
           const simDimension =  await computeSimDimension(val.client, val.users);
@@ -332,14 +314,38 @@ const MatchMakeFinal = ({navigation, route}) => {
           return {client:val.client, users:filterBySim}
                   
       }))
+
       
       
-      //setForFilters(simDimensionTransform); 
+      const filterByIntros = await Promise.all(simDimensionTransform.map(async val => {
+        const filteredUsers = await Promise.all(val.users.map(val1 => {
+           const _id = createChatThread(val.client.phoneNumber, val1.phoneNumber);
+           console.log("_id is"+_id) 
+           return db.collection('introductions').doc(_id).get().then(onDoc => {
+             if(!onDoc.exists){
+                return val1; 
+             }
+           })
+        }))
+        const finalFilter = filteredUsers.filter(val => val !== undefined); 
+        return {client:val.client, users:finalFilter}
+
+      }))
+      console.log(filterByIntros) 
+      const filterBySort = await Promise.all(filterByIntros.map(async val => {
+        return {
+          client:val.client, 
+          users:await clientSort(val.users, ['creativity', 'charisma', 'honest', 'empathetic', 'looks', 'humor', 'status', 'wealthy'])
+        }
+   }))
+      
+
+      
        
-      setForFilters(simDimensionTransform)
+      setForFilters(filterBySort)
 
 
-      const forNextPage = simDimensionTransform.map(val => {
+      const forNextPage = filterBySort.map(val => {
            return {
                client:val.client, 
                data:val.users
@@ -349,14 +355,13 @@ const MatchMakeFinal = ({navigation, route}) => {
       
       setUserDisplay(forNextPageFilter)
 
-      const sectionDataTransform = simDimensionTransform.map(val => {
+      const sectionDataTransform = filterBySort.map(val => {
            return {
              client:val.client, 
              sectionData:computeSectionLabel(val.users)
            }
       })
-      console.log("sectionChecker"); 
-      sectionDataTransform.map(val => console.log(val.client.name)) 
+      
       setLoader(false)
       setSectionData(sectionDataTransform); 
 

@@ -183,7 +183,7 @@ export default function App() {
   const [inviteToPlayContacts, setInvitetoplayContacts] = useState(null); 
   const [loader, setLoader] = useState(true); 
   const [changedClient, setChangedClient] = useState(null);  
-  const [generatedMatch, setGeneratedMatch] = useState({});
+  const [generatedMatch, setGeneratedMatch] = useState([]);
   
 
   
