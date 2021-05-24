@@ -42,8 +42,8 @@ export default function Photos({navigation, route }){
       const blob = await response.blob(); 
       const namer = Math.random().toString(36).substring(2);
       const ref = firebase.storage().ref().child("images/"+ namer); 
-      await ref.put(blob).catch(error => console.log(error))
-      const result1 = await ref.getDownloadURL().catch(error => console.log(error))
+      await ref.put(blob)
+      const result1 = await ref.getDownloadURL()
       setProfilePicLocal(profilePic)
       
       //db.collection('user').doc(userId).set({profilePic:result1}, {merge:true}); 
@@ -141,7 +141,7 @@ export default function Photos({navigation, route }){
         // const result = pickerResult.uri.replace('file://', '');
         // //data.append('file',  {uri: result,filename :'imageName.png',type: 'image/png'});
         // mountainsRef.putString(pickerResult.base64).then(function(snapshot) {
-        //   console.log('Uploaded a blob or file!');
+        
         // }); 
 
          

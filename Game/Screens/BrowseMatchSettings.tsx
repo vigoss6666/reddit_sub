@@ -171,9 +171,9 @@ const distanceTemplate = () => {
 
 const addClientFilter = () => {
 
-  // const copy = JSON.parse(JSON.stringify(clientFilter)); 
-  // const indexer = copy.findIndex(val => val.client == client.phoneNumber); 
-  // copy[indexer].filter = Object.assign({}, copy[indexer].filter,{dimension:compatibility, distancePreference:distance, minAgePreference:minAge, maxAgePreference:maxAge, matchMakerProfiles:matchmaking, appUsers})
+  const copy = JSON.parse(JSON.stringify(clientFilter)); 
+  const indexer = copy.findIndex(val => val.client == client.phoneNumber); 
+  copy[indexer].filter = Object.assign({}, {...copy[indexer].filter},{dimension:compatibility, distancePreference:distance, minAgePreference:minAge, maxAgePreference:maxAge, matchMakerProfiles:matchmaking, appUsers})
   
   // const result = clientFilter.map((val, index) => {
   //    if(index == indexer){
@@ -182,7 +182,7 @@ const addClientFilter = () => {
   //    return val; 
   // })
   
-  // setClientFilter(copy); 
+  setClientFilter(copy); 
    
 }
  
@@ -709,7 +709,7 @@ function jsUcfirst(str)
  <Text style = {{fontWeight:'600'}}>Display App users</Text>
  <SwitchSelector
   options={options}
-  initial={currentClientFilter.appUsers ? 0:1}
+  initial={currentClientFilter.appUsers ? 0:1}  
   onPress={value => {setAppUsers(value)}}
   style = {{width:100}}
 />

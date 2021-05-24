@@ -16,17 +16,23 @@ const db = firebase.firestore();
 interface MatchMakeFinalProps {}
 
 async function applyFilters(filter:any,arr:any,client, createChatThread):serverDataObjectDimension[]{
-    //  console.log(client.name) 
-    //  console.log(filter) 
+   console.log(filter.dimension)
+    console.log("client name is"+client.phoneNumber)
+    if(arr.length == 0){
+      return []; 
+    }
     
     const finalObject:any = [];     
       arr.map(val => {
         
         //const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude); 
+        //console.log(filter)
+        console.log(val.dimension)
                 
         if(
-          val.creativity >= filter.creativity 
+          // val.creativity >= filter.creativity 
           // && val.charisma >= filter.charisma 
+          && val.dimension >= filter.dimension
           // && val.narcissism <= filter.narcissism 
           // && val.humor >= filter.humor
           // && val.honest >= filter.honest
@@ -37,7 +43,6 @@ async function applyFilters(filter:any,arr:any,client, createChatThread):serverD
           // && filter.appUsers ? val.appUser == true:true
           // && filter.matchMakerProfiles ? true: val.matchMaker == client.matchMaker ? false:true
           
-          // && val.dimension >= filter.dimension
           // && distance < filter.distancePreference
           // && val.age >= filter.minAgePreference
           // && val.age <= filter.maxAgePreference
@@ -81,40 +86,44 @@ const MatchMakeFinal = ({navigation, route}) => {
       async function namer(){
         
         
-          // const plane = []
+      //     // const plane = []
           const copy = JSON.parse(JSON.stringify(forFilters)); 
-          console.log("copy length checker")
-          console.log(copy[0].users.length)
+          
           
           
           await Promise.all(clientFilter.map(async val => {
+            //console.log(clientFilter)
+            
+            
             const checkMainIndex = copy.findIndex(val1 => val1.client.phoneNumber == val.client);
-            console.log("checkMainIndex"+checkMainIndex)
+            
+            
             const filters = await applyFilters(val.filter, copy[checkMainIndex].users,copy[checkMainIndex].client, createChatThread); 
-            console.log("filters length is"+filters.length)
+            
             copy[checkMainIndex].users = filters; 
-            const result = await clientSort(copy[checkMainIndex].users, val.sortOrder); 
+            
+            const result =  await clientSort(copy[checkMainIndex].users, val.sortOrder); 
             
             copy[checkMainIndex].users = result; 
+            
+            
+            
           }))
           
           if(generatedMatch.length){
             
             await Promise.all(generatedMatch.map(val => {
                const  mainerIndex = copy.findIndex(copyValue => copyValue.client.phoneNumber == val.client.phoneNumber); 
-
-
                
-
-               const result1 = copy[mainerIndex].users.filter(copyUser => copyUser.phoneNumber !== val.user.phoneNumber); 
+               const result1 =  copy[mainerIndex].users.filter(copyUser => copyUser.phoneNumber !== val.user.phoneNumber)  
                
-              copy[mainerIndex].users = result1; 
+               copy[mainerIndex].users = result1; 
 
             })) 
           }
           
           
-          //copy[0].users = gamer; 
+          
 
         
           
@@ -183,14 +192,14 @@ const MatchMakeFinal = ({navigation, route}) => {
     // }, [clienter, sliderState.currentPage])
     // userDisplay.length ? userDisplay.map(val => console.log(val.client.name)):null
     
-    profiles.length ? console.log(profiles[sliderState.currentPage].name):null
+    
     
   async function getDatingPool(){
     
       const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get(); 
       const client = await result.docs.map(val => val.data());
       setProfiles(client)
-      console.log("clientVIew")
+      
       client.map(val => console.log(val.name))
       return client; 
   }    
@@ -217,7 +226,7 @@ const MatchMakeFinal = ({navigation, route}) => {
                dimension:0,
                distancePreference:val.distancePreference == 40 ? 40: val.distancePreference, 
                matchMakerProfiles:true, 
-               appUsers:true, 
+               appUsers:false, 
        
              }
         }
@@ -320,7 +329,7 @@ const MatchMakeFinal = ({navigation, route}) => {
       const filterByIntros = await Promise.all(simDimensionTransform.map(async val => {
         const filteredUsers = await Promise.all(val.users.map(val1 => {
            const _id = createChatThread(val.client.phoneNumber, val1.phoneNumber);
-           console.log("_id is"+_id) 
+            
            return db.collection('introductions').doc(_id).get().then(onDoc => {
              if(!onDoc.exists){
                 return val1; 
@@ -331,7 +340,7 @@ const MatchMakeFinal = ({navigation, route}) => {
         return {client:val.client, users:finalFilter}
 
       }))
-      console.log(filterByIntros) 
+       
       const filterBySort = await Promise.all(filterByIntros.map(async val => {
         return {
           client:val.client, 

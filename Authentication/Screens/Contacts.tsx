@@ -57,7 +57,7 @@ useEffect(() => {
 }, [user])
 const sendToServer = async () => {
     
-  console.log(indexer)
+  
 
    
    db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', indexer).get().then(async onResult => {
@@ -81,7 +81,7 @@ const sendToServer = async () => {
     await db.collection('user').doc(userId).set({datingPoolList:indexer}, {merge:true}); 
     await AsyncStorage.setItem('user', userId);  
     setId(userId);
-    console.log(result); 
+    
     
      return;    
      }

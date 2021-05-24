@@ -215,7 +215,7 @@ export default function Tester({navigation}){
        
     //   //  const dirInfo = await FileSystem.getInfoAsync(dir); 
     //   //  if (!dirInfo.exists) {
-    //   //   console.log("Gif directory doesn't exist, creating...");
+    
     //   //   await FileSystem.makeDirectoryAsync(dir);
     //   // }
     //   //  const fileUri = dir + "something"; 

@@ -64,7 +64,7 @@ const AttributeFilterCLient = ({navigation, route}) => {
   
    const [attribute, setAttribute] = useState(''); 
    const myContext = useContext(AppContext);
-   const {user, userId, setClientFilter, clientFilter} = myContext;
+   const { setClientFilter, clientFilter} = myContext;
    const [maleMatches, setMaleMatches] = useState(0); 
    const [femaleMatches, setFemaleMatches] = useState(0); 
    const [femaleAhead, setFemaleAhead] = useState(0); 
@@ -242,7 +242,7 @@ useEffect(() => {
        setMaleAhead(getAttribute[0].aheadOf); 
     })
   }  
-  }, [attribute,clientFilter])
+  }, [attribute])
 useEffect(() => {
   if(attribute){
   db.collection('user')
@@ -267,13 +267,13 @@ useEffect(() => {
   })
   }
   
-  }, [attribute, clientFilter])
+  }, [attribute])
 
 useEffect(() => {
   
   if(attValue){
     if(attribute == 'narcissism'){
-    console.log("Att value"+attValue)
+    
       db.collection('user')
       .where('gender', '==', 'female')
       .where('state', '==', client.state)
@@ -281,8 +281,7 @@ useEffect(() => {
       .get()
       .then(onResult => {
          const finalResult = onResult.docs.map(val => val.data());
-         console.log("Femlae checkerx"); 
-         console.log(finalResult.length)
+         
   
        
          const listWithoutUser = finalResult.filter(val => val.phoneNumber !== client.phoneNumber); 
@@ -330,8 +329,7 @@ useEffect(() => {
   .get()
   .then(onResult => {
      const finalResult = onResult.docs.map(val => val.data()); 
-     console.log("FInal result is")
-     console.log(finalResult.length)
+     
     const listWithoutUser = finalResult.filter(val => val.phoneNumber !== client.phoneNumber);  
      setMaleMatches(listWithoutUser.length)
  })
@@ -371,10 +369,18 @@ useEffect(() => {
 // }
 
 const addClientFilter = () => {
-  const copy = JSON.parse(JSON.stringify(clientFilter)); 
+   
+   const copy = JSON.parse(JSON.stringify(clientFilter)); 
   const indexer = copy.findIndex(val => val.client == client.phoneNumber); 
+  copy[indexer].filter = Object.assign({}, {...copy[indexer].filter},{[attribute]:attValue})
   
-  copy[indexer].filter = Object.assign({},copy[indexer].filter, {[attribute]:attValue})
+  // copy[indexer].filter = Object.assign({},{...copy[indexer].filter}, {[attribute]:attValue})
+  // const result = clientFilter.map((val, index) => {
+  //    if(index == indexer){
+  //      return {sortOrder:val.sortedOrder,client:val.client, filter:Object.assign({},val.filter, {[attribute]:attValue})} 
+  //    }
+  //    return val; 
+  // })
   
   setClientFilter(copy); 
    
@@ -627,7 +633,7 @@ const addClientFilter = () => {
               <Text style = {{fontWeight:'bold'}} >Males</Text>
           </View>
           </View>
-          <Button title = {'Save'} containerStyle = {{marginTop:20, marginBottom:30,marginLeft:20, marginRight:20}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {addClientFilter(),  navigation.navigate('BrowseMatchSettings')}}/>
+          <Button title = {'Save'} containerStyle = {{marginTop:20, marginBottom:30,marginLeft:20, marginRight:20}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {addClientFilter(),  navigation.goBack()}}/>
           </View> 
     </ScrollView>
     </SafeAreaView>

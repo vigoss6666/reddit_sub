@@ -7,7 +7,7 @@ interface WebberProps {}
 const Webber = ({route}) => {
     const {uri} = route.params.uri
 
-    console.log(uri)
+    
   return (
     <WebView source={{ uri: uri }} style={{ marginTop: 20 }} />
   );

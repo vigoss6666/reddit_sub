@@ -78,7 +78,7 @@ const Sort = ({navigation, route}) => {
     const [clientIndex, setClientIndex] = useState(); 
     
     
-    console.log(sortData[0])
+    
 
 
     useEffect(() => {

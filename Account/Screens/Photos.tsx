@@ -117,7 +117,7 @@ export default function Photos({navigation, route }){
       Promise.all(result).then(finaler => {
          
          updateUser(userId, {photos:finaler})
-      }).catch(error => console.log(error)); 
+      }) 
     
     }     
     
@@ -140,7 +140,7 @@ export default function Photos({navigation, route }){
         // const result = pickerResult.uri.replace('file://', '');
         // //data.append('file',  {uri: result,filename :'imageName.png',type: 'image/png'});
         // mountainsRef.putString(pickerResult.base64).then(function(snapshot) {
-        //   console.log('Uploaded a blob or file!');
+        
         // }); 
 
          

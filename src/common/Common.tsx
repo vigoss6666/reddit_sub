@@ -276,7 +276,7 @@ export function Tester1({navigation,db,chatID,userId}){
      async function ensureDirExists() {
          const dirInfo = await FileSystem.getInfoAsync(gifDir);
          if (!dirInfo.exists) {
-           console.log("Gif directory doesn't exist, creating...");
+           
            await FileSystem.makeDirectoryAsync(gifDir, { intermediates: true });
          }
        }
@@ -284,7 +284,7 @@ export function Tester1({navigation,db,chatID,userId}){
          try {
            await ensureDirExists();
        
-           console.log('Downloading', gifUrls.length, 'gif files...');
+           
            Promise.all(gifUrls.map(url => FileSystem.downloadAsync(url, gifFileUri(urlToFilename(url))))).then(async (result) => AsyncStorage.setItem('gif', 'set')); 
             
          } catch (e) {
@@ -299,7 +299,7 @@ export function Tester1({navigation,db,chatID,userId}){
                const resJson = await fetch(`https://api.giphy.com/v1/gifs/trending?api_key=ZXj9CoxD99LW4ULTMZ423W0TmQ3EG44e&limit=5&rating=g`);
                const res = await resJson.json();
                const urls = res.data.map(val => ({url:val.images.original.url}));
-               console.log(urls)
+               
                setGifs(urls);  
                 
                
@@ -344,7 +344,7 @@ export function Tester1({navigation,db,chatID,userId}){
      )
      }
   //   export function AudioGetter({audio}){
-  //         console.log(audio)
+  
   //         const [isPlaying, setIsPlaying] = useState(false);      
   //         const recordingInstance = useRef(new Audio.Sound());
   //         const [loading, setLoading] = useState(0); 
@@ -1024,7 +1024,7 @@ export function ClientHeader({client, style}) {
               
     
     const setArrow = (obj) => {
-        console.log("called"); 
+        
      const result = traits.map(val => {
             if(val.trait == obj.trait){
                 val.selected = true; 
