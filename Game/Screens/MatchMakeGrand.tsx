@@ -16,32 +16,38 @@ const db = firebase.firestore();
 interface MatchMakeFinalProps {}
 
 async function applyFilters(filter:any,arr:any,client, createChatThread):serverDataObjectDimension[]{
-   console.log(filter.dimension)
-    console.log("client name is"+client.phoneNumber)
+  //  console.log(filter)
+  
+    
     if(arr.length == 0){
       return []; 
     }
+    console.log("client outside")
+   console.log(client.phoneNumber)
     
     const finalObject:any = [];     
-      arr.map(val => {
+      await Promise.all(arr.map(async val => {
         
         //const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude); 
         //console.log(filter)
-        console.log(val.dimension)
-                
+        console.log("dimension condtion checker");  
+        console.log(val.dimension >= filter.dimension)        
+        console.log("app condition checker");  
+        console.log(filter.appUsers ? val.appUser == true:true)
+
         if(
-          // val.creativity >= filter.creativity 
-          // && val.charisma >= filter.charisma 
+          val.creativity >= filter.creativity 
+          && val.charisma >= filter.charisma 
+          && val.narcissism <= filter.narcissism 
+          && val.humor >= filter.humor
+          && val.honest >= filter.honest
+          && val.looks >= filter.looks
+          && val.empathetic >= filter.empathetic
+          && val.status >= filter.status
+          && val.wealthy >= filter.wealthy
           && val.dimension >= filter.dimension
-          // && val.narcissism <= filter.narcissism 
-          // && val.humor >= filter.humor
-          // && val.honest >= filter.honest
-          // && val.looks >= filter.looks
-          // && val.empathetic >= filter.empathetic
-          // && val.status >= filter.status
-          // && val.wealthy >= filter.wealthy
-          // && filter.appUsers ? val.appUser == true:true
-          // && filter.matchMakerProfiles ? true: val.matchMaker == client.matchMaker ? false:true
+          
+          
           
           // && distance < filter.distancePreference
           // && val.age >= filter.minAgePreference
@@ -49,13 +55,25 @@ async function applyFilters(filter:any,arr:any,client, createChatThread):serverD
            
           
           ){
-             
+            console.log("i was called")
+            //  console.log("clientPhonenumber")
+            //  console.log(client.phoneNumber)
+            //  console.log("dimension result")
+            //  console.log("for this client"+val.phoneNumber)
+            //  console.log(val.dimension >= filter.dimension)
              finalObject.push(val); 
         }
-   })
+         
+   }))
+
+   const filterByAppUsers = finalObject.length ? finalObject.filter(val => filter.appUsers ? val.appUser == true:true ):[]; 
+   const filterByMatchMaker = filterByAppUsers.length ? filterByAppUsers.filter(val => filter.matchMakerProfiles ? true: val.matchMaker == client.matchMaker ? false:true):[]; 
+   
+   
+  
   
    
-   return finalObject;  
+   return filterByMatchMaker;  
    }
 
 const MatchMakeFinal = ({navigation, route}) => {
@@ -93,7 +111,8 @@ const MatchMakeFinal = ({navigation, route}) => {
           
           await Promise.all(clientFilter.map(async val => {
             //console.log(clientFilter)
-            
+            // console.log("Insider promise cchker"); 
+            // console.log(val.client); 
             
             const checkMainIndex = copy.findIndex(val1 => val1.client.phoneNumber == val.client);
             
