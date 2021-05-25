@@ -17,11 +17,14 @@ export default function ProfileClientView({route, navigation}) {
     }, [])
     const {intro} = route.params; 
     const [user, setUser] = useState(); 
+
+    
     
     
     const handleIntro = () => {
       db.collection('user').doc(userId).set({introMatches:firebase.firestore.FieldValue.arrayUnion(intro._id)}, {merge:true});
       db.collection('matches').doc(intro._id).set({client1:intro.client1, client2:intro.client2, createdAt:new Date(), discoveredBy:intro.discoveredBy ? intro.discoveredBy:null})
+      db.collection('user').doc(intro.discoveredBy).set({points:firebase.firestore.FieldValue.arrayUnion({pointFor:'matchAccepted', point:250, createdAt:new Date(), client:intro.client1})}, {merge:true})
       navigation.goBack()
   }  
 

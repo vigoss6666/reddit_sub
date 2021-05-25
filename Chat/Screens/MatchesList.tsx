@@ -89,8 +89,8 @@ export function MatchesList({navigation, setMatchNotification,UserFactory}) {
 
       const clientObjects = onResultClient1.docs.map(val => Object.assign({}, val.data(), { _id: val.id }));
       const collective = [...transformed, ...clientObjects]; 
-      const finalCollective = collective.filter(val => val.discoveredBy !== userId);
-      const filterByChatted = finalCollective.filter(val => val.chatted !== true) 
+      //const finalCollective = collective.filter(val => val.discoveredBy !== userId);
+      const filterByChatted = collective.filter(val => val.chatted !== true) 
       const filterByReported = filterByChatted.filter(val => val.reported !== true); 
       const filterByUnmatched = filterByReported.filter(val => val.unMatched !== true);
       const transformedWithUsers1 = await Promise.all(filterByUnmatched.map(async (val) => {
@@ -125,8 +125,8 @@ export function MatchesList({navigation, setMatchNotification,UserFactory}) {
       const diffClient = await db.collection('matches').where('client1', '==', userId).get(); 
       const diffClientUsers = diffClient.docs.map(val => Object.assign({}, val.data(),{_id:val.id} )); 
       const collective = [...diffClientUsers, ...transformed]; 
-      const finalCollective = collective.filter(val => val.discoveredBy !== userId); 
-      const filterByChatted = finalCollective.filter(val => val.chatted !== true) 
+      // const finalCollective = collective.filter(val => val.discoveredBy !== userId); 
+      const filterByChatted = collective.filter(val => val.chatted !== true) 
       const filterByReported = filterByChatted.filter(val => val.reported !== true); 
       const filterByUnmatched = filterByReported.filter(val => val.unMatched !== true);
 
