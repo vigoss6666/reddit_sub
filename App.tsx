@@ -241,8 +241,12 @@ if(!Object.keys(user).length){
   // useEffect(() => {
     
   useEffect(() => {
-    setLoader(true)
+    //setLoader(true)
   }, [_id])
+  useEffect(() => {
+    const result = createChatThread('+917208110384', '+15557664823')
+    console.log(result)
+  }, [])
   
   
   useEffect(() => {
@@ -425,7 +429,7 @@ const mainHome = () => {
         <NavigationContainer>
          
         <Stack.Navigator>
-          <Stack.Screen name="Home" component={MatchMakeGrand} options = {{headerShown:false}}/>
+          <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="PointsRequired" component={PointsRequired}/>
           <Stack.Screen name="Sort" component={Sort}/>

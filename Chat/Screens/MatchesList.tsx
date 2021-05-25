@@ -2,12 +2,12 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { Line } from '../../src/common/Common';
 import AppContext from '../../AppContext';
-import { UserFactory, db } from './MatchList';
+
 import { filterGamer } from '../../networking';
 
-export function MatchesList({navigation, setMatchNotification}) {
+export function MatchesList({navigation, setMatchNotification,UserFactory}) {
   const myContext = useContext(AppContext);
-  const { user, userId, setChatNotification, setChatterNotification, firebase } = myContext;
+  const { user, userId, setChatNotification, setChatterNotification, firebase, db } = myContext;
   const [matches, setMatches] = useState([]);
   const handleMatchPressed = (doc) => {
     db.collection('user').doc(user.phoneNumber).update({seenMatches:firebase.firestore.FieldValue.arrayUnion(doc._id)}); 
@@ -149,7 +149,7 @@ export function MatchesList({navigation, setMatchNotification}) {
     setMatches(grandMason);
     });
     return () => { unsubscribe1(), unsubscribe()};
-  }, [user.seenMatches, user.chatted, user.introMatches,user.unMatched, user.reported]);
+  }, [user.seenMatches, user.chatted, user.introMatches,user.unMatched, user.reported, user.lastMessage]);
   
   
   return (

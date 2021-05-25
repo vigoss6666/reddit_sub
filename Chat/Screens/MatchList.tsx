@@ -70,8 +70,8 @@ setChatNotification(false);
 }, [MatchNotification, IntroNotification, ChatNotifcaiton1])
 return(
 <SafeAreaView style = {{flex:1, marginTop:20, marginLeft:20, marginRight:20}}>
-<Introductions navigation = {navigation} setIntroNotification = {setIntroNotification}/>
-<MatchesList navigation = {navigation} setMatchNotification = {setMatchNotification}/>
+<Introductions navigation = {navigation} setIntroNotification = {setIntroNotification} UserFactory = {UserFactory}/>
+<MatchesList navigation = {navigation} setMatchNotification = {setMatchNotification} UserFactory = {UserFactory}/>
 <MatchChats navigation = {navigation} setChatNotification = {setChatNotification1}/>
 </SafeAreaView>
 )

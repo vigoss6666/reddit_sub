@@ -4,11 +4,11 @@ import { Line } from '../../src/common/Common';
 import { firebase } from '../../config';
 import AppContext from '../../AppContext';
 import { filterGamer } from '../../networking';
-import { db, UserFactory } from './MatchList';
 
-export function Introductions({ navigation,setIntroNotification }) {
+
+export function Introductions({ navigation,setIntroNotification, UserFactory }) {
   const myContext = useContext(AppContext);
-  const { user, userId, setChatNotification, setChatterNotification } = myContext;
+  const { user, userId, setChatNotification, setChatterNotification,db } = myContext;
   const [intros, setIntros] = useState([]); 
 
   useEffect(() => {
