@@ -14,7 +14,7 @@ const SelfMatchView = ({navigation, route}) => {
     const {selfMatchView, userIndex} = route.params; 
     
     const myContext = useContext(AppContext); 
-    const {user, userId, createChatThread} = myContext; 
+    const {user, userId, createChatThread, generatedMatchSelf, setGeneratedMatchSelf} = myContext; 
     const [hidden, setHidden]= useState(false);
     const { width, height } = Dimensions.get('window');
     const [sliderState, setSliderState] = useState({ currentPage: userIndex });
@@ -25,6 +25,7 @@ const SelfMatchView = ({navigation, route}) => {
 
     const requestIntro = () => {
        const _id = createChatThread(userId,selfMatchView.data[sliderState.currentPage].phoneNumber);
+       setGeneratedMatchSelf((generatedMatchSelf) => [...generatedMatchSelf, selfMatchView.data[sliderState.currentPage].phoneNumber])
        
        const object = {
           client1:userId, 
@@ -120,7 +121,7 @@ const SelfMatchView = ({navigation, route}) => {
         style = {{flex:1,  position:'absolute', top:180, left:90,zIndex:100,}} 
         horizontal = {true}
         pagingEnabled = {true}
-        scrollEventThrottle={8}
+        scrollEventThrottle={200}
         onScroll={(event: any) => {
           setSliderPage(event);
         }}

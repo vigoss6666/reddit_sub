@@ -17,7 +17,7 @@ export function MatchChats({navigation, setChatNotification}) {
     navigation.navigate('ChatLatest', {mainer:doc}); 
 }
   const renderVerticalList = ({ item }) => {
-    const messageText = item.lastMessage.user._id == userId ? <Text numberOfLines = {1} style = {{width:300}}> You: {item.lastMessage.text}</Text>:<Text numberOfLines = {1} style = {{width:300}}> {item.lastMessage.text}</Text>
+    const messageText = item.lastMessage.user._id == userId ? <Text numberOfLines = {1} style = {{maxWidth:200}}> You: {item.lastMessage.text}</Text>:<Text numberOfLines = {1} style = {{maxWidth:200}}> {item.lastMessage.text}</Text>
     return <View>
     <View style = {{flexDirection:'row', alignItems:'center', marginTop:20}}>
         
@@ -111,8 +111,8 @@ export function MatchChats({navigation, setChatNotification}) {
 
       const clientObjects = onResultClient1.docs.map(val => Object.assign({}, val.data(), { _id: val.id }));
       const collective = [...transformed, ...clientObjects]; 
-      const finalCollective = collective.filter(val => val.discoveredBy !== userId); 
-      const filterByReported = finalCollective.filter(val => val.reported !== true); 
+      // const finalCollective = collective.filter(val => val.discoveredBy !== userId); 
+      const filterByReported = collective.filter(val => val.reported !== true); 
       const filterByUnmatched = filterByReported.filter(val => val.unMatched !== true);
       const transformedWithUsers = await Promise.all(filterByUnmatched.map(async (val) => {
           return await db.collection('user').doc(val.client2).get().then(async (result) => {
@@ -181,8 +181,8 @@ export function MatchChats({navigation, setChatNotification}) {
       const diffClient = await db.collection('matches').where('client1', '==', userId).where('chatted', '==', true).get(); 
       const diffClientUsers = diffClient.docs.map(val => Object.assign({}, val.data(),{_id:val.id} )); 
       const collective = [...diffClientUsers, ...transformed]; 
-      const finalCollective = collective.filter(val => val.discoveredBy !== userId); 
-      const filterByReported = finalCollective.filter(val => val.reported !== true); 
+      // const finalCollective = collective.filter(val => val.discoveredBy !== userId); 
+      const filterByReported = collective.filter(val => val.reported !== true); 
       const filterByUnmatched = filterByReported.filter(val => val.unMatched !== true);
       const transformedWithUsers = await Promise.all(filterByUnmatched.map(async (val) => {
         return await db.collection('user').doc(val.client2).get().then(async (result) => {

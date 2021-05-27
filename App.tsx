@@ -51,6 +51,7 @@ import ContactLoadSuccess from './Authentication/Screens/ContactLoadSuccess';
 import Playgame from './Game/Screens/Playgame'; 
 import PlayGameLatest from './Game/Screens/PlayGameLatest';
 import MapViewClientGame from './Game/Screens/MapViewClientGame';
+import MapViewSelfGame from './Game/Screens/MapViewSelfGame';
 import Play20 from './Game/Screens/Play20';
 import ProfilePool from './Authentication/Screens/ProfilePool';
 import ProfileClientView from './Authentication/Screens/ProfileClientView';
@@ -124,6 +125,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import Frontpage from './Authentication/Screens/Frontpage';
 import { uploadImage, createChatThread } from './networking';
 import Sort from './Game/Screens/Sort'; 
+import SelfSort from './Game/Screens/SelfSort'; 
 import Filter from './Game/Screens/Filter'; 
 import BrowseSettings from './Game/Screens/BrowseSettings';
 import AttributeFilter from './Game/Screens/AttributeFilter'; 
@@ -184,6 +186,7 @@ export default function App() {
   const [loader, setLoader] = useState(true); 
   const [changedClient, setChangedClient] = useState(null);  
   const [generatedMatch, setGeneratedMatch] = useState([]);
+  const [generatedMatchSelf, setGeneratedMatchSelf] = useState([]); 
   
 
   
@@ -200,6 +203,7 @@ export default function App() {
     </TouchableOpacity>   
   }
   const [selfFilter, setSelfFilter] = useState({
+    sortOrder:['creativity', 'charisma', 'honest', 'empathetic', 'looks', 'humor', 'status', 'wealthy'],    
     charisma:0, 
     creativity:0, 
     honest:0, 
@@ -244,7 +248,7 @@ if(!Object.keys(user).length){
     //setLoader(true)
   }, [_id])
   useEffect(() => {
-    const result = createChatThread('+917208110384', '+15557664823')
+    const result = createChatThread('+917208110384', '+15555228243')
     console.log(result)
   }, [])
   
@@ -314,6 +318,8 @@ function stringifyNumber(n) {
   }
   
   const globalObject = {
+    generatedMatchSelf, 
+    setGeneratedMatchSelf, 
     generatedMatch, 
     setGeneratedMatch, 
     changedClient, 
@@ -433,6 +439,7 @@ const mainHome = () => {
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="PointsRequired" component={PointsRequired}/>
           <Stack.Screen name="Sort" component={Sort}/>
+          <Stack.Screen name="SelfSort" component={SelfSort}/>
           <Stack.Screen name="Birthday" component={BirthDay}/>
           <Stack.Screen name="NewContactLocation" component={NewContactLocation}/>
           <Stack.Screen name="Gender" component={Gender}/>
@@ -475,6 +482,7 @@ const mainHome = () => {
         }}/>
           <Stack.Screen name="Play20" component={Play20}/>
           <Stack.Screen name="MapViewClientGame" component={MapViewClientGame}/>
+          <Stack.Screen name="MapViewSelfGame" component={MapViewSelfGame}/>
           <Stack.Screen name="ProfilePool" component={ProfilePool} options = {{headerTitle:false, headerLeft:false}}/>
           <Stack.Screen name="SettingsHome" component={SettingsHome} options = {{headerTitle:false}} />
           <Stack.Screen name="AccountSettings" component={AccountSettings  }  />

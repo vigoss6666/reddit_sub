@@ -96,8 +96,8 @@ useEffect(() => {
 const [traits, setTraits] = useState([]); 
 const addClientFilter = () => {
   
-  setSelfFilter(Object.assign({},selfFilter, {dimension:compatibility, minAgePreference:minAge, maxAgePreference:maxAge, appUsers, matchMakerContact:matchmaking})); 
-  navigation.navigate('SelfGame')
+  setSelfFilter(Object.assign({},{...selfFilter}, {dimension:compatibility, minAgePreference:minAge, maxAgePreference:maxAge, appUsers, matchMakerContact:matchmaking})); 
+  navigation.goBack(); 
    
 }
 
