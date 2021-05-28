@@ -138,6 +138,25 @@ const [result, setResult] = useState('🔮');
         }
       }
     );
+    async function sendPushNotification(expoPushToken) {
+      const message = {
+        to: expoPushToken,
+        sound: 'default',
+        title: 'Friends',
+        body: 'New message received',
+        data: { someData: 'goes here' },
+      };
+    
+      await fetch('https://exp.host/--/api/v2/push/send', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(message),
+      });
+    }
     const renderChatEmpty = () => {
       const dater = formatDistance(subDays(new Date(clientObj.createdAt.toDate()), 3), new Date(), { addSuffix: true })
       return <View style = {{flex:1, justifyContent:"center", alignItems:"center", transform: [ { scaleY: -1 } ]}}>
@@ -147,7 +166,7 @@ const [result, setResult] = useState('🔮');
         {Object.keys(matchMaker).length ? <Text style = {{marginTop:30, fontWeight:'bold'}}> Matched by {computeName(matchMaker)}</Text>:null }
       </View>
    }
-
+   console.log(clientObj.clientUser.pushToken)
     const onSend = useCallback((messages = []) => {
       
       db.collection('matches').doc(clientObj._id).update({chatted:true});
@@ -155,6 +174,7 @@ const [result, setResult] = useState('🔮');
       db.collection('user').doc(clientObj.client2).update({lastMessage:firebase.firestore.FieldValue.arrayUnion(messages[0])}) 
 
       db.collection('messages').doc(chatID).collection("messages").add(messages[0])
+      sendPushNotification(clientObj.clientUser.pushToken); 
     }, [])
 
 

@@ -645,10 +645,10 @@ onChangeItem={namer => addAge(item, namer)}
      }
      
      const renderItem = ({item, index}) => (
-          <View key = {index.toString()} style = {{ marginLeft:30, marginRight:30}}>
+          <View key = {index.toString()} style = {{ marginLeft:30, marginRight:30,}}>
           <View style = {{borderBottomWidth:1, borderBottomColor:"black", width:Dimensions.get('window').width - 60,marginBottom:30,}}/>
           
-          <View style = {{flexDirection:"row", justifyContent:'space-between'}}>
+          <View style = {{flexDirection:"row", justifyContent:'space-between',marginBottom:20}}>
           <View style = {{flexDirection:"row", alignItems:"center"}}>
           {item.profilePic ?<TouchableOpacity onPress = {() => {setVisible(true), setCurrentUser(item.profilePic)}}><Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/></TouchableOpacity>:<MaterialIcons name="account-circle" size={30} color="black" />}
           <Text style = {{marginLeft:10,marginBottom:10,fontWeight:"bold",maxWidth:100,}} numberOfLines = {2}>{computeName(item)}</Text>

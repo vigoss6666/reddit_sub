@@ -459,7 +459,7 @@ db.collection('user').doc(userId).set({suggestedMatches:[]}, {merge:true})
    
   
    if(user.datingPoolList.length < 2){
-     return <View style = {{flex:1, backgroundColor:'black', justifyContent:'center', alignItems:'center' }}>
+     return <View style = {{flex:1, backgroundColor:'black', justifyContent:'center', alignItems:'center', marginLeft:30, marginRight:30 }}>
        <Text style = {{color:'white', fontSize:40, fontWeight:'bold'}}>Not enough contacts</Text>
        <Text style = {{color:'white', fontStyle:'italic'}}>Please add some contacts in your dating pool list to play the game</Text>
      </View>

@@ -144,7 +144,11 @@ const Points = (props: RankProps) => {
       </View>
  }
     })
-    return <ScrollView style = {{marginLeft:30, marginRight:30}}>{template}</ScrollView>; 
+    return <ScrollView>
+        <View style = {{marginLeft:30, marginRight:30}}>
+        {template}
+        </View>
+        </ScrollView>; 
  };
     
 

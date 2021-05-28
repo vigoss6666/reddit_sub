@@ -19,6 +19,7 @@ export function MatchChats({navigation, setChatNotification}) {
   const renderVerticalList = ({ item }) => {
     const messageText = item.lastMessage.user._id == userId ? <Text numberOfLines = {1} style = {{maxWidth:200}}> You: {item.lastMessage.text}</Text>:<Text numberOfLines = {1} style = {{maxWidth:200}}> {item.lastMessage.text}</Text>
     return <View>
+      
     <View style = {{flexDirection:'row', alignItems:'center', marginTop:20}}>
         
      <UserFactory user={item} onPress={handleChatPressed} />

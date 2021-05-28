@@ -95,7 +95,7 @@ const Rank = (props: RankProps) => {
    ]
    //const user = data.filter((val,index) => val._id == "user"); 
     const template = templater.map((val,index) => {
-         return <View style = {{flexDirection:"row", alignItems:'center', borderBottomWidth:2, marginTop:15, justifyContent:'space-between'}}>
+         return <View style = {{flexDirection:"row", alignItems:'center', borderBottomWidth:2, marginTop:15, justifyContent:'space-between',marginLeft:30, marginRight:30}}>
            <View style = {{flexDirection:'row', alignItems:'center'}}>
            {val.profilePic ? <SingleImageView image = {val.profilePic} style = {{height:40, width:40, borderRadius:20}}/> : <MaterialIcons name="account-circle" size={40} color="black" />}
            <View style = {{flexDirection:'row'}}>
@@ -109,8 +109,8 @@ const Rank = (props: RankProps) => {
            </View>
            </View>
     })
-    return <View style = {{marginLeft:30, marginRight:30}}>
-    <View style = {{justifyContent:"space-between", flexDirection:'row', marginLeft:10, marginRight:10}}>
+    return <View >
+    <View style = {{justifyContent:"space-between", flexDirection:'row', marginLeft:30, marginRight:30}}>
     <View style = {{flexDirection:"row",  padding:10, alignItems:'center',marginBottom:20, }}>
                     <FontAwesome5 name="trophy" size={24} color="black" />
                     <View style = {{marginLeft:10}}>   
@@ -131,7 +131,7 @@ const Rank = (props: RankProps) => {
       <Text style = {{fontSize:20, fontWeight:'bold', padding:10}}>ALL TIME</Text> 
       <Text style = {{fontSize:20, fontWeight:'bold', padding:10}}>MONTHLY</Text>
      </View>   
-    <ScrollView >{template}
+    <ScrollView>{template}
     </ScrollView>      
     </View>
 
