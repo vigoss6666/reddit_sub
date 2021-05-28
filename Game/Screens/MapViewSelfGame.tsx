@@ -32,13 +32,13 @@ export default function MapViewSelfGame({navigation,route}){
 
   
   
-  useEffect(() => {
-    navigation.setOptions({
-      headerShown:false, 
+  // useEffect(() => {
+  //   navigation.setOptions({
+  //     headerShown:false, 
       
       
-    })
-  }, [])
+  //   })
+  // }, [])
   
   
   

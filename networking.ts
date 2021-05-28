@@ -335,7 +335,54 @@ export function transformCreativity(obj1:obj1, arr1:[obj1]):[transfromReturn] {
   //narcissism()
   return mainerObj; 
   }
+export function computeSimDimensionShuffle(obj:obj1, arr:obj1[]):objectWithDimension[]{
+const simDimension = []; 
+arr.map(val => {
+  if(val.creativity == obj.creativity){
+     simDimension.push({client:val.phoneNumber, dimension:'creativity'})
+  }
+ 
+  if(val.charisma == obj.charisma){
+    simDimension.push({client:val.phoneNumber, dimension:'charisma'})
+  }
+  if(val.empathetic == obj.empathetic){
+    simDimension.push({client:val.phoneNumber, dimension:'empathetic'})
+  }
+  if(val.humor == obj.humor){
+    simDimension.push({client:val.phoneNumber, dimension:'humor'})
+  }
+  if(val.looks == obj.looks){
+    simDimension.push({client:val.phoneNumber, dimension:'looks'})
+  }
+  if(val.status == obj.status){
+    simDimension.push({client:val.phoneNumber, dimension:'status'})
+  }
+  if(val.wealthy == obj.wealthy){
+    simDimension.push({client:val.phoneNumber, dimension:'wealthy'})
+  }
+  if(val.honest == obj.honest){
+    simDimension.push({client:val.phoneNumber, dimension:'honest'})
+  }
+  
+})
+if(simDimension.length){
+ const finalResult = arr.map(val => {
+   const checker = simDimension.filter(val1 => val1.client == val.phoneNumber); 
+   if(checker.length){
+     const dimension = checker.map(val => val.dimension); 
+     const shuffle = dimension
+     .map((a) => ({sort: Math.random(), value: a}))
+     .sort((a, b) => a.sort - b.sort)
+     .map((a) => a.value)
+     return {...val, simDimension:shuffle[0]} 
+   }
+   return val; 
+ })  
+return finalResult; 
+}
+return arr; 
 
+}
 
   export const computeSimDimension = (obj:obj1, arr:obj1[]):objectWithDimension[] => {
   const dimensions =  ['creativity', 'charisma', 'honest', 'looks', 'empathetic', 'humor', 'status', 'wealthy', 'narcissism']; 

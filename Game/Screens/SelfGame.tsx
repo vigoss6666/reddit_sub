@@ -2,7 +2,7 @@ import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { Text, View, StyleSheet, Dimensions, ScrollView, Image, SafeAreaView, SectionList, FlatList, TouchableOpacity } from 'react-native';
 import { MaterialIcons, Foundation, Feather, Entypo, FontAwesome5 } from '@expo/vector-icons';
 import {firebase } from '../../config'; 
-import {transformCreativity, computeSimDimension, computeSectionLabel, getDistanceFromLatLonInKm} from '../../networking'; 
+import {transformCreativity, computeSimDimension, computeSectionLabel, getDistanceFromLatLonInKm, computeSimDimensionShuffle} from '../../networking'; 
 import { iconFactory, LoadScreen} from '../../src/common/Common'; 
 import { logTen } from './logTen';
 import AppContext from '../../AppContext'; 
@@ -178,7 +178,7 @@ const SelfGame = ({navigation, route}) => {
                    data:logData
                  })
 
-                 const simD = computeSimDimension(userLogged, logData);
+                 const simD = computeSimDimensionShuffle(userLogged, logData);
                  
                  const filterBySim = simD.filter(val => val.simDimension) 
 
@@ -231,11 +231,11 @@ const SelfGame = ({navigation, route}) => {
 
 
     
-    const headerTemplate = user.profilePic ? <View>
+    const headerTemplate = user.profilePic ? <View style = {{alignItems:'center'}}>
     <Image source = {{uri:user.profilePic}} style = {{height:80, width:80, borderRadius:40}}/>
     <Text style = {{fontWeight:'bold', marginTop:5}}>{computeName(user)}</Text>
-    </View>:<View>
-    <MaterialIcons name="account-circle" size={24} color="black" />
+    </View>:<View style = {{alignItems:"center"}}>
+    <MaterialIcons name="account-circle" size={60} color="black" />
     <Text style = {{fontWeight:'bold', marginTop:5}}>{computeName(user)}</Text>
     </View>
     const computeIndex = (flatListuser) => {

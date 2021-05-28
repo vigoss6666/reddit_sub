@@ -7,6 +7,7 @@ import { AntDesign, Entypo } from '@expo/vector-icons';
 import { StyleSheet, Text, View,Button, Settings, Platform,  Image, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {LoadScreen} from './src/common/Common'; 
+import { CardStyleInterpolators } from '@react-navigation/stack';
 
 import { NavigationContainer, BaseRouter } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -137,7 +138,7 @@ import MatchMakeLatest from './Game/Screens/MatchMakeLatest';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from './AppContext'; 
 import GameEngine from './GameEngine'; 
-import {defaultDataObject} from './DefaultData'; 
+import {defaultDataObject, defaultUsers} from './DefaultData'; 
 import SignUp from './SignUp'; 
 
 
@@ -156,10 +157,7 @@ const computeName = (obj) => {
 
 export default function App() {
 
-  // useEffect(() => {
-  //   AsyncStorage.setItem('user', '')
-    
-  // }, [])
+  
   console.disableYellowBox = true;
   const [profileAuth, setProfilesAuth] = useState([{name:"zaid shaikh", phoneNumber:'+917208110384'}]); 
   const [xClient, setXClient] = useState({latitude:null, longitude:null});
@@ -231,8 +229,10 @@ export default function App() {
 useEffect(() => {
 async function namer(){
   const userGamer = await AsyncStorage.getItem('user'); 
+  const user1 = "+917208110384"; 
+  const user2 = "+919930815474";
   
-  setId(userGamer); 
+  setId(user2); 
 }
 if(!Object.keys(user).length){
   namer()
@@ -248,8 +248,7 @@ if(!Object.keys(user).length){
     //setLoader(true)
   }, [_id])
   useEffect(() => {
-    const result = createChatThread('+917208110384', '+15555228243')
-    console.log(result)
+    // defaultUsers()
   }, [])
   
   
@@ -384,8 +383,22 @@ function stringifyNumber(n) {
     }
   }
 
-   
-   
+  const config = {
+    animation: 'spring',
+    config: {
+      stiffness: 1000,
+      damping: 500,
+      mass: 3,
+      overshootClamping: true,
+      restDisplacementThreshold: 0.01,
+      restSpeedThreshold: 0.01,
+    },
+  };
+  const forFade = ({ current }) => ({
+    cardStyle: {
+      opacity: current.progress,
+    },
+  });
   
   const [chatNotify,setChatNotify] = useState(true); 
   useEffect(() => {
@@ -416,6 +429,8 @@ function stringifyNumber(n) {
 
 }
 
+
+
 const customHeader = () => {
    const insets = useSafeAreaInsets();
    return ( 
@@ -438,8 +453,8 @@ const mainHome = () => {
           <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="PointsRequired" component={PointsRequired}/>
-          <Stack.Screen name="Sort" component={Sort}/>
-          <Stack.Screen name="SelfSort" component={SelfSort}/>
+          <Stack.Screen name="Sort" component={Sort} />
+          <Stack.Screen name="SelfSort" component={SelfSort} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS ,headerShown:false}}/>
           <Stack.Screen name="Birthday" component={BirthDay}/>
           <Stack.Screen name="NewContactLocation" component={NewContactLocation}/>
           <Stack.Screen name="Gender" component={Gender}/>
@@ -447,7 +462,7 @@ const mainHome = () => {
           <Stack.Screen name="Height" component={Height}/>
           <Stack.Screen name="Feet" component={Feet}/>
           <Stack.Screen name="Inches" component={Inches}/>
-          <Stack.Screen name="FriendsLocation" component={FriendsLocation}/>
+          <Stack.Screen name="FriendsLocation" component={FriendsLocation} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS, headerShown:false }}/>
           <Stack.Screen name="EnableLocation" component={EnableLocation}/>
           <Stack.Screen name="Tell" component={Tell}/>
           <Stack.Screen name="Email" component={Email}/>
@@ -472,7 +487,7 @@ const mainHome = () => {
           {/* <Stack.Screen name="ContactsPhotos" component={ContactsPhotos} options = {{headerTitle:false, headerLeft:false}}/> */}
           <Stack.Screen name="Contacts" component={Contacts} options = {{headerTitle:false, headerLeft:false}}/>
           <Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess} options = {{headerTitle:false, headerLeft:false}}/>
-          <Stack.Screen name="NewContact" component={NewContact}/>
+          <Stack.Screen name="NewContact" component={NewContact} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS ,}}/>
           <Stack.Screen name="Invitetoplay" component={Invitetoplay}/>
           <Stack.Screen name="Playgame" component={Playgame} options={{
           animationEnabled: false,
@@ -480,9 +495,9 @@ const mainHome = () => {
         <Stack.Screen name="PlayGameLatest" component={PlayGameLatest} options={{
           animationEnabled: false,
         }}/>
-          <Stack.Screen name="Play20" component={Play20}/>
+          <Stack.Screen name="Play20" component={Play20} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS, headerShown:false }}/>
           <Stack.Screen name="MapViewClientGame" component={MapViewClientGame}/>
-          <Stack.Screen name="MapViewSelfGame" component={MapViewSelfGame}/>
+          <Stack.Screen name="MapViewSelfGame" component={MapViewSelfGame} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS ,headerShown:false}}/>
           <Stack.Screen name="ProfilePool" component={ProfilePool} options = {{headerTitle:false, headerLeft:false}}/>
           <Stack.Screen name="SettingsHome" component={SettingsHome} options = {{headerTitle:false}} />
           <Stack.Screen name="AccountSettings" component={AccountSettings  }  />

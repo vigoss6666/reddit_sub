@@ -29,7 +29,8 @@ export function Introductions({ navigation,setIntroNotification, UserFactory }) 
 
       const clientObjects = onResultClient1.docs.map(val => Object.assign({}, val.data(), { _id: val.id }));
       const collective = [...transformed, ...clientObjects]; 
-      const finalCollective = collective.filter(val => val.discoveredBy !== userId); 
+      const filterByMatch = collective.filter(val => !val.match); 
+      const finalCollective = filterByMatch.filter(val => val.discoveredBy !== userId); 
       const transformedWithUsers1 = await Promise.all(finalCollective.map(async (val) => {
         return await db.collection('user').doc(val.client2).get().then(result => Object.assign({}, val, { clientUser: result.data() }));
       }));
@@ -66,7 +67,9 @@ export function Introductions({ navigation,setIntroNotification, UserFactory }) 
       const diffClient = await db.collection('introductions').where('client1', '==', userId).get(); 
       const diffClientUsers = diffClient.docs.map(val => Object.assign({}, val.data(),{_id:val.id} )); 
       const collective = [...diffClientUsers, ...transformed]; 
-      const finalCollective = collective.filter(val => val.discoveredBy !== userId); 
+      const filterByMatch = collective.filter(val => !val.match); 
+      const finalCollective = filterByMatch.filter(val => val.discoveredBy !== userId); 
+      
 
 
       

@@ -42,6 +42,7 @@ const useFetchContactPool = (navigation) => {
      const {user, userId, contactList, setContactList, setSingleContact, defaultDataObject, datingFlatList,inviteToPlay, setInvitetoplay} = myContext;
      const KEYS_TO_FILTERS = ['name'];
      
+     
      const [search, setSearch] = useState('');
      const [currentUser, setCurrentUser] = useState(''); 
      const [visible, setVisible] = useState(false); 

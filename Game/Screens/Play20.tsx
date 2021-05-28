@@ -43,6 +43,14 @@ title = "Play again" containerStyle = {{marginLeft:30, marginRight:30}} buttonSt
   }>
 
 </Button>
+<Button
+
+disabled = {matchFound ? false : true}
+onPress = {() => navigation.navigate('Homer')}
+title = "Maybe Not" containerStyle = {{marginLeft:30, marginRight:30, marginTop:10}} buttonStyle = {{backgroundColor:"black"}} 
+  >
+
+</Button>
  </View>   
 </View>
 )

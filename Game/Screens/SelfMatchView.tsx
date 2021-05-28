@@ -14,12 +14,14 @@ const SelfMatchView = ({navigation, route}) => {
     const {selfMatchView, userIndex} = route.params; 
     
     const myContext = useContext(AppContext); 
-    const {user, userId, createChatThread, generatedMatchSelf, setGeneratedMatchSelf} = myContext; 
+    const {user, userId, createChatThread, generatedMatchSelf, setGeneratedMatchSelf,CustomBackComponent, selfFilter,computeName} = myContext; 
     const [hidden, setHidden]= useState(false);
     const { width, height } = Dimensions.get('window');
     const [sliderState, setSliderState] = useState({ currentPage: userIndex });
     
     const insets = useSafeAreaInsets(); 
+
+    console.log(selfMatchView.data[sliderState.currentPage])
     
 
 
@@ -41,39 +43,40 @@ const SelfMatchView = ({navigation, route}) => {
          
       
     }
+
+    useEffect(() => {
+      navigation.setOptions({
+        headerLeft:() => <CustomBackComponent navigation = {navigation}/>,
+        headerRight:() => <TouchableOpacity onPress = {() => navigation.navigate('SelfSort')} style = {{marginRight:15}}>
+        <FontAwesome5 name="sort-numeric-down" size={24} color="black" />
+        </TouchableOpacity>
+      })
+    }, [])
     
     
     
     
-    const computeName = (obj) => {
-      if(obj.name){
-         return obj.name
-      }
-      if(obj.firstName && obj.lastName){
-         return obj.firstName+obj.lastName
-      }
-      return obj.firstName
-    }
+    
     const textTemplate = hidden ? null: <View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
-          {iconFactory('humor', 20)}
-          <Text style = {styles.scores }>Humor:  {selfMatchView.data[sliderState.currentPage].humor}</Text>
+          {iconFactory(selfFilter.sortOrder[3], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[3].toUpperCase()}  {selfMatchView.data[sliderState.currentPage][selfFilter.sortOrder[3]]}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
-          {iconFactory('empathetic', 20)}
-          <Text style = {styles.scores }>Empathetic:  {selfMatchView.data[sliderState.currentPage].empathetic}</Text>
+          {iconFactory(selfFilter.sortOrder[4], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[4].toUpperCase()}  {selfMatchView.data[sliderState.currentPage][selfFilter.sortOrder[4]]}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5, marginLeft:5}}>
-          {iconFactory('wealthy', 20)}
-          <Text style = {styles.scores }>Wealthy:  {selfMatchView.data[sliderState.currentPage].wealthy}</Text>
+          {iconFactory(selfFilter.sortOrder[5], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[5].toUpperCase()}  {selfMatchView.data[sliderState.currentPage][selfFilter.sortOrder[5]]}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
-          {iconFactory('looks', 20)}
-          <Text style = {styles.scores }>Looks:  {selfMatchView.data[sliderState.currentPage].looks}</Text>
+          {iconFactory(selfFilter.sortOrder[6], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[6].toUpperCase()}  {selfMatchView.data[sliderState.currentPage][selfFilter.sortOrder[6]]}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center",padding:5}}>
-          {iconFactory('status', 20)}
-          <Text style = {styles.scores }>Status:  {selfMatchView.data[sliderState.currentPage].status}</Text>
+          {iconFactory(selfFilter.sortOrder[7], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[7].toUpperCase()}  {selfMatchView.data[sliderState.currentPage][selfFilter.sortOrder[7]]}</Text>
           </View>
           
           
@@ -83,7 +86,7 @@ const SelfMatchView = ({navigation, route}) => {
         <View style = {{ alignItems:"center",}}>
         
         {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:80, width:80, borderRadius:40}}/>:<MaterialIcons name="account-circle" size={75} color="black" />}
-        <Text style = {{fontWeight:"bold"}}>{ val.firstName }</Text>
+        <Text style = {{fontWeight:"bold"}}>{ computeName(val) }</Text>
         
         </View>
         </View>
@@ -121,7 +124,7 @@ const SelfMatchView = ({navigation, route}) => {
         style = {{flex:1,  position:'absolute', top:180, left:90,zIndex:100,}} 
         horizontal = {true}
         pagingEnabled = {true}
-        scrollEventThrottle={200}
+        scrollEventThrottle={8}
         onScroll={(event: any) => {
           setSliderPage(event);
         }}
@@ -148,16 +151,16 @@ const SelfMatchView = ({navigation, route}) => {
             <View style = {{flexDirection:"row", justifyContent:'space-around'}}>
             <View>
             <View style = {{flexDirection:"row", alignItems:"center",padding:5}}>
-            {iconFactory('charisma', 20)}
-          <Text style = {styles.scores }>Charisma:  {selfMatchView.data[sliderState.currentPage].charisma}</Text>
+            {iconFactory(selfFilter.sortOrder[0], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[0].toUpperCase()}:  {selfMatchView.data[sliderState.currentPage][selfFilter.sortOrder[0]]}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center",padding:5}}>
-          {iconFactory('creativity', 20)}
-          <Text style = {styles.scores }>Creativity:  {selfMatchView.data[sliderState.currentPage].creativity}</Text>
+          {iconFactory(selfFilter.sortOrder[1], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[1].toUpperCase()}  {selfMatchView.data[sliderState.currentPage][selfFilter.sortOrder[1]]}</Text>
           </View> 
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
-          {iconFactory('honest', 20)}
-          <Text style = {styles.scores }> Honest:  {selfMatchView.data[sliderState.currentPage].honest}</Text>
+          {iconFactory(selfFilter.sortOrder[2], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[2].toUpperCase()}  {selfMatchView.data[sliderState.currentPage][selfFilter.sortOrder[2]]}</Text>
           </View> 
           
                

@@ -149,6 +149,9 @@ const SelfSort = ({navigation, route}) => {
   
     return (
       <View style={{ flex: 1 }}>
+        <View style = {{height:50, alignItems:'center',justifyContent:'center'}}>
+        <CustomBackComponent navigation = {navigation}/>
+        </View>
         <DraggableFlatList
           data={sortData}
           renderItem={renderItem}

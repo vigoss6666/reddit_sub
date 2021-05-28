@@ -24,6 +24,8 @@ function computeName(obj) {
 export default function Endorsement({navigation, route}){
   const myContext = useContext(AppContext); 
   const { userId} = myContext;
+  console.log("user id is ")
+  console.log(userId)
   const createChatThread = (userID:string, user2ID:string) => {
     if(userID > user2ID){
        return userID+user2ID.toString()
@@ -46,7 +48,8 @@ export default function Endorsement({navigation, route}){
            points:firebase.firestore.FieldValue.arrayUnion({
              pointFor:'matchDiscovered', 
              point:50, 
-             createdAt:new Date()
+             createdAt:new Date(),
+             client:client.phoneNumber
            })
          }) 
       

@@ -873,7 +873,7 @@ export function ClientHeader({client, style}) {
   return <View style = {{marginLeft:20, marginRight:20}}>
   <View style = {[styles.line, {marginTop:40}]}/>
                   
-  <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>{computeName(user)}'s details</Text>
+  <Text style = {[styles.textStyle, {alignSelf:'center', fontSize:25}]}>{computeName(client)}'s details</Text>
 
   <View style = {styles.line}></View>
   {age}
@@ -1152,7 +1152,9 @@ export function ClientHeader({client, style}) {
  
  
  const reversed = votes.reverse(); 
- const votesTemplate = reversed.length > 0 ? reversed.map(val => {
+ const length = reversed.length; 
+ const finalArray = length > 0 && length <= 10 ? reversed:reversed.slice(0,9); 
+ const votesTemplate = reversed.length > 0 ? finalArray.map(val => {
      return (
          <View style = {{ borderBottomWidth:3, justifyContent:'center', alignItems:'center', }}>
              <Text style = {{alignSelf:'flex-end',  marginTop:3, fontSize:12}}>
@@ -1171,8 +1173,8 @@ export function ClientHeader({client, style}) {
                  
          </View>
      ) 
-  }):<View>
-    <Text>Loading</Text>
+  }):<View style = {{justifyContent:'center', alignItems:'center', height:50}}>
+    <Text style = {{fontSize:'20', fontWeight:'bold', fontStyle:'italic'}}>No votes</Text>
   </View>
  
  
