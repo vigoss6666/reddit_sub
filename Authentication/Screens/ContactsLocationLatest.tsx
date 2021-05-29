@@ -256,7 +256,7 @@ const handleInit = async () => {
       <View style = {{flex:1, paddingBottom:insets.bottom}}>
       <ScrollView
       keyboardShouldPersistTaps = {'always'}
-contentOffset = {{x:414, y:0}}
+
 style = {{flex:1, paddingTop:insets.top }} 
 horizontal = {true}
 pagingEnabled = {true}

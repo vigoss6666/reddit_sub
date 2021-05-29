@@ -82,19 +82,30 @@ const useFetchContactPool = (navigation) => {
        async function namer(){
        if(user.contactList.length > 0){
           
-       const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.contactList).get().then(onResult => {
-          const data = onResult.docs.map(val => val.data());
+     //   const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.contactList).get().then(onResult => {
+     //      const data = onResult.docs.map(val => val.data());
           function applyToIncluded(val){
                return {...val, invitationSent:true}
          }
-         const result = filterGamer(data, 'phoneNumber', user.invitations, null,applyToIncluded)
+     const checkerResult = await Promise.all(user.contactList.map(async val => {
+          return await db.collection('user').doc(val).get().then(onDoc => {
+            if(onDoc.exists){
+              return onDoc.data()
+            }
+            return null; 
+          })
+          
+         }))
+         const finalChecker = checkerResult.filter(val => val !== null);  
+         //const result = filterGamer(data, 'phoneNumber', user.invitations, null,applyToIncluded)
  
  
              
-         setContactList([...result.excludedObjects, ...result.includedObjects]);
+     //     setContactList([...result.excludedObjects, ...result.includedObjects]);
+     setContactList(finalChecker)
              
           
-       }).catch(error => console.log(error.message))
+     //   }).catch(error => console.log(error.message))
        }
        if(user.contactList.length == 0){
           
@@ -643,6 +654,7 @@ onChangeItem={namer => addAge(item, namer)}
 
 
      }
+     console.log(user.datingPoolList)
      
      const renderItem = ({item, index}) => (
           <View key = {index.toString()} style = {{ marginLeft:30, marginRight:30,}}>

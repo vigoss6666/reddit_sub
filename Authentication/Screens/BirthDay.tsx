@@ -72,13 +72,14 @@ return(
 <Header text = {"My Birthday is...."} style = {{alignSelf: 'center',}}/>
 <View style = {{marginLeft:30,borderBottomColor:"black", borderBottomWidth:2, width:Dimensions.get('window').width - 60,opacity:0.3,marginTop:10}}/>
     <DateTimePicker
+      style = {{marginLeft:150}}
       testID="dateTimePicker"
       value={date}
       mode={"date"}
       is24Hour={true}
       display="default"
       onChange={onChange}
-      textColor = {"red"}
+      
     />
     <View style = {{marginLeft:30,borderBottomColor:"black", borderBottomWidth:2, width:Dimensions.get('window').width - 60,opacity:0.3,marginTop:10}}/>
     

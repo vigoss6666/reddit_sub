@@ -88,17 +88,17 @@ const ContactsPhotos = ({navigation}) => {
     
     
       
-      
+    const cloner = profileAuth.concat();  
+    const objIndex = cloner.findIndex(val => val.phoneNumber == obj.phoneNumber);
+    cloner[objIndex].profilePic = pickerResult.uri;  
+    setProfilesAuth(cloner);
       const response = await fetch(pickerResult.uri); 
         const blob = await response.blob(); 
         const namer = Math.random().toString(36).substring(2);
         const ref = firebase.storage().ref().child("images/"+ namer); 
         await ref.put(blob)
         const result1 = await ref.getDownloadURL();
-        const cloner = profileAuth.concat();  
-        const objIndex = cloner.findIndex(val => val.phoneNumber == obj.phoneNumber);
-        cloner[objIndex].profilePic = result1;  
-        setProfilesAuth(cloner); 
+         
         const serverObject = {
         profilePic:result1   
         }

@@ -22,7 +22,7 @@ const ContactsLocation = ({navigation}) => {
     const [location, setLocation] = useState([]);  
     const myContext = useContext(AppContext); 
     const [flatListChanged, setFlatListChanged] = useState(1)
-    const { userId} = myContext; 
+    const { userId, computeName} = myContext; 
     const [profiles, setProfiles] = useState([]);  
     const [state, setState] = useState(); 
     const [gate, checkGate] = useState(true);
@@ -56,15 +56,7 @@ const ContactsLocation = ({navigation}) => {
       }) 
     }
     
-    const computeName = (obj) => {
-        if(obj.name){
-           return obj.name
-        }
-        if(obj.firstName && obj.lastName){
-           return obj.firstName+obj.lastName
-        }
-        return obj.firstName
-     }
+    
      const renderItem = ({ item }) => (
         <View style = {{flex:1, }}>
                <View style = {{flexDirection:'row', alignItems:'center', flex:0.9, marginBottom:10}}>

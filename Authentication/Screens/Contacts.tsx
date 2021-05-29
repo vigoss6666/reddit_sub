@@ -9,16 +9,19 @@ import {updateUser,filterGamer} from '../../networking';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { filter } from 'underscore';
+import { LoadScreen } from '../../src/common/Common';
 
 
 export default function Contacts({navigation,route}){
   
 const myContext = useContext(AppContext); 
 const { userId,defaultDataObject,setUser,computeName, setId} = myContext;
+console.log(userId)
 const db = firebase.firestore(); 
 const [indexer,setIndexer] = useState([]); 
 const [isSelected, setSelection] = useState(false);
 const KEYS_TO_FILTERS = ['name', 'firstName', 'lastName'];
+const [loading, setLoading] = useState(true); 
 const [search, setSearch] = useState('');
 const [selectAll, setSelectAll] = useState(true);
 const [serverData, addServerData] = useState([]); 
@@ -33,8 +36,22 @@ useEffect(() => {
 
 useEffect(() => {
    async function namer(){
-    const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.contactList).get();
-    const users = onResult.docs.map(val => val.data()); 
+     setLoading(true); 
+    const checkerResult = await Promise.all(user.contactList.map(async val => {
+      return await db.collection('user').doc(val).get().then(onDoc => {
+        if(onDoc.exists){
+          return onDoc.data()
+        }
+        return null; 
+      })
+      
+     }))
+     const finalChecker = checkerResult.filter(val => val !== null);
+    //const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.contactList).get();
+    // const users = onResult.docs.map(val => val.data()); 
+    const users = finalChecker; 
+    const regUsers = users.filter(val => val.latitude);
+    const nonReg = users.filter(val => !val.latitude); 
     const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
     const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
     const withMatchPics = await Promise.all(profilesWithoutMatchmaker.map(async val => {
@@ -45,8 +62,9 @@ useEffect(() => {
       }
       return {...val, matchMakerPic:null}
     }))
-    const finalUsers = [...withMatchPics, ...profilesWithMatchMaker]
-    setProfiles(finalUsers); 
+    const finalUsers = [...regUsers, ...nonReg]
+    setProfiles(finalUsers);
+    setLoading(false);  
 
    }
    if(Object.keys(user).length){
@@ -120,11 +138,11 @@ const addArray = (phoneNumber:string) => {
 
     
     const filteredEmails = profiles.filter(createFilter(search, KEYS_TO_FILTERS))
+   if(loading){
+     return <LoadScreen />
+   }
    return(
-      <KeyboardAvoidingView
-      behavior={Platform.OS == "ios" ? "padding" : "height"}
-      style={{flex:1}}
-    >
+     
         <View style = {{flex:1, }}>
         <View style = {{flex:0.1}}>
                         
@@ -156,8 +174,8 @@ const addArray = (phoneNumber:string) => {
                   <View style = {{flexDirection:'row', alignItems:'center', marginTop:5, marginBottom:5}}>
                   {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:60, width:60, borderRadius:30, }}/>:<MaterialIcons name="account-circle" size={60} color="black" />}  
                   <Text style = {{marginLeft:10, fontSize:17,maxWidth:100,maxHeight:100}}>{computeName(val)}</Text>
-                  <Text style = {{marginLeft:20}}>{val.matchMaker !== userId ? <Text style = {{fontWeight:'bold', fontSize:25}}> R </Text>:null}</Text>
-                  {val.matchMakerPic ? <Image source = {{uri:val.matchMakerPic}} style = {{height:30, width:30,borderRadius:15, marginLeft:10}}/>:null}
+                  <Text style = {{marginLeft:20}}>{val.latitude ? <Text style = {{fontWeight:'bold', fontSize:25}}> R </Text>:null}</Text>
+                  {/* {val.matchMakerPic ? <Image source = {{uri:val.matchMakerPic}} style = {{height:30, width:30,borderRadius:15, marginLeft:10}}/>:null} */}
                   </View>
                   <View style = {{alignItems:'center', justifyContent:'center', marginRight:10}}>
                      <Icon name = {"check"} iconStyle = {{opacity:indexer.includes(val.phoneNumber) ? 1:0}}/> 
@@ -175,7 +193,7 @@ const addArray = (phoneNumber:string) => {
                
         </View>
         </View>
-        </KeyboardAvoidingView>
+        
         )
 
 }

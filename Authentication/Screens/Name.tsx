@@ -57,7 +57,7 @@ export default function Name({navigation}){
    const handleLastNameChange = async (event) => {
     handleOpenGate()
     const {eventCount, target, text} = event.nativeEvent;
-    console.log(text)   
+    console.log(text)  
     setLastName(text);
         
 }
@@ -73,25 +73,20 @@ export default function Name({navigation}){
         
    }
    
-    let [fontsLoaded] = useFonts({
-        Roboto_400Regular,
-      });
+    
       
-      if (!fontsLoaded) {
-        return <Text>App is loading</Text>;
-      }    
 return(
 <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "padding"}>
 <Header text = "My name is....." style = {{justifyContent:"center", alignItems: 'flex-start',marginLeft:30,marginTop:60, }}/>
 <TextInput style = {{borderBottomWidth:0.5,opacity:0.3, borderColor:"grey",width:Dimensions.get('window').width -60, marginLeft:30 }}>
 
 </TextInput>
-<Text style = {{alignSelf:"flex-start", marginLeft:30,marginTop:10, fontFamily: 'Roboto_400Regular'}}>This is how it will appear to others</Text>
-<TextInput style = {{fontSize:35,borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:40 }} placeholder = {"First Name"} onChange = {async (text) => {await handleFirstNameChange(text)}} autoCorrect = {false} value = {firstName}>
+<Text style = {{alignSelf:"flex-start", marginLeft:30,marginTop:10, }}>This is how it will appear to others</Text>
+<TextInput style = {{fontSize:35,borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:40 }} placeholder = {"First Name"} onChange = { (text) => {handleFirstNameChange(text)}} autoCorrect = {false} value = {firstName}>
 
 
 </TextInput>
-<TextInput style = {{fontSize:35, borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} placeholder = {"Last Name"} onChange = {async (text) => {await handleLastNameChange(text)} } autoCorrect = {false} value = {lastName}></TextInput>
+<TextInput style = {{fontSize:35, borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} placeholder = {"Last Name"} onChange = {(text) => {handleLastNameChange(text)} } autoCorrect = {false} value = {lastName}></TextInput>
 <TextInput style = {{borderBottomWidth:0.3, borderColor:"grey",opacity:0.5, width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} ></TextInput>
 
 
@@ -103,7 +98,7 @@ return(
   type="outline"
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30,}}
   disabled = {openGate}
-  titleStyle = {{color:"white", fontWeight:"700"}}
+  titleStyle = {{color:"white", fontWeight:'bold'}}
   disabledStyle = {{backgroundColor:"grey",}}
   // onPress = {() =>  fire()}
   onPress = {() => fire()}

@@ -225,6 +225,9 @@ export default function App() {
     matchMakerContact:true
   })
   const [clientFilter, setClientFilter] = useState([]); 
+  useEffect(() => {
+    // AsyncStorage.setItem('user', null)
+  }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
   const [basicAuth, setBasicAuth] = useState(null); 
@@ -238,7 +241,7 @@ async function namer(){
   const user1 = "+917208110384"; 
   const user2 = "+919930815474";
   
-  setId(user2); 
+  setId(null); 
 }
 if(!Object.keys(user).length){
   namer()
@@ -575,7 +578,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Name} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>

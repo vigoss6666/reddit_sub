@@ -44,6 +44,11 @@ export default function LoadContacts({navigation}){
      return () => gamer;    
         
     }, [])
+    useEffect(() => {
+      navigation.setOptions({
+        headerShown:false
+      })
+    }, []) 
     //const [uploadContacts1, {data}] = useMutation(UPLOAD_CONTACTS); 
     // if(data){
         
@@ -56,7 +61,10 @@ export default function LoadContacts({navigation}){
     // }, [])
 
     const transformPhoneNumber = (phoneNumber, countryCode) => {
-        const countryCoder = countryCode.toUpperCase(); 
+        const countryCoder = countryCode.toUpperCase();
+        if(phoneNumber.includes("+")){
+          return phoneNumber; 
+        } 
         const obj = country.filter(val => val.code == countryCoder); 
         return obj[0].dial_code+phoneNumber; 
     }
@@ -71,22 +79,47 @@ export default function LoadContacts({navigation}){
               fields: [Contacts.Fields.PhoneNumbers],
             });
             if (data.length > 0) {
+              
               const contact = data;
-              const finaler = contact.map(val => {
-                   return {
-                       name:val.name, 
-                       firstName:val.firstName, 
-                       lastName:val.lastName,
-                       formattedPhoneNumber:val.phoneNumbers[0].number, 
-                       phoneNumber:transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode)
-                   }
+              const refined = contact.filter(val => val.phoneNumbers !== undefined); 
+              console.log("chencking refined length"); 
+              console.log(refined.length); 
+              const finaler = refined.map(val => {
+                
+                 
+                
+                
+                  return {
+                    name:val.name, 
+                    firstName:val.firstName ? val.firstName:null, 
+                    lastName:val.lastName ? val.lastName:null,
+                    formattedPhoneNumber:val.phoneNumbers[0].number, 
+                    phoneNumber:transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode)
+                }
+                
+                   
               })
             
              const contactList = finaler.map(val => val.phoneNumber); 
-             const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', contactList).get().catch(error => console.log(error.message))
-             const registeredUsers = onResult.docs.map(val =>  val.data());
-             const registeredUsersNumbers = registeredUsers.map(val => val.phoneNumber); 
-             setRegisteredUsers(registeredUsers) 
+             const checkerResult = await Promise.all(contactList.map(async val => {
+              return await db.collection('user').doc(val).get().then(onDoc => {
+                if(onDoc.exists){
+                  return onDoc.data()
+                }
+                return null; 
+              })
+              
+             }))
+             const finalChecker = checkerResult.filter(val => val !== null);  
+             
+             
+
+             
+             
+            //  const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', contactList).get().catch(error => console.log(error.message))
+             //const registeredUsers = finalChecker.length ? finalChecker.docs.map(val =>  val.data()):[]; 
+             const registeredUsersNumbers = finalChecker.length ? finalChecker.map(val => val.phoneNumber):[];  
+             setRegisteredUsers(finalChecker) 
              
              var filtered = contactList.filter(
                 function(e) {

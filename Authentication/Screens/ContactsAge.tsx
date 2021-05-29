@@ -14,6 +14,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { MaterialIcons } from '@expo/vector-icons';
 
 import { firebase } from '../../config'; 
+import { LoadScreen } from '../../src/common/Common';
 const db = firebase.firestore(); 
 
 
@@ -28,6 +29,7 @@ mutation namer($userInputList:userInputList1!){
 export default function ContactsAge({navigation,route}){
     const myContext = useContext(AppContext); 
     const { userId, setProfilesAuth,computeName} = myContext;
+    const [loading, setLoading] = useState(true); 
     const [user,setUser] = useState({});
 useEffect(() => {
   db.collection('user').doc(userId).get().then(onDoc => {
@@ -48,6 +50,7 @@ useEffect(() => {
 
      useEffect(() => {
         async function namer(){
+
          const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
          const users = onResult.docs.map(val => val.data()); 
          
@@ -56,7 +59,8 @@ useEffect(() => {
          const filterByApp = finalTransformed.filter(val => !val.appUser );
          const filterBySetter = filterByApp.filter(val => !val.latitude );
          setProfilesAuth(filterBySetter) 
-         setProfiles(filterBySetter); 
+         setProfiles(filterBySetter);
+         setLoading(false) 
      
         }
         if(Object.keys(user).length){
@@ -148,7 +152,9 @@ useEffect(() => {
 //         return obj.firstName;
 //     }
   
-
+    if(loading){
+        return <LoadScreen/>
+    }    
     return(
         <SafeAreaView style = {{flex:1, }}>
         

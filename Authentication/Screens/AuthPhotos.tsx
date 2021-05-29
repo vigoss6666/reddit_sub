@@ -37,14 +37,15 @@ export default function Photos({navigation, route }){
     //   const pattern = /file/i; 
     //   const result = profilePic.match(pattern); 
       
-      
+      setProfilePicLocal(profilePic)
       const response = await fetch(profilePic); 
+      
       const blob = await response.blob(); 
       const namer = Math.random().toString(36).substring(2);
       const ref = firebase.storage().ref().child("images/"+ namer); 
       await ref.put(blob)
       const result1 = await ref.getDownloadURL()
-      setProfilePicLocal(profilePic)
+      
       
       //db.collection('user').doc(userId).set({profilePic:result1}, {merge:true}); 
 
