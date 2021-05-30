@@ -463,12 +463,25 @@ export const updateUser = (user, obj) => {
 
 
 export function filterGamer(arr, indexValue, arrFilter, applyToExcluded, applyToIncluded){
+  if(arrFilter == undefined){
+    return {
+       excludedObjects:arr, 
+       includedObjects:[]
+    }
+  }
 
+if(arrFilter.length == 0){
+  return {
+     excludedObjects:arr, 
+     includedObjects:[]
+  }
+}
 
+if(arrFilter.length == 0){
+  arrFilter == []; 
+}
 
- if(arrFilter == undefined){
-    arrFilter = []; 
- } 
+  
  
 
   let excludedTransform; 
@@ -479,7 +492,7 @@ export function filterGamer(arr, indexValue, arrFilter, applyToExcluded, applyTo
   var filteredIntros = arr.filter(
       function(e) {
   
-        return this.indexOf(e[indexValue]) < 0;
+        return this.indexOf(e[indexValue]) < 0
       },
      arrFilter
   );

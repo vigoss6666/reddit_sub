@@ -106,6 +106,7 @@ export default function App({navigation}) {
                if(onfulfilled.user){
                   
                   setTempId(phoneNumber)
+                  db.collection('user').doc(phoneNumber).set({phoneNumber:phoneNumber}, {merge:true})
                   db.collection('invitationSent').where('client', '==', phoneNumber).get().then(async onDocs => {
                     if(!onDocs.empty){
                       const docs = onDocs.docs.map(val => val.data()); 

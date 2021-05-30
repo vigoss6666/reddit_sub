@@ -71,6 +71,7 @@ setDefaultDating(user.dating ? 0:1)
 
 
 }, [user.distancePreference, user.minAgePreference, user.maxAgePreference, user.dating])
+console.log(userId)
 
    //const {data, loading, error} = useQuery(GET_DETAILS);
    // if(data){

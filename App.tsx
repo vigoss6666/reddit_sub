@@ -171,11 +171,11 @@ export default function App() {
   const [introNotification, setIntroNotification] = useState(); 
   const [chatNotification, setChatNotification] = useState(true);  
   const [chatterNotification, setChatterNotification] = useState(false);
-  const [initialRouteName, setInitialRouteName] = useState('ProfilePool');  
+  const [initialRouteName, setInitialRouteName] = useState();  
   const [singleContact, setSingleContact] = useState();  
   const [notification, setNotification] = useState(false);
   const [sentFromBrowse, setSentFromBrowse] = useState(null); 
-  const [tempId, setTempId] = useState('+917208110384'); 
+  const [tempId, setTempId] = useState(); 
   const responseListener = useRef();
   const notificationListener = useRef();
   const [profilePicLocal, setProfilePicLocal] = useState(null); 
@@ -185,6 +185,7 @@ export default function App() {
   const [changedClient, setChangedClient] = useState(null);  
   const [generatedMatch, setGeneratedMatch] = useState([]);
   const [generatedMatchSelf, setGeneratedMatchSelf] = useState([]); 
+  const [mainId, setMainId] = useState()
   
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -226,7 +227,7 @@ export default function App() {
   })
   const [clientFilter, setClientFilter] = useState([]); 
   useEffect(() => {
-    // AsyncStorage.setItem('user', null)
+    // AsyncStorage.removeItem('user')
   }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
@@ -241,7 +242,7 @@ async function namer(){
   const user1 = "+917208110384"; 
   const user2 = "+919930815474";
   
-  setId(null); 
+  setId(userGamer); 
 }
 if(!Object.keys(user).length){
   namer()
@@ -265,8 +266,12 @@ if(!Object.keys(user).length){
      
       const subscribe = _id  ?  db.collection('user').doc(_id).onSnapshot(doc => {
         if(doc.exists){
+          const user = doc.data();  
+          
+           setUser(user)
+           
            setLoader(false)
-           setUser(doc.data())
+           
         } 
      }):() => setLoader(false)
      //setLoader(false)
@@ -578,7 +583,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Name} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>

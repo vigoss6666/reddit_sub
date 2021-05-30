@@ -33,7 +33,7 @@ export default function Name({navigation}){
    const fire = () => {
      
     
-    db.collection('user').doc(userId).set({firstName, lastName, name:firstName+lastName}, {merge:true}).then(() => {
+    db.collection('user').doc(userId).set({firstName, lastName, name:firstName+""+lastName}, {merge:true}).then(() => {
       
       navigation.navigate('Birthday', {page:"something"})
       

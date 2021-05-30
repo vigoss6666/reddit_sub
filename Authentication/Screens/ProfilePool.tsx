@@ -368,16 +368,20 @@ const useFetchDatingPool = (navigation) => {
      async function namer(){
      if(user.datingPoolList.length > 0){
          
-     const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get().then(onResult => {
-        const data = onResult.docs.map(val => val.data());
+     const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get().then(async onResult => {
+        const data = await onResult.docs.map(val => val.data());
         function applyToIncluded(val){
               return {...val, invitationSent:true}
         }
         const result = filterGamer(data, 'phoneNumber', user.invitations, null,applyToIncluded)
+        console.log(result)
+     //    console.log("exlucded"+result.excludedObjects.length)
+     //    console.log("included"+result.includedObjects.length)
 
 
             
-        setDatingPoolList([...result.excludedObjects, ...result.includedObjects]);
+     //    setDatingPoolList([...result.excludedObjects, ...result.includedObjects]);
+     setDatingPoolList(data)
      }).catch(error => console.log(error.message))
      }
      if(user.datingPoolList.length == 0){
@@ -389,7 +393,8 @@ const useFetchDatingPool = (navigation) => {
 }
 namer()
 },[user.datingPoolList])
-
+console.log("length is")
+console.log(user.datingPoolList.length)
 
 const updateLocationList = () => {
   if(Object.keys(datingFlatList).length){
@@ -422,13 +427,13 @@ const updateInvitation = () => {
    }
    
 
-useFocusEffect(
-     React.useCallback(() => {
-       console.log("i was called")   
-       updateLocationList()
-       updateInvitation()
-     }, [datingFlatList,inviteToPlay])
-   );
+// useFocusEffect(
+//      React.useCallback(() => {
+//        console.log("i was called")   
+//        updateLocationList()
+//        updateInvitation()
+//      }, [datingFlatList,inviteToPlay])
+//    );
 
 
 
@@ -794,7 +799,7 @@ onChangeItem={namer => addAge(item, namer)}
         data={filteredEmails}
         renderItem={renderItem}
         keyExtractor={(item) => item.phoneNumber}
-        contentInset={{  top: 0, left: 0, bottom: 200 }}
+     //    contentInset={{  top: 0, left: 0, bottom: 200 }}
 
         //extraData={inviteToPlay}
       />  

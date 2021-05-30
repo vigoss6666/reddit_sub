@@ -109,6 +109,7 @@ const handleMarker = (marker) => {
     
 }
 const handleInit = async () => {
+  console.log(user); 
   const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
   db.collection('user').doc(userId).set(userInit,{merge:true});
   setFinalUser(userInit)

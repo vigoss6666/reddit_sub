@@ -83,7 +83,7 @@ interface database {
 export const defaultDataObject:database = {
 
  age:0, 
- 
+ invitations:[], 
  chattedArray:[],
  contactList:[], 
  datingPoolList:[], 

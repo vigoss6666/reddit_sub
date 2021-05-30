@@ -14,19 +14,12 @@ import { logTen } from './logTen';
 import { filter } from 'underscore';
 import GamePreview from './GamePreview'; 
 import {filterGamer, getDistanceFromLatLonInKm} from '../../networking'; 
+
 import {LoadScreen} from '../../src/common/Common'; 
 const db = firebase.firestore(); 
 //@refresh reset
 interface PlayGameLatestProps {}
-const computeName = (obj) => {
-    if(obj.name){
-       return obj.name
-    }
-    if(obj.firstName && obj.lastName){
-       return obj.firstName+obj.lastName
-    }
-    return obj.firstName
-}
+
 
 
 
@@ -49,6 +42,7 @@ const PlayGameLatest = ({navigation}) => {
   const [profiles,setProfiles] = useState([])
   const myContext = useContext(AppContext); 
   const [pageFocused, setPageFocused] = useState(false); 
+  
   
   const [questions, setQuestions] = useState([]); 
   const element = createRef();
@@ -176,7 +170,7 @@ const namer =  [
   
   const [namer, setNamer] = useState(); 
   const mainView = useRef(); 
-  const {user, userId, setInitialRouteName} = myContext;
+  const {user, userId, computeName} = myContext;
   const [demo, setDemo] = useState([])  
   const measure = () => {
       
@@ -406,7 +400,7 @@ db.collection('user').doc(userId).set({suggestedMatches:[]}, {merge:true})
          
            {demo[index].profilePic ? <Image source = {{uri:demo[index].profilePic}} style = {{height:80, width:80, borderRadius:40}}/>:<MaterialIcons name="account-circle" size={80} color="black" />} 
          
-         <Text style = {{alignSelf:'center', fontWeight:'bold', fontSize:17, marginTop:5, marginLeft:-10}}>{demo[index].name}</Text>
+         <Text style = {{alignSelf:'center', fontWeight:'bold', fontSize:11, marginTop:5, marginLeft:-10}}>{computeName(demo[index])}</Text>
          
          </View>
        }
@@ -417,7 +411,7 @@ db.collection('user').doc(userId).set({suggestedMatches:[]}, {merge:true})
          
         {demo[index + 1].profilePic ? <Image source = {{uri:demo[index + 1].profilePic}} style = {{height:80, width:80, borderRadius:40}}/>:<MaterialIcons name="person" size={80} color="black" />} 
       
-      <Text style = {{alignSelf:'center', fontWeight:'bold', fontSize:17, marginTop:5, }}>{demo[index + 1].name}</Text>
+      <Text style = {{alignSelf:'center', fontWeight:'bold', fontSize:11, marginTop:5, }}>{computeName(demo[index + 1])}</Text>
       
       </View>
        }

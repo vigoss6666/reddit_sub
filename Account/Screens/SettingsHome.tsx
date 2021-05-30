@@ -10,8 +10,6 @@ import {firebase} from '../../config';
 import AppContext from '../../AppContext'; 
 
 import {updateUser} from '../../networking';
-
-
 import { AntDesign } from '@expo/vector-icons';
 
 
@@ -19,6 +17,7 @@ import { AntDesign } from '@expo/vector-icons';
 export default function SettingsHome({navigation}){
     const myContext = useContext(AppContext); 
     const {user, userId,setInitialRouteName} = myContext; 
+    console.log("user id is"+userId)
     useEffect(() => {
          navigation.setOptions({
              headerLeft:() => <TouchableOpacity onPress = {() => {setInitialRouteName('Settings'),navigation.navigate('Homer')}}>
@@ -51,7 +50,7 @@ const _firebaseCaller = () => {
      const lamer = firebase.functions().httpsCallable('batman');
      lamer();  
 }
-
+console.log("userId is",userId)
 return(
 <View style = {{flex:1, marginLeft:30, marginRight:30 }}>
 <View style = {{flex:0.1}}>
