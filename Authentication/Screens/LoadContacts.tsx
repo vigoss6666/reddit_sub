@@ -93,7 +93,7 @@ export default function LoadContacts({navigation}){
                     name:val.name ? val.name:null , 
                     firstName:val.firstName ? val.firstName:null, 
                     lastName:val.lastName ? val.lastName:null,
-                    formattedPhoneNumber:val.phoneNumbers[0].number, 
+                    formattedPhoneNumber:val.phoneNumbers[0].number ? val.phoneNumbers[0].number:null, 
                     phoneNumber:transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode)
                 }
                 
@@ -151,7 +151,7 @@ export default function LoadContacts({navigation}){
              var batch = db.batch();
              newUsers.map(val => {
                   const ref = db.collection('user').doc(val.phoneNumber)
-                  batch.set(ref, {...val, matchMaker:userId})
+                  batch.set(ref, {...val, matchMaker:userId}, {merge:true})
              })
              batch.commit().then(() => {
                 navigation.navigate('Loader'); 
