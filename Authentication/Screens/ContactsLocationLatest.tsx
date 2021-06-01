@@ -12,12 +12,13 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import {Button} from 'react-native-elements'; 
 import {addUsers} from '../../networking'; 
 import {NavigationAction} from '@react-navigation/native'; 
+import { LoadScreen } from '../../src/common/Common';
 const db = firebase.firestore(); 
 
 interface ContactsLocationLatestProps {}
 
 const ContactsLocationLatest = ({navigation, route}) => {
-  const [sliderState, setSliderState] = useState({ currentPage: 1 });
+  const [sliderState, setSliderState] = useState({ currentPage: 0 });
   const myContext = useContext(AppContext); 
   const { userId,computeName,CustomBackComponent,setUser,defaultDataObject,setProfilesAuth, setId} = myContext;
   const [finalUser, setFinalUser] = useState({}); 
@@ -31,6 +32,7 @@ const ContactsLocationLatest = ({navigation, route}) => {
   const [location, setLocation] = useState({}); 
   const [gate, setGate] = useState(true); 
   const [user,setUser1] = useState({}); 
+  const [loading, setLoading] = useState(true); 
   
    
   useEffect(() => {
@@ -44,15 +46,26 @@ const ContactsLocationLatest = ({navigation, route}) => {
 
   useEffect(() => {
     async function namer(){
-     const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
-     const users = onResult.docs.map(val => val.data()); 
+      const checkerResult = await Promise.all(user.datingPoolList.map(async val => {
+        return await db.collection('user').doc(val).get().then(onDoc => {
+          if(onDoc.exists){
+            return onDoc.data()
+          }
+          return null; 
+        })
+        
+       }))
+   const finalChecker = checkerResult.filter(val => val !== null);
+    //  const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
+    //  const users = onResult.docs.map(val => val.data()); 
      
-     const finalTransformed = users.map((val, index) => ( {...val, zIndex:index}));
+     const finalTransformed = finalChecker.map((val, index) => ( {...val, zIndex:index}));
      finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
      const filterByApp = finalTransformed.filter(val => !val.appUser );
      const filterBySetter = filterByApp.filter(val => !val.latitude);
      
      setProfiles(filterBySetter); 
+     setLoading(false)
  
     }
     if(Object.keys(user).length){
@@ -96,18 +109,22 @@ const ContactsLocationLatest = ({navigation, route}) => {
   }
 
 
-const handleMarker = (marker) => {
-      
+const handleMarker = async (marker) => {
+    console.log(marker)  
     const copy = markers.concat(); 
     const index = copy.findIndex(val => val.client.phoneNumber == marker.client.phoneNumber); 
+    console.log("index"+index)
     if(index !== -1){
       copy[index] = marker; 
-      setMarkers(copy); 
+      await setMarkers(copy); 
+      
       return; 
     } 
-    setMarkers([...markers, marker])
+    await setMarkers((markers) => [...markers, marker])
+    
     
 }
+console.log(markers)
 const handleInit = async () => {
   console.log(user); 
   const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
@@ -253,6 +270,10 @@ const handleInit = async () => {
   
     </View>
 )):null
+
+ if(loading){
+   return <LoadScreen />
+ }
   return (
       <View style = {{flex:1, paddingBottom:insets.bottom}}>
       <ScrollView
