@@ -50,11 +50,20 @@ useEffect(() => {
 
      useEffect(() => {
         async function namer(){
-
-         const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
-         const users = onResult.docs.map(val => val.data()); 
+            const checkerResult = await Promise.all(user.datingPoolList.map(async val => {
+                return await db.collection('user').doc(val).get().then(onDoc => {
+                  if(onDoc.exists){
+                    return onDoc.data()
+                  }
+                  return null; 
+                })
+                
+               }))
+           const finalChecker = checkerResult.filter(val => val !== null);   
+        //  const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
+        //  const users = onResult.docs.map(val => val.data()); 
          
-         const finalTransformed = users.map((val, index) => ( {...val, zIndex:index}));
+         const finalTransformed = finalChecker.map((val, index) => ( {...val, zIndex:index}));
          finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
          const filterByApp = finalTransformed.filter(val => !val.appUser );
          const filterBySetter = filterByApp.filter(val => !val.latitude );

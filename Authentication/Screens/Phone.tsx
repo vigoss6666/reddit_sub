@@ -105,19 +105,20 @@ export default function App({navigation}) {
             firebase.auth().signInWithCredential(credential).then(async onfulfilled => {
                if(onfulfilled.user){
                   
-                  setTempId(phoneNumber)
-                  db.collection('user').doc(phoneNumber).set({phoneNumber:phoneNumber}, {merge:true})
-                  db.collection('invitationSent').where('client', '==', phoneNumber).get().then(async onDocs => {
-                    if(!onDocs.empty){
-                      const docs = onDocs.docs.map(val => val.data()); 
-                      const finaler = await Promise.all(docs.map(async val => {
-                       return db.collection('user').doc(val.matchMaker).set({points:firebase.firestore.FieldValue.arrayUnion({pointFor:'invitationAccepted',point:50, client:val.client, createdAt:new Date()})}, {merge:true})
-                    }))
-                    navigation.navigate('Name')
-                    }
-                    navigation.navigate('Name')
+                  // setTempId(phoneNumber)
+                  navigation.navigate('Name')
+                 
+                  // db.collection('invitationSent').where('client', '==', phoneNumber).get().then(async onDocs => {
+                  //   if(!onDocs.empty){
+                  //     const docs = onDocs.docs.map(val => val.data()); 
+                  //     const finaler = await Promise.all(docs.map(async val => {
+                  //      return db.collection('user').doc(val.matchMaker).set({points:firebase.firestore.FieldValue.arrayUnion({pointFor:'invitationAccepted',point:50, client:val.client, createdAt:new Date()})}, {merge:true})
+                  //   }))
+                    // navigation.navigate('Name')
+                  //   }
+                  //   navigation.navigate('Name')
                     
-                  })
+                  // })
                   
 
                   // showMessage({ text: 'Phone authentication successful 👍' })

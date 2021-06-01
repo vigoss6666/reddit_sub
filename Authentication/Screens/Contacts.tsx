@@ -1,4 +1,4 @@
-import  React, {useState,useRef,useEffect, useContext} from 'react';
+import  React, {useState,useRef,useEffect, useContext, useCallback, useMemo, memo} from 'react';
 
 import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, KeyboardAvoidingView} from 'react-native';
 import { Divider,Header,Text, SearchBar,Avatar,Icon,Button,CheckBox} from 'react-native-elements';
@@ -10,15 +10,26 @@ import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { filter } from 'underscore';
 import { LoadScreen } from '../../src/common/Common';
+//@refresh reset
 
 
-export default function Contacts({navigation,route}){
-  
+function MainGun({length}){
+  return <Text>{length}</Text>
+  }
+
+
+
+
+function Contacts({navigation,route}){
+   
 const myContext = useContext(AppContext); 
 const { userId,defaultDataObject,setUser,computeName, setId} = myContext;
-console.log(userId)
+
 const db = firebase.firestore(); 
-const [indexer,setIndexer] = useState([]); 
+// const [indexer,setIndexer] = useState([]); 
+const [indexer, setIndexer] = useState([]) 
+let checker = useRef([]).current; 
+
 const [isSelected, setSelection] = useState(false);
 const KEYS_TO_FILTERS = ['name', 'firstName', 'lastName'];
 const [loading, setLoading] = useState(true); 
@@ -26,13 +37,39 @@ const [search, setSearch] = useState('');
 const [selectAll, setSelectAll] = useState(true);
 const [serverData, addServerData] = useState([]); 
 const [profiles, setProfiles] = useState([]); 
+const [name, setName] = useState("zaid")
 const [user,setUser1] = useState({});
+const arr = Array.from(new Array(10000), (x,index) => index + 1)
+const namer = arr.map(val => {
+ return {
+  phoneNumber:val, 
+  name:"Kate bell"
+ }
+})
+namer[4].name = "zaid"; 
+namer[4].phoneNumber = 10 
 useEffect(() => {
   db.collection('user').doc(userId).get().then(onDoc => {
       setUser1(onDoc.data())
   })
 }, [])
- 
+
+// const WrapperComponent = () => {
+//  return <FlatList
+//  data = {filteredEmails}
+//  renderItem = {renderItem}
+//  keyExtractor = {(item => item.phoneNumber )}
+//  />  
+// }
+// function moviePropsAreEqual(prevMovie, nextMovie) {
+//   return true
+// }
+const [, updateState] = React.useState();
+const forceUpdate = React.useCallback(() => updateState({}), []);
+
+ useEffect(() => {
+  console.log(" checker effect was called")
+ }, [checker])
 
 useEffect(() => {
    async function namer(){
@@ -75,69 +112,209 @@ useEffect(() => {
 }, [user])
 const sendToServer = async () => {
     
-  
+  const checkerResult = await Promise.all(checker.map(async val => {
+    return await db.collection('user').doc(val).get().then(onDoc => {
+      if(onDoc.exists){
+        return onDoc.data()
+      }
+      return null; 
+    })
+    
+   }))
+   const finalChecker = checkerResult.filter(val => val !== null); 
+   const filterByApp = finalChecker.filter(val => !val.appUser);
+   const filterBySetter = filterByApp.filter(val => !val.latitude);
+   if(filterBySetter.length < 1){
+    const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
+    db.collection('user').doc(userId).set(userInit, {merge:true});
 
-   
-   db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', indexer).get().then(async onResult => {
-     const result = onResult.docs.map(val => val.data());
-     const filterByApp = result.filter(val => !val.appUser);
-     const filterBySetter = filterByApp.filter(val => !val.latitude);
-     if(filterBySetter.length < 1){
-      const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
-      db.collection('user').doc(userId).set(userInit, {merge:true});
-
-      var filteredIntros = user.contactList.filter(
-        function(e) {
-    
-          return this.indexOf(e) < 0;
-        },
-       indexer
-    );
-    
-          
-    updateUser(userId, {contactList:filteredIntros})
-    await db.collection('user').doc(userId).set({datingPoolList:indexer}, {merge:true}); 
-    await AsyncStorage.setItem('user', userId);  
-    setId(userId);
-    
-    
-     return;    
-     }
-     var filteredIntros = user.contactList.filter(
+    var filteredIntros = user.contactList.filter(
       function(e) {
   
         return this.indexOf(e) < 0;
       },
-     indexer
+     checker
   );
-     
-     updateUser(userId, {contactList:filteredIntros})
-     await db.collection('user').doc(userId).set({datingPoolList:indexer}, {merge:true}); 
-     navigation.navigate('ContactsAge') 
+  
+        
+  updateUser(userId, {contactList:filteredIntros})
+  await db.collection('user').doc(userId).set({datingPoolList:checker}, {merge:true}); 
+  await AsyncStorage.setItem('user', userId);  
+  setId(userId);
+  return;    
+  }
+  var filteredIntros = user.contactList.filter(
+    function(e) {
 
-   })
+      return this.indexOf(e) < 0;
+    },
+   checker
+);
+   
+   updateUser(userId, {contactList:filteredIntros})
+   await db.collection('user').doc(userId).set({datingPoolList:checker}, {merge:true}); 
+   navigation.navigate('ContactsAge')
+
+   
+  //  db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', indexer).get().then(async onResult => {
+  //    const result = onResult.docs.map(val => val.data());
+  //    const filterByApp = result.filter(val => !val.appUser);
+  //    const filterBySetter = filterByApp.filter(val => !val.latitude);
+  //    if(filterBySetter.length < 1){
+  //     const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
+  //     db.collection('user').doc(userId).set(userInit, {merge:true});
+
+  //     var filteredIntros = user.contactList.filter(
+  //       function(e) {
+    
+  //         return this.indexOf(e) < 0;
+  //       },
+  //      indexer
+  //   );
+    
+          
+  //   updateUser(userId, {contactList:filteredIntros})
+  //   await db.collection('user').doc(userId).set({datingPoolList:indexer}, {merge:true}); 
+  //   await AsyncStorage.setItem('user', userId);  
+  //   setId(userId);
+    
+    
+  //    return;    
+  //    }
+  //    var filteredIntros = user.contactList.filter(
+  //     function(e) {
+  
+  //       return this.indexOf(e) < 0;
+  //     },
+  //    indexer
+  // );
+     
+  //    updateUser(userId, {contactList:filteredIntros})
+  //    await db.collection('user').doc(userId).set({datingPoolList:indexer}, {merge:true}); 
+  //    navigation.navigate('ContactsAge') 
+
+  //  })
    
 }
 
 
 
+// const addArray = (phoneNumber:string) => {
+  
+//      if(indexer.includes(phoneNumber)){
+//         const copyIndex = indexer.concat()  
+//         const index = indexer.indexOf(phoneNumber);
+//              const result = indexer.splice(index, 1);
+//             // copyIndex[index] = phoneNumber
+//             //setIndexer(copyIndex); 
+//             return; 
+//      }
+//      setIndexer([...indexer, phoneNumber]);
+// }
 const addArray = (phoneNumber:string) => {
-     if(indexer.includes(phoneNumber)){
-        const copyIndex = indexer.concat();  
-        const index = copyIndex.indexOf(phoneNumber);
-            const result = copyIndex.splice(index, 1);
-            setIndexer(copyIndex); 
-            return; 
-     }
-     setIndexer([...indexer, phoneNumber]);
+  console.log(" iwas called")
+  
+  if(checker.includes(phoneNumber)){
+     const index = checker.findIndex(val => val == phoneNumber);
+          const result = checker.splice(index, 1);
+         
+         console.log(checker)
+         forceUpdate()
+         
+         return; 
+  }
+  checker.push(phoneNumber)
+  forceUpdate()
+  console.log(checker)
+}
+const [, setForceUpdate] = useState(Date.now());
+
+const BottomTemplate = ({mainer}) => {
+  console.log(" i m mainer "); 
+  console.log(mainer.length)
+  return <Text>{mainer.length}</Text>
+}
+function checkerProps(prev, next){
+  if(prev.mainer ===  next.mainer){
+    return true; 
+  }
+}
+const BottomTemplate2 = memo(BottomTemplate, checkerProps)
+
+
+
+
+// const gamerBoy = useCallback((phoneNumber:string) => {
+// addArray(phoneNumber)
+// }, [indexer])
+
+// const addArray = (phoneNumber:string) => {
+  
+//     if(indexer.includes(phoneNumber)){
+//       const copyIndex = indexer.concat();  
+//       const index = copyIndex.indexOf(phoneNumber);
+//           const result = copyIndex.splice(index, 1);
+//           indexer = result;  
+//           console.log(indexer)
+//           return; 
+//    }
+   
+//    indexer = [...indexer, phoneNumber]
+
+  
+//   console.log(indexer)
+// }
+
+
+
+const ContactView = ({item,adder}) => {
+  const [isClicked, setIsClicked] = useState(false);  
+  return (
+    <TouchableOpacity  
+    style = {{borderWidth:1, flexDirection:"row",  justifyContent:'space-between', marginLeft:20, marginRight:20, borderLeftWidth:0, borderRightWidth:0,}}
+    onPress = {() => { setIsClicked(!isClicked), adder(item.phoneNumber)}}
+    >
+      
+        <View style = {{flexDirection:'row', alignItems:'center', marginTop:5, marginBottom:5}}>
+        {item.profilePic ? <Image source = {{uri:item.profilePic}} style = {{height:60, width:60, borderRadius:30, }}/>:<MaterialIcons name="account-circle" size={60} color="black" />}  
+        <Text style = {{marginLeft:10, fontSize:17,maxWidth:100,maxHeight:100}}>{computeName(item)}</Text>
+        <Text style = {{marginLeft:20}}>{item.latitude ? <Text style = {{fontWeight:'bold', fontSize:25}}> R </Text>:null}</Text>
+        
+        </View>
+        <View style = {{alignItems:'center', justifyContent:'center', marginRight:10}}>
+           <Icon name = {"check"} iconStyle = {{opacity:isClicked ? 1:0}}/> 
+        </View>
+    </TouchableOpacity>
+  )
 }
 
+console.log(indexer)
 
+
+
+const renderItem = ({ item }) => {
+  console.log(" iwas rendered")
+  return (
+    <ContactView item = {item} adder = {addArray}/>
+  ) 
+}
  
-
+  const result = useMemo(() => {
+    console.log("Memo called")
+  }, [checker])
 
     
-    const filteredEmails = profiles.filter(createFilter(search, KEYS_TO_FILTERS))
+   const filteredEmails = profiles.filter(createFilter(search, KEYS_TO_FILTERS))
+   const Memo = React.useMemo(() => {
+    console.log("i was called")
+  return <FlatList
+  data = {filteredEmails}
+  renderItem = {renderItem}
+  keyExtractor={item => item.phoneNumber}
+  extraData = {filteredEmails}
+  />  
+  }, [profiles, filteredEmails.length])
+   
    if(loading){
      return <LoadScreen />
    }
@@ -162,8 +339,14 @@ const addArray = (phoneNumber:string) => {
         </View>
           <View style = {{marginTop:10,flex:0.5, marginTop:40}}>
           
-
-          <ScrollView>
+          {Memo}  
+          {/* <FlatList
+  data = {filteredEmails}
+  renderItem = {renderItem}
+  keyExtractor={item => item.phoneNumber}
+  extraData = {filteredEmails}
+  /> */}
+          {/* <ScrollView>
           {filteredEmails.map((val,index) => {
             return (
               <TouchableOpacity key={index} 
@@ -175,7 +358,7 @@ const addArray = (phoneNumber:string) => {
                   {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:60, width:60, borderRadius:30, }}/>:<MaterialIcons name="account-circle" size={60} color="black" />}  
                   <Text style = {{marginLeft:10, fontSize:17,maxWidth:100,maxHeight:100}}>{computeName(val)}</Text>
                   <Text style = {{marginLeft:20}}>{val.latitude ? <Text style = {{fontWeight:'bold', fontSize:25}}> R </Text>:null}</Text>
-                  {/* {val.matchMakerPic ? <Image source = {{uri:val.matchMakerPic}} style = {{height:30, width:30,borderRadius:15, marginLeft:10}}/>:null} */}
+                  
                   </View>
                   <View style = {{alignItems:'center', justifyContent:'center', marginRight:10}}>
                      <Icon name = {"check"} iconStyle = {{opacity:indexer.includes(val.phoneNumber) ? 1:0}}/> 
@@ -183,11 +366,16 @@ const addArray = (phoneNumber:string) => {
               </TouchableOpacity>
             )
           })}
-        </ScrollView>        
+        </ScrollView>         */}
+       
+
+
+        
         </View>
         <View style = {{flex:0.2,marginTop:20}}>
-            <Text style = {{alignSelf:'center', marginBottom:20, color:'black', fontWeight:"600", marginTop:10}}>{indexer.length} Friends selected</Text>
-            <Button buttonStyle = {{backgroundColor:'black'}} title = {"Done"} containerStyle = {{marginLeft:20, marginRight:20}} disabledStyle = {{backgroundColor:'grey', }} disabled = {indexer.length > 0 ? false:true} onPress = {() => {sendToServer()}}>
+          
+            <Text style = {{alignSelf:'center', marginBottom:20, color:'black', fontWeight:"600", marginTop:10}}>{checker.length} Friends selected</Text>
+            <Button buttonStyle = {{backgroundColor:'black'}} title = {"Done"} containerStyle = {{marginLeft:20, marginRight:20}} disabledStyle = {{backgroundColor:'grey', }} disabled = {checker.length > 0 ? false:true} onPress = {() => {sendToServer()}}>
                 
             </Button>
                
@@ -197,6 +385,12 @@ const addArray = (phoneNumber:string) => {
         )
 
 }
+
+
+ const Memed = React.memo(Contacts)
+ export default Memed; 
+
+
 const styles = StyleSheet.create({
     container: {
       flex: 1,

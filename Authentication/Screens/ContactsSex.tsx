@@ -25,6 +25,9 @@ const [gate, checkGate] = useState(true);
 const [gender,addGender] = useState([]); 
 const [profiles, setProfiles] = useState([]); 
 const [user,setUser] = useState({}); 
+const [, updateState] = React.useState();
+const forceUpdate = React.useCallback(() => updateState({}), []);
+let checker = useRef([]).current;
 
 
 useEffect(() => {
@@ -32,6 +35,30 @@ useEffect(() => {
        setUser(onDoc.data())
    })
  }, [])
+
+
+ function addGenderGamer(obj){
+   console.log(obj)
+   const index = checker.findIndex(val => val.client == obj.client);
+   console.log(index)
+   
+   if(index !== -1 ){
+      
+      checker.splice(index, 1);
+      checker.push(obj);
+      forceUpdate()
+
+      console.log("checker is")
+       console.log(checker)
+      return; 
+   }
+   
+   checker.push(obj); 
+   console.log("checker is")
+   console.log(checker)
+   forceUpdate() 
+
+ }
 
 
 
@@ -55,6 +82,12 @@ useEffect(() => {
    
    
 // }, [user])
+
+const genderComponent  = () => {
+   
+}
+
+
 
 const updateToServer = () => {
     const db = firebase.firestore(); 
@@ -87,16 +120,36 @@ result[0].gender = "female";
 setProfilesAuth(data); 
 })
 
-useEffect(() => {
-   profileAuth !== undefined ? profileAuth.map(val => {
-       if(val.gender == undefined){
-          checkGate(true); 
-          return; 
-      }
-      checkGate(false); 
+// useEffect(() => {
+//    profileAuth !== undefined ? profileAuth.map(val => {
+//        if(val.gender == undefined){
+//           checkGate(true); 
+//           return; 
+//       }
+//       checkGate(false); 
       
-  }):null    
-}, [profileAuth])
+//   }):null    
+// }, [profileAuth])
+
+const updateGender = () => {
+   checker.map(val => {
+      db.collection('user').doc(val.client).set({gender:val.gender}, {merge:true})
+   })
+}
+
+
+useEffect(() => {
+console.log("gate checker called")  
+const gender = checker.map(val => val.gender); 
+const genderFilter = gender.filter(val => val.gender !== undefined); 
+if(checker.length !== profileAuth.length){
+  checkGate(true)
+  return; 
+}
+  
+
+checkGate(false)
+}, [checker.length])
 
 
 
@@ -107,6 +160,49 @@ const _sendToServer = () => {
  
  updateContactsGender({variables:{userInputList:{data:finaler}}});   
 }
+
+const ContactView = ({item, index}) => {
+  const [selected, setSelected] = useState()
+
+  return (
+    <View key={index} 
+    style = {{borderWidth:1, height:50,flexDirection:"row",  justifyContent:'space-between', marginLeft:20, marginRight:20, borderLeftWidth:0, borderRightWidth:0,}}
+    // onPress = {() => { addArray(index)}}
+    >
+        <View style = {{flexDirection:'row', alignItems:'center', flex:0.9}}>
+        {item.profilePic ? <Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
+        <Text style = {{marginLeft:10,maxWidth:100,maxHeight:50}} numberOfLines = {2}>{computeName(item)}</Text>
+
+        </View>
+        <View style = {{alignItems:'center', justifyContent:'space-between', marginRight:10, flexDirection:'row',flex:0.2}}>
+           <TouchableOpacity onPress = {() => {addGenderGamer({client:item.phoneNumber, gender:'male'}), setSelected('male')}} style = {{}}> 
+           <FontAwesome name="male" size={34} color={selected == 'male' ? 'green':'black' || item.gender} />
+           </TouchableOpacity>
+           <TouchableOpacity onPress = {() => {addGenderGamer({client:item.phoneNumber, gender:'female'}),setSelected('female')}}>
+           <FontAwesome5 name="female" size={34} color={selected == 'female' ? 'green':'black'} />
+           </TouchableOpacity>
+
+        </View>
+    </View>
+  )
+}
+
+const renderItem = ({ item, index }) => {
+  console.log(" iwas rendered")
+  return (
+    <ContactView item = {item} index = {index}/>
+  ) 
+}
+
+const Memo = React.useMemo(() => {
+  
+return <FlatList
+data = {profileAuth}
+renderItem = {renderItem}
+keyExtractor={item => item.phoneNumber}
+
+/>  
+}, [])
 
 
    var radio_props = [
@@ -125,12 +221,14 @@ const _sendToServer = () => {
    
     </View>
     <View style = {{flex:0.6}}>
-    <ScrollView>
+    {Memo}
+
+    {/* <ScrollView>
               {profileAuth !== undefined ? profileAuth.map((val,index) => {
                 return (
                   <View key={index} 
                   style = {{borderWidth:1, height:50,flexDirection:"row",  justifyContent:'space-between', marginLeft:20, marginRight:20, borderLeftWidth:0, borderRightWidth:0,}}
-                  onPress = {() => { addArray(index)  }}
+                  onPress = {() => { addArray(index)}}
                   >
                       <View style = {{flexDirection:'row', alignItems:'center', flex:0.9}}>
                       {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
@@ -149,10 +247,10 @@ const _sendToServer = () => {
                   </View>
                 )
               }):null}
-            </ScrollView> 
+            </ScrollView>  */}
     </View>
     <View style = {{flex:0.2, justifyContent:'center',marginTop:10 }}>
-    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { updateToServer(), navigation.navigate('ContactsPhotos')}} disabled = {gate}></Button>   
+    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { updateGender(), navigation.navigate('ContactsPhotos')}} disabled = {gate}></Button>   
 
     </View>
     </View>

@@ -90,7 +90,7 @@ export default function LoadContacts({navigation}){
                 
                 
                   return {
-                    name:val.name, 
+                    name:val.name ? val.name:null , 
                     firstName:val.firstName ? val.firstName:null, 
                     lastName:val.lastName ? val.lastName:null,
                     formattedPhoneNumber:val.phoneNumbers[0].number, 

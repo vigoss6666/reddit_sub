@@ -8,7 +8,7 @@ import { StyleSheet, Text, View,Button, Settings, Platform,  Image, TouchableOpa
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {LoadScreen} from './src/common/Common'; 
 import { CardStyleInterpolators } from '@react-navigation/stack';
-
+import TT  from './TT'; 
 import { NavigationContainer, BaseRouter } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Name from './Authentication/Screens/Name';
@@ -175,7 +175,7 @@ export default function App() {
   const [singleContact, setSingleContact] = useState();  
   const [notification, setNotification] = useState(false);
   const [sentFromBrowse, setSentFromBrowse] = useState(null); 
-  const [tempId, setTempId] = useState(); 
+  const [tempId, setTempId] = useState("+919930815474"); 
   const responseListener = useRef();
   const notificationListener = useRef();
   const [profilePicLocal, setProfilePicLocal] = useState(null); 
@@ -226,9 +226,9 @@ export default function App() {
     matchMakerContact:true
   })
   const [clientFilter, setClientFilter] = useState([]); 
-  useEffect(() => {
-    // AsyncStorage.removeItem('user')
-  }, [])
+  // useEffect(() => {
+  //   AsyncStorage.removeItem('user')
+  // }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
   const [basicAuth, setBasicAuth] = useState(null); 
@@ -583,7 +583,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={ContactsAge} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>
