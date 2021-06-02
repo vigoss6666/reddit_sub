@@ -342,7 +342,7 @@ return (
     </View>
     <View style = {{flexDirection:'row', marginLeft:30, justifyContent:'space-between', alignItems:'center',marginBottom:30, zIndex:500}}>
     <Text style = {{fontWeight:'bold'}}>Height (optional) </Text>
-    <View style = {{flexDirection:'row',}}>
+    <View style = {{flexDirection:'row',zIndex:1000}}>
     <DropDownPicker
         items={[
             {label: "4'", value: 4, },

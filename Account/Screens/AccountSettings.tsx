@@ -67,7 +67,7 @@ setDefaultDistance(user.distancePreference);
 setDistancePreference(user.distancePreference); 
 selectMinAgePreference(user.minAgePreference); 
 selectMaxAgePreference(user.maxAgePreference);
-setDefaultDating(user.dating ? 0:1)
+setDefaultDating(user.dating ? 1:0)
 
 
 }, [user.distancePreference, user.minAgePreference, user.maxAgePreference, user.dating])
@@ -423,7 +423,7 @@ if(defaultDating || defaultDating == 0){
        
             <SwitchSelector
           options={options}
-          initial={user.dating ? 0:1}
+          initial={user.dating ? 1:0}
           onPress={value => {updateUser(userId, {dating:value})}}
           style = {{width:100}}
         />

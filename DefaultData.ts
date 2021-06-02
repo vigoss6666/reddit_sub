@@ -113,8 +113,9 @@ export const defaultDataObject:database = {
  lastName:"", 
  matchMaker:"", 
  matchMakers:[], 
- maxAge:0, 
- minAge:0, 
+ minAge:15, 
+ maxAge:60, 
+ 
  month:0, 
  name:"", 
  phoneNumber:"", 

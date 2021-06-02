@@ -127,14 +127,13 @@ const handleMarker = async (marker) => {
 console.log(markers)
 const handleInit = async () => {
   console.log(user); 
-  const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
+  const userInit = Object.assign({}, {...defaultDataObject},{phoneNumber:userId}, {...user}, {appUser:true}) 
   db.collection('user').doc(userId).set(userInit,{merge:true});
   setFinalUser(userInit)
   await addUsers(profiles, userId);
+  AsyncStorage.setItem('user', userId)
   setId(userId)
   navigation.reset({index:0, routes:[{name:"Homer"}]})
-  AsyncStorage.setItem('user', userId)
-   
 
  }
 

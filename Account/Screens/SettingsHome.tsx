@@ -16,15 +16,9 @@ import { AntDesign } from '@expo/vector-icons';
 
 export default function SettingsHome({navigation}){
     const myContext = useContext(AppContext); 
-    const {user, userId,setInitialRouteName} = myContext; 
+    const {user, userId,setInitialRouteName,computeName} = myContext; 
     console.log("user id is"+userId)
-    useEffect(() => {
-         navigation.setOptions({
-             headerLeft:() => <TouchableOpacity onPress = {() => {setInitialRouteName('Settings'),navigation.navigate('Homer')}}>
-                 <Text style = {{fontWeight:'bold', color:'blue', marginLeft:10, }}> Back </Text>
-             </TouchableOpacity>
-         })
-    })
+    
       
     const [firstName, setFirstname] = useState(); 
     const [age, setAge] = useState(); 
@@ -34,15 +28,7 @@ export default function SettingsHome({navigation}){
     const db = firebase.firestore();
     
     
- const computeName = (obj) => {
-    if(obj.name){
-       return obj.name
-    }
-    if(obj.firstName && obj.lastName){
-       return obj.firstName+""+obj.lastName
-    }
-    return obj.firstName
-}
+
 
 
 

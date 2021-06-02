@@ -135,7 +135,10 @@ const useFetchContactPool = (navigation) => {
            
      }
      const transformPhoneNumber = (phoneNumber, countryCode) => {
-          const countryCoder = countryCode.toUpperCase(); 
+          const countryCoder = countryCode.toUpperCase();
+          if(phoneNumber.includes("+")){
+            return phoneNumber; 
+          } 
           const obj = country.filter(val => val.code == countryCoder); 
           return obj[0].dial_code+phoneNumber; 
       }
@@ -162,7 +165,8 @@ const useFetchContactPool = (navigation) => {
                    });
                    if (data.length > 0) {
                      const contact = data;
-                     const finaler = contact.map(val => {
+                     const refined = contact.filter(val => val.phoneNumbers !== undefined);
+                     const gamer = refined.map(val => {
                           return {
                               name:val.name, 
                               firstName:val.firstName, 
@@ -172,13 +176,24 @@ const useFetchContactPool = (navigation) => {
                               phoneNumber:transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode)
                           }
                      })
+                     const finaler = gamer.filter(val => val.phoneNumber !== userId);
                    
                     const contactList = finaler.map(val => val.phoneNumber); 
-                    const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', contactList).get().catch(error => console.log(error.message))
-                    const registeredUsers = onResult.docs.map(val =>  val.data());
-                    const registeredUsersNumbers = registeredUsers.map(val => val.phoneNumber); 
+                    const checkerResult = await Promise.all(contactList.map(async val => {
+                         return await db.collection('user').doc(val).get().then(onDoc => {
+                           if(onDoc.exists){
+                             return onDoc.data()
+                           }
+                           return null; 
+                         })
+                         
+                        }))
+                    const finalChecker = checkerResult.filter(val => val !== null);  
+                    // const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', contactList).get().catch(error => console.log(error.message))
+                    // const registeredUsers = onResult.docs.map(val =>  val.data());
+                    // const registeredUsersNumbers = registeredUsers.map(val => val.phoneNumber); 
                     //setRegisteredUsers(registeredUsers) 
-                    
+                    const registeredUsersNumbers = finalChecker.length ? finalChecker.map(val => val.phoneNumber):[];
                     var filtered = contactList.filter(
                        function(e) {
                          return this.indexOf(e) < 0;
@@ -215,7 +230,7 @@ const useFetchContactPool = (navigation) => {
                     var batch = db.batch();
                     newUsers.map(val => {
                          const ref = db.collection('user').doc(val.phoneNumber)
-                         batch.set(ref, {...val, matchMaker:userId})
+                         batch.set(ref, {...val, matchMaker:userId}, {merge:true})
                     })
                     batch.commit().then(() => {
                        
@@ -392,7 +407,7 @@ const useFetchDatingPool = (navigation) => {
       
 }
 namer()
-},[user.datingPoolList])
+},[])
 console.log("length is")
 console.log(user.datingPoolList.length)
 

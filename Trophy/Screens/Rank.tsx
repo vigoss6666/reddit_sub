@@ -23,7 +23,7 @@ const Rank = (props: RankProps) => {
 
  useEffect(() => {
         console.log("Points called")
-        const unsubscribe = db.collection('user').where('state', '==', user.state).limit(30).get().then(onResult => {
+         db.collection('user').where('state', '==', user.state).limit(30).get().then(onResult => {
           const result = onResult.docs.map(val => val.data()); 
           const transfromWithPoints = result.map(val => {
                let aggregatePoint = 0; 
@@ -61,7 +61,8 @@ const Rank = (props: RankProps) => {
           const arrangedDescending =  monthAdder.sort((a, b) => {
             return b.aggregatePoint - a.aggregatePoint;
           });
-          setTemplate(arrangedDescending); 
+          const filterByZero = arrangedDescending.filter(val => val.aggregatePoint !== 0); 
+          setTemplate(filterByZero); 
           const index = arrangedDescending.findIndex(val => val.phoneNumber == userId); 
           
           setAllTime(index + 1); 

@@ -84,7 +84,7 @@ export default function LoadContacts({navigation}){
               const refined = contact.filter(val => val.phoneNumbers !== undefined); 
               console.log("chencking refined length"); 
               console.log(refined.length); 
-              const finaler = refined.map(val => {
+              const gamer = refined.map(val => {
                 
                  
                 
@@ -99,7 +99,9 @@ export default function LoadContacts({navigation}){
                 
                    
               })
-            
+
+              const finaler = gamer.filter(val => val.phoneNumber !== userId); 
+             
              const contactList = finaler.map(val => val.phoneNumber); 
              const checkerResult = await Promise.all(contactList.map(async val => {
               return await db.collection('user').doc(val).get().then(onDoc => {
@@ -111,6 +113,7 @@ export default function LoadContacts({navigation}){
               
              }))
              const finalChecker = checkerResult.filter(val => val !== null);  
+             
              
              
 
@@ -136,8 +139,9 @@ export default function LoadContacts({navigation}){
                     }              
                  }
             }
-            
-            
+
+            console.log("new users")
+            console.log(newUsers)
 
              
 

@@ -175,7 +175,7 @@ export default function App() {
   const [singleContact, setSingleContact] = useState();  
   const [notification, setNotification] = useState(false);
   const [sentFromBrowse, setSentFromBrowse] = useState(null); 
-  const [tempId, setTempId] = useState("+919930815474"); 
+  const [tempId, setTempId] = useState("+917208110384"); 
   const responseListener = useRef();
   const notificationListener = useRef();
   const [profilePicLocal, setProfilePicLocal] = useState(null); 
@@ -226,9 +226,9 @@ export default function App() {
     matchMakerContact:true
   })
   const [clientFilter, setClientFilter] = useState([]); 
-  // useEffect(() => {
-  //   AsyncStorage.removeItem('user')
-  // }, [])
+  useEffect(() => {
+    //AsyncStorage.removeItem('user')
+  }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
   const [basicAuth, setBasicAuth] = useState(null); 
@@ -331,6 +331,7 @@ function stringifyNumber(n) {
   }
   
   const globalObject = {
+    setUser, 
     generatedMatchSelf, 
     setGeneratedMatchSelf, 
     generatedMatch, 
@@ -653,7 +654,7 @@ function Home(props){
     <SafeAreaProvider>
     <Tab.Navigator 
       style = {{paddingTop:insets.top, paddingRight:insets.right, paddingLeft:insets.left}} 
-      initialRouteName = {initialRouteName}
+      initialRouteName = {'ProfilePool'}
       tabBarOptions={{
       activeTintColor: 'tomato',
       inactiveTintColor: 'gray',

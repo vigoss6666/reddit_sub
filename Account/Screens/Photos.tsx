@@ -19,7 +19,7 @@ import {updateUser} from '../../networking';
 
 export default function Photos({navigation, route }){
   const myContext = useContext(AppContext); 
-    const {user, userId,db} = myContext;     
+    const {user, userId,db, setUser} = myContext;     
     const insets = useSafeAreaInsets();
     const [camera,setCamera] = useState(); 
     
@@ -69,7 +69,8 @@ export default function Photos({navigation, route }){
         }
         
         let pickerResult = await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.Images});
-        setProfilePic(pickerResult.uri) 
+        setProfilePic(pickerResult.uri)
+        setUser({...user, profilePic:pickerResult.uri}) 
   }   
 
   const keys = ["apple", "banana", "mango", "cheery", "gobhi", "lemon", "chocolate", "vanilla", "juice", "bruce", "viagra", "vigoss"]
@@ -166,6 +167,7 @@ export default function Photos({navigation, route }){
    </View>
  </TouchableOpacity>
  :<TouchableOpacity 
+ onPress = {() => loadProfilePic()}
  style = {{flexDirection:"row", justifyContent:"center"}}
  >
  
@@ -226,7 +228,7 @@ const row2 = <View style = {{flexDirection:"row",marginBottom:15, justifyContent
 return(
 <View style = {{flex:1,marginLeft:30, marginRight:30, paddingTop:insets.top}}>
 <View style = {{flex:0.2}}> 
-<TouchableOpacity onPress = {() => {updateProfilePicToServer(),uploadPhotosToServer(),  navigation.navigate(SettingsHome)}} style = {{alignItems:'flex-end', marginTop:10}}>
+<TouchableOpacity onPress = {() => {updateProfilePicToServer(),uploadPhotosToServer(),  navigation.goBack()}} style = {{alignItems:'flex-end', marginTop:10}}>
    <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
    </TouchableOpacity>
    

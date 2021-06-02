@@ -125,7 +125,7 @@ const sendToServer = async () => {
    const filterByApp = finalChecker.filter(val => !val.appUser);
    const filterBySetter = filterByApp.filter(val => !val.latitude);
    if(filterBySetter.length < 1){
-    const userInit = Object.assign({}, {...defaultDataObject},{...user}) 
+    const userInit = Object.assign({}, {...defaultDataObject},{phoneNumber:userId},{...user}, {appUser:true}) 
     db.collection('user').doc(userId).set(userInit, {merge:true});
 
     var filteredIntros = user.contactList.filter(

@@ -10,6 +10,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import {Button} from 'react-native-elements'; 
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { LoadScreen } from '../../src/common/Common';
 const db = firebase.firestore(); 
 
 interface ContactsLocationLatestProps {}
@@ -27,6 +28,7 @@ const SingleContactLocation = ({navigation, route}) => {
   const [markers, setMarkers] = useState([]);  
   const [location, setLocation] = useState({}); 
   const [gate, setGate] = useState(true); 
+  const [loading, setLoading] = useState(false); 
   console.log(location.address)
   useEffect(() => {
     navigation.setOptions({
@@ -35,6 +37,7 @@ const SingleContactLocation = ({navigation, route}) => {
     })
   }, [])
   const handleServerLocation = async () => {
+    setLoading(true)
      const marker1 = Array.from(markers);  
      const lamer = firebase.functions().httpsCallable('batman');
      const batch = db.batch();
@@ -58,6 +61,7 @@ const SingleContactLocation = ({navigation, route}) => {
   }
 
 const updateToServer = async () => {
+       
      const getUser = await db.collection('user').doc(singleContact.phoneNumber).get();  
      const user = Object.assign({},{...defaultDataObject}, {...getUser.data()})
      db.collection('user').doc(singleContact.phoneNumber).set({...user, matchMakers:firebase.firestore.FieldValue.arrayUnion(userId)}, {merge:true}).then(() => {
@@ -206,6 +210,9 @@ const updateToServer = async () => {
   
     </View>
 ))
+if(loading){
+  return <LoadScreen />
+}
   return (
       <View style = {{flex:1, paddingBottom:insets.bottom}}>
       <ScrollView
