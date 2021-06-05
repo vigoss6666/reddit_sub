@@ -31,7 +31,7 @@ return(
  containerStyle = {{marginBottom:20,marginLeft:30, marginRight:30, }}
   buttonStyle = {{backgroundColor:'yellow', height:40}}
   titleStyle = {{color:'black', fontWeight:'900'}}
-  onPress = {() => navigation.navigate('MatchMakeFinal')}
+  onPress = {() => navigation.navigate('MatchMakeGrand')}
   />
 <Button 
 title = {"Play Again"} 

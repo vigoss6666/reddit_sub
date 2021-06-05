@@ -9,12 +9,14 @@ interface EndorsementClientProps {}
 
 const EndorsementClient = ({route, navigation}) => {
     const myContext = useContext(AppContext);
-  const { user,userId, selfFilter, setSelfFilter,computeName,db, firebase, stringifyNumber, CustomBackComponent } = myContext;
+  const { user,userId, selfFilter, setSelfFilter,computeName,db, firebase, stringifyNumber, CustomBackComponent, setInitialRouteName } = myContext;
   const {matchInstance} = route.params; 
   function endorse(){
     db.collection('matches').doc(matchInstance._id).set({endorsements:firebase.firestore.FieldValue.arrayUnion(userId)}, {merge:true}).then(() => {
-      db.collection('user').doc(matchInstance.discoveredBy).set({points:firebase.firestore.FieldValue.arrayUnion({pointFor:'matchEndorsed', point:20, createdAt:new Date, client:userId})}, {merge:true}).then(() => {
-        navigation.goBack(); 
+      
+      db.collection('user').doc(userId).set({points:firebase.firestore.FieldValue.arrayUnion({pointFor:'matchEndorsed', point:20, createdAt:new Date, client:matchInstance.client1User.phoneNumber})}, {merge:true}).then(() => {
+        setInitialRouteName('Trophy');
+        navigation.navigate('Homer'); 
       })
     })
 
@@ -71,7 +73,7 @@ const EndorsementClient = ({route, navigation}) => {
          
         </Button>
         <Button title = "Maybe Not" buttonStyle = {{backgroundColor:"#6e6b65",}} titleStyle = {{color:"white", fontWeight:"bold"}} containerStyle = {{marginLeft:30, marginRight:30, marginTop:30}}
-        onPress = {() => navigation.goBack()}
+        onPress = {() => {navigation.navigate('Homer'), setInitialRouteName('Trophy')}}
         >
         </Button>
         

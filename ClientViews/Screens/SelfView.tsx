@@ -20,6 +20,8 @@ import { firebase } from '../../config';
 import { Octicons } from '@expo/vector-icons';
 import {ClientHeader, ClientDetails, ClientPhotos, ClientMatchMakers, ClientTraits, ClientVotes} from '../../src/common/Common'; 
 import * as Linking from 'expo-linking';
+import ViewShot from "react-native-view-shot";
+
 
 
 
@@ -38,6 +40,20 @@ const SelfView = (props: ClientViewProps) => {
     const [selected, setSelected] = useState('traits');
     const myContext = useContext(AppContext);
     const {user, userId} = myContext;  
+    const [captured, setCaptured] = useState(); 
+
+
+    const shareImage = async () => {
+      // const result = await Sharing.isAvailableAsync(); 
+      // if(result){
+      //   await Sharing.shareAsync(captured);
+      // }
+      // await Share.share({message:"https://friends-365d0.web.app/?name=", url:captured})
+      const result = await Share.share({
+        url:captured,
+      });
+
+    }
 
 
 
@@ -49,7 +65,18 @@ const SelfView = (props: ClientViewProps) => {
       
     }
     
-    
+    function Rest(){
+      return (
+        <View style = {{flexDirection:'row', justifyContent:'space-evenly', borderWidth:2, marginTop:40}}>
+        <TouchableOpacity style = {{borderRightWidth:1, justifyContent:'center',backgroundColor:selected == 'traits' ? '#75a4f0':'white', flex:1}} onPress = {() => setSelected('traits')}>
+            <Text style = {{alignSelf:'center', fontSize:20,  fontWeight:'bold', marginTop:6, marginBottom:6}}>Traits</Text>
+        </TouchableOpacity> 
+        <TouchableOpacity onPress = {() => setSelected('votes')} style = {{backgroundColor:selected == 'votes' ? '#75a4f0':'white', flex:1}}>
+         <Text style = {{alignSelf:'center', fontSize:20,  fontWeight:'bold', marginTop:6, marginBottom:6}}>Votes</Text>
+        </TouchableOpacity>
+    </View>
+      )
+    }
      
      
 
@@ -78,6 +105,12 @@ const SelfView = (props: ClientViewProps) => {
       
      }
      
+     console.log(captured)
+
+     const onCapture = (uri) => {
+       setCaptured(uri) 
+     }
+     
     const imageTemplate = data.appUser ? data.photos.map(val => {
          return val.photo ? <TouchableOpacity onPress = {() => console.log("hell oworld")}><Image source = {{uri:val.photo}} style = {{height:75, width:75}}/></TouchableOpacity>:<Feather name="image" size={40} color="black" />
     }):data.profilePhoto ? <Image source = {{uri:data.profilePhoto}} style = {{height:75, width:75}}/>:<Feather name="image" size={40} color="black" /> 
@@ -101,53 +134,64 @@ const SelfView = (props: ClientViewProps) => {
             </View>
          )
      }
-  
-    const matchMaker = [{
-         fullName:"David boctor",
-         firstName:"David",  
-      }];
+    
        
      if(data){
       return (
-          <View style={styles.container}>
-          <ScrollView>
           
-           <ClientHeader client = {user} style = {{ flex:0.3}}/>  
+          <ScrollView style = {{flex:1}}>
+          <View style = {{marginLeft:30, marginRight:30}}>
+             
            
-            <View style = {{flex:0.7, marginLeft:30, marginRight:30}}>
-                   <View style = {{flexDirection:'row', justifyContent:'space-evenly', borderWidth:2, marginTop:40}}>
-
-                       <TouchableOpacity style = {{borderRightWidth:1, justifyContent:'center',backgroundColor:selected == 'traits' ? '#75a4f0':'white', flex:1}} onPress = {() => setSelected('traits')}>
-                           <Text style = {{alignSelf:'center', fontSize:20,  fontWeight:'bold', marginTop:6, marginBottom:6}}>Traits</Text>
-
-                       </TouchableOpacity> 
-                       <TouchableOpacity onPress = {() => setSelected('votes')} style = {{backgroundColor:selected == 'votes' ? '#75a4f0':'white', flex:1}}>
-                        <Text style = {{alignSelf:'center', fontSize:20,  fontWeight:'bold', marginTop:6, marginBottom:6}}>Votes</Text>
-                       </TouchableOpacity>
-                   </View> 
+        
+      
+      <Image source = {{uri:captured}} style = {{height:200, width:200}} resizeMode = {'contain'}/>
+      
+        
+      <ViewShot captureMode = "mount" onCapture = {onCapture} options = {{format:'jpg'}}>
+      <View>
+      <ClientHeader client = {user} style = {{ flex:0.3}}/>     
+      
+      
+                       
+      
+            
+                    
+                   <Rest />
+                   
                    {selected == 'traits' ? <ClientTraits client = {user} />:<ClientVotes client = {user}/>}
+                   </View>
+                   </ViewShot>
+                   
+      
                    <ClientDetails client = {user} client2 = {{latitiude:32.735487, longitude:-117.149025}}/>
                   <ClientPhotos client = {user}/>
                   <ClientMatchMakers client = {user} />
                   
+                  
+                  
                  
                  
                  
                   
                   
-                  <Button title = {"SHARE THIS PROFILE"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:100, marginBottom:200,}} buttonStyle = {{backgroundColor:'green',}} onPress = {share}>
+                  {/* <Button title = {"SHARE THIS PROFILE"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:100, marginBottom:200,}} buttonStyle = {{backgroundColor:'green',}} onPress = {share}>
+                  
   
-                  </Button>
-  
+                  </Button> */}
+                  <Button title = {"Share Your Reputation"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:100,}} buttonStyle = {{backgroundColor:'green',}} onPress = {() => shareImage()}></Button>
+                  <Button title = {"Share Profile link"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:10,}} buttonStyle = {{backgroundColor:'green',marginBottom:100}} onPress = {() => share()}></Button>
+                
   
                   
                   
   
                   
-            </View>
+            
+                  </View>
             </ScrollView>    
             
-          </View>
+          
         );    
      }
      return (
@@ -159,7 +203,7 @@ const SelfView = (props: ClientViewProps) => {
 export default SelfView;
 
 const styles = StyleSheet.create({
-    container: {flex:1}, 
+    container: {flex:1, marginLeft:30, marginRight:30}, 
     textStyle:{fontWeight:'500', fontSize:30}, 
     line:{borderBottomWidth:3,}, 
     iconNames:{marginLeft:10, fontSize:17, fontWeight:'500'}, 

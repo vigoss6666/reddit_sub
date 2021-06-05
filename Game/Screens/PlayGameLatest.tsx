@@ -16,6 +16,7 @@ import GamePreview from './GamePreview';
 import {filterGamer, getDistanceFromLatLonInKm} from '../../networking'; 
 
 import {LoadScreen} from '../../src/common/Common'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const db = firebase.firestore(); 
 //@refresh reset
 interface PlayGameLatestProps {}
@@ -185,12 +186,24 @@ const namer =  [
     return filtered;  
   }
   useEffect(() => {
-    if(user.datingPoolList.length >= 2){
-      db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get().then(onResult => {
-        const result = onResult.docs.map(val => val.data())
-        setDemo(result); 
-   })
+    async function namer(){
+      if(user.datingPoolList.length >= 2){
+  
+        const checkerResult = await Promise.all(user.datingPoolList.map(async val => {
+         return await db.collection('user').doc(val).get().then(onDoc => {
+           if(onDoc.exists){
+             return onDoc.data()
+           }
+           return null; 
+         })
+         
+        }))
+        const finalChecker = checkerResult.filter(val => val !== null);  
+        
+        setDemo(finalChecker); 
+         }
     }
+    namer()
           
   }, [])
   
@@ -453,7 +466,7 @@ db.collection('user').doc(userId).set({suggestedMatches:[]}, {merge:true})
    
   
    if(user.datingPoolList.length < 2){
-     return <View style = {{flex:1, backgroundColor:'black', justifyContent:'center', alignItems:'center', marginLeft:30, marginRight:30 }}>
+     return <View style = {{flex:1, backgroundColor:'black', justifyContent:'center', alignItems:'center',  }}>
        <Text style = {{color:'white', fontSize:40, fontWeight:'bold'}}>Not enough contacts</Text>
        <Text style = {{color:'white', fontStyle:'italic'}}>Please add some contacts in your dating pool list to play the game</Text>
      </View>

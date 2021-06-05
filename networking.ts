@@ -1,5 +1,5 @@
 
-import { StyleSheet, Text, View,Button, AsyncStorage, Settings } from 'react-native';
+import { StyleSheet, Text, View,Button, AsyncStorage, Settings,Image } from 'react-native';
 import ApolloClient, { gql, InMemoryCache } from 'apollo-boost';
 import {firebase} from './config'; 
 import { Foundation } from '@expo/vector-icons';
@@ -615,6 +615,14 @@ export async function clientSort(users, sortedArray){
   return finalResult; 
 }
 
+
+export function cacheImages(images) {
+  return images.map(image => {
+    if (typeof image === 'string') {
+      return Image.prefetch(image);
+    } 
+  });
+}
 
 
 

@@ -135,6 +135,7 @@ const useFetchContactPool = (navigation) => {
            
      }
      const transformPhoneNumber = (phoneNumber, countryCode) => {
+          console.log("countryCode"+countryCode)
           const countryCoder = countryCode.toUpperCase();
           if(phoneNumber.includes("+")){
             return phoneNumber; 
@@ -163,15 +164,16 @@ const useFetchContactPool = (navigation) => {
                    const { data } = await Contacts.getContactsAsync({
                      fields: [Contacts.Fields.PhoneNumbers],
                    });
+                   console.log(data)
                    if (data.length > 0) {
                      const contact = data;
                      const refined = contact.filter(val => val.phoneNumbers !== undefined);
                      const gamer = refined.map(val => {
                           return {
-                              name:val.name, 
-                              firstName:val.firstName, 
-                              lastName:val.lastName,
-                              formattedPhoneNumber:val.phoneNumbers[0].number, 
+                              name:val.name ? val.name:null, 
+                              firstName:val.firstName ?val.firstName:null, 
+                              lastName:val.lastName ? val.lastName:null,
+                              
                               // phoneNumber:transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode)
                               phoneNumber:transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode)
                           }
@@ -263,7 +265,7 @@ const useFetchContactPool = (navigation) => {
                     <View style = {{flexDirection:"row", justifyContent:'space-between', marginBottom:5, marginTop:5}}>
                     <View style = {{flexDirection:"row", alignItems:"center"}}>
                                                       
-                   {item.profilePic ? <TouchableOpacity onPress = {() => {setVisible(true), setCurrentUser(item.profilePic)}}><SingleImageView image = {item.profilePic} style = {{height:40, width:40, borderRadius:20}}/></TouchableOpacity>:<MaterialIcons name="account-circle" size={30} color="black" />}
+                   {item.profilePic ? <SingleImageView image = {item.profilePic} style = {{marginRight:10}} />:<MaterialIcons name="account-circle" size={30} color="black" />}
                     <Text style = {{marginLeft:10, marginBottom:5, fontWeight:"bold", maxWidth:100}} >{computeName(item)}</Text>
                     </View>
                     {   
@@ -379,8 +381,37 @@ const useFetchDatingPool = (navigation) => {
      return <Text style = {{fontWeight:'bold',}} >{computeName(item)}'{type} </Text> 
 }
     
-    useEffect(() => {
-     async function namer(){
+//     useEffect(() => {
+//      async function namer(){
+//      if(user.datingPoolList.length > 0){
+         
+//      const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get().then(async onResult => {
+//         const data = await onResult.docs.map(val => val.data());
+//         function applyToIncluded(val){
+//               return {...val, invitationSent:true}
+//         }
+//         const result = filterGamer(data, 'phoneNumber', user.invitations, null,applyToIncluded)
+//         //console.log(result)
+//      //    console.log("exlucded"+result.excludedObjects.length)
+//      //    console.log("included"+result.includedObjects.length)
+
+
+            
+//      //    setDatingPoolList([...result.excludedObjects, ...result.includedObjects]);
+//      setDatingPoolList(data)
+//      }).catch(error => console.log(error.message))
+//      }
+//      if(user.datingPoolList.length == 0){
+         
+//         setDatingPoolList([])
+//      }     
+     
+      
+// }
+// namer()
+// },[])
+async function namer12(){
+     console.log("namer was called")
      if(user.datingPoolList.length > 0){
          
      const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get().then(async onResult => {
@@ -406,8 +437,13 @@ const useFetchDatingPool = (navigation) => {
      
       
 }
-namer()
-},[])
+useFocusEffect(
+     React.useCallback(() => {
+       console.log("i was called")   
+       
+       namer12()
+     }, [user.datingPoolList])
+   );
 console.log("length is")
 console.log(user.datingPoolList.length)
 
@@ -682,7 +718,7 @@ onChangeItem={namer => addAge(item, namer)}
           
           <View style = {{flexDirection:"row", justifyContent:'space-between',marginBottom:20}}>
           <View style = {{flexDirection:"row", alignItems:"center"}}>
-          {item.profilePic ?<TouchableOpacity onPress = {() => {setVisible(true), setCurrentUser(item.profilePic)}}><Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/></TouchableOpacity>:<MaterialIcons name="account-circle" size={30} color="black" />}
+          {item.profilePic ?<SingleImageView image = {item.profilePic} style = {{marginRight:10}} />:<MaterialIcons name="account-circle" size={30} color="black" />}
           <Text style = {{marginLeft:10,marginBottom:10,fontWeight:"bold",maxWidth:100,}} numberOfLines = {2}>{computeName(item)}</Text>
           
           </View>

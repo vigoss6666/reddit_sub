@@ -140,6 +140,7 @@ import AppContext from './AppContext';
 import GameEngine from './GameEngine'; 
 import {defaultDataObject, defaultUsers} from './DefaultData'; 
 import SignUp from './SignUp'; 
+import {cacheImages} from './networking'; 
 
 
 const db = firebase.firestore();
@@ -171,7 +172,7 @@ export default function App() {
   const [introNotification, setIntroNotification] = useState(); 
   const [chatNotification, setChatNotification] = useState(true);  
   const [chatterNotification, setChatterNotification] = useState(false);
-  const [initialRouteName, setInitialRouteName] = useState();  
+  const [initialRouteName, setInitialRouteName] = useState('ProfilePool');  
   const [singleContact, setSingleContact] = useState();  
   const [notification, setNotification] = useState(false);
   const [sentFromBrowse, setSentFromBrowse] = useState(null); 
@@ -242,8 +243,9 @@ async function namer(){
   const user1 = "+917208110384"; 
   const user2 = "+919930815474";
   
-  setId(userGamer); 
+  setId(user1); 
 }
+
 if(!Object.keys(user).length){
   namer()
 }
@@ -255,11 +257,9 @@ if(!Object.keys(user).length){
   // useEffect(() => {
     
   useEffect(() => {
-    //setLoader(true)
+    setLoader(true)
   }, [_id])
-  useEffect(() => {
-    // defaultUsers()
-  }, [])
+  
   
   
   useEffect(() => {
@@ -385,7 +385,9 @@ function stringifyNumber(n) {
     
     
   }
-  
+  useEffect(() => {
+    console.log(createChatThread('+917506425060', '+917391827998'))
+  }, []) 
   
   const getUserData = async (value) => {
     try {
@@ -584,7 +586,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Name} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>
@@ -650,11 +652,23 @@ function Home(props){
   const myContext = useContext(AppContext); 
   const {user, userId, countryCode, dialCode, chatNotification, chatterNotification, initialRouteName} = myContext;
   const insets = useSafeAreaInsets();
+  async function _loadAssetsAsync() {
+    const imageAssets = cacheImages([
+      user.profilePic,
+    ]);
+
+    
+
+    await Promise.all([...imageAssets]);
+  }
+  useEffect(() => {
+    
+  }, [])
   return (
     <SafeAreaProvider>
     <Tab.Navigator 
       style = {{paddingTop:insets.top, paddingRight:insets.right, paddingLeft:insets.left}} 
-      initialRouteName = {'ProfilePool'}
+      initialRouteName = {initialRouteName}
       tabBarOptions={{
       activeTintColor: 'tomato',
       inactiveTintColor: 'gray',
@@ -748,7 +762,7 @@ function Home(props){
     
     >
         
-       <Tab.Screen name="SelfView" component={SelfView} /> 
+      <Tab.Screen name="SelfView" component={SelfView} /> 
       <Tab.Screen name="Game" component={GameHomepage} />
       <Tab.Screen name="Trophy" component={Trophy} />
       <Tab.Screen name="ProfilePool" component={ProfilePool}  />

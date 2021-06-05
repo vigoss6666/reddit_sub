@@ -230,7 +230,7 @@ const useIntroTemplate = () => {
 }
 
 export default function Trophy({navigation}){
-const [page, setPage] = useState('rank');   
+const [page, setPage] = useState('match');   
 
 const pushToken = 'ExponentPushToken[FrneiUBwFvVhNI161d99is]'; 
 

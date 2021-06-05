@@ -914,10 +914,14 @@ export function ClientHeader({client, style}) {
         url:val
       }
    })
+  //  const finalTemplate = templateForImage.map(val => (
+  //     <SingleImageView image = {val}/>
+  //  ))
    
    return <View>
    <View style = {{flexDirection:'row',marginTop:20, alignItems:'center',marginBottom:10}}>
-   <ImageView visible = {visible} images = {templateForImage} setVisible = {setVisible}/>  
+   <SingleImageView  image = {} />  
+   {/* {finalTemplate} */}
    <AntDesign name="instagram" size={24} color="black" />
    <Text style = {[styles.iconNames, {fontWeight:'bold'}] }> Photos</Text>
    </View>

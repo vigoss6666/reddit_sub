@@ -34,7 +34,7 @@ export default function Intro({navigation}){
     return (
       <>
         <StatusBar barStyle="dark-content" />
-        <SafeAreaView style={{ flex: 1, paddingTop:insets.top }}>
+        <SafeAreaView style={{ flex: 1, paddingTop:insets.top, marginTop:40 }}>
           <ScrollView
             style={{ flex: 0.7,  }}
             horizontal={true}
