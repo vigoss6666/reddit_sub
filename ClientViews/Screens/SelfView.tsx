@@ -21,6 +21,7 @@ import { Octicons } from '@expo/vector-icons';
 import {ClientHeader, ClientDetails, ClientPhotos, ClientMatchMakers, ClientTraits, ClientVotes} from '../../src/common/Common'; 
 import * as Linking from 'expo-linking';
 import ViewShot from "react-native-view-shot";
+import { FlatList } from 'react-native-gesture-handler';
 
 
 
@@ -41,6 +42,43 @@ const SelfView = (props: ClientViewProps) => {
     const myContext = useContext(AppContext);
     const {user, userId} = myContext;  
     const [captured, setCaptured] = useState(); 
+
+
+
+    const renderItem = () => {
+      return <View style = {{marginLeft:30, marginRight:30}}>
+             
+           
+        
+      
+      
+      
+        
+      <ViewShot captureMode = "mount" onCapture = {onCapture} options = {{format:'jpg'}}>
+      <View>
+      <ClientHeader client = {user} style = {{ flex:0.3}}/>     
+      
+      
+                       
+      
+            
+                    
+                   <Rest />
+                   
+                   {selected == 'traits' ? <ClientTraits client = {user} />:<ClientVotes client = {user}/>}
+                   </View>
+                   </ViewShot>
+                   
+      
+                   <ClientDetails client = {user} client2 = {{latitiude:32.735487, longitude:-117.149025}}/>
+                  <ClientPhotos client = {user}/>
+                  <ClientMatchMakers client = {user} />
+                  
+                  
+                  <Button title = {"Share Your Reputation"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:100,}} buttonStyle = {{backgroundColor:'green',}} onPress = {() => shareImage()}></Button>
+                  <Button title = {"Share Profile link"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:10,}} buttonStyle = {{backgroundColor:'green',marginBottom:100}} onPress = {() => share()}></Button> 
+                  </View>
+    }
 
 
     const shareImage = async () => {
@@ -84,26 +122,7 @@ const SelfView = (props: ClientViewProps) => {
 
 
 
-    const data = { 
-        fullName:"Amy Guion", 
-        firstName:"Amy", 
-        matchMaker:['jandjsnjfk', 'jhadfjbfjs', 'jfbsbfjds'], 
-        creativity:5.5, 
-        charisma:7.7, 
-        looks:3.3, 
-        honest:4.4,
-        age:'32', 
-        job:'influencer', 
-        state:'california', 
-        subLocality:'westwood', 
-        lattitude:'something', 
-        longitude:'something', 
-        distance:2, 
-        photos:[], 
-        appUser:false, 
-        profilePhoto:"https://i.pinimg.com/originals/f0/a6/4e/f0a64e32194d341befecc80458707565.jpg", 
-      
-     }
+    const data = [1]; 
      
      console.log(captured)
 
@@ -115,58 +134,40 @@ const SelfView = (props: ClientViewProps) => {
          return val.photo ? <TouchableOpacity onPress = {() => console.log("hell oworld")}><Image source = {{uri:val.photo}} style = {{height:75, width:75}}/></TouchableOpacity>:<Feather name="image" size={40} color="black" />
     }):data.profilePhoto ? <Image source = {{uri:data.profilePhoto}} style = {{height:75, width:75}}/>:<Feather name="image" size={40} color="black" /> 
   
-    const computeHeader = () => {
-        if(!client.creativity && !client.charisma && !client.looks && !client.honest 
-         && !client.status && !client.wealthy && !client.humour
-         ){
-           return (
-             <View style = {{flex:0.3, justifyContent:'center', alignItems:'center', marginTop:30}}>
-             <Text style = {[styles.textStyle, {fontWeight:'bold', fontSize:40, fontStyle:'italic'}]}>{computeName(client)}</Text>
-             </View>
-           ) 
-         }
-         return (
-           <View style = {{flex:0.3, justifyContent:'center', alignItems:'center', marginTop:30}}>
-           <Text style = {styles.textStyle}> {client.matchMakers.length} people said  </Text>
-           <Text style = {[styles.textStyle, {fontWeight:'bold', fontSize:40, fontStyle:'italic'}]}>{computeName(client)}</Text>
-   
-           <Text style = {[styles.textStyle, {fontSize:25, fontStyle:'italic', marginLeft:30, marginRight:30}]}> is INTELLIGENT, GOOD HEARTED and CREATIVE </Text>
-            </View>
-         )
-     }
+    
     
        
      if(data){
       return (
           
-          <ScrollView style = {{flex:1}}>
-          <View style = {{marginLeft:30, marginRight:30}}>
+      //     <ScrollView style = {{flex:1}}>
+      //     <View style = {{marginLeft:30, marginRight:30}}>
              
            
         
       
-      <Image source = {{uri:captured}} style = {{height:200, width:200}} resizeMode = {'contain'}/>
+      
       
         
-      <ViewShot captureMode = "mount" onCapture = {onCapture} options = {{format:'jpg'}}>
-      <View>
-      <ClientHeader client = {user} style = {{ flex:0.3}}/>     
+      // <ViewShot captureMode = "mount" onCapture = {onCapture} options = {{format:'jpg'}}>
+      // <View>
+      // <ClientHeader client = {user} style = {{ flex:0.3}}/>     
       
       
                        
       
             
                     
-                   <Rest />
+      //              <Rest />
                    
-                   {selected == 'traits' ? <ClientTraits client = {user} />:<ClientVotes client = {user}/>}
-                   </View>
-                   </ViewShot>
+      //              {selected == 'traits' ? <ClientTraits client = {user} />:<ClientVotes client = {user}/>}
+      //              </View>
+      //              </ViewShot>
                    
       
-                   <ClientDetails client = {user} client2 = {{latitiude:32.735487, longitude:-117.149025}}/>
-                  <ClientPhotos client = {user}/>
-                  <ClientMatchMakers client = {user} />
+      //              <ClientDetails client = {user} client2 = {{latitiude:32.735487, longitude:-117.149025}}/>
+      //             <ClientPhotos client = {user}/>
+      //             <ClientMatchMakers client = {user} />
                   
                   
                   
@@ -175,12 +176,12 @@ const SelfView = (props: ClientViewProps) => {
                  
                   
                   
-                  {/* <Button title = {"SHARE THIS PROFILE"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:100, marginBottom:200,}} buttonStyle = {{backgroundColor:'green',}} onPress = {share}>
+      //             {/* <Button title = {"SHARE THIS PROFILE"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:100, marginBottom:200,}} buttonStyle = {{backgroundColor:'green',}} onPress = {share}>
                   
   
-                  </Button> */}
-                  <Button title = {"Share Your Reputation"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:100,}} buttonStyle = {{backgroundColor:'green',}} onPress = {() => shareImage()}></Button>
-                  <Button title = {"Share Profile link"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:10,}} buttonStyle = {{backgroundColor:'green',marginBottom:100}} onPress = {() => share()}></Button>
+      //             </Button> */}
+      //             <Button title = {"Share Your Reputation"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:100,}} buttonStyle = {{backgroundColor:'green',}} onPress = {() => shareImage()}></Button>
+      //             <Button title = {"Share Profile link"} containerStyle = {{marginLeft:30, marginRight:30, marginTop:10,}} buttonStyle = {{backgroundColor:'green',marginBottom:100}} onPress = {() => share()}></Button>
                 
   
                   
@@ -188,8 +189,13 @@ const SelfView = (props: ClientViewProps) => {
   
                   
             
-                  </View>
-            </ScrollView>    
+      //             </View>
+      //       </ScrollView>    
+
+      <FlatList 
+      data = {data}
+      renderItem = {renderItem}
+      />
             
           
         );    

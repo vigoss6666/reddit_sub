@@ -8,6 +8,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { uploadImage } from '../../networking'; 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {firebase} from '../../config'; 
+import * as FileSystem from 'expo-file-system';
 //@refresh reset
 import SettingsHome from './SettingsHome';
 import { pick } from 'underscore';
@@ -22,15 +23,15 @@ export default function Photos({navigation, route }){
     const {user, userId,db, setUser} = myContext;     
     const insets = useSafeAreaInsets();
     const [camera,setCamera] = useState(); 
+    const [profilePic, setProfilePic] = useState(); 
     
     //const {page} = route.params; 
     
-    
-    const [profilePic,setProfilePic] = useState(null);
-    
-    useEffect(() => {
-      setProfilePic(user.profilePic)
-    }, [])
+    const localUri = (uri) => {
+      
+    }
+
+  
     
     
     
@@ -159,10 +160,10 @@ export default function Photos({navigation, route }){
     
  }
 
- const profileTemplate = profilePic ? 
+ const profileTemplate = user.profilePic ? 
  <TouchableOpacity onPress = {() => loadProfilePic()} style = {{justifyContent:"center", alignItems:"center"}}>
    <View>
-   <Image source = {{uri:profilePic}} style = {{height:160, width:160, borderRadius:80}}/>
+   <Image source = {{uri:user.profilePic}} style = {{height:160, width:160, borderRadius:80}}/>
    <AntDesign name="pluscircle" size={20} color="red" style = {{position:'absolute', top:120, right:8 }}/>
    </View>
  </TouchableOpacity>

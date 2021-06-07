@@ -141,6 +141,8 @@ import GameEngine from './GameEngine';
 import {defaultDataObject, defaultUsers} from './DefaultData'; 
 import SignUp from './SignUp'; 
 import {cacheImages} from './networking'; 
+import * as FileSystem from 'expo-file-system';
+import { Asset } from 'expo-asset';
 
 
 const db = firebase.firestore();
@@ -188,6 +190,9 @@ export default function App() {
   const [generatedMatchSelf, setGeneratedMatchSelf] = useState([]); 
   const [mainId, setMainId] = useState()
   
+   
+
+
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
@@ -228,7 +233,7 @@ export default function App() {
   })
   const [clientFilter, setClientFilter] = useState([]); 
   useEffect(() => {
-    //AsyncStorage.removeItem('user')
+    AsyncStorage.removeItem('user')
   }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
@@ -257,16 +262,37 @@ if(!Object.keys(user).length){
   // useEffect(() => {
     
   useEffect(() => {
-    setLoader(true)
+    // setLoader(!loader)
   }, [_id])
   
-  
+  function cacheImages(images) {
+    return images.map(image => {
+      if (typeof image === 'string') {
+        return Image.prefetch(image);
+      } 
+    });
+  }
+  async function ensureDirExists(location) {
+    const dirInfo = await FileSystem.getInfoAsync(location);
+    if (!dirInfo.exists) {
+      console.log("Gif directory doesn't exist, creating...");
+      await FileSystem.makeDirectoryAsync(location, { intermediates: true });
+    }
+  }
   
   useEffect(() => {
      
       const subscribe = _id  ?  db.collection('user').doc(_id).onSnapshot(doc => {
         if(doc.exists){
-          const user = doc.data();  
+          
+          const user = doc.data();
+          if(user.gamePreview == false){
+            Asset.loadAsync(require('./assets/Project%20Name.mp4'))
+          }
+          
+          
+         
+         
           
            setUser(user)
            

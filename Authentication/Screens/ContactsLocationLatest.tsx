@@ -4,7 +4,7 @@ import {firebase} from '../../config';
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Callout, Marker } from 'react-native-maps';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // @refresh reset 
 import {MaterialIcons} from '@expo/vector-icons'; 
@@ -235,7 +235,9 @@ const handleInit = async () => {
         {/* {markers.length > 0 ?  <Marker  coordinate = {markers[0].latlng}></Marker>:null } */}
         {markers.map(val => <Marker coordinate = {val.latlng}>
           
-          {val.client.profilePic ? <Image source={{uri:val.client.profilePic}} style={{ height: 40, width:40, borderRadius:20 }} />:<MaterialIcons name = "account-circle" size = {40} color = "black"/>}
+          <View><Text style = {{marginLeft:-10}}>{computeName(val.client)}</Text><MaterialIcons name = "account-circle" size = {40} color = "black"/></View>
+          {/* <Text>Hello world</Text> */}
+          
         </Marker>)}
      
   

@@ -889,46 +889,66 @@ export function ClientHeader({client, style}) {
  }
 
  export function ClientPhotos({client}){
-  const photosMainer = [null, null, null, null, null, null];
+  const photosMainer = client.photos;
   const [visible, setVisible] = useState(false); 
-  const photos = photosMainer.slice(2)
+  const [indexer, setIndexer] = useState(0);  
+  const data = [""]
+  const photos = photosMainer; 
   let template; 
+  const checkNull = photos.filter(val => val !== null); 
   
-   const checkNull = photos.filter(val => val !== null); 
-   
+  
+  
    if(client.profilePic){
      checkNull.unshift(client.profilePic)
    }
    
-   if(checkNull.length == 0){
-      template = <MaterialIcons name="account-circle" size={50} color="black" />
-   }
-   if(checkNull.length > 0){
-      template = checkNull.map(val => {
+    
 
-         return <TouchableOpacity onPress = {() => setVisible(true)}><Image source = {{uri:val}} style = {{height:80, width:80, marginRight:10}} onPress = {() => setVisible(true)}/></TouchableOpacity> 
-      })
-   }
+
+  const renderItem = ({item, index}) => {
+   console.log(item)
+   
+     return <TouchableOpacity onPress = {() => {setVisible(true), setIndexer(index)}}><Image source = {{uri:item}} style = {{height:80, width:80, marginRight:10}} onPress = {() => setVisible(true)}/></TouchableOpacity> 
+      
+  }
+  
+  
+  
+   
+   
+  
    const templateForImage = checkNull.map(val => {
       return {
         url:val
       }
    })
-  //  const finalTemplate = templateForImage.map(val => (
-  //     <SingleImageView image = {val}/>
-  //  ))
+  
    
-   return <View>
+   return (<View>
    <View style = {{flexDirection:'row',marginTop:20, alignItems:'center',marginBottom:10}}>
-   <SingleImageView  image = {} />  
+   <Modal visible={visible} transparent={true}>
+   <ImageViewer imageUrls={templateForImage} renderHeader = {() => <View style = {{backgroundColor:'red'}} ></View>} enableSwipeDown onSwipeDown = {() => setVisible(!visible)} enableImageZoom index = {indexer}/>
+   </Modal>  
+   
    {/* {finalTemplate} */}
    <AntDesign name="instagram" size={24} color="black" />
    <Text style = {[styles.iconNames, {fontWeight:'bold'}] }> Photos</Text>
    </View>
    <View style = {{flexDirection:'row', alignItems:'center'}}>
-   {template}
+   {/* {template} */}
+   { checkNull.length  == 0 ? <View> 
+    <MaterialIcons name="account-circle" size={40} color="black" />
+   </View>:
+     <FlatList
+        data={checkNull}
+        renderItem={renderItem}
+        keyExtractor={item => item}
+        horizontal = {true}
+        showsHorizontalScrollIndicator = {false}
+      />}
    </View>
-   </View>
+   </View>)
     
  }
 
@@ -1272,6 +1292,17 @@ export function ClientHeader({client, style}) {
     
     
 
+    
+  );
+
+ }
+
+
+ export function PrefetchedImage(url){
+  const downloadResumable = FileSystem.createDownloadResumable(
+    '',
+    FileSystem.documentDirectory + 'small.mp4',
+    {},
     
   );
 

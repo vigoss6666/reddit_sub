@@ -51,22 +51,23 @@ const SingleContactPhoto = ({navigation}) => {
     let pickerResult = await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.All});
     console.log(pickerResult.type)
     if(pickerResult.type == 'image'){
-      const manipResult = await ImageManipulator.manipulateAsync(
-        pickerResult.uri,
-        [{resize:{width:200, height:200}}],
-        { compress: 0.1, format: ImageManipulator.SaveFormat.PNG,}
-      );
+      // const manipResult = await ImageManipulator.manipulateAsync(
+      //   pickerResult.uri,
+      //   [{resize:{width:200, height:200}}],
+      //   { compress: 0.1, format: ImageManipulator.SaveFormat.PNG,}
+      // );
+      const cloner = profiles.concat();  
+        const objIndex = cloner.findIndex(val => val.phoneNumber == obj.phoneNumber);
+        cloner[objIndex].profilePic = pickerResult.uri;  
+        setProfiles(cloner); 
       
-      const response = await fetch(manipResult.uri); 
+      const response = await fetch(pickerResult.uri); 
         const blob = await response.blob(); 
         const namer = Math.random().toString(36).substring(2);
         const ref = firebase.storage().ref().child("images/"+ namer); 
         await ref.put(blob)
         const result1 = await ref.getDownloadURL();
-        const cloner = profiles.concat();  
-        const objIndex = cloner.findIndex(val => val.phoneNumber == obj.phoneNumber);
-        cloner[objIndex].profilePic = result1;  
-        setProfiles(cloner); 
+        
         const serverObject = {
         profilePic:result1   
         }

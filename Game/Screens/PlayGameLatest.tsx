@@ -17,6 +17,9 @@ import {filterGamer, getDistanceFromLatLonInKm} from '../../networking';
 
 import {LoadScreen} from '../../src/common/Common'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Video } from 'expo-av';
+import * as FileSystem from 'expo-file-system';
+import {Button} from 'react-native-elements'; 
 const db = firebase.firestore(); 
 //@refresh reset
 interface PlayGameLatestProps {}
@@ -43,12 +46,22 @@ const PlayGameLatest = ({navigation}) => {
   const [profiles,setProfiles] = useState([])
   const myContext = useContext(AppContext); 
   const [pageFocused, setPageFocused] = useState(false); 
+  const [preview, setPreview] = useState()
   
   
   const [questions, setQuestions] = useState([]); 
   const element = createRef();
   const [matchFound, setMatchFound] = useState(false); 
 
+  useEffect(() => {
+  async function namer(){
+    const result = await AsyncStorage.getItem('preview'); 
+    setPreview(result)
+
+  }  
+  namer()
+  
+  }, [])
 
   useEffect(() => {
     navigation.setOptions({
@@ -344,6 +357,8 @@ const namer =  [
    }
    if(client == 'second'){
     const client = demo[index + 1]; 
+    console.log('clienter')
+    console.log(client.phoneNumber); 
     db.collection('user').where('state', '==', demo[index + 1].state).get().then(async onResult => {
       const users = onResult.docs.map(val =>val.data()); 
       const usersLogged = logTen(users); 
@@ -387,6 +402,12 @@ const namer =  [
 }
 const onRefresh = () => {
 db.collection('user').doc(userId).set({suggestedMatches:[]}, {merge:true}) 
+}
+
+const handleGame = () => {
+  updateUser(userId, {gamePreview:true});
+  navigation.navigate('PlayGameLatest')
+   
 }
  
  
@@ -471,6 +492,24 @@ db.collection('user').doc(userId).set({suggestedMatches:[]}, {merge:true})
        <Text style = {{color:'white', fontStyle:'italic'}}>Please add some contacts in your dating pool list to play the game</Text>
      </View>
     
+   }
+   if(user.gamePreview == false){
+     return <View style = {{flex:1}}>
+      <Video
+        
+        style={{flex:0.9}}
+        source={require('../../assets/Project%20Name.mp4')}
+        shouldPlay
+        resizeMode="contain"
+        isLooping = {true}
+        
+        // onPlaybackStatusUpdate={status => setStatus(() => status)}
+      />
+      <View style = {{flex:0.1, marginTop:20}}> 
+      <Button onPress = {handleGame} title = {"Get Started"} containerStyle = {{marginLeft:30, marginRight:30,marginTop:10}}></Button>
+      </View> 
+     </View>
+     
    }
     return (
         <View style={{flex:1, paddingBottom:insets.bottom}}>
