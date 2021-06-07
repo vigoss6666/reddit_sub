@@ -87,7 +87,7 @@ export const defaultDataObject:database = {
  chattedArray:[],
  contactList:[], 
  datingPoolList:[], 
- 
+ invitedToApp:false, 
  day:0, 
  empathetic:0, 
  creativity:0, 

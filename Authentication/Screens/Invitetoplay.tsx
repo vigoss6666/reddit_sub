@@ -20,6 +20,7 @@ const Invitetoplay = ({navigation,route}) => {
         if(result.action == "sharedAction"){
           db.collection('invitationSent').add({client:client.phoneNumber, matchMaker:userId}).then(() => {
             db.collection('user').doc(userId).set({invitations:firebase.firestore.FieldValue.arrayUnion(client.phoneNumber)}, {merge:true}).then(() => {
+              db.collection('user').doc(client.phoneNumber).set({invitedToApp:true}, {merge:true})
               
                 setInvitetoplay(client.phoneNumber)
                 navigation.goBack()

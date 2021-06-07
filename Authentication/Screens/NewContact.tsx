@@ -262,87 +262,9 @@ return (
     
     </View>
     <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:30, marginBottom:30}}/>
-    
-    <View style = {{flexDirection:'row', marginLeft:30,justifyContent:'space-between',marginRight:30,alignItems:'center',marginBottom:30}}>
-    <Text style = {{flex:0.5,fontWeight:'bold'}}>Sex</Text>
-    <View style = {{flexDirection:'row',justifyContent:'space-between',flex:0.3,alignItems:'center'}}>
-    <TouchableOpacity onPress = {() => {setGender('female')}} style = {{borderWidth:gender == 'female' ? 3:0, borderRadius:10,borderColor:'green' }}>
-    <FontAwesome name="female" size={35} color="black" />
-    </TouchableOpacity>
-    <TouchableOpacity onPress = {() => {setGender('male')}} style = {{borderWidth:gender == 'male' ? 3:0, borderRadius:10,borderColor:'green' }}>
-    <FontAwesome name="male" size={35} color="black" />
-    </TouchableOpacity>
-    </View>
-    </View>
-    <View style={{
-        borderStyle: 'dotted',
-        borderWidth: 2,
-        borderRadius: 1,
-        borderColor:'grey',
-         marginBottom:30
-      }}>
-      
-    </View>
-    {/* <View style = {{flexDirection:'row', marginLeft:30,justifyContent:'space-between',marginRight:30,alignItems:'center',marginBottom:30}}>
-    <Text style = {{flex:0.6,fontWeight:'bold'}}>Orientation</Text>
-    <View style = {{flexDirection:'row',justifyContent:'space-between',flex:0.4,alignItems:'center'}}>
-    <TouchableOpacity onPress = {() => {setOrientation('female')}} style = {{borderWidth:orientation == 'female' ? 3:0, borderRadius:10,borderColor:'green' }}>
-    <FontAwesome name="female" size={35} color="black" />
-    </TouchableOpacity>
-    <TouchableOpacity onPress = {() => {setOrientation('male')}} style = {{borderWidth:orientation == 'male' ? 3:0, borderRadius:10,borderColor:'green' }}>
-    <FontAwesome name="male" size={35} color="black" />
-    </TouchableOpacity>
-    <TouchableOpacity onPress = {() => {setOrientation('bisexual')}} style = {{borderWidth:orientation == 'bisexual' ? 3:0, borderRadius:10,borderColor:'green' }}>
-    <Ionicons name="ios-people" size={35} color="black" />
-    </TouchableOpacity>
-    </View>
-    </View> */}
-    {/* <View style={{
-        borderStyle: 'dotted',
-        borderWidth: 2,
-        borderRadius: 1,
-        borderColor:'grey',
-         marginBottom:30
-      }}> */}
-      
-    {/* </View> */}
-    <View style = {{flexDirection:'row', marginLeft:30, justifyContent:'space-between', alignItems:'center',marginBottom:30, zIndex:1000}}>
-    <Text style = {{fontWeight:'bold'}}>Age </Text>
-    <DropDownPicker
-        items={[
-            {label: '15 - 20 years', value: {minAge:15,maxAge:20}, },
-            {label: '20 - 25 years', value: {minAge:20,maxAge:25} },
-            {label: '25 - 30 years', value: {minAge:25,maxAge:30} },
-            {label: '30 - 35 years', value: {minAge:30,maxAge:35} },
-            {label: '35 - 40 years', value: {minAge:35,maxAge:40}, },
-            {label: '40 - 45 years', value: {minAge:40,maxAge:45}, },
-            {label: '45 - 50 years', value: {minAge:45,maxAge:50}, },
-        ]}
-        placeholder = {"20 - 25 years "}
-        containerStyle={{height: 40,width:200,zIndex:100}}
-        style={{backgroundColor: '#fafafa',zIndex:100}}
-        itemStyle={{
-            justifyContent: 'flex-start', 
-            zIndex:100
-        }}
-        dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
-        onChangeItem={item => selectAge(
-            item.value
-        )}
-    />
-    </View>
-    <View style={{
-        borderStyle: 'dotted',
-        borderWidth: 2,
-        borderRadius: 1,
-        borderColor:'grey',
-         marginBottom:30
-      }}>
-      
-    </View>
-    <View style = {{flexDirection:'row', marginLeft:30, justifyContent:'space-between', alignItems:'center',marginBottom:30, zIndex:500}}>
+    <View style = {{flexDirection:'row', marginLeft:30, justifyContent:'space-between', alignItems:'center',marginBottom:30, zIndex:5000}}>
     <Text style = {{fontWeight:'bold'}}>Height (optional) </Text>
-    <View style = {{flexDirection:'row',zIndex:1000}}>
+    <View style = {{flexDirection:'row',zIndex:5000}}>
     <DropDownPicker
         items={[
             {label: "4'", value: 4, },
@@ -392,7 +314,96 @@ return (
     />
     </View>
     </View>
-    <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:30, marginBottom:30}} zIndex = {100}/>
+    <View style={{
+        borderStyle: 'dotted',
+        borderWidth: 2,
+        borderRadius: 1,
+        borderColor:'grey',
+         marginBottom:30
+      }}>
+      
+    </View>
+    <View style = {{flexDirection:'row', marginLeft:30, justifyContent:'space-between', alignItems:'center',marginBottom:30, zIndex:1000}}>
+    <Text style = {{fontWeight:'bold'}}>Age </Text>
+    <DropDownPicker
+        items={[
+            {label: '15 - 20 years', value: {minAge:15,maxAge:20}, },
+            {label: '20 - 25 years', value: {minAge:20,maxAge:25} },
+            {label: '25 - 30 years', value: {minAge:25,maxAge:30} },
+            {label: '30 - 35 years', value: {minAge:30,maxAge:35} },
+            {label: '35 - 40 years', value: {minAge:35,maxAge:40}, },
+            {label: '40 - 45 years', value: {minAge:40,maxAge:45}, },
+            {label: '45 - 50 years', value: {minAge:45,maxAge:50}, },
+        ]}
+        placeholder = {"20 - 25 years "}
+        containerStyle={{height: 40,width:200,zIndex:100}}
+        style={{backgroundColor: '#fafafa',zIndex:100}}
+        itemStyle={{
+            justifyContent: 'flex-start', 
+            zIndex:100
+        }}
+        dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
+        onChangeItem={item => selectAge(
+            item.value
+        )}
+    />
+    </View>
+    <View style={{
+        borderStyle: 'dotted',
+        borderWidth: 2,
+        borderRadius: 1,
+        borderColor:'grey',
+         marginBottom:30
+      }}>
+      
+    </View>
+    <View style = {{flexDirection:'row', marginLeft:30,justifyContent:'space-between',marginRight:30,alignItems:'center',marginBottom:30}}>
+    <Text style = {{flex:0.5,fontWeight:'bold'}}>Sex</Text>
+    <View style = {{flexDirection:'row',justifyContent:'space-between',flex:0.3,alignItems:'center'}}>
+    <TouchableOpacity onPress = {() => {setGender('female')}} style = {{borderWidth:gender == 'female' ? 3:0, borderRadius:10,borderColor:'green' }}>
+    <FontAwesome name="female" size={35} color="black" />
+    </TouchableOpacity>
+    <TouchableOpacity onPress = {() => {setGender('male')}} style = {{borderWidth:gender == 'male' ? 3:0, borderRadius:10,borderColor:'green' }}>
+    <FontAwesome name="male" size={35} color="black" />
+    </TouchableOpacity>
+    </View>
+    </View>
+    
+    {/* <View style = {{flexDirection:'row', marginLeft:30,justifyContent:'space-between',marginRight:30,alignItems:'center',marginBottom:30}}>
+    <Text style = {{flex:0.6,fontWeight:'bold'}}>Orientation</Text>
+    <View style = {{flexDirection:'row',justifyContent:'space-between',flex:0.4,alignItems:'center'}}>
+    <TouchableOpacity onPress = {() => {setOrientation('female')}} style = {{borderWidth:orientation == 'female' ? 3:0, borderRadius:10,borderColor:'green' }}>
+    <FontAwesome name="female" size={35} color="black" />
+    </TouchableOpacity>
+    <TouchableOpacity onPress = {() => {setOrientation('male')}} style = {{borderWidth:orientation == 'male' ? 3:0, borderRadius:10,borderColor:'green' }}>
+    <FontAwesome name="male" size={35} color="black" />
+    </TouchableOpacity>
+    <TouchableOpacity onPress = {() => {setOrientation('bisexual')}} style = {{borderWidth:orientation == 'bisexual' ? 3:0, borderRadius:10,borderColor:'green' }}>
+    <Ionicons name="ios-people" size={35} color="black" />
+    </TouchableOpacity>
+    </View>
+    </View> */}
+    {/* <View style={{
+        borderStyle: 'dotted',
+        borderWidth: 2,
+        borderRadius: 1,
+        borderColor:'grey',
+         marginBottom:30
+      }}> */}
+      
+    {/* </View> */}
+    
+    <View style={{
+        borderStyle: 'dotted',
+        borderWidth: 2,
+        borderRadius: 1,
+        borderColor:'grey',
+         marginBottom:30
+      }}>
+      
+    </View>
+    
+    <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:30, marginBottom:30}} />
     
     
     </View>

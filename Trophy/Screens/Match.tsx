@@ -173,6 +173,9 @@ const Match = ({navigation}) => {
         return { ...val, client1: a, client2: b };
       });
       const mainArray = [...client1Array, ...transformed]; 
+      if(mainArray.length == 0){
+        setLoading(false)
+      }
        
       const filterByReported = mainArray.filter(val => val.reported !== true); 
       const filterByUnmatched = filterByReported.filter(val => val.unMatched !== true); 

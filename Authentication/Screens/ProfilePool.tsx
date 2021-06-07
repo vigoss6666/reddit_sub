@@ -52,27 +52,8 @@ const useFetchContactPool = (navigation) => {
                data:[]
           }
      })
-     const updateInvitation = () => {
-          if(inviteToPlay){
-              const copy = contactList.concat();  
-              const index = copy.findIndex(val => val.phoneNumber == inviteToPlay); 
-              if(index !== -1){
-               copy[index].invitationSent = true;  
-                
-               setContactList(copy)
-               //setDatingFlatlist({})   
-                  
+     
         
-              } 
-          }    
-        }
-        useFocusEffect(
-          React.useCallback(() => {
-            console.log("i was called")   
-            
-            updateInvitation()
-          }, [inviteToPlay])
-        );
 
         
      
@@ -289,12 +270,12 @@ const useFetchContactPool = (navigation) => {
                          marginBottom:10,
                          marginTop: 10,
                       }}/>}
-                      {item.appUser ? null : <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
+                      {/* {item.appUser ? null : <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20}}>
                       {item.invitationSent ? <Text style = {{fontWeight:'bold',}}>INVITATION SENT</Text>:<Text style = {{fontWeight:'bold',}}>INVITE TO PLAY</Text>}
                       {item.invitationSent ? <View><AntDesign name="checkcircle" size={24} color="black" /></View>:<TouchableOpacity onPress = {() => navigation.navigate('Invitetoplay',{client:item, page:'friends'})}>
                       <Entypo name="mail" size={24} color="black" />
                       </TouchableOpacity>}
-                      </View>}
+                      </View>} */}
                       </View>
                       :null}    
                     </View> 
@@ -413,22 +394,33 @@ const useFetchDatingPool = (navigation) => {
 async function namer12(){
      console.log("namer was called")
      if(user.datingPoolList.length > 0){
+          const checkerResult = await Promise.all(user.datingPoolList.map(async val => {
+               return await db.collection('user').doc(val).get().then(onDoc => {
+                 if(onDoc.exists){
+                   return onDoc.data()
+                 }
+                 return null; 
+               })
+               
+              }))
+              const finalChecker = checkerResult.filter(val => val !== null); 
+              setDatingPoolList(finalChecker)     
          
-     const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get().then(async onResult => {
-        const data = await onResult.docs.map(val => val.data());
-        function applyToIncluded(val){
-              return {...val, invitationSent:true}
-        }
-        const result = filterGamer(data, 'phoneNumber', user.invitations, null,applyToIncluded)
-        console.log(result)
-     //    console.log("exlucded"+result.excludedObjects.length)
-     //    console.log("included"+result.includedObjects.length)
+     // const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get().then(async onResult => {
+     //    const data = await onResult.docs.map(val => val.data());
+     //    function applyToIncluded(val){
+     //          return {...val, invitationSent:true}
+     //    }
+     //    const result = filterGamer(data, 'phoneNumber', user.invitations, null,applyToIncluded)
+     //    console.log(result)
+     // //    console.log("exlucded"+result.excludedObjects.length)
+     // //    console.log("included"+result.includedObjects.length)
 
 
             
-     //    setDatingPoolList([...result.excludedObjects, ...result.includedObjects]);
-     setDatingPoolList(data)
-     }).catch(error => console.log(error.message))
+     // //    setDatingPoolList([...result.excludedObjects, ...result.includedObjects]);
+     // setDatingPoolList(data)
+     // }).catch(error => console.log(error.message))
      }
      if(user.datingPoolList.length == 0){
          
@@ -698,8 +690,8 @@ onChangeItem={namer => addAge(item, namer)}
      marginTop: 10,
      }}/>
                       <View style = {{flexDirection:'row',alignItems:'center', justifyContent:'space-between',marginBottom:20,marginTop:20}}>
-                      {item.invitationSent ? <Text style = {{fontWeight:'bold',}}>INVITATION SENT</Text>:<Text style = {{fontWeight:'bold',}}>INVITE TO PLAY</Text>}
-                      {item.invitationSent ? <View><AntDesign name="checkcircle" size={24} color="black" /></View>:<TouchableOpacity onPress = {() => navigation.navigate('Invitetoplay',{client:item, page:'friends'})}>
+                      {item.invitedToApp ? <Text style = {{fontWeight:'bold',}}>INVITATION SENT</Text>:<Text style = {{fontWeight:'bold',}}>INVITE TO PLAY</Text>}
+                      {item.invitedToApp ? <View><AntDesign name="checkcircle" size={24} color="black" /></View>:<TouchableOpacity onPress = {() => navigation.navigate('Invitetoplay',{client:item, page:'friends'})}>
                       <Entypo name="mail" size={24} color="black" />
                       </TouchableOpacity>}
                       </View>
