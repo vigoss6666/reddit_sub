@@ -246,15 +246,15 @@ useEffect(() => {
   .then(onResult => {
      const finalResult = onResult.docs.map(val => val.data());
 
-     const filterByDistance = finalResult.map(val => {
-      const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, user.latitude, user.longitude); 
-      if(distance < selfFilter.distancePreference){
-        return val; 
-      }
+    //  const filterByDistance = finalResult.map(val => {
+    //   const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, user.latitude, user.longitude); 
+    //   if(distance < selfFilter.distancePreference){
+    //     return val; 
+    //   }
 
-    }); 
-    const filterByDistanceFinal = filterByDistance.filter(val => val !== undefined);
-     const listWithoutUser = filterByDistanceFinal.filter(val => val.phoneNumber !== userId); 
+    // }); 
+    // const filterByDistanceFinal = filterByDistance.filter(val => val !== undefined);
+     const listWithoutUser = finalResult.filter(val => val.phoneNumber !== userId); 
      setFemaleMatches(listWithoutUser.length) 
  })
  }
@@ -293,15 +293,15 @@ useEffect(() => {
   .then(onResult => {
      const finalResult = onResult.docs.map(val => val.data()); 
 
-     const filterByDistance = finalResult.map(val => {
-      const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, user.latitude, user.longitude); 
-      if(distance < selfFilter.distancePreference){
-        return val; 
-      }
+    //  const filterByDistance = finalResult.map(val => {
+    //   const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, user.latitude, user.longitude); 
+    //   if(distance < selfFilter.distancePreference){
+    //     return val; 
+    //   }
 
-    }); 
-    const filterByDistanceFinal = filterByDistance.filter(val => val !== undefined);
-     const listWithoutUser = filterByDistanceFinal.filter(val => val.phoneNumber !== userId);  
+    // }); 
+    // const filterByDistanceFinal = filterByDistance.filter(val => val !== undefined);
+     const listWithoutUser = finalResult.filter(val => val.phoneNumber !== userId);  
      setMaleMatches(listWithoutUser.length)
  })
  }

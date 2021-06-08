@@ -21,6 +21,8 @@ const [selected, setSelected] = useState('filter');
 const myContext = useContext(AppContext); 
 const {user, userId, selfFilter, setSelfFilter} = myContext;
 const [potentialMatches, setPotentialMatches] = useState(0); 
+console.log("selfFilter")
+console.log(selfFilter)
 
 
 const [minAge, setMinAge] = useState(); 
@@ -28,20 +30,23 @@ const [maxAge, setMaxAge] = useState();
 const [inches, setInches] = useState("11"); 
 const [appUsers, setAppUsers] = useState();
 const [feet, setFeet ] = useState("5"); 
-const [matchmaking, setMatchmaking] = useState();
+const [matchMakerContact, setMatchmaking] = useState();
 const [compatibility, setCompatibility] = useState();
 const [defaultCompatibility, setDefaultCompatibility] = useState(); 
 const [distancePreference, setDistancePreference] = useState(); 
 const [defaultDistance, setDefaultDistance] = useState(); 
 const insets = useSafeAreaInsets();
 useEffect(() => {
-  
+  console.log(selfFilter.appUsers)
   setCompatibility(selfFilter.dimension); 
   setDefaultCompatibility(selfFilter.dimension)
   setDistancePreference(selfFilter.distancePreference); 
   setDefaultDistance(selfFilter.distancePreference)
   setMinAge(selfFilter.minAgePreference)
   setMaxAge(selfFilter.maxAgePreference)
+  setAppUsers(selfFilter.appUsers)
+  setMatchmaking(selfFilter.matchMakerContact)
+  //setAppUsers(selfFilter.appUsers)
   // setDefaultCompatibility(currentClientFilter.dimension); 
   // setMinAge(currentClientFilter.minAgePreference)
   // setMaxAge(currentClientFilter.maxAgePreference)
@@ -95,8 +100,12 @@ useEffect(() => {
 
 const [traits, setTraits] = useState([]); 
 const addClientFilter = () => {
+  console.log(compatibility)
+  console.log(minAge)
+  console.log(maxAge)
+  console.log("appUsers"+appUsers)
   
-  setSelfFilter(Object.assign({},{...selfFilter}, {dimension:compatibility, minAgePreference:minAge, maxAgePreference:maxAge, appUsers, matchMakerContact:matchmaking})); 
+  setSelfFilter(Object.assign({},{...selfFilter}, {dimension:compatibility, minAgePreference:minAge, maxAgePreference:maxAge, appUsers, matchMakerContact})); 
   navigation.goBack(); 
    
 }

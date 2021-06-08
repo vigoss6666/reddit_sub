@@ -78,10 +78,10 @@ async function applyFilters(filter:filter, arr:serverDataObjectDimension[], clie
         && val.empathetic >= filter.empathetic
         && val.status >= filter.status
         && val.wealthy >= filter.wealthy
-        // && val.age >= filter.minAgePreference
-        // && val.age <= filter.maxAgePreference
+        && val.age >= filter.minAgePreference
+        && val.age <= filter.maxAgePreference
         && val.dimension >= filter.dimension
-        // && val.narcissism <= filter.narcissism
+        && val.narcissism <= filter.narcissism
         // && distance < filter.distancePreference 
         // && filter.appUsers ? val.appUser ? true: false:true 
         // && filter.matchMakerContact ? true: val.matchMaker == client.matchMaker ? false:true 
@@ -92,9 +92,13 @@ async function applyFilters(filter:filter, arr:serverDataObjectDimension[], clie
         ){
            finalObject.push(val); 
       }
+      
  })
+ const filterByAppUsers = finalObject.length ? finalObject.filter(val => filter.appUsers ? val.appUser :true ):[]; 
+ const filterByMatchMaker = filterByAppUsers.length ? filterByAppUsers.filter(val => filter.matchMakerContact ? true: val.matchMaker == client.phoneNumber ? false:true):[]; 
 
- return finalObject
+
+ return filterByMatchMaker;   
 
 // const gamer = await Promise.all(finalObject.map(async val => {
 //   const id = createChatThread(val.phoneNumber, client.phoneNumber); 
@@ -128,7 +132,7 @@ const SelfGame = ({navigation, route}) => {
 
     console.log(generatedMatchSelf.length)
 
-
+   console.log(selfFilter)
 
     useEffect(() => {
      async function namer(){
@@ -163,7 +167,7 @@ const SelfGame = ({navigation, route}) => {
            db.collection('user')
            .where('state', '==', user.state)
            .where('gender', '==', user.gender == 'male'?'female':'male')
-           .get({source:'server'})
+           .get()
            .then(async result => {
                
                  const serverObjectWithId = result.docs.map(val => val.data())
@@ -177,12 +181,16 @@ const SelfGame = ({navigation, route}) => {
                    user:userLogged, 
                    data:logData
                  })
+                 
 
                  const simD = computeSimDimensionShuffle(userLogged, logData);
                  
+                 
                  const filterBySim = simD.filter(val => val.simDimension) 
+                 
 
                  const filterBySort = await clientSort(filterBySim, selfFilter.sortOrder)
+                 
                  
                  //const filters = await applyFilters(selfFilter, filterBySim, user, createChatThread);
                  const filterByIntros = await Promise.all(filterBySort.map(async val => {
@@ -199,11 +207,15 @@ const SelfGame = ({navigation, route}) => {
           
                 }))
                 const removeUndefined = filterByIntros.filter(val => val !== undefined);
+                console.log('User'); 
+                 console.log(removeUndefined.length)
+                
                 setForFilters(removeUndefined);  
                  
 
-                 
+                 console.log(simD.length)
                  const sectionData = computeSectionLabel(removeUndefined);
+                 console.log(sectionData)
                  setSectionData(sectionData);  
            })
       })
@@ -285,7 +297,9 @@ const SelfGame = ({navigation, route}) => {
     minAgePreference:15, 
     maxAgePreference:60,
     dimension:0, 
-    distancePreference:10
+    distancePreference:10,
+    appUsers:false, 
+    matchMakerContact:true
     })   
     }
 
