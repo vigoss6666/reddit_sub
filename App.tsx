@@ -495,8 +495,9 @@ const mainHome = () => {
         <NavigationContainer>
          
         <Stack.Navigator>
-          <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
+          <Stack.Screen name="Home" component={MatchMakeGrand} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
+          <Stack.Screen name="MatchMakeGrand" component={MatchMakeGrand}/>
           <Stack.Screen name="PointsRequired" component={PointsRequired}/>
           <Stack.Screen name="Sort" component={Sort} />
           <Stack.Screen name="SelfSort" component={SelfSort} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS ,headerShown:false}}/>

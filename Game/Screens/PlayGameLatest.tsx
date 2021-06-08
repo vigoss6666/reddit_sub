@@ -289,10 +289,13 @@ const namer =  [
           const users = onResult.docs.map(val =>val.data()); 
           const usersLogged = logTen(users); 
           const clientLogged = logTen(client)
+
+          const datingFilter = filterGamer(usersLogged, 'phoneNumber', user.datingPoolList, null, null); 
+
           
           let matchObject; 
           
-          const filterBySuggestions = filterGamer(usersLogged, 'phoneNumber', user.suggestedMatches, null, null);
+          const filterBySuggestions = filterGamer(datingFilter.excludedObjects, 'phoneNumber', user.suggestedMatches, null, null);
           const filterBySelf = filterGamer(filterBySuggestions.excludedObjects, 'phoneNumber', [client.phoneNumber], null, null);
           let counter = 0; 
           filterBySelf.excludedObjects.some(async val => {
@@ -363,10 +366,11 @@ const namer =  [
       const users = onResult.docs.map(val =>val.data()); 
       const usersLogged = logTen(users); 
       const clientLogged = logTen(client)
+      const datingFilter = filterGamer(usersLogged, 'phoneNumber', user.datingPoolList, null, null); 
       
       let matchObject; 
       
-      const filterBySuggestions = filterGamer(usersLogged, 'phoneNumber', user.suggestedMatches, null, null);
+      const filterBySuggestions = filterGamer(datingFilter.excludedObjects, 'phoneNumber', user.suggestedMatches, null, null);
       const filterBySelf = filterGamer(filterBySuggestions.excludedObjects, 'phoneNumber', [client.phoneNumber], null, null);
       
       filterBySelf.excludedObjects.some(async val => {

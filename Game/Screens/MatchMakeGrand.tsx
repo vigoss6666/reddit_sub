@@ -92,6 +92,13 @@ const MatchMakeFinal = ({navigation, route}) => {
     const [tempCopy, setTempCopy] = useState([]); 
     
     const [flat, setFlat] = useState(null)
+
+
+    useEffect(() => {
+      navigation.setOptions({
+        headerShown:false
+      })
+    }, [])
     
 
 
@@ -214,13 +221,23 @@ const MatchMakeFinal = ({navigation, route}) => {
     
     
   async function getDatingPool(){
-    
-      const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get(); 
-      const client = await result.docs.map(val => val.data());
-      setProfiles(client)
+    const checkerResult = await Promise.all(user.datingPoolList.map(async val => {
+      return await db.collection('user').doc(val).get().then(onDoc => {
+        if(onDoc.exists){
+          return onDoc.data()
+        }
+        return null; 
+      })
       
-      client.map(val => console.log(val.name))
-      return client; 
+     }))
+     const finalChecker = checkerResult.filter(val => val !== null);
+    
+      // const result = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get(); 
+      // const client = await result.docs.map(val => val.data());
+      setProfiles(finalChecker)
+      
+      // client.map(val => console.log(val.name))
+      return finalChecker; 
   }    
     
 
