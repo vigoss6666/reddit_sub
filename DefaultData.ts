@@ -1,4 +1,6 @@
+
 import {firebase} from './config';
+const db = firebase.firestore(); 
 
 interface lastMessage {
    _id:string, 
@@ -157,4 +159,56 @@ result.map(val => {
     db.collection('user').doc(val.phoneNumber).set(val).then(() => console.log('user added'));     
 })
   
+}
+
+export async function preload(user){
+    
+        await addPoints(user); 
+        await generateIntro(user); 
+    
+    
+    
+}
+
+ function generateIntro(user){
+
+     db.collection('introductions').add({
+         client1:user, 
+         client2:'+15555228243', 
+         createdAt:new Date(), 
+         discoveredBy:'+15555228243'
+
+     })
+
+}
+function addPoints(user){
+const pointsArr = ['matchAccepted', 'invitationAccepted', 'roundCompleted', 'roundCompleted']; 
+pointsArr.map(val => { 
+    if(val == 'matchAccepted'){
+        db.collection('user').doc(user).set({points:firebase.firestore.FieldValue.arrayUnion({
+            pointFor:val, 
+            client:'+917208110384', 
+            point:100, 
+            createdAt:new Date() 
+         })}, {merge:true})
+    }
+    if(val == 'invitationAccepted'){
+        db.collection('user').doc(user).set({points:firebase.firestore.FieldValue.arrayUnion({
+            pointFor:val, 
+            client:'+917208110384', 
+            point:250, 
+            createdAt:new Date() 
+         })}, {merge:true})
+    }
+    if(val == 'roundCompleted'){
+        db.collection('user').doc(user).set({points:firebase.firestore.FieldValue.arrayUnion({
+            pointFor:val, 
+            point:20, 
+            createdAt:new Date() 
+         })}, {merge:true})
+    }
+    
+})
+    
+
 }

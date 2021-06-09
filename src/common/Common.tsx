@@ -850,6 +850,16 @@ export function ClientHeader({client, style}) {
   <Text style = {styles.iconNames}>{distance} miles away</Text>
 
   </View>:null; 
+  const hometownTemplate = client.hometown ? <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
+  <FontAwesome5 name="city" size={24} color="black" />
+  <Text style = {styles.iconNames}> From {client.hometown}</Text>
+
+  </View>:null;
+  const schoolTemplate = client.school ? <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
+  <FontAwesome5 name="school" size={24} color="black" />
+  <Text style = {styles.iconNames}> Went to {client.school}</Text>
+
+  </View>:null;
 
   const age = client.age ? <View style = {{flexDirection:'row',marginTop:15, alignItems:'center'}}>
   <FontAwesome name="birthday-cake" size={24} color="black" />
@@ -879,6 +889,8 @@ export function ClientHeader({client, style}) {
   {age}
   {job}
   {location}
+  {hometownTemplate}
+  {schoolTemplate}
   
   
   {distanceTemplate}

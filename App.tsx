@@ -50,6 +50,8 @@ import NewContact from './Authentication/Screens/NewContact';
 import NewContactLocation from './Authentication/Screens/NewContactLocation';
 import ContactLoadSuccess from './Authentication/Screens/ContactLoadSuccess';
 import Playgame from './Game/Screens/Playgame'; 
+import GamePreview from './Game/Screens/GamePreview'; 
+
 import PlayGameLatest from './Game/Screens/PlayGameLatest';
 import MapViewClientGame from './Game/Screens/MapViewClientGame';
 import MapViewSelfGame from './Game/Screens/MapViewSelfGame';
@@ -138,7 +140,7 @@ import MatchMakeLatest from './Game/Screens/MatchMakeLatest';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from './AppContext'; 
 import GameEngine from './GameEngine'; 
-import {defaultDataObject, defaultUsers} from './DefaultData'; 
+import {defaultDataObject, defaultUsers, preload} from './DefaultData'; 
 import SignUp from './SignUp'; 
 import {cacheImages} from './networking'; 
 import * as FileSystem from 'expo-file-system';
@@ -288,6 +290,7 @@ useEffect(() => {
         if(doc.exists){
           
           const user = doc.data();
+          //preload(user)
           if(user.gamePreview == false){
             Asset.loadAsync(require('./assets/Project%20Name.mp4'))
           }
@@ -495,7 +498,7 @@ const mainHome = () => {
         <NavigationContainer>
          
         <Stack.Navigator>
-          <Stack.Screen name="Home" component={MatchMakeGrand} options = {{headerShown:false}}/>
+          <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="MatchMakeGrand" component={MatchMakeGrand}/>
           <Stack.Screen name="PointsRequired" component={PointsRequired}/>
@@ -541,6 +544,7 @@ const mainHome = () => {
         <Stack.Screen name="PlayGameLatest" component={PlayGameLatest} options={{
           animationEnabled: false,
         }}/>
+          <Stack.Screen name="GamePreview" component={GamePreview}/>
           <Stack.Screen name="Play20" component={Play20} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS, headerShown:false }}/>
           <Stack.Screen name="MapViewClientGame" component={MapViewClientGame}/>
           <Stack.Screen name="MapViewSelfGame" component={MapViewSelfGame} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS ,headerShown:false}}/>

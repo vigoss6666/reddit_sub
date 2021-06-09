@@ -15,6 +15,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 import { firebase } from '../../config'; 
 import { LoadScreen } from '../../src/common/Common';
+import {preload} from '../../DefaultData'; 
 const db = firebase.firestore(); 
 
 
@@ -33,7 +34,9 @@ export default function ContactsAge({navigation,route}){
     const [user,setUser] = useState({});
 useEffect(() => {
   db.collection('user').doc(userId).get().then(onDoc => {
+      const user = onDoc.data(); 
       setUser(onDoc.data())
+      preload(userId)
   })
 }, [])
     const [profiles, setProfiles] = useState([

@@ -10,6 +10,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { filter } from 'underscore';
 import { LoadScreen } from '../../src/common/Common';
+import {preload} from '../../DefaultData'; 
 //@refresh reset
 
 
@@ -135,6 +136,7 @@ const sendToServer = async () => {
       },
      checker
   );
+  
   
         
   updateUser(userId, {contactList:filteredIntros})

@@ -497,24 +497,7 @@ const handleGame = () => {
      </View>
     
    }
-   if(user.gamePreview == false){
-     return <View style = {{flex:1}}>
-      <Video
-        
-        style={{flex:0.9}}
-        source={require('../../assets/Project%20Name.mp4')}
-        shouldPlay
-        resizeMode="contain"
-        isLooping = {true}
-        
-        // onPlaybackStatusUpdate={status => setStatus(() => status)}
-      />
-      <View style = {{flex:0.1, marginTop:20}}> 
-      <Button onPress = {handleGame} title = {"Get Started"} containerStyle = {{marginLeft:30, marginRight:30,marginTop:10}}></Button>
-      </View> 
-     </View>
-     
-   }
+   
     return (
         <View style={{flex:1, paddingBottom:insets.bottom}}>
                 <View style = {{flex:0.3,}}>
