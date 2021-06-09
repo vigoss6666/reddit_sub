@@ -1173,21 +1173,22 @@ export function ClientHeader({client, style}) {
  
  useEffect(() => {
   async function gamer(){
-    const finaler = Promise.all(client.votes.map(async val => {
+    const finaler = await Promise.all(client.votes.map(async val => {
       const result = await db.collection('user').doc(val.answeredBy).get(); 
       return {...val, answeredBy:result.data()}
     })); 
     
-   finaler.then(result => setVotes(result))
+  //  finaler.then(result => setVotes(result))
+   setVotes(finaler.reverse())
    } 
   gamer(); 
-  }, [client])   
+  }, [client.votes])   
  
 
  
  
- 
- const reversed = votes.reverse(); 
+//  let gamer = JSON.parse(JSON.stringify(votes)); 
+ const reversed = votes;   
  const length = reversed.length; 
  const finalArray = length > 0 && length <= 10 ? reversed:reversed.slice(0,9); 
  const votesTemplate = reversed.length > 0 ? finalArray.map(val => {

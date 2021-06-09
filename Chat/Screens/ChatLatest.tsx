@@ -65,32 +65,41 @@ const [result, setResult] = useState('🔮');
 }, []);
   
 
+  // useEffect(() => {
+  //   if(Object.keys(clientObj.clientUser)){
+  //     navigation.setOptions({
+  //       headerLeft:() => {
+  //         return <TouchableOpacity onPress = {() => onPress()}>
+  //         <FontAwesome5 name="font-awesome-flag" size={24} color="red" style = {{marginLeft:10}}/>
+  //         </TouchableOpacity>
+  //       }, 
+  //       headerTitle:() => {
+  //         return <View style = {{marginTop:10, marginBottom:10, justifyContent:'center', alignItems:'center'}}>
+  //         <TouchableOpacity onPress = {() => navigation.navigate('ChatClientView', {client:clientObj.clientUser.phoneNumber})}>{clientObj.clientUser.profilePic ? <Image source = {{uri:clientObj.clientUser.profilePic}} style = {{height:40, width:40, borderRadius:20}}></Image>:<MaterialIcons name="account-circle" size={50} color="black" />}</TouchableOpacity>  
+  //         <Text style = {{fontWeight:'bold', marginTop:5, marginBottom:5, maxWidth:100, maxHeight:50}} numberOfLines = {1}>{computeName(clientObj.clientUser)}</Text>
+  //         </View>
+  //       }, 
+  //       headerStyle:{height:120}, 
+  //       headerRight:() => {
+  //         return <TouchableOpacity onPress = {() => navigation.goBack()}>
+  //           <Text style = {{fontWeight:'bold', color:'orange',}}>Done</Text>
+  //         </TouchableOpacity>
+  //       },
+  //        headerRightContainerStyle:{ paddingRight:10}
+  
+        
+        
+        
+  //     })
+
+  //   }
+    
+  // }, [])
   useEffect(() => {
     navigation.setOptions({
-      headerLeft:() => {
-        return <TouchableOpacity onPress = {() => onPress()}>
-        <FontAwesome5 name="font-awesome-flag" size={24} color="red" style = {{marginLeft:10}}/>
-        </TouchableOpacity>
-      }, 
-      headerTitle:() => {
-        return <View style = {{marginTop:10, marginBottom:10, justifyContent:'center', alignItems:'center'}}>
-        <TouchableOpacity onPress = {() => navigation.navigate('ChatClientView', {client:clientObj.clientUser.phoneNumber})}>{clientObj.clientUser.profilePic ? <Image source = {{uri:clientObj.clientUser.profilePic}} style = {{height:40, width:40, borderRadius:20}}></Image>:<MaterialIcons name="account-circle" size={50} color="black" />}</TouchableOpacity>  
-        <Text style = {{fontWeight:'bold', marginTop:5, marginBottom:5, maxWidth:100, maxHeight:50}} numberOfLines = {1}>{computeName(clientObj.clientUser)}</Text>
-        </View>
-      }, 
-      headerStyle:{height:120}, 
-      headerRight:() => {
-        return <TouchableOpacity onPress = {() => navigation.goBack()}>
-          <Text style = {{fontWeight:'bold', color:'orange',}}>Done</Text>
-        </TouchableOpacity>
-      },
-      headerRightContainerStyle:{ paddingRight:10}
-
-      
-      
-      
+      headerShown:false
     })
-  })
+  }, [])
  const renderTime = (props) => {
     return <Time {...props} timeTextStyle = {{left:{color:'black', fontWeight:'bold'}, right:{color:'black', fontWeight:'bold'}}}/>
  } 
@@ -166,7 +175,7 @@ const [result, setResult] = useState('🔮');
         {Object.keys(matchMaker).length ? <Text style = {{marginTop:30, fontWeight:'bold'}}> Matched by {computeName(matchMaker)}</Text>:null }
       </View>
    }
-   console.log(clientObj.clientUser.pushToken)
+   console.log(clientObj.clientUser.profilePic)
     const onSend = useCallback((messages = []) => {
       
       db.collection('matches').doc(clientObj._id).update({chatted:true});
@@ -182,7 +191,23 @@ const [result, setResult] = useState('🔮');
 
 
   return (
-    
+        <View style = {{flex:1}}>
+         <View style = {{ justifyContent:'space-between', alignItems:'center', height:120, flexDirection:'row', marginRight:10, paddingTop:insets.top}}>
+         <TouchableOpacity onPress = {() => onPress()}>
+          <FontAwesome5 name="font-awesome-flag" size={24} color="red" style = {{marginLeft:10}}/>
+          </TouchableOpacity>
+          <View style = {{marginTop:10, marginBottom:10, justifyContent:'center', alignItems:'center'}}>
+          <TouchableOpacity onPress = {() => navigation.navigate('ChatClientView', {client:clientObj.clientUser.phoneNumber})}>
+            {clientObj.clientUser.profilePic ? <Image source = {{uri:clientObj.clientUser.profilePic}} style = {{height:40, width:40, borderRadius:20}}></Image>:<MaterialIcons name="account-circle" size={50} color="black" />}
+            </TouchableOpacity>  
+          <Text style = {{fontWeight:'bold', marginTop:5, marginBottom:5, maxWidth:100, maxHeight:50}} numberOfLines = {1}>{computeName(clientObj.clientUser)}</Text>
+          </View>
+          <TouchableOpacity onPress = {() => navigation.goBack()}>
+            <Text style = {{fontWeight:'bold', color:'orange',}}>Done</Text>
+          </TouchableOpacity>
+
+           </View> 
+
         <GiftedChat
       renderChatEmpty = {renderChatEmpty}  
       showAvatarForEveryMessage = {false}
@@ -190,6 +215,7 @@ const [result, setResult] = useState('🔮');
       renderBubble = {renderBubble}
       renderTime = {renderTime}
       renderAvatarOnTop
+      
       scrollToBottom = {true}
       messages={messages}
       onSend={messages => onSend(messages)}
@@ -197,6 +223,7 @@ const [result, setResult] = useState('🔮');
         _id: clientObj.client1,
       }}
     />
+    </View>
     
   );
 };

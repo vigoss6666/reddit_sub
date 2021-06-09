@@ -24,7 +24,7 @@ return(
 <Entypo name="game-controller" size={24} color="black" />
 </TouchableOpacity>
 </View>
-<View style = {{flex:0.6, alignItems:"center", }}>
+<View style = {{flex:0.6, alignItems:"center", }}> 
 
 <Text style = {{fontWeight:"bold", fontSize:40}}>MATCHMAKE</Text>
 <TouchableOpacity style = {{marginTop:30}} onPress = {() => {user.gamePreview ? navigation.navigate('PlayGameLatest'):navigation.navigate('GamePreview')}}>

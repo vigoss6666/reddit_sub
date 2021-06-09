@@ -1,6 +1,6 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { Text, View, StyleSheet, Dimensions, ScrollView, Image, SafeAreaView, SectionList, FlatList, TouchableOpacity } from 'react-native';
-import { MaterialIcons, Foundation, Feather, Entypo,MaterialCommunityIcons  } from '@expo/vector-icons';
+import { MaterialIcons, Foundation, Feather, Entypo,MaterialCommunityIcons, FontAwesome5  } from '@expo/vector-icons';
 import {firebase } from '../../config'; 
 import {Button} from 'react-native-elements'; 
 import {iconFactory} from '../../src/common/Common'; 
@@ -15,7 +15,7 @@ const MatchViewLatest = ({navigation, route}) => {
     const [hidden, setHidden]= useState(false);
     const insets = useSafeAreaInsets();
     const myContext = useContext(AppContext); 
-    const {user, userId, db, createChatThread, firebase, computeName, setGeneratedMatch, generatedMatch} = myContext;
+    const {user, userId, db, createChatThread, firebase, computeName, setGeneratedMatch, generatedMatch, selfFilter} = myContext;
     const expoToken = 'ExponentPushToken[W-LwjHLivbcjOyOCbGIUve]'; 
     
     
@@ -75,7 +75,10 @@ const MatchViewLatest = ({navigation, route}) => {
     useEffect(() => {
        navigation.setOptions({
            headerTitle:false, 
-           headerLeft:() => (<TouchableOpacity onPress = {() => navigation.goBack()} style = {{marginLeft:10}}><Text style = {{fontWeight:'bold', color:'blue', fontSize:20}}>Back</Text></TouchableOpacity>)
+           headerLeft:() => (<TouchableOpacity onPress = {() => navigation.goBack()} style = {{marginLeft:10}}><Text style = {{fontWeight:'bold', color:'blue', fontSize:20}}>Back</Text></TouchableOpacity>),
+           headerRight:() => <TouchableOpacity onPress = {() => navigation.navigate('SelfSort')} style = {{marginRight:15}}>
+        <FontAwesome5 name="sort-numeric-down" size={24} color="black" />
+        </TouchableOpacity>
        }) 
     }, [])
 
@@ -151,24 +154,34 @@ const MatchViewLatest = ({navigation, route}) => {
 
     const textTemplate = hidden ? null: <View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
-          {iconFactory('humor', 20)}
-          <Text style = {styles.scores }>Humor:  {tester[sliderState.currentPage].data[sliderState1.currentPage].humor} </Text>
+          {/* {iconFactory('humor', 20)}
+          <Text style = {styles.scores }>Humor:  {tester[sliderState.currentPage].data[sliderState1.currentPage].humor} </Text> */}
+          {iconFactory(selfFilter.sortOrder[3], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[3].toUpperCase()}: {tester[sliderState.currentPage].data[sliderState1.currentPage][selfFilter.sortOrder[3]]}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
-          {iconFactory('empathetic', 20)}
-          <Text style = {styles.scores }>Empathetic:  {tester[sliderState.currentPage].data[sliderState1.currentPage].empathetic} </Text>
+          {/* {iconFactory('empathetic', 20)}
+          <Text style = {styles.scores }>Empathetic:  {tester[sliderState.currentPage].data[sliderState1.currentPage].empathetic} </Text> */}
+          {iconFactory(selfFilter.sortOrder[4], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[4].toUpperCase()}: {tester[sliderState.currentPage].data[sliderState1.currentPage][selfFilter.sortOrder[4]]}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5, marginLeft:5}}>
-          {iconFactory('wealthy', 20)}
-          <Text style = {styles.scores }>Wealthy:  {tester[sliderState.currentPage].data[sliderState1.currentPage].wealthy} </Text>
+          {/* {iconFactory('wealthy', 20)}
+          <Text style = {styles.scores }>Wealthy:  {tester[sliderState.currentPage].data[sliderState1.currentPage].wealthy} </Text> */}
+          {iconFactory(selfFilter.sortOrder[5], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[5].toUpperCase()}: {tester[sliderState.currentPage].data[sliderState1.currentPage][selfFilter.sortOrder[5]]}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
-          {iconFactory('looks', 20)}
-          <Text style = {styles.scores }>Looks:  {tester[sliderState.currentPage].data[sliderState1.currentPage].looks}</Text>
+          {/* {iconFactory('looks', 20)}
+          <Text style = {styles.scores }>Looks:  {tester[sliderState.currentPage].data[sliderState1.currentPage].looks}</Text> */}
+          {iconFactory(selfFilter.sortOrder[6], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[6].toUpperCase()}: {tester[sliderState.currentPage].data[sliderState1.currentPage][selfFilter.sortOrder[6]]}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center",padding:5}}>
-          {iconFactory('status', 20)}
-          <Text style = {styles.scores }>Status:  {tester[sliderState.currentPage].data[sliderState1.currentPage].status} </Text>
+          {/* {iconFactory('status', 20)}
+          <Text style = {styles.scores }>Status:  {tester[sliderState.currentPage].data[sliderState1.currentPage].status} </Text> */}
+          {iconFactory(selfFilter.sortOrder[7], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[7].toUpperCase()}: {tester[sliderState.currentPage].data[sliderState1.currentPage][selfFilter.sortOrder[7]]}</Text>
           </View>
           </View> 
     const sliderTemplate =  tester.map((val,index) => {
@@ -240,16 +253,22 @@ onScroll={(event: any) => {
             <View style = {{flexDirection:"row", justifyContent:'space-around'}}>
             <View>
             <View style = {{flexDirection:"row", alignItems:"center",padding:5}}>
-            {iconFactory('charisma', 20)}
-          <Text style = {styles.scores }>Charisma:  {tester[sliderState.currentPage].data[sliderState1.currentPage].charisma}</Text>
+            
+          {/* <Text style = {styles.scores }>{selfFilter.sortOrder[0].toUpperCase()}:  {selfMatchView.data[sliderState.currentPage][selfFilter.sortOrder[0]]}</Text> */}
+          {iconFactory(selfFilter.sortOrder[0], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[0].toUpperCase()}: {tester[sliderState.currentPage].data[sliderState1.currentPage][selfFilter.sortOrder[0]]}</Text>
           </View>
           <View style = {{flexDirection:"row", alignItems:"center",padding:5}}>
-          {iconFactory('creativity', 20)}
-          <Text style = {styles.scores }>Creativity:  {tester[sliderState.currentPage].data[sliderState1.currentPage].creativity}</Text>
+          {/* {iconFactory('creativity', 20)}
+          <Text style = {styles.scores }>Creativity:  {tester[sliderState.currentPage].data[sliderState1.currentPage].creativity}</Text> */}
+          {iconFactory(selfFilter.sortOrder[1], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[1].toUpperCase()}: {tester[sliderState.currentPage].data[sliderState1.currentPage][selfFilter.sortOrder[1]]}</Text>
           </View> 
           <View style = {{flexDirection:"row", alignItems:"center", padding:5}}>
-          {iconFactory('honest', 20)}
-          <Text style = {styles.scores }> Honest:  {tester[sliderState.currentPage].data[sliderState1.currentPage].honest}</Text>
+          {/* {iconFactory('honest', 20)}
+          <Text style = {styles.scores }> Honest:  {tester[sliderState.currentPage].data[sliderState1.currentPage].honest}</Text> */}
+          {iconFactory(selfFilter.sortOrder[2], 20)}
+          <Text style = {styles.scores }>{selfFilter.sortOrder[2].toUpperCase()}: {tester[sliderState.currentPage].data[sliderState1.currentPage][selfFilter.sortOrder[2]]}</Text>
           </View> 
           {textTemplate}
             </View>

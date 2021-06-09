@@ -10,7 +10,7 @@ import { logTen } from './logTen';
 import { iconFactory, LoadScreen} from '../../src/common/Common';
 
 
-import {transformCreativity, computeSimDimension, computeSectionLabel, filterGamer, getDistanceFromLatLonInKm, clientSort} from '../../networking'; 
+import {transformCreativity, computeSimDimension, computeSectionLabel, filterGamer, getDistanceFromLatLonInKm, clientSort, computeSimDimensionShuffle} from '../../networking'; 
 import { filter } from 'underscore';
 const db = firebase.firestore(); 
 interface MatchMakeFinalProps {}
@@ -340,7 +340,7 @@ const MatchMakeFinal = ({navigation, route}) => {
       
       
       const simDimensionTransform = await Promise.all(transformedpointstoscores.map(async val => {
-          const simDimension =  await computeSimDimension(val.client, val.users);
+          const simDimension =  await computeSimDimensionShuffle(val.client, val.users);
           const filterBySim = await simDimension.filter(val => val.simDimension)
           
           //console.log(simDimension)
