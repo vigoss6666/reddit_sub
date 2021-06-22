@@ -180,7 +180,7 @@ export default function App() {
   const [singleContact, setSingleContact] = useState();  
   const [notification, setNotification] = useState(false);
   const [sentFromBrowse, setSentFromBrowse] = useState(null); 
-  const [tempId, setTempId] = useState('+992992992'); 
+  const [tempId, setTempId] = useState(); 
   const responseListener = useRef();
   const notificationListener = useRef();
   const [profilePicLocal, setProfilePicLocal] = useState(null); 
@@ -202,7 +202,7 @@ export default function App() {
       shouldSetBadge: false,
     }),
   });
-  
+ 
   
 
 
@@ -235,7 +235,7 @@ export default function App() {
   })
   const [clientFilter, setClientFilter] = useState([]); 
   useEffect(() => {
-    // AsyncStorage.removeItem('user')
+    AsyncStorage.removeItem('user')
   }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
@@ -250,7 +250,7 @@ async function namer(){
   const user1 = "+917208110384"; 
   const user2 = "+919930815474";
   
-  setId(userGamer); 
+  setId(user1); 
 }
 
 if(!Object.keys(user).length){
@@ -358,6 +358,10 @@ function stringifyNumber(n) {
     setUser,
     defaultDataObject,
     firebase,
+    countryCode, 
+    dialCode,
+    setDialCode, 
+    setCountryCode
 
   }
   
@@ -502,7 +506,7 @@ const mainHome = () => {
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="MatchMakeGrand" component={MatchMakeGrand}/>
           <Stack.Screen name="PointsRequired" component={PointsRequired}/>
-          <Stack.Screen name="Sort" component={Sort} />
+          <Stack.Screen name="Sort" component={Sort} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS, headerShown:false }}/>
           <Stack.Screen name="SelfSort" component={SelfSort} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS ,headerShown:false}}/>
           <Stack.Screen name="Birthday" component={BirthDay}/>
           <Stack.Screen name="NewContactLocation" component={NewContactLocation}/>
@@ -619,12 +623,12 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Name} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>
 <Stack.Screen name="Birthday" component={BirthDay}/>
-
+<Stack.Screen name="CountryCodes" component={CountryCodes} options = {{headerTitle:false}}/> 
 <Stack.Screen name="Gender" component={Gender}/>
 <Stack.Screen name="ContactsLocationLatest" component={ContactsLocationLatest}/>
 <Stack.Screen name="GenderPreference" component={GenderPreference}/>

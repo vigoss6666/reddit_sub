@@ -13,7 +13,7 @@ const Invitetoplay = ({navigation,route}) => {
   const {client} = route.params;  
   const invite = () => {
     Share.share({message:`Inviting you to try Friends Help Friends app
-    https://expo.io/@votexclient/projects/laniister
+    https://exp.host/@votexclient/frends_first_beta
     username:votexclient 
     password:chemistry1Zu!2     
     `, url:undefined}).then(result => {

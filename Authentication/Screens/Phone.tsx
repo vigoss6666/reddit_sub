@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Fl
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from '../../AppContext';
 
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
 import {Button} from 'react-native-elements'; 
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
@@ -15,8 +15,9 @@ const auth = firebase.auth();
 
 export default function App({navigation}) {
   const myContext = useContext(AppContext);
-  const {CustomBackComponent, setTempId} = myContext;
+  const {CustomBackComponent, setTempId, dialCode, countryCode} = myContext;
   const recaptchaVerifier = React.useRef(null);
+  
   const storeData = async (value:string) => {
     try {
       await AsyncStorage.setItem('user', value)
@@ -43,6 +44,8 @@ export default function App({navigation}) {
       : undefined
   );
   const attemptInvisibleVerification = false;
+
+  console.log(phoneNumber)
   
 
   return (
@@ -53,15 +56,30 @@ export default function App({navigation}) {
         attemptInvisibleVerification={attemptInvisibleVerification}
       />
       <Text style={{ marginTop: 20 }}>Enter phone number</Text>
+      <View style = {{flexDirection:'row', alignItems:'center', marginTop:5,marginBottom:10}}>
+      <TouchableOpacity style = {{flexDirection:'row', marginRight:20,  height:40}} onPress = {() => navigation.navigate('CountryCodes', {page:'Phone'})}>
+        <Text style = {{borderWidth:0.5,padding:10,}}>
+             {/* {countryCode}
+               {dialCode} */}
+               {countryCode} {dialCode}
+    
+        </Text>
+        <View style = {{borderWidth:0.5,padding:10}}>
+        <FontAwesome5 name="caret-down" size={24} color="black" />
+        </View>
+    
+    
+    </TouchableOpacity>
       <TextInput
         style={{ marginVertical: 10, fontSize: 17 }}
-        placeholder="+1 999 999 9999"
+        placeholder="999 999 9999"
         autoFocus
         autoCompleteType="tel"
         keyboardType="phone-pad"
         textContentType="telephoneNumber"
-        onChangeText={phoneNumber => setPhoneNumber(phoneNumber)}
+        onChangeText={phoneNumber => setPhoneNumber(dialCode+phoneNumber)}
       />
+      </View>
       <Button
         title="Send Verification Code"
         disabled={!phoneNumber}

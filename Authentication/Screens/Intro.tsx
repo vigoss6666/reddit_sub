@@ -46,7 +46,7 @@ export default function Intro({navigation}){
             }}
           >
             <View style={{ width, height,backgroundColor:"#ffffff" }}>
-              <Image source={{uri:'https://storage.googleapis.com/nemesis-157710.appspot.com/Intro1.png'}} style={styles.imageStyle} />
+              <Image source={{uri:'https://firebasestorage.googleapis.com/v0/b/friends-365d0.appspot.com/o/Screenshot%202021-06-14%20at%205.08.20%20PM.png?alt=media&token=c404a9ca-1044-47b8-a55b-4c5f287fa204'}} style={styles.imageStyle} />
               
             </View>
             <View style={{ width, height,backgroundColor:"#ffffff" }}>

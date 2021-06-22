@@ -216,7 +216,7 @@ const Match = ({navigation}) => {
        return Object.assign({}, val, {endorsementClients:[]})
         
      }))
-     console.log(getEndorsements[1].endorsementClients.length)
+     
            function applyToIncluded(val){
           return {...val, seen:true}  
         }

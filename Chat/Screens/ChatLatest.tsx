@@ -105,7 +105,7 @@ const [result, setResult] = useState('🔮');
  } 
  const renderAvatar = () => {
     return (
-       clientObj.clientUser.profilePic ? <Image style = {{height:40, width:40, borderRadius:20}} source = {{uri:clientObj.clientUser.profilePic}}/>:<MaterialIcons name="account-circle" size={50} color="black" /> 
+       clientObj.clientUser.profilePic ? <Image style = {{height:40, width:40, borderRadius:20}} source = {{uri:clientObj.clientUser.profilePic ? clientObj.clientUser.profilePic:""}}/>:<MaterialIcons name="account-circle" size={50} color="black" /> 
     )
     
  }
@@ -175,7 +175,7 @@ const [result, setResult] = useState('🔮');
         {Object.keys(matchMaker).length ? <Text style = {{marginTop:30, fontWeight:'bold'}}> Matched by {computeName(matchMaker)}</Text>:null }
       </View>
    }
-   console.log(clientObj.clientUser.profilePic)
+   //console.log(clientObj.clientUser.profilePic)
     const onSend = useCallback((messages = []) => {
       
       db.collection('matches').doc(clientObj._id).update({chatted:true});
@@ -183,7 +183,11 @@ const [result, setResult] = useState('🔮');
       db.collection('user').doc(clientObj.client2).update({lastMessage:firebase.firestore.FieldValue.arrayUnion(messages[0])}) 
 
       db.collection('messages').doc(chatID).collection("messages").add(messages[0])
-      sendPushNotification(clientObj.clientUser.pushToken); 
+      console.log("pushTOken is"+clientObj.clientUser.pushToken)
+      if(clientObj.clientUser.pushToken){
+        sendPushNotification(clientObj.clientUser.pushToken); 
+      }
+      
     }, [])
 
 
@@ -198,7 +202,7 @@ const [result, setResult] = useState('🔮');
           </TouchableOpacity>
           <View style = {{marginTop:10, marginBottom:10, justifyContent:'center', alignItems:'center'}}>
           <TouchableOpacity onPress = {() => navigation.navigate('ChatClientView', {client:clientObj.clientUser.phoneNumber})}>
-            {clientObj.clientUser.profilePic ? <Image source = {{uri:clientObj.clientUser.profilePic}} style = {{height:40, width:40, borderRadius:20}}></Image>:<MaterialIcons name="account-circle" size={50} color="black" />}
+            {clientObj.clientUser.profilePic ? <Image source = {{uri:clientObj.clientUser.profilePic ? clientObj.clientUser.profilePic : ""}} style = {{height:40, width:40, borderRadius:20}}></Image>:<MaterialIcons name="account-circle" size={50} color="black" />}
             </TouchableOpacity>  
           <Text style = {{fontWeight:'bold', marginTop:5, marginBottom:5, maxWidth:100, maxHeight:50}} numberOfLines = {1}>{computeName(clientObj.clientUser)}</Text>
           </View>

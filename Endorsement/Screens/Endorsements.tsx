@@ -70,8 +70,8 @@ export default function Endorsement({navigation, route}){
    }, [])
     return(
         <View style = {{flex:1,backgroundColor:"black" }}>
-        <View style = {{flex:0.2}}>
-        
+        <View style = {{flex:0.2, justifyContent:'center', alignItems:'center'}}>
+        <Image source = {{uri:'https://media.giphy.com/media/3ohs4oWkzyVeVgTwKQ/giphy.gif'}} style = {{height:80, width:80}}/>
         </View>
         <View style = {{flex:0.6,}}>
          <Text style = {{color:"white", fontWeight:"bold", fontSize:35, fontStyle:"italic", alignSelf:'center'}}> It's a Match ! </Text>

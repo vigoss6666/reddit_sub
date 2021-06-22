@@ -149,7 +149,8 @@ const Sort = ({navigation, route}) => {
   
     return (
       <View style={{ flex: 1 }}>
-        <DraggableFlatList
+        <CustomBackComponent navigation = {navigation}/>
+      <DraggableFlatList
           data={sortData}
           renderItem={renderItem}
           keyExtractor={(item, index) => `draggable-item-${item.key}`}

@@ -24,6 +24,7 @@ export default function Name({navigation}){
  
  console.log("user id is"+userId) 
  
+ 
    
    
    const [firstName, setFirstName] = useState(""); 

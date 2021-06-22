@@ -20,6 +20,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Video } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 import {Button} from 'react-native-elements'; 
+import { LinearGradient } from 'expo-linear-gradient';
+
 const db = firebase.firestore(); 
 //@refresh reset
 interface PlayGameLatestProps {}
@@ -32,6 +34,7 @@ const PlayGameLatest = ({navigation}) => {
   const [bar, setBar] = useState(0);
   const [client, setClient] = useState(); 
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const backFade = useRef(new Animated.Value(0)).current;
   const fadeOpac = useRef(new Animated.Value(0)).current;
   const [questionsIndex, setQuestionsIndex] = useState(0); 
   const insets = useSafeAreaInsets();
@@ -47,6 +50,7 @@ const PlayGameLatest = ({navigation}) => {
   const myContext = useContext(AppContext); 
   const [pageFocused, setPageFocused] = useState(false); 
   const [preview, setPreview] = useState()
+  const colors = ['green', 'blue', 'red']
   
   
   const [questions, setQuestions] = useState([]); 
@@ -72,9 +76,15 @@ const PlayGameLatest = ({navigation}) => {
              <Text style = {{fontWeight:'bold', fontSize:17, color:'blue'}}>Back</Text>  
              </TouchableOpacity>
       }, 
-      headerRight:() => <TouchableOpacity style = {{marginRight:20}} onPress = {onRefresh}>
+      headerRight:() => <View style = {{flexDirection:'row'}}>
+        <TouchableOpacity style = {{marginRight:20}} onPress = {onRefresh}>
+        {/* <FontAwesome name="refresh" size={24} color="black" /> */}
+        <Text>Flip</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style = {{marginRight:20}} onPress = {onRefresh}>
         <FontAwesome name="refresh" size={24} color="black" />
-      </TouchableOpacity>     
+      </TouchableOpacity>
+      </View>     
     })
 },[]) 
   
@@ -134,7 +144,13 @@ const namer =  [
 }, [])
 
   
-  
+  const backFader = () => {
+    Animated.timing(backFade, {
+      toValue:2, 
+      useNativeDriver:false, 
+      duration:1
+    }).start()
+  }
 
   const fadeOp = () => {
     // Will change fadeAnim value to 1 in 5 seconds
@@ -421,6 +437,10 @@ const handleGame = () => {
     inputRange:[0,1],
     outputRange:['white','green'], 
  })
+ const blader = backFade.interpolate({
+  inputRange:[0,1,2,3],
+  outputRange:['red','green', 'blue', 'yellow'], 
+})
 
   function measureMain(gesture){
     
@@ -477,6 +497,7 @@ const handleGame = () => {
        addPoints()
        suggestMatches() 
        fadeIn()
+       backFader()
        incrementIndex();   
        questionsIndexIncrement(); 
        
@@ -498,13 +519,19 @@ const handleGame = () => {
     
    }
    
+   
     return (
         <View style={{flex:1, paddingBottom:insets.bottom}}>
+          
+          <LinearGradient colors={[`rgba(${index},${index + 10},20,0.5)`, 'transparent']} style = {{flex:1}} start = {{x:0.1, y:0.3}}>
+          
+          
+  
                 <View style = {{flex:0.3,}}>
                 <View style = {{marginTop:10, marginLeft:30, marginRight:30}}>
                 <Text style = {{alignSelf:'flex-end', marginBottom:10}}> {questionsIndex}/{questions.length -1}</Text>    
                 <Progress.Bar progress={bar} width={Dimensions.get('window').width -60   } height = {20} />
-                <Text style = {{marginTop:30,  marginBottom:10,fontSize:15, fontWeight:'bold',}} numberOfLines = {3} textBreakStrategy = {'highQuality'}> {questions.length ? questions[questionsIndex].question:null} </Text>
+                <Text style = {{marginTop:30,  marginBottom:10,fontSize:15, fontWeight:'bold',color:'white'}} numberOfLines = {3} textBreakStrategy = {'highQuality'}> {questions.length ? questions[questionsIndex].question:null} </Text>
                 </View>    
                 
                 </View>
@@ -514,10 +541,10 @@ const handleGame = () => {
                 </Animated.View>    
                 <Animated.View style = {{opacity:fadeOpac, position:'absolute', top:5, right:50}}>
                 <View style = {{flexDirection:"row", alignItems:'center'}}>
-               <Text style = {{fontWeight:"bold"}}>+1</Text> 
+               <Text style = {{fontWeight:"bold",color:'black'}}>+1</Text> 
                <MaterialCommunityIcons name="lightbulb-on" size={24} color="black" />
                </View>
-               <Text>{ questions.length && questionsIndex > 0 ? questions[questionsIndex - 1].dimension:null }</Text>   
+               <Text style = {{fontWeight:"bold",color:'black'}}>{ questions.length && questionsIndex > 0 ? questions[questionsIndex - 1].dimension:null }</Text>   
                 </Animated.View>
                 </View>
                 
@@ -530,7 +557,7 @@ const handleGame = () => {
                    {secondTemplate()}
                </Draggable>    
                </View> 
-              
+              </LinearGradient >
               
               
         </View>
