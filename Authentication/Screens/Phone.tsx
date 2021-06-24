@@ -43,7 +43,7 @@ export default function App({navigation}) {
         }
       : undefined
   );
-  const attemptInvisibleVerification = false;
+  const attemptInvisibleVerification = true;
 
   console.log(phoneNumber)
   

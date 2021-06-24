@@ -235,7 +235,7 @@ export default function App() {
   })
   const [clientFilter, setClientFilter] = useState([]); 
   useEffect(() => {
-    AsyncStorage.removeItem('user')
+    //AsyncStorage.removeItem('user')
   }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
@@ -250,7 +250,7 @@ async function namer(){
   const user1 = "+917208110384"; 
   const user2 = "+919930815474";
   
-  setId(user1); 
+  setId(userGamer); 
 }
 
 if(!Object.keys(user).length){

@@ -464,8 +464,9 @@ const MatchMakeFinal = ({navigation, route}) => {
     };
 
     const computeIndex = (flatListuser) => {
-       const result = userDisplay[sliderState.currentPage].data.findIndex(val => val.phoneNumber == flatListuser.phoneNumber);
-       return result;  
+      //  const result = userDisplay[sliderState.currentPage].data.findIndex(val => val.phoneNumber == flatListuser.phoneNumber);
+      //  return result;
+      return 0;   
     }
     const renderSectionItem = ({section, index}) => {
         

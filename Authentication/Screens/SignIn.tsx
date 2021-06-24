@@ -15,7 +15,7 @@ const auth = firebase.auth();
 
 export default function SignIn({navigation}) {
   const myContext = useContext(AppContext);
-  const {CustomBackComponent, setTempId, dialCode, countryCode} = myContext;
+  const {CustomBackComponent, setTempId, dialCode, countryCode, setUser} = myContext;
   const recaptchaVerifier = React.useRef(null);
   const storeData = async (value:string) => {
     try {
@@ -42,7 +42,7 @@ export default function SignIn({navigation}) {
         }
       : undefined
   );
-  const attemptInvisibleVerification = false;
+  const attemptInvisibleVerification = true;
   
 
   return (
