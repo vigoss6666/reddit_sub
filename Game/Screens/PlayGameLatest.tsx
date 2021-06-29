@@ -97,12 +97,43 @@ const resetGame = () => {
     
    
 
-   useEffect(() => {
+  //  useEffect(() => {
     
-    db.collection('questions').get().then(onResult => {
-         const result = onResult.docs.map(val => val.data()); 
-         setQuestions(result); 
-    })
+  //   db.collection('questions').get().then(onResult => {
+  //        const result = onResult.docs.map(val => val.data()); 
+  //        setQuestions(result); 
+  //   })
+  // }, [])
+  useEffect(() => {
+    console.log(user.userSet)
+    db.collection('dimensionQuestions').doc(user.userSet).get().then(onResult => {
+      if(onResult.exists){
+        
+        const data = parseInt(user.userSet); 
+        const increment = data + 1; 
+        const finalIncremnent = increment.toString(); 
+        db.collection('user').doc(userId).set({userSet:finalIncremnent},{merge:true})
+        const result = onResult.data(); 
+        setQuestions(result.questions); 
+        return; 
+      }
+      const int = parseInt(user.userSet);
+      const finalInt = int - 1; 
+      const finalString = finalInt.toString();   
+      db.collection('dimensionQuestions').doc(finalString).get().then(onResult1 => {
+        const result1 = onResult1.data();
+        
+        setQuestions(result1.questions); 
+        db.collection('user').doc(userId).set({userSet:"0"},{merge:true}) 
+      })
+      
+ })
+  // db.collection('questions').get().then(onResult => {
+  //        const result = onResult.docs.map(val => val.data()); 
+  //        //setQuestions(result); 
+  //        console.log(result)
+  //        db.collection('dimensionQuestions').doc('0').set({questions:result})
+  //   }) 
   }, [])
   useEffect(() => {
     console.log("i was called")
