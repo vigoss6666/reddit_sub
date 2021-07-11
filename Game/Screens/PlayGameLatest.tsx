@@ -22,6 +22,7 @@ import * as FileSystem from 'expo-file-system';
 import {Button} from 'react-native-elements'; 
 import { LinearGradient } from 'expo-linear-gradient';
 
+
 const db = firebase.firestore(); 
 //@refresh reset
 interface PlayGameLatestProps {}
@@ -70,6 +71,7 @@ const PlayGameLatest = ({navigation}) => {
   useEffect(() => {
     navigation.setOptions({
       didFocus:() => console.log("I was chaddi"), 
+      headerShown:false, 
       headerTitle:false, 
       headerLeft:() => { 
          return  <TouchableOpacity onPress = {() => {resetGame(),navigation.goBack()}} style = {{marginLeft:15}}>
@@ -77,7 +79,7 @@ const PlayGameLatest = ({navigation}) => {
              </TouchableOpacity>
       }, 
       headerRight:() => <View style = {{flexDirection:'row'}}>
-        <TouchableOpacity style = {{marginRight:20}} onPress = {onRefresh}>
+        <TouchableOpacity style = {{marginRight:20}} onPress = {() => flip()}>
         {/* <FontAwesome name="refresh" size={24} color="black" /> */}
         <Text>Flip</Text>
       </TouchableOpacity>
@@ -520,6 +522,13 @@ const handleGame = () => {
       } 
   }
 
+  const flip = () => {
+       incrementIndex();   
+       questionsIndexIncrement(); 
+       
+       setBar(bar + 0.05)
+  }
+
   const onDragRelease = (gesture) => {
     
     const measured = measureMain(gesture); 
@@ -552,15 +561,31 @@ const handleGame = () => {
    
    
     return (
-        <View style={{flex:1, paddingBottom:insets.bottom}}>
+        <View style={{flex:1, paddingBottom:insets.bottom, paddingTop:insets.top}}>
+          
           
           <LinearGradient colors={[`rgba(${index},${index + 10},20,0.5)`, 'transparent']} style = {{flex:1}} start = {{x:0.1, y:0.3}}>
           
           
   
                 <View style = {{flex:0.3,}}>
+                <View style = {{flexDirection:'row', justifyContent:'space-between',marginTop:20}}>
+                <TouchableOpacity onPress = {() => {resetGame(),navigation.goBack()}} style = {{marginLeft:15}}>
+             <Text style = {{fontWeight:'bold', fontSize:17, color:'white'}}>Back</Text>  
+             </TouchableOpacity>
+             <View style = {{flexDirection:'row'}}>
+        <TouchableOpacity style = {{marginRight:20}} onPress = {() => flip()}>
+        {/* <FontAwesome name="refresh" size={24} color="black" /> */}
+        <Text style = {{color:'white', fontWeight:'bold'}}>Flip</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style = {{marginRight:20}} onPress = {onRefresh}>
+        <FontAwesome name="refresh" size={24} color="white" />
+      </TouchableOpacity>
+      </View>
+                </View>  
                 <View style = {{marginTop:10, marginLeft:30, marginRight:30}}>
                 <Text style = {{alignSelf:'flex-end', marginBottom:10}}> {questionsIndex}/{questions.length -1}</Text>    
+                
                 <Progress.Bar progress={bar} width={Dimensions.get('window').width -60   } height = {20} />
                 <Text style = {{marginTop:30,  marginBottom:10,fontSize:15, fontWeight:'bold',color:'white'}} numberOfLines = {3} textBreakStrategy = {'highQuality'}> {questions.length ? questions[questionsIndex].question:null} </Text>
                 </View>    
