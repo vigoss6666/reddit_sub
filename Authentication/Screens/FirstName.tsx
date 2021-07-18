@@ -35,7 +35,7 @@ export default function FirstName({navigation}){
    const fire = () => {
      
     
-    db.collection('user').doc(userId).set({firstName, lastName, name:firstName+lastName}, {merge:true}).then(() => {
+    db.collection('user').doc(userId).set({firstName}, {merge:true}).then(() => {
       
       navigation.navigate('Birthday', {page:"something"})
       
@@ -44,13 +44,20 @@ export default function FirstName({navigation}){
     
     } 
    
-    
+    useEffect(() => {
+     if(firstName.length > 0){
+         setOpenGate(false)
+     }
+     if(firstName.length == 0){
+        setOpenGate(true)
+    }
+    },[firstName])
   
 
   
 
    const handleFirstNameChange = async (event) => {
-    handleOpenGate()
+    // handleOpenGate()
     const {eventCount, target, text} = event.nativeEvent;
         console.log(text)
         setFirstName(text);  
@@ -97,7 +104,7 @@ return(
   title="Continue"
 
   type="outline"
-  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30,}}
+  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30,elevation:5}}
   disabled = {openGate}
   titleStyle = {{color:"white", fontWeight:'bold'}}
   disabledStyle = {{backgroundColor:"grey",}}
