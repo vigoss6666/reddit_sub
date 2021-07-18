@@ -9,6 +9,7 @@ import AppContext from '../../AppContext';
 export default function School({navigation}){
   const myContext = useContext(AppContext); 
     const {userId, CustomBackComponent,profilePicLocal} = myContext;
+    const [openGate, setOpenGate] = useState(true); 
     const [Email, setEmail] = useState();
     useEffect(() => {
       navigation.setOptions({
@@ -16,6 +17,15 @@ export default function School({navigation}){
         headerLeft:() => <CustomBackComponent navigation = {navigation}/>
       })
     }, [])
+
+    useEffect(() => {
+      if(profilePicLocal){
+        setOpenGate(false); 
+      }
+      if(!profilePicLocal){
+        setOpenGate(true)
+      }
+    }, [profilePicLocal])
 
     const _handleEmail = () => {
     const hello = "zaheeryakub@gmail.com";     
@@ -27,12 +37,12 @@ export default function School({navigation}){
       <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
       <View style = {{flex:1, }}>   
       <View style = {{flex:0.2}}>
-      <TouchableOpacity onPress = {() => { navigation.navigate('School', {page:'something'})}}>
+      {/* <TouchableOpacity onPress = {() => { navigation.navigate('School', {page:'something'})}}>
       <Text style = {{marginTop:20, alignSelf:"flex-end", marginRight:30, color:"orange", fontWeight:"bold"}}>Skip</Text>   
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       </View>
       <View style = {{flex:0.5, marginLeft:30}}>
-      <Text style = {{fontWeight:"bold", fontSize:23, alignSelf:"center", marginLeft:-20 }}> Upload your photo</Text>
+      <Text style = {{fontWeight:"bold", fontSize:23,  marginLeft:30 }}> Upload your photo</Text>
       <View style = {{borderBottomWidth:1, width:Dimensions.get('window').width - 60, marginTop:10}}/> 
       <View style = {{justifyContent:"center", alignItems:"center", marginTop:60, marginLeft:-30}}>
       {profilePicLocal ? <Image source = {{uri:profilePicLocal}} style = {{height:100, width:100, borderRadius:50}}/>: <MaterialIcons name="account-circle" size={120} color="black" />}

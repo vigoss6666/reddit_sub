@@ -96,7 +96,7 @@ export const Header:FunctionComponent<HeaderProps>= (props) => {
 //       }
 return(
 <View style = {[props.style]}>
-<Text style = {{fontSize:35, fontWeight:'500', }}>{props.text}</Text>
+<Text style = {{fontSize:30, fontWeight:'500', }}>{props.text}</Text>
 </View>
 )
 }

@@ -51,12 +51,12 @@ const gateGuard = man || woman ? false: true;
 
 
 return(
-<View style = {{flex:1,}}>
+<View style = {{flex:1,backgroundColor:'#ffffff'}}>
 <View style = {{flex:0.2}}>
      
 </View>
 <View style = {{flex:0.5, marginLeft:50, marginRight:50}}>
-<Header text = {"I identify as a...."}/>
+<Header text = {"I identify as a..."}/>
 <View  style = {{borderBottomWidth:0.5, width:Dimensions.get('window').width - 60,marginTop:20}}/>
 <View style = {{flexDirection:"row", justifyContent:"space-around",marginTop:40 }}>
 <TouchableOpacity 

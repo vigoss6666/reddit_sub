@@ -41,7 +41,7 @@ export default function Job({navigation, route}){
   
     return(
       <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
-      <View style = {{flex:1, }}>   
+      <View style = {{flex:1,backgroundColor:'#ffffff' }}>   
       <View style = {{flex:0.2}}>
       <TouchableOpacity onPress = {() => _handlePage()}>
       <Text style = {{marginTop:20, alignSelf:"flex-end", marginRight:30, color:"orange", fontWeight:"bold"}}>Skip</Text>   
@@ -55,7 +55,7 @@ export default function Job({navigation, route}){
         marginTop:40 }}
          placeholder = {"Ex: Retail Manager"}  
          autoCorrect = {false}
-         autoCapitalize = {"none"}
+         autoCapitalize = {"words"}
          value = {job}
          onChangeText = {(text) => { setJob(text)}}
         ></TextInput>

@@ -64,12 +64,12 @@ export default function BirthDay({navigation, route}){
     showMode('time');
   };
 return(
-<View style = {{flex:1, }}>
+<View style = {{flex:1, backgroundColor:'#ffffff' }}>
 <View style = {{flex:0.2}}>
      
 </View>
 <View style = {{flex:0.5, }}>
-<Header text = {"My Birthday is...."} style = {{alignSelf: 'center',}}/>
+<Header text = {"My birthday is..."} style = {{marginLeft:30, marginRight:30}}/>
 <View style = {{marginLeft:30,borderBottomColor:"black", borderBottomWidth:2, width:Dimensions.get('window').width - 60,opacity:0.3,marginTop:10}}/>
     <DateTimePicker
       style = {{marginLeft:150}}

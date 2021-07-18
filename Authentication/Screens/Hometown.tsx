@@ -44,23 +44,24 @@ export default function Hometown({navigation, route}){
   
     return(
       <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
-      <View style = {{flex:1, }}>   
+      <View style = {{flex:1, backgroundColor:'#ffffff'}}>   
       <View style = {{flex:0.2}}>
       <TouchableOpacity onPress = {() => _handlePage()}>
       <Text style = {{marginTop:20, alignSelf:"flex-end", marginRight:30, color:"orange", fontWeight:"bold"}}>Skip</Text>   
       </TouchableOpacity>
       </View>
       <View style = {{flex:0.5, marginLeft:30}}>
-      <Text style = {{fontWeight:"bold", fontSize:23, }}> What's your Hometown?</Text>
+      <Text style = {{fontWeight:"bold", fontSize:23, }}> Where are you from?</Text>
       <View style = {{borderBottomWidth:1, width:Dimensions.get('window').width - 60, marginTop:10}}/> 
       <TextInput 
       style = {{fontSize:35,borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60,
         marginTop:40 }}
          placeholder = {"Ex: Leon valley, TX"}  
          autoCorrect = {false}
-         autoCapitalize = {"none"}
+         autoCapitalize = {"words"}
          value = {job}
          onChangeText = {(text) => { setJob(text)}}
+         
         ></TextInput>
              <Button
   title="Continue"

@@ -12,13 +12,19 @@ import {updateUser} from '../../networking';
 // @refresh reset
 const auth = firebase.auth(); 
 
-export default function FirstName({navigation}){
+export default function LastName({navigation}){
    const myContext = useContext(AppContext);   
    const { userId, CustomBackComponent,db  } = myContext; 
-   useEffect(() => {
+//    useEffect(() => {
+//     navigation.setOptions({
+//       headerTitle:false, 
+//       headerLeft:false, 
+//     })
+//   }, [])
+useEffect(() => {
     navigation.setOptions({
       headerTitle:false, 
-      headerLeft:false, 
+      headerLeft:() => <CustomBackComponent navigation = {navigation}/>
     })
   }, [])
  
@@ -35,36 +41,30 @@ export default function FirstName({navigation}){
    const fire = () => {
      
     
-    db.collection('user').doc(userId).set({firstName}, {merge:true}).then(() => {
+    db.collection('user').doc(userId).set({ lastName }, {merge:true}).then(() => {
       
-      navigation.navigate('LastName', {page:"something"})
+      navigation.navigate('Birthday', {page:"something"})
       
     })
     
     
     } 
    
-    useEffect(() => {
-     if(firstName.length > 0){
-         setOpenGate(false)
-     }
-     if(firstName.length == 0){
+    
+  
+
+  
+   useEffect(() => {
+    if(lastName.length > 0 ){
+        setOpenGate(false); 
+    }
+    if(lastName.length == 0){
         setOpenGate(true)
     }
-    },[firstName])
-  
-
-  
-
-   const handleFirstNameChange = async (event) => {
-    // handleOpenGate()
-    const {eventCount, target, text} = event.nativeEvent;
-        console.log(text)
-        setFirstName(text);  
-        
-   }
+   }, [lastName])
+   
    const handleLastNameChange = async (event) => {
-    handleOpenGate()
+    // handleOpenGate()
     const {eventCount, target, text} = event.nativeEvent;
     console.log(text)  
     setLastName(text);
@@ -85,17 +85,17 @@ export default function FirstName({navigation}){
     
       
 return(
-<KeyboardAvoidingView style = {{flex:1,paddingTop:100,backgroundColor:'#ffffff'}} behavior={Platform.OS == "ios" ? "padding" : "padding"}>
+<KeyboardAvoidingView style = {{flex:1,paddingTop:40,backgroundColor:'#ffffff'}} behavior={Platform.OS == "ios" ? "padding" : "padding"}>
 <Header text = "My name is..." style = {{justifyContent:"center", alignItems: 'flex-start',marginLeft:30,marginTop:60, }}/>
-<View style = {{borderBottomWidth:1, borderBottomColor:'grey',marginLeft:30, marginRight:30, marginTop:30}}/>
+<View style = {{borderBottomWidth:0.5, borderBottomColor:'grey',marginLeft:30, marginRight:30, marginTop:30}}/>
 
-<TextInput style = {{fontSize:35,borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:40 }} placeholder = {"First Name"} onChange = { (text) => {handleFirstNameChange(text)}} autoCorrect = {false} value = {firstName}>
+{/* <TextInput style = {{fontSize:35,borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:40 }} placeholder = {"First Name"} onChange = { (text) => {handleFirstNameChange(text)}} autoCorrect = {false} value = {firstName}>
 
 
-</TextInput>
-<Text style = {{alignSelf:"flex-start", marginLeft:30,marginTop:10, }}>This is how it will appear to others</Text>
-{/* <TextInput style = {{fontSize:35, borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} placeholder = {"Last Name"} onChange = {(text) => {handleLastNameChange(text)} } autoCorrect = {false} value = {lastName}></TextInput> */}
-<TextInput style = {{borderBottomWidth:0.3, borderColor:"grey",opacity:0.5, width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} ></TextInput>
+</TextInput> */}
+<TextInput style = {{fontSize:35, borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} placeholder = {"Last Name"} onChange = {(text) => {handleLastNameChange(text)} } autoCorrect = {false} value = {lastName}></TextInput>
+<Text style = {{alignSelf:"flex-start", marginLeft:30,marginTop:10,color:'grey',marginRight:30 }}>Your last name won't be shared with others </Text>
+<View style = {{borderBottomWidth:1, borderBottomColor:'grey',marginLeft:30, marginRight:30, marginTop:50}}/>
 
 
 
@@ -104,7 +104,7 @@ return(
   title="Continue"
 
   type="outline"
-  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30,elevation:5}}
+  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30,}}
   disabled = {openGate}
   titleStyle = {{color:"white", fontWeight:'bold'}}
   disabledStyle = {{backgroundColor:"grey",}}

@@ -13,6 +13,7 @@ import { NavigationContainer, BaseRouter } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Name from './Authentication/Screens/Name';
 import FirstName from './Authentication/Screens/FirstName';
+import LastName from './Authentication/Screens/LastName';
 import BirthDay from './Authentication/Screens/BirthDay';  
 import Gender from './Authentication/Screens/Gender';  
 import GenderPreference from './Authentication/Screens/GenderPreference'; 
@@ -148,6 +149,7 @@ import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
 
 
+
 const db = firebase.firestore();
 
 const Stack = createStackNavigator();
@@ -211,9 +213,10 @@ export default function App() {
   
   function CustomBackComponent({navigation}){
     return <TouchableOpacity style = {{marginLeft:10}} onPress = {() => navigation.goBack()}>
-    <Text style = {{fontWeight:'bold', color:'blue', fontSize:17}}>
+    {/* <Text style = {{fontWeight:'bold', color:'blue', fontSize:17}}>
       Back
-    </Text>
+    </Text> */}
+    <MaterialIcons name="keyboard-arrow-left" size={24} color="black" />
     </TouchableOpacity>   
   }
   const [selfFilter, setSelfFilter] = useState({
@@ -627,6 +630,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <Stack.Screen name="Home" component={FirstName} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="FirstName" component={FirstName}/>
+<Stack.Screen name="LastName" component={LastName}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>
 <Stack.Screen name="Birthday" component={BirthDay}/>

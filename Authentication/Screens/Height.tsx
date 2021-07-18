@@ -47,7 +47,7 @@ const _handleNavigation = () => {
 }
 
 return(
-<View style = {{flex:1,}}>
+<View style = {{flex:1,backgroundColor:'#ffffff'}}>
 <View style = {{flex:0.2}}>
 
 </View>
