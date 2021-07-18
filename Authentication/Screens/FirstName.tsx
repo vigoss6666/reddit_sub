@@ -12,7 +12,7 @@ import {updateUser} from '../../networking';
 // @refresh reset
 const auth = firebase.auth(); 
 
-export default function Name({navigation}){
+export default function FirstName({navigation}){
    const myContext = useContext(AppContext);   
    const { userId, CustomBackComponent,db  } = myContext; 
    useEffect(() => {
@@ -78,17 +78,16 @@ export default function Name({navigation}){
     
       
 return(
-<KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "padding"}>
+<KeyboardAvoidingView style = {{flex:1,marginTop:100}} behavior={Platform.OS == "ios" ? "padding" : "padding"}>
 <Header text = "My name is..." style = {{justifyContent:"center", alignItems: 'flex-start',marginLeft:30,marginTop:60, }}/>
-<TextInput style = {{borderBottomWidth:0.5,opacity:0.3, borderColor:"grey",width:Dimensions.get('window').width -60, marginLeft:30 }}>
+<View style = {{borderBottomWidth:1, borderBottomColor:'grey',marginLeft:30, marginRight:30, marginTop:30}}/>
 
-</TextInput>
-<Text style = {{alignSelf:"flex-start", marginLeft:30,marginTop:10, }}>This is how it will appear to others</Text>
 <TextInput style = {{fontSize:35,borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:40 }} placeholder = {"First Name"} onChange = { (text) => {handleFirstNameChange(text)}} autoCorrect = {false} value = {firstName}>
 
 
 </TextInput>
-<TextInput style = {{fontSize:35, borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} placeholder = {"Last Name"} onChange = {(text) => {handleLastNameChange(text)} } autoCorrect = {false} value = {lastName}></TextInput>
+<Text style = {{alignSelf:"flex-start", marginLeft:30,marginTop:10, }}>This is how it will appear to others</Text>
+{/* <TextInput style = {{fontSize:35, borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} placeholder = {"Last Name"} onChange = {(text) => {handleLastNameChange(text)} } autoCorrect = {false} value = {lastName}></TextInput> */}
 <TextInput style = {{borderBottomWidth:0.3, borderColor:"grey",opacity:0.5, width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} ></TextInput>
 
 

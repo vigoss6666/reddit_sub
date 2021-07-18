@@ -12,6 +12,7 @@ import TT  from './TT';
 import { NavigationContainer, BaseRouter } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Name from './Authentication/Screens/Name';
+import FirstName from './Authentication/Screens/FirstName';
 import BirthDay from './Authentication/Screens/BirthDay';  
 import Gender from './Authentication/Screens/Gender';  
 import GenderPreference from './Authentication/Screens/GenderPreference'; 
@@ -235,7 +236,7 @@ export default function App() {
   })
   const [clientFilter, setClientFilter] = useState([]); 
   useEffect(() => {
-    //AsyncStorage.removeItem('user')
+    // AsyncStorage.removeItem('user')
   }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
@@ -623,8 +624,9 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={FirstName} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
+<Stack.Screen name="FirstName" component={FirstName}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>
 <Stack.Screen name="Birthday" component={BirthDay}/>
