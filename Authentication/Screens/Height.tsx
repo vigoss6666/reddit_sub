@@ -7,6 +7,7 @@ import {Button} from 'react-native-elements';
 import DropDownPicker from 'react-native-dropdown-picker';
  import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking'; 
+import { MaterialIcons } from '@expo/vector-icons';
 
 export default function Height({navigation,route}){
     const myContext = useContext(AppContext); 
@@ -180,6 +181,13 @@ return(
   onPress = {() => {_sendToServer(), _handleNavigation() }}
   disabled = {gate}
 />
+<View style = {{justifyContent:'center', alignItems:'center'}}>
+<TouchableOpacity style = {{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}} onPress = {() => navigation.navigate('HeightMetric')}>
+    <Text> USE METRIC SYSTEM </Text>
+    <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
+
+</TouchableOpacity>
+</View>
 </View>
 </View>
 )

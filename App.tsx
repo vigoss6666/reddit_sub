@@ -18,7 +18,10 @@ import BirthDay from './Authentication/Screens/BirthDay';
 import Gender from './Authentication/Screens/Gender';  
 import GenderPreference from './Authentication/Screens/GenderPreference'; 
 import Height from './Authentication/Screens/Height';  
+import HeightMetric from './Authentication/Screens/HeightMetric';
 import Feet from './Authentication/Screens/Feet'; 
+import AccountType from './Authentication/Screens/AccountType';
+import AccountTypeDetail from './Authentication/Screens/AccountTypeDetail';
 import Inches from './Authentication/Screens/Inches'; 
 import EnableLocation from './Authentication/Screens/EnableLocation'; 
 import Tell from './Authentication/Screens/Tell'; 
@@ -627,8 +630,10 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={FirstName} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Posted} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
+<Stack.Screen name="AccountType" component={AccountType}/>
+<Stack.Screen name="AccountTypeDetail" component={AccountTypeDetail} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS}}/>
 <Stack.Screen name="FirstName" component={FirstName}/>
 <Stack.Screen name="LastName" component={LastName}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
@@ -639,6 +644,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <Stack.Screen name="ContactsLocationLatest" component={ContactsLocationLatest}/>
 <Stack.Screen name="GenderPreference" component={GenderPreference}/>
 <Stack.Screen name="Height" component={Height}/>
+<Stack.Screen name="HeightMetric" component={HeightMetric} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS ,}}/>
 <Stack.Screen name="AddPhoto" component={AddPhoto}/>
 <Stack.Screen name="AuthPhotos" component={AuthPhotos}/>
 <Stack.Screen name="School" component={School}/>

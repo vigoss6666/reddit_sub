@@ -42,8 +42,8 @@ export default function School({navigation}){
       </TouchableOpacity> */}
       </View>
       <View style = {{flex:0.5, marginLeft:30}}>
-      <Text style = {{fontWeight:"bold", fontSize:23,  marginLeft:30 }}> Upload your photo</Text>
-      <View style = {{borderBottomWidth:1, width:Dimensions.get('window').width - 60, marginTop:10}}/> 
+      <Text style = {{fontWeight:"bold", fontSize:23,  marginLeft:30,marginRight:30 }}> Upload your photo</Text>
+      <View style = {{borderBottomWidth:1, marginTop:10,marginLeft:30, marginRight:30}}/> 
       <View style = {{justifyContent:"center", alignItems:"center", marginTop:60, marginLeft:-30}}>
       {profilePicLocal ? <Image source = {{uri:profilePicLocal}} style = {{height:100, width:100, borderRadius:50}}/>: <MaterialIcons name="account-circle" size={120} color="black" />}
       </View>
@@ -53,7 +53,7 @@ export default function School({navigation}){
       <FontAwesome name="caret-down" size={24} color="black" />
       </TouchableOpacity>
       </View>
-        <View style = {{borderBottomWidth:1, width:Dimensions.get('window').width - 60, marginTop:40, borderBottomColor:"grey"}}/> 
+        <View style = {{borderBottomWidth:1, marginTop:40, borderBottomColor:"grey",marginLeft:30, marginRight:30}}/> 
       </View>
       <View style = {{flex:0.3,justifyContent:"center", }}>
        {/* <Continue  onPress = {() => {_handleEmail(), mutateSettings({email:Email}) }}/>     */}
