@@ -56,16 +56,16 @@ const _sendToServer = () => {
 }
 
 return(
-<View style = {{flex:1,}}>
+<View style = {{flex:1,backgroundColor:'#ffffff'}}>
 <View style = {{flex:0.1}}> 
      
 </View>
 <View style = {{flex:0.7}}>
-<View style = {{justifyContent:"center", alignItems:"center"}}>
-<Header text = {"Im looking for....."}/>
+<View style = {{marginLeft:30, marginRight:30}}>
+<Header text = {"I'm looking for..."}/>
 <Text style = {{fontWeight:"700", marginTop:10, marginBottom:10}}>Who do you want to be matched with?</Text>
 </View>
-<View style = {{marginLeft:30, width:Dimensions.get('window').width - 60, borderWidth:0.3, marginTop:20}}/>
+<View style = {{marginLeft:30,  borderBottomWidth:1, marginTop:20, marginRight:30}}/>
 <View>
 <View style = {{flexDirection:"row", justifyContent:"space-around",marginTop:40 }}>
 <View>
@@ -108,9 +108,9 @@ onPress = {() => {setWoman(false), setMan(false), setBoth(true)}}
 <Ionicons name="ios-people" size={60} color="white" />
 </TouchableOpacity>
 </TouchableOpacity>
-<Text style = {{marginTop:10, fontWeight:"bold"}}>EveryOne</Text>
+<Text style = {{marginTop:10, fontWeight:"bold"}}>Everyone</Text>
 </TouchableOpacity>
-<View style = {{marginLeft:30, width:Dimensions.get('window').width - 60, borderWidth:0.3,marginTop:30 }}/>
+<View style = {{marginLeft:30,  borderBottomWidth:1,marginTop:30,marginRight:30 }}/>
 </View>
 <View>
 </View>

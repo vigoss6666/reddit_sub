@@ -1,7 +1,7 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
 import { Button } from 'react-native-elements'; 
 import {Header,Continue} from '../../src/common/Common'; 
@@ -13,7 +13,7 @@ import {updateUser} from '../../networking';
 export default function Gender({navigation, route}){
 const myContext = useContext(AppContext); 
 const {userId, CustomBackComponent} = myContext; 
-const {page} = route.params; 
+// const {page} = route.params; 
 useEffect(() => {
    navigation.setOptions({
      headerTitle:false, 
@@ -22,12 +22,12 @@ useEffect(() => {
  }, [])  
 
 const _handlePage = () => {
- if(page == "DetailsSettings"){
+//  if(page == "DetailsSettings"){
     
-    navigation.navigate("DetailsSettings")
-    return; 
- }
- navigation.navigate('Height', {page:"something"})
+//     navigation.navigate("DetailsSettings")
+//     return; 
+//  }
+ navigation.navigate('GenderPreference', {page:"something"})
 
 }
 const _handleServer = () => {
@@ -99,6 +99,12 @@ onPress = {() => {setWoman(true), setMan(false)}}
   disabled = {gateGuard}
   onPress = {() => {_handleServer(),_handlePage()}}
 />
+<TouchableOpacity style = {{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}} onPress = {() => navigation.navigate('GenderDetail')}>
+    <Text> MORE </Text>
+    <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
+    
+
+</TouchableOpacity>
 </View>
 </View>
 )

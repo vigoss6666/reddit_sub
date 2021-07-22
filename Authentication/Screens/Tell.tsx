@@ -1,7 +1,7 @@
 import  React, {useState,useRef,useEffect,useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import {Header} from '../../src/common/Common'; 
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';
@@ -38,8 +38,8 @@ export default function Tell({navigation}){
 return(
 <View style = {{flex:1, alignItems:"center"}}>
 <View style = {{flex:0.1, marginTop:30}}>
-<TouchableOpacity onPress = {() => {navigation.navigate('EnableLocation')}}>
-<AntDesign name="caretup" size={24} color="black" />
+<TouchableOpacity onPress = {() => {navigation.goBack()}}>
+<MaterialIcons name="keyboard-arrow-down" size={40} color="black" />
 </TouchableOpacity>
 </View>
 <View style = {{flex:0.5, alignItems:"center"}}>

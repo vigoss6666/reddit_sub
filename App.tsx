@@ -16,6 +16,7 @@ import FirstName from './Authentication/Screens/FirstName';
 import LastName from './Authentication/Screens/LastName';
 import BirthDay from './Authentication/Screens/BirthDay';  
 import Gender from './Authentication/Screens/Gender';  
+import GenderDetail from './Authentication/Screens/GenderDetail'; 
 import GenderPreference from './Authentication/Screens/GenderPreference'; 
 import Height from './Authentication/Screens/Height';  
 import HeightMetric from './Authentication/Screens/HeightMetric';
@@ -630,7 +631,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Posted} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Gender} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="AccountType" component={AccountType}/>
 <Stack.Screen name="AccountTypeDetail" component={AccountTypeDetail} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS}}/>
@@ -641,6 +642,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <Stack.Screen name="Birthday" component={BirthDay}/>
 <Stack.Screen name="CountryCodes" component={CountryCodes} options = {{headerTitle:false}}/> 
 <Stack.Screen name="Gender" component={Gender}/>
+<Stack.Screen name="GenderDetail" component={GenderDetail} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS ,}}/>
 <Stack.Screen name="ContactsLocationLatest" component={ContactsLocationLatest}/>
 <Stack.Screen name="GenderPreference" component={GenderPreference}/>
 <Stack.Screen name="Height" component={Height}/>
@@ -653,7 +655,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <Stack.Screen name="Posted" component={Posted}/>
 <Stack.Screen name="EnableLocation" component={EnableLocation}/>
 <Stack.Screen name="LoadContacts" component={LoadContacts}/>
-<Stack.Screen name="Tell" component={Tell}/>
+<Stack.Screen name="Tell" component={Tell} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}/>
 <Stack.Screen name="ProfileHidden" component={ProfileHidden}/>
 <Stack.Screen name="Loader" component={Loader} options = {{headerTitle:false, headerLeft:false}}/>
 <Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess} options = {{headerTitle:false, headerLeft:false}}/>

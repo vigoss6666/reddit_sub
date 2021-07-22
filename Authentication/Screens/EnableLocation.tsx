@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import {updateUser} from '../../networking';
 import * as Location from 'expo-location';
 import {firebase} from '../../config'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Button} from 'react-native-elements'; 
 
 
 export default function EnableLocation({navigation}){
@@ -50,28 +51,38 @@ const handleLocation = async () => {
       
 }    
 return(
-<View style = {{flex:1, justifyContent:'center', alignItems:'center'}}>
-<View style = {{flex:0.2, }}>
+<View style = {{flex:1,backgroundColor:'#ffffff'}}>
+<View style = {{flex:0.1, }}>
 
 </View>
-<View style = {{flex:0.5}}>
-<Entypo name="location-pin" size={200} color="black" style = {{alignSelf:"center"}} />
-<Header text = {"Enable Location"}/>
-<Text> You will need to enable location in order </Text>
+<View style = {{flex:0.6,justifyContent:'center', alignItems:'center'}}>
+{/* <Entypo name="location-pin" size={200} color="black" style = {{alignSelf:"center"}} /> */}
+<Image source = {require('/Users/zaidshaikh/newGamer/fhf_client/assets/location.png')} style = {{height:100, width:100,marginBottom:20}}/>
+<Header text = {"Enable location"}/>
+<Text> You'll need to enable location in order </Text>
 <Text style = {{alignSelf: 'center',}}> to use Friends Help Friends</Text>
 </View>
 <View style = {{flex:0.3}}>
-<TouchableOpacity 
+{/* <TouchableOpacity 
 onPress = {() => {handleLocation()}}
 style = {{borderWidth:1, padding:20, backgroundColor:'black' }}>
     <Text style = {{color:"white", fontWeight:"bold"}}>Allow location</Text>
     
-</TouchableOpacity>
+</TouchableOpacity> */}
+<Button
+  title="Allow location"
+  type="outline"
+  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
+  titleStyle = {{color:"white", fontWeight:"bold"}}
+  disabledStyle = {{backgroundColor:"grey",}}
+  onPress = {() => {handleLocation()}}
+  disabled = {false}
+/>
 <TouchableOpacity 
 style = {{justifyContent:"center", alignItems:"center", marginTop:20, flexDirection:'row'}}
 onPress = {() => {navigation.navigate('Tell')}}
 >
-    <Text>Tell me More</Text>
+    <Text>TELL ME MORE </Text>
     <AntDesign name="caretdown" size={10} color="black" />
 </TouchableOpacity>
 </View>

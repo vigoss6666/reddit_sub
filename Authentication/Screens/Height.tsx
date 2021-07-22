@@ -185,6 +185,7 @@ return(
 <TouchableOpacity style = {{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}} onPress = {() => navigation.navigate('HeightMetric')}>
     <Text> USE METRIC SYSTEM </Text>
     <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
+    
 
 </TouchableOpacity>
 </View>
