@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, AsyncStorageStatic} from 'react-native';
+import { Keyboard,View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, AsyncStorageStatic, Dimensions} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from '../../AppContext';
 
@@ -10,12 +10,13 @@ import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-fi
 import {firebase} from '../../config';
 
 
+
 const db = firebase.firestore(); 
 const auth = firebase.auth(); 
 
 export default function App({navigation}) {
   const myContext = useContext(AppContext);
-  const {CustomBackComponent, setTempId, dialCode, countryCode} = myContext;
+  const {CustomBackComponent, setTempId, dialCode, countryCode,setGlobalPhoneNumber,setVID} = myContext;
   const recaptchaVerifier = React.useRef(null);
   
   const storeData = async (value:string) => {
@@ -45,18 +46,24 @@ export default function App({navigation}) {
   );
   const attemptInvisibleVerification = true;
 
-  console.log(phoneNumber)
   
+  useEffect(() => {
+   return () => Keyboard.dismiss() 
+  }, []) 
 
   return (
     <View style={{ padding: 20, marginTop: 50 }}>
+      
       <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
         firebaseConfig={firebaseConfig}
-        attemptInvisibleVerification={attemptInvisibleVerification}
+        attemptInvisibleVerification={true}
       />
-      <Text style={{ marginTop: 20 }}>Enter phone number</Text>
-      <View style = {{flexDirection:'row', alignItems:'center', marginTop:5,marginBottom:10}}>
+      <Text style={{ marginTop: 20, fontSize:30, fontWeight:'bold'  }}>My number is...</Text>
+      <Text style={{ marginTop: 15, fontSize:11, fontWeight:'bold'  }}>When you tap "continue" we will send a text with </Text>
+      <Text style={{  fontSize:11, fontWeight:'bold'  }}> verification code.Message and data rates may apply.  </Text>
+      {/* <Header /> */}
+      <View style = {{flexDirection:'row', alignItems:'center', marginTop:40,marginBottom:10,justifyContent:'center'}}>
       <TouchableOpacity style = {{flexDirection:'row', marginRight:20,  height:40}} onPress = {() => navigation.navigate('CountryCodes', {page:'Phone'})}>
         <Text style = {{borderWidth:0.5,padding:10,}}>
              {/* {countryCode}
@@ -71,18 +78,23 @@ export default function App({navigation}) {
     
     </TouchableOpacity>
       <TextInput
-        style={{ marginVertical: 10, fontSize: 17 }}
+        style={{  fontSize: 17,borderBottomWidth:1,width:Dimensions.get('window').width - 200,marginRight:10}}
         placeholder="999 999 9999"
         autoFocus
         autoCompleteType="tel"
         keyboardType="phone-pad"
         textContentType="telephoneNumber"
         onChangeText={phoneNumber => setPhoneNumber(dialCode+phoneNumber)}
+        
       />
       </View>
       <Button
-        title="Send Verification Code"
+        title="Continue"
+        type="outline"
+        titleStyle = {{color:"white", fontWeight:"700"}}
         disabled={!phoneNumber}
+        disabledStyle = {{backgroundColor:"grey",}}
+        containerStyle = {{backgroundColor:'black',marginTop:100}}
         onPress={async () => {
           // The FirebaseRecaptchaVerifierModal ref implements the
           // FirebaseAuthApplicationVerifier interface and can be
@@ -93,22 +105,26 @@ export default function App({navigation}) {
               phoneNumber,
               recaptchaVerifier.current
             );
-            setVerificationId(verificationId);
-            showMessage({
-              text: 'Verification code has been sent to your phone.',
-            });
+            // setVerificationId(verificationId);
+            // showMessage({
+            //   text: 'Verification code has been sent to your phone.',
+            // });
+            setVID(verificationId); 
+            setGlobalPhoneNumber(phoneNumber), 
+            
+            navigation.navigate('VerifyPhone')
           } catch (err) {
             showMessage({ text: `Error: ${err.message}`, color: 'red' });
           }
         }}
       />
-      <Text style={{ marginTop: 20 }}>Enter Verification code</Text>
+      {/* <Text style={{ marginTop: 20 }}>Enter Verification code</Text>
       <TextInput
         style={{ marginVertical: 10, fontSize: 17 }}
         editable={!!verificationId}
         placeholder="123456"
         onChangeText={setVerificationCode}
-      />
+      /> */}
       <Button
         title="Confirm Verification Code"
         disabled={!verificationId}

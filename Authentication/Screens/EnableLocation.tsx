@@ -57,7 +57,7 @@ return(
 </View>
 <View style = {{flex:0.6,justifyContent:'center', alignItems:'center'}}>
 {/* <Entypo name="location-pin" size={200} color="black" style = {{alignSelf:"center"}} /> */}
-<Image source = {require('/Users/zaidshaikh/newGamer/fhf_client/assets/location.png')} style = {{height:100, width:100,marginBottom:20}}/>
+{/* <Image source = {require('/Users/zaidshaikh/newGamer/fhf_client/assets/location.png')} style = {{height:100, width:100,marginBottom:20}}/> */}
 <Header text = {"Enable location"}/>
 <Text> You'll need to enable location in order </Text>
 <Text style = {{alignSelf: 'center',}}> to use Friends Help Friends</Text>

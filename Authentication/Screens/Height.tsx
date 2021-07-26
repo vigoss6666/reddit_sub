@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
+import { Keyboard, View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
 
 import {Header, Continue} from '../../src/common/Common'; 
 import { AntDesign } from '@expo/vector-icons';
@@ -36,6 +36,9 @@ const _sendToServer = () => {
     updateUser(userId,{feet, inches} )
 }     
 
+useEffect(() => {
+Keyboard.dismiss()
+},[])
       
 const _handleNavigation = () => {
      if(page == "DetailsSettings"){

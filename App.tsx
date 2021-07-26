@@ -28,6 +28,7 @@ import EnableLocation from './Authentication/Screens/EnableLocation';
 import Tell from './Authentication/Screens/Tell'; 
 import Email from './Authentication/Screens/Email'; 
 import VerifyCode from './Authentication/Screens/VerifyCode';
+import ResendCode from './Authentication/Screens/ResendCode'; 
 import Password from './Authentication/Screens/Password';
 import Posted from './Authentication/Screens/Posted';
 import ProfileHidden from './Authentication/Screens/ProfileHidden';
@@ -198,6 +199,8 @@ export default function App() {
   const [generatedMatch, setGeneratedMatch] = useState([]);
   const [generatedMatchSelf, setGeneratedMatchSelf] = useState([]); 
   const [mainId, setMainId] = useState()
+  const [globalPhoneNumber, setGlobalPhoneNumber] = useState(null); 
+  const [vID, setVID] = useState(null);
   
    
 
@@ -348,6 +351,10 @@ function stringifyNumber(n) {
 
 
   const tempObject = {
+    globalPhoneNumber, 
+    setGlobalPhoneNumber, 
+    vID, 
+    setVID,
 
     _id,
     setId,
@@ -631,9 +638,11 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Gender} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Phone} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
+<Stack.Screen name="ResendCode" component={ResendCode} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS}}/>
 <Stack.Screen name="AccountType" component={AccountType}/>
+<Stack.Screen name="VerifyPhone" component={VerifyPhone}/>
 <Stack.Screen name="AccountTypeDetail" component={AccountTypeDetail} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS}}/>
 <Stack.Screen name="FirstName" component={FirstName}/>
 <Stack.Screen name="LastName" component={LastName}/>

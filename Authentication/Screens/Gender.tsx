@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions,Keyboard} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
@@ -13,7 +13,7 @@ import {updateUser} from '../../networking';
 export default function Gender({navigation, route}){
 const myContext = useContext(AppContext); 
 const {userId, CustomBackComponent} = myContext; 
-// const {page} = route.params; 
+const {page} = route.params; 
 useEffect(() => {
    navigation.setOptions({
      headerTitle:false, 
@@ -21,12 +21,16 @@ useEffect(() => {
    })
  }, [])  
 
+ useEffect(() => {
+   Keyboard.dismiss()
+   },[])
+
 const _handlePage = () => {
-//  if(page == "DetailsSettings"){
+ if(page == "DetailsSettings"){
     
-//     navigation.navigate("DetailsSettings")
-//     return; 
-//  }
+    navigation.navigate("DetailsSettings")
+    return; 
+ }
  navigation.navigate('GenderPreference', {page:"something"})
 
 }

@@ -64,7 +64,7 @@ export default function School({navigation}){
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   disabled = {false}
-  onPress = {() => { navigation.navigate('School', {page:'something'})}}
+  onPress = {() => { navigation.navigate('Posted', {page:'something'})}}
 />
       </View>
       </View>

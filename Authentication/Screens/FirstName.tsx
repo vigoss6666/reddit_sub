@@ -85,7 +85,7 @@ export default function FirstName({navigation}){
     
       
 return(
-<KeyboardAvoidingView style = {{flex:1,paddingTop:100,backgroundColor:'#ffffff'}} behavior={Platform.OS == "ios" ? "padding" : "padding"}>
+<KeyboardAvoidingView style = {{flex:1,paddingTop:40,backgroundColor:'#ffffff'}} behavior={Platform.OS == "ios" ? "padding" : "padding"}>
 <Header text = "My name is..." style = {{justifyContent:"center", alignItems: 'flex-start',marginLeft:30,marginTop:60, }}/>
 <View style = {{borderBottomWidth:1, borderBottomColor:'grey',marginLeft:30, marginRight:30, marginTop:30}}/>
 

@@ -1,9 +1,12 @@
-import  React, {useState,useRef,useEffect} from 'react';
+import  React, {useState,useRef,useEffect,useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
 
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Header, Continue } from '../../src/common/Common'; 
 import {Button} from 'react-native-elements'; 
+import AppContext from '../../AppContext'; 
+import {updateUser} from '../../networking';
+import {firebase} from '../../config';
 import {
     CodeField,
     Cursor,
@@ -11,6 +14,8 @@ import {
     useClearByFocusCell,
   } from 'react-native-confirmation-code-field';
 import { gql } from 'apollo-boost';
+import { MaterialIcons } from '@expo/vector-icons';
+import { db } from 'Chat/Screens/MatchList';
   const styles = StyleSheet.create({
     root: {flex: 1, padding: 20},
     title: {textAlign: 'center', fontSize: 30},
@@ -30,33 +35,93 @@ import { gql } from 'apollo-boost';
   });
   const CELL_COUNT = 6;
 
-  const VERIFY_PHONE_CODE = gql`
-   mutation namer($phoneCode:Float! ){
-        verifyPhoneCode(phoneCode:$phoneCode)
-   }
-  `; 
-  const RESEND_PHONE = gql`
-   mutation {
-        resendPhone
-   }
-  `;
+  
+  
 export default function VerifyPhone({navigation, route}){
-    const {page} = route.params; 
-    console.log("page on verify phone:"+page)
-    const [verifyPhoneCode, {data}] = useMutation(VERIFY_PHONE_CODE); 
-    const [resendPhone] = useMutation(RESEND_PHONE);
+    // const {page} = route.params; 
+    // console.log("page on verify phone:"+page)
+    const myContext = useContext(AppContext); 
+    const {userId,CustomBackComponent,vID, globalPhoneNumber,setTempId} = myContext;
+    // const {verificationId} = route.params; 
+    useEffect(() => {
+      navigation.setOptions({
+        headerTitle:false, 
+        headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+      })
+    }, [])
+    
+    const [verificationCode, setVerificationCode] = React.useState(0);
+    const firebaseConfig = firebase.apps.length ? firebase.app().options : undefined;
     let error = useRef(false).current;   
-    if(data){
-        //  if(data.verifyPhoneCode){
-        //       navigation.navigate('PhoneSuccess')
-        //       error = false; 
-        //  }
-        //  else if(data.verifyPhoneCode == false){
-        //     error = true;    
-        //  }
-        navigation.navigate('PhoneSuccess')
-          
+    const [message, showMessage] = React.useState(
+      !firebaseConfig || Platform.OS === 'web'
+        ? {
+            text:
+              'To get started, provide a valid firebase config in App.js and open this snack on an iOS or Android device.',
+          }
+        : undefined
+    );
+    console.log(verificationCode)
+    useEffect(() => {
+      if(verificationCode.length == 6){
+        _checkVerification();   
+      }
+    }, [verificationCode])
+    const _checkVerification =  async () => {
+      try {
+        const credential = firebase.auth.PhoneAuthProvider.credential(
+          vID,
+          verificationCode
+        );
+            
+
+        firebase.auth().signInWithCredential(credential).then(async onfulfilled => {
+           if(onfulfilled.user){
+            //  db.collection('user').doc(globalPhoneNumber).get().then(onDoc => {
+            //    if(onDoc.exists){
+            //      navigation.navigate('Homer'); 
+            //    }
+            //  })
+              
+              setTempId(globalPhoneNumber)
+              navigation.navigate('FirstName'); 
+              console.log("Verification has been successfull"); 
+              //console.log(phoneNumber)
+              //setTempId(phoneNumber)
+              //navigation.navigate('Name')
+             
+              // db.collection('invitationSent').where('client', '==', phoneNumber).get().then(async onDocs => {
+              //   if(!onDocs.empty){
+              //     const docs = onDocs.docs.map(val => val.data()); 
+              //     const finaler = await Promise.all(docs.map(async val => {
+              //      return db.collection('user').doc(val.matchMaker).set({points:firebase.firestore.FieldValue.arrayUnion({pointFor:'invitationAccepted',point:50, client:val.client, createdAt:new Date()})}, {merge:true})
+              //   }))
+              //   navigation.navigate('Name')
+              //   }
+              //   navigation.navigate('Name')
+                
+              // })
+              
+
+              // showMessage({ text: 'Phone authentication successful 👍' })
+
+              
+              //navigation.navigate('Name'); 
+              
+           }
+           
+        }).catch(err => {
+          showMessage({ text: `Error: ${err.message}`, color: 'red' });
+        }) 
+        
+        
+        
+      } catch (err) {
+        showMessage({ text: `Error: ${err.message}`, color: 'red' });
+      }
     }
+
+    
      
     const [value, setValue] = useState('');
     const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
@@ -74,18 +139,20 @@ export default function VerifyPhone({navigation, route}){
     }
   return(
   <View style = {{flex:1, justifyContent:'center', }}>
-  <View style = {{flex:0.2}}>
   
+  <View style = {{flex:0.4 }}>
+  <Header text = {"Enter verification code "} style = {{alignSelf:"flex-start",marginLeft:30, marginRight:30,marginTop:30}}/>
+  <Text style = {{alignSelf:"flex-start",marginLeft:30, marginRight:30,fontWeight:'500', marginTop:10,marginBottom:50}}>Code sent to {globalPhoneNumber}</Text>
+  <View style = {{borderBottomWidth:1,marginLeft:30, marginRight:30,marginBottom:30}}>
+
   </View>
-  <View style = {{flex:0.5,alignItems:"center" }}>
-  <Header text = {"Verify Phone"} style = {{alignSelf:"center"}}/>
-  <Text>A sms has been sent on the number</Text>
-  <Text style = {{alignSelf:"center"}}>Please enter the code here</Text>
+  <View style = {{marginLeft:30,marginRight:30}}>
   <CodeField
+                 
           ref={ref}
           {...props}
-          value={value}
-          onChangeText={(text) => {setValue(text), error = false}}
+          value={verificationCode}
+          onChangeText={(text) => {setVerificationCode(text), error = false}}
           cellCount={CELL_COUNT}
           rootStyle={styles.codeFieldRoot}
           keyboardType="number-pad"
@@ -99,9 +166,13 @@ export default function VerifyPhone({navigation, route}){
             </Text>
           )}
         />
+        </View>
+        <View style = {{borderBottomWidth:1,marginLeft:30, marginRight:30,marginBottom:30,marginTop:30}}>
+
+  </View>
      {error ? <Text style = {{alignSelf:"center", color:"red", fontSize:14,marginTop:10}}>code didnt match </Text>:null}   
   </View>
-  <View style = {{flex:0.3,justifyContent:"center",}}>
+  <View style = {{flex:0.6,}}>
   
   {/* <TouchableOpacity onPress = {() => {_handleVerification()}} style = {{height:30, width:200,borderWidth:1,justifyContent:"center", alignItems:"center",backgroundColor:'black'}}>
       <Text style = {{color:'white', fontWeight:'600'}}>Verify Code</Text>
@@ -110,14 +181,20 @@ export default function VerifyPhone({navigation, route}){
       <Text style = {{color:'white', fontWeight:'600'}}>Verify Code</Text>
   </TouchableOpacity> */}
   <Button
-  title="Continue"
+  title="Verify"
   type="outline"
-  disabled = {value.length < 6 ? true : false}
+  disabled = {verificationCode.length < 6 ? true : false}
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  onPress = {() => { navigation.navigate('PhoneSuccess', {page})}}
+  // onPress = {() => { navigation.navigate('PhoneSuccess', {page})}}
 />
+<TouchableOpacity style = {{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}} onPress = {() => navigation.navigate('ResendCode')}>
+    <Text> HELP </Text>
+    <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
+    
+
+</TouchableOpacity>
   {/* <TouchableOpacity onPress = {() => {_handleResend()}}>
   <Text style = {{marginTop:10,}}>Resend Code</Text>
   </TouchableOpacity> */}

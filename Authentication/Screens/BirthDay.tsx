@@ -20,6 +20,7 @@ export default function BirthDay({navigation, route}){
   const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
+  const [error, showError] = useState(false); 
 
 
   const _handlePage = () => {
@@ -28,7 +29,7 @@ export default function BirthDay({navigation, route}){
         return; 
      }
 
-     navigation.navigate('Gender', {page:"something"})
+     navigation.navigate('AddPhoto', {page:"something"})
      
   }
 
@@ -40,6 +41,18 @@ export default function BirthDay({navigation, route}){
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
   };
+  useEffect(() => {
+    const d = new Date(date); 
+    const year = d.getFullYear();  
+    const namer = new Date(); 
+    const age = namer.getFullYear() - year; 
+    if(age < 15){
+       showError(true)
+    }
+    if(age >=15){
+      showError(false)
+    }
+  }, [date])
   const _sendToServer = async () => {
     const d = new Date(date); 
     const month = d.getMonth()
@@ -72,18 +85,18 @@ return(
 <Header text = {"My birthday is..."} style = {{marginLeft:30, marginRight:30}}/>
 <View style = {{marginLeft:30,borderBottomColor:"black", borderBottomWidth:2, width:Dimensions.get('window').width - 60,opacity:0.3,marginTop:10}}/>
     <DateTimePicker
-      style = {{marginLeft:150}}
+      
       testID="dateTimePicker"
       value={date}
       mode={"date"}
       is24Hour={true}
-      display="default"
+      display="spinner"
       onChange={onChange}
       
     />
     <View style = {{marginLeft:30,borderBottomColor:"black", borderBottomWidth:2, width:Dimensions.get('window').width - 60,opacity:0.3,marginTop:10}}/>
     
-
+{error ?<Text style = {{marginTop:15, marginLeft:30,color:'red', fontSize:17,fontWeight:'bold'}}>Sorry, you must be at least 15 to play.</Text>:null}
 </View>
 <View style = {{flex:0.3, justifyContent:'center' }}>
  {/* <Continue onPress = {() => {_sendToServer(), navigation.navigate('Gender')}} />     */}
@@ -94,6 +107,7 @@ return(
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   onPress = {() => {_sendToServer(), _handlePage() }}
+  disabled = {error}
 />
 </View>
 </View>
