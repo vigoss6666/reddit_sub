@@ -3,14 +3,35 @@ import { Dimensions,View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollVie
 import {Button} from 'react-native-elements'; 
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Header } from '../../src/common/Common';
-import { MaterialIcons } from '@expo/vector-icons';
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import AppContext from '../../AppContext';
+import {firebase} from '../../config';
+import {updateUser} from '../../networking';
 export default function School({navigation}){
   const myContext = useContext(AppContext); 
-    const {userId, CustomBackComponent,profilePicLocal} = myContext;
+    const {userId, CustomBackComponent,profilePicLocal,setProfilePicLocal} = myContext;
     const [openGate, setOpenGate] = useState(true); 
     const [Email, setEmail] = useState();
+    const loadProfilePic = async () => {
+      let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
+          
+          if (permissionResult.granted === false) {
+            alert("Permission to access camera roll is required!");
+            return;
+          }
+          
+      let pickerResult = await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.Images});
+      setProfilePicLocal(pickerResult.uri) 
+      const response = await fetch(pickerResult.uri); 
+      const blob = await response.blob(); 
+      const namer = Math.random().toString(36).substring(2);
+      const ref = firebase.storage().ref().child("images/"+ namer); 
+      await ref.put(blob)
+      const result1 = await ref.getDownloadURL()
+      updateUser(userId, {profilePic:result1})
+    }
     useEffect(() => {
       navigation.setOptions({
         headerTitle:false, 
@@ -34,8 +55,8 @@ export default function School({navigation}){
    
   }
     return(
-      <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
-      <View style = {{flex:1, }}>   
+      
+      <View style = {{flex:1, backgroundColor:'white'}}>   
       <View style = {{flex:0.2}}>
       {/* <TouchableOpacity onPress = {() => { navigation.navigate('School', {page:'something'})}}>
       <Text style = {{marginTop:20, alignSelf:"flex-end", marginRight:30, color:"orange", fontWeight:"bold"}}>Skip</Text>   
@@ -45,13 +66,14 @@ export default function School({navigation}){
       <Text style = {{fontWeight:"bold", fontSize:23,  marginLeft:30,marginRight:30 }}> Upload your photo</Text>
       <View style = {{borderBottomWidth:1, marginTop:10,marginLeft:30, marginRight:30}}/> 
       <View style = {{justifyContent:"center", alignItems:"center", marginTop:60, marginLeft:-30}}>
-      {profilePicLocal ? <Image source = {{uri:profilePicLocal}} style = {{height:100, width:100, borderRadius:50}}/>: <MaterialIcons name="account-circle" size={120} color="black" />}
+      {profilePicLocal ? <Image source = {{uri:profilePicLocal}} style = {{height:120, width:120, borderRadius:60}}/>: <TouchableOpacity onPress = {loadProfilePic}><Image source = {require('../../assets/addPhoto.png')} style = {{height:120, width:120}}/></TouchableOpacity>}
       </View>
       <View style = {{flexDirection:"row", justifyContent:"center"}}>
-      <TouchableOpacity onPress = {() => navigation.navigate('AuthPhotos', {page:"AddPhoto"})} style = {{flexDirection:"row", alignItems:"center"}}>
+      {/* <TouchableOpacity onPress = {() => navigation.navigate('AuthPhotos', {page:"AddPhoto"})} style = {{flexDirection:"row", alignItems:"center"}}>
       <Text style = {{ fontWeight:"bold", marginLeft:-30, marginRight:5}}>Change Photo</Text>
       <FontAwesome name="caret-down" size={24} color="black" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+      
       </View>
         <View style = {{borderBottomWidth:1, marginTop:40, borderBottomColor:"grey",marginLeft:30, marginRight:30}}/> 
       </View>
@@ -63,11 +85,11 @@ export default function School({navigation}){
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  disabled = {false}
+  disabled = {profilePicLocal ? false:true}
   onPress = {() => { navigation.navigate('Posted', {page:'something'})}}
 />
       </View>
       </View>
-      </KeyboardAvoidingView>
+      
       )
 }

@@ -47,7 +47,7 @@ export default function Photos({navigation, route }){
       const result1 = await ref.getDownloadURL()
       
       
-      //db.collection('user').doc(userId).set({profilePic:result1}, {merge:true}); 
+      
 
       updateUser(userId, {profilePic:result1})
       
@@ -229,7 +229,7 @@ const row2 = <View style = {{flexDirection:"row",marginBottom:15, justifyContent
 return(
 <View style = {{flex:1,marginLeft:30, marginRight:30, paddingTop:insets.top}}>
 <View style = {{flex:0.2}}> 
-<TouchableOpacity onPress = {() => {updateProfilePicToServer(),uploadPhotosToServer(),  navigation.goBack()}} style = {{alignItems:'flex-end', marginTop:10}}>
+<TouchableOpacity onPress = {() => {updateProfilePicToServer(),uploadPhotosToServer(),  navigation.navigate('School', {page:'something'})}} style = {{alignItems:'flex-end', marginTop:10}}>
    <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
    </TouchableOpacity>
    

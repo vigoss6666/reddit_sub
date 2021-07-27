@@ -32,6 +32,7 @@ import ResendCode from './Authentication/Screens/ResendCode';
 import Password from './Authentication/Screens/Password';
 import Posted from './Authentication/Screens/Posted';
 import ProfileHidden from './Authentication/Screens/ProfileHidden';
+import LoadPermission from './Authentication/Screens/LoadPermission';
 import Phone from './Authentication/Screens/Phone';
 import CountryCodes from './Authentication/Screens/CountryCodes';
 import Intro from './Authentication/Screens/Intro';
@@ -385,7 +386,6 @@ function stringifyNumber(n) {
     generatedMatchSelf, 
     setGeneratedMatchSelf, 
     generatedMatch, 
-    setGeneratedMatch, 
     changedClient, 
     setChangedClient, 
     inviteToPlayContacts, 
@@ -638,11 +638,12 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Phone} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={LoadPermission} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="ResendCode" component={ResendCode} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS}}/>
 <Stack.Screen name="AccountType" component={AccountType}/>
 <Stack.Screen name="VerifyPhone" component={VerifyPhone}/>
+<Stack.Screen name="LoadPermission" component={LoadPermission}/>
 <Stack.Screen name="AccountTypeDetail" component={AccountTypeDetail} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS}}/>
 <Stack.Screen name="FirstName" component={FirstName}/>
 <Stack.Screen name="LastName" component={LastName}/>

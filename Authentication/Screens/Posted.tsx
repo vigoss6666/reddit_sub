@@ -80,14 +80,14 @@ onPress = {() => {_sendToServer(),navigation.navigate('EnableLocation')}}
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"bold"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  onPress = {() => {_sendToServer(),navigation.navigate('EnableLocation')}}
+  onPress = {() => {_sendToServer(),navigation.navigate('AccountType', {page:'Something'})}}
   disabled = {false}
 />
 <TouchableOpacity 
 style = {{padding:20,justifyContent:"center",alignItems:'center'}}
-onPress = {() => {updateUser(userId, {posted:false}),navigation.navigate('EnableLocation')}}
+onPress = {() => {updateUser(userId, {posted:false}),navigation.navigate('AccountType',{page:'something'})}}
 >
-    <Text style = {{ fontWeight:"600"}}>NOT NOW</Text>
+    <Text style = {{ fontWeight:"600"}}>NOT NOW1</Text>
 </TouchableOpacity>
 
 

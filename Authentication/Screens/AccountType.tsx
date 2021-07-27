@@ -13,7 +13,7 @@ import {updateUser} from '../../networking';
 export default function Gender({navigation, route}){
 const myContext = useContext(AppContext); 
 const {userId, CustomBackComponent} = myContext; 
-// const {page} = route.params; 
+const {page} = route.params; 
 useEffect(() => {
    navigation.setOptions({
      headerTitle:false, 
@@ -27,7 +27,7 @@ const _handlePage = () => {
     navigation.navigate("DetailsSettings")
     return; 
  }
- navigation.navigate('Height', {page:"something"})
+ navigation.navigate('Gender', {page:"something"})
 
 }
 const _handleServer = () => {
@@ -68,7 +68,7 @@ onPress = {() => {setMan(true), setWoman(false)}}
 <TouchableOpacity style = {{height:80, width:80, borderRadius:40,  borderWidth:0.3,justifyContent:"center", alignItems:"center",backgroundColor:"white"}}
 onPress = {() => {setMan(true), setWoman(false)}}
 >
-{/* <Image source = {require('/Users/zaidshaikh/newGamer/fhf_client/assets/date.png')} style = {{height:80, width:80}}></Image> */}
+<Image source = {require('../../assets/date.png')} style = {{height:80, width:80}}></Image>
 
 
 </TouchableOpacity>
@@ -85,7 +85,7 @@ onPress = {() => {setWoman(true), setMan(false)}}
 <TouchableOpacity style = {{height:80, width:80, borderRadius:40, borderColor:'black', borderWidth:0.3,justifyContent:"center", alignItems:"center",backgroundColor:"white"}}
 onPress = {() => {setWoman(true), setMan(false)}} 
 >
-{/* <Image source = {require('/Users/zaidshaikh/newGamer/fhf_client/assets/matchmake.png')} style = {{height:80, width:80}}></Image> */}
+<Image source = {require('../../assets/matchmake.png')} style = {{height:80, width:80}}></Image>
 </TouchableOpacity>
 </TouchableOpacity>
 <Text style = {{fontWeight:'700'}}>MATCHMAKE</Text>

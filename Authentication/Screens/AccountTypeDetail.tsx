@@ -76,7 +76,7 @@ onPress = {() => {setMan(true), setWoman(false)}}
 <TouchableOpacity style = {{height:80, width:80, borderRadius:40,  borderWidth:0.3,justifyContent:"center", alignItems:"center",backgroundColor:"white"}}
 onPress = {() => {setMan(true), setWoman(false)}}
 >
-{/* <Image source = {require('/Users/zaidshaikh/newGamer/fhf_client/assets/date.png')} style = {{height:80, width:80}}></Image> */}
+<Image source = {require('../../assets/date.png')} style = {{height:80, width:80}}></Image>
 
 
 </TouchableOpacity>
@@ -97,12 +97,12 @@ onPress = {() => {setWoman(true), setMan(false)}}
 <TouchableOpacity style = {{height:80, width:80, borderRadius:40, borderColor:'black', borderWidth:0.3,justifyContent:"center", alignItems:"center",backgroundColor:"white"}}
 onPress = {() => {setWoman(true), setMan(false)}} 
 >
-{/* <Image source = {require('/Users/zaidshaikh/newGamer/fhf_client/assets/matchmake.png')} style = {{height:80, width:80}}></Image> */}
+<Image source = {require('../../assets/matchmake.png')} style = {{height:80, width:80}}></Image>
 </TouchableOpacity>
 </TouchableOpacity>
 <Text style = {{fontWeight:'700'}}>MATCHMAKE</Text>
 <Text style = {{fontWeight:'700'}}>ONLY</Text>
-<View style = {{flexDirection:'row',marginTop:10,justifyContent:'center',alignItems:'center'}}>
+<View style = {{flexDirection:'row',marginTop:10,justifyContent:'center',alignItems:'center',marginLeft:20}}>
 <FontAwesome name="check" size={15} color="black" style = {{marginRight:5}}/>
 <Text style = {{fontWeight:'700', color:'grey'}}>Suggest Matches</Text>
 </View>

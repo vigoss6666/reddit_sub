@@ -37,7 +37,7 @@ export default function Hometown({navigation, route}){
          navigation.navigate("DetailsSettings"); 
          return
        }
-       navigation.navigate('Posted')
+       navigation.navigate('EnableLocation')
        
     } 
        
