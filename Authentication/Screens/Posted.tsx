@@ -87,7 +87,7 @@ onPress = {() => {_sendToServer(),navigation.navigate('EnableLocation')}}
 style = {{padding:20,justifyContent:"center",alignItems:'center'}}
 onPress = {() => {updateUser(userId, {posted:false}),navigation.navigate('AccountType',{page:'something'})}}
 >
-    <Text style = {{ fontWeight:"600"}}>NOT NOW1</Text>
+    <Text style = {{ fontWeight:"600"}}>NOT NOW</Text>
 </TouchableOpacity>
 
 

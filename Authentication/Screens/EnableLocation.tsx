@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView,Keyboard} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
@@ -18,6 +18,7 @@ export default function EnableLocation({navigation}){
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState("");
     useEffect(() => {
+        Keyboard.dismiss(); 
         navigation.setOptions({
           headerTitle:false, 
           headerLeft:() => <CustomBackComponent navigation = {navigation}/>

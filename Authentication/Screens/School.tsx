@@ -12,7 +12,7 @@ export default function School({navigation,route}){
     const [Email, setEmail] = useState("");
     const myContext = useContext(AppContext); 
     const {userId,CustomBackComponent} = myContext;
-    const {page} = route.params; 
+    // const {page} = route.params; 
     const [gate,setGate] = useState(true); 
     const [school, setSchool] = useState(null); 
 
