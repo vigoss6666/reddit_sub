@@ -16,7 +16,7 @@ export default function Height({navigation,route}){
     const myContext = useContext(AppContext); 
     const {userId, CustomBackComponent} = myContext;
     let [feet, setFeet] = useState(null); 
-     let [inches, setInches] = useState(null); 
+     
     const [gate, setGate] = useState(true); 
     // useEffect(() => {
     //     navigation.setOptions({
@@ -30,28 +30,24 @@ export default function Height({navigation,route}){
         })
       }, [])
     useEffect(() => {
-       if(feet !== null && inches !== null){
+       if(feet !== null){
            setGate(false)
            return; 
        } 
        setGate(true); 
-    }, [feet, inches])  
+    }, [feet])  
     // const { page } = route.params;  
 
      
 
 const _sendToServer = () => {
-    updateUser(userId,{feet, inches} )
+    updateUser(userId,{cms:feet} )
 }     
 
       
 const _handleNavigation = () => {
-     if(page == "DetailsSettings"){
-          navigation.navigate("DetailsSettings")
-          return; 
-          
-     }
-     navigation.navigate('AddPhoto', {page:"something"})
+     
+     navigation.navigate('AuthPhotos', {page:"something"})
 
 }
 

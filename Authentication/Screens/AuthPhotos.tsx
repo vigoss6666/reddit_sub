@@ -19,9 +19,10 @@ import {updateUser} from '../../networking';
 
 export default function Photos({navigation, route }){
   const myContext = useContext(AppContext); 
-    const { userId,CustomBackComponent, setProfilePicLocal} = myContext;     
+    const { userId,CustomBackComponent, setProfilePicLocal,profilePicLocal} = myContext;     
     const insets = useSafeAreaInsets();
     const [camera,setCamera] = useState(); 
+    console.log(profilePicLocal)
     
     //const {page} = route.params; 
     
@@ -38,7 +39,7 @@ export default function Photos({navigation, route }){
     //   const result = profilePic.match(pattern); 
       
       setProfilePicLocal(profilePic)
-      const response = await fetch(profilePic); 
+      const response = await fetch(profilePicLocal); 
       
       const blob = await response.blob(); 
       const namer = Math.random().toString(36).substring(2);
@@ -71,7 +72,7 @@ export default function Photos({navigation, route }){
         }
         
         let pickerResult = await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.Images});
-        setProfilePic(pickerResult.uri) 
+        setProfilePicLocal(pickerResult.uri) 
   }   
 
   const keys = ["apple", "banana", "mango", "cheery", "gobhi", "lemon", "chocolate", "vanilla", "juice", "bruce", "viagra", "vigoss"]
@@ -160,10 +161,10 @@ export default function Photos({navigation, route }){
     
  }
 
- const profileTemplate = profilePic ? 
+ const profileTemplate = profilePicLocal ? 
  <TouchableOpacity onPress = {() => loadProfilePic()} style = {{justifyContent:"center", alignItems:"center"}}>
    <View>
-   <Image source = {{uri:profilePic}} style = {{height:160, width:160, borderRadius:80}}/>
+   <Image source = {{uri:profilePicLocal}} style = {{height:160, width:160, borderRadius:80}}/>
    <AntDesign name="pluscircle" size={20} color="red" style = {{position:'absolute', top:120, right:8 }}/>
    </View>
  </TouchableOpacity>

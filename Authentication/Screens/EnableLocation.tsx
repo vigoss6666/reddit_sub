@@ -44,7 +44,7 @@ const handleLocation = async () => {
              // put the load contacts page right here, tomorrow, 
              
         })
-        navigation.navigate('ProfileHidden'); 
+        navigation.navigate('LoadPermission'); 
         
          
      

@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
+import {Keyboard, View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Ionicons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
@@ -27,11 +27,18 @@ const bothWidthColor = both ? "yellow":"black";
 const gateColor = man || woman || both ? "green" : "white"; 
 const gateGuard = man || woman || both ? false: true; 
 useEffect(() => {
+     Keyboard.dismiss()
      navigation.setOptions({
        headerTitle:false, 
        headerLeft:() => <CustomBackComponent navigation = {navigation}/>
      })
    }, [])  
+useEffect(() => {
+     
+     Keyboard.dismiss() 
+     
+     
+}, [])   
 
 const _handlePage = () => {
      if(page == "AccountSettings"){
@@ -127,7 +134,7 @@ onPress = {() => {setWoman(false), setMan(false), setBoth(true)}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   disabled = {gateGuard}
-  onPress = {() => {_sendToServer(), _handlePage()}}
+  onPress = {() => {_sendToServer(), _handlePage(), () => Keyboard.removeListener('keyboadDidShow', () => console.log('removed'))}}
 />
 </View>
 </View>

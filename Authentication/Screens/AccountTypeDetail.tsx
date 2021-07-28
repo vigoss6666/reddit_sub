@@ -16,7 +16,7 @@ export default function Gender({navigation, route}){
 const myContext = useContext(AppContext); 
 const insets = useSafeAreaInsets();
 const {userId, CustomBackComponent} = myContext; 
-// const {page} = route.params; 
+
 useEffect(() => {
    navigation.setOptions({
      headerShown:false
@@ -24,21 +24,23 @@ useEffect(() => {
  }, [])  
 
 const _handlePage = () => {
- if(page == "DetailsSettings"){
-    
-    navigation.navigate("DetailsSettings")
-    return; 
+ 
+ if(man){
+   navigation.navigate('Gender', {page:"something"})
  }
- navigation.navigate('Height', {page:"something"})
+ if(woman){
+   navigation.navigate('LoadPermission', {page:"something"})
+ }
+ 
 
 }
 const _handleServer = () => {
    if(man){
-   updateUser(userId, {gender:"male",genderPreference:"female"})  
+   updateUser(userId, {dating:true})  
       
    }
    else if(woman){
-      updateUser(userId, {gender:"female", genderPreference:"male"})  
+      updateUser(userId, {dating:false})  
    }
 }
 
@@ -86,7 +88,7 @@ onPress = {() => {setMan(true), setWoman(false)}}
 <Text style = {{fontWeight:'700'}}>MATCHMAKE</Text>
 <View style = {{flexDirection:'row',marginTop:10,justifyContent:'center',alignItems:'center'}}>
 <FontAwesome name="check" size={15} color="black" style = {{marginRight:5}}/>
-<Text style = {{fontWeight:'700', color:'grey'}}>Suggest Matches</Text>
+<Text style = {{fontWeight:'700', color:'grey',fontSize:11}}>Suggest Matches</Text>
 </View>
 </View>  
 <View style = {{alignItems:'center'}}>
@@ -104,11 +106,11 @@ onPress = {() => {setWoman(true), setMan(false)}}
 <Text style = {{fontWeight:'700'}}>ONLY</Text>
 <View style = {{flexDirection:'row',marginTop:10,justifyContent:'center',alignItems:'center',marginLeft:20}}>
 <FontAwesome name="check" size={15} color="black" style = {{marginRight:5}}/>
-<Text style = {{fontWeight:'700', color:'grey'}}>Suggest Matches</Text>
+<Text style = {{fontWeight:'700', color:'grey',fontSize:11}}>Suggest Matches</Text>
 </View>
 <View style = {{flexDirection:'row',marginTop:10,justifyContent:'center',alignItems:'center'}}>
 <FontAwesome name="check" size={15} color="black" style = {{marginRight:5}}/>
-<Text style = {{fontWeight:'700', color:'grey'}}>Browse Users</Text>
+<Text style = {{fontWeight:'700', color:'grey',fontSize:11}}>Browse Users</Text>
 </View>
 </View>
 </View>

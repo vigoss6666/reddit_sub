@@ -27,16 +27,24 @@ const _handlePage = () => {
     navigation.navigate("DetailsSettings")
     return; 
  }
- navigation.navigate('Gender', {page:"something"})
+ if(man){
+   navigation.navigate('Gender', {page:"something"})
+ }
+
+ if(woman){
+   navigation.navigate('LoadPermission')
+ }
+ 
+ 
 
 }
 const _handleServer = () => {
    if(man){
-   updateUser(userId, {gender:"male",genderPreference:"female"})  
+   updateUser(userId, {dating:true})  
       
    }
    else if(woman){
-      updateUser(userId, {gender:"female", genderPreference:"male"})  
+      updateUser(userId, {dating:false})  
    }
 }
 

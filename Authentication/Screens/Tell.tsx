@@ -1,5 +1,6 @@
 import  React, {useState,useRef,useEffect,useContext} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import { Button } from 'react-native-elements'; 
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import {Header} from '../../src/common/Common'; 
@@ -36,24 +37,29 @@ export default function Tell({navigation}){
           
     }
 return(
-<View style = {{flex:1, alignItems:"center"}}>
-<View style = {{flex:0.1, marginTop:30}}>
-<TouchableOpacity onPress = {() => {navigation.goBack()}}>
+<View style = {{flex:1,marginTop:30}}>
+<View style = {{flex:0.2, marginTop:30}}>
+<TouchableOpacity onPress = {() => {navigation.goBack()}} style = {{alignSelf:'center'}}>
 <MaterialIcons name="keyboard-arrow-down" size={40} color="black" />
 </TouchableOpacity>
 </View>
-<View style = {{flex:0.5, alignItems:"center"}}>
-
-<TouchableOpacity 
-onPress = {() => {handleLocation()}}
-style = {{borderWidth:1, padding:20, backgroundColor:'black' }}>
-    <Text style = {{color:"white", fontWeight:"bold"}}>Allow location</Text>
-</TouchableOpacity>
-</View>
-<View style = {{flex:0.4}}>
+<View style = {{flex:0.6,alignItems:'center'}}>
 <Header text = {"Meet People Nearby"}/>
 <Text style = {{fontWeight:'bold'}}>Your location will be used to increase the quality</Text>
 <Text style = {{alignSelf:'center', fontWeight:'bold'}}>  of our match suggestions</Text>
+
+</View>
+<View style = {{flex:0.2}}>
+
+<Button 
+title = {'Allow Location'}
+onPress = {() => {handleLocation()}}
+type = {'outline'}
+containerStyle = {{backgroundColor:'black',marginLeft:30, marginRight:30}}
+titleStyle = {{color:'white'}}
+>
+    
+</Button>
 </View>
 
 </View>
