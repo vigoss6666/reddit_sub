@@ -10,6 +10,7 @@ import * as Location from 'expo-location';
 export default function Tell({navigation}){
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState("");
+    const [loading,setLoading] = useState(false); 
     const myContext = useContext(AppContext);
     const {userId, CustomBackComponent} = myContext;
     useEffect(() => {
@@ -53,10 +54,11 @@ return(
 
 <Button 
 title = {'Allow Location'}
-onPress = {() => {handleLocation()}}
+onPress = {() => {setLoading(true),handleLocation()}}
 type = {'outline'}
 containerStyle = {{backgroundColor:'black',marginLeft:30, marginRight:30}}
 titleStyle = {{color:'white'}}
+loading = {loading}
 >
     
 </Button>

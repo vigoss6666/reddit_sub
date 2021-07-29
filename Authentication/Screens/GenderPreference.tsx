@@ -63,7 +63,7 @@ const _sendToServer = () => {
 }
 
 return(
-<View style = {{flex:1,backgroundColor:'#ffffff'}}>
+<TouchableOpacity style = {{flex:1,backgroundColor:'#ffffff'}} onPress = {Keyboard.dismiss}>
 <View style = {{flex:0.1}}> 
      
 </View>
@@ -138,6 +138,6 @@ onPress = {() => {setWoman(false), setMan(false), setBoth(true)}}
 />
 </View>
 </View>
-</View>
+</TouchableOpacity>
 )
 }

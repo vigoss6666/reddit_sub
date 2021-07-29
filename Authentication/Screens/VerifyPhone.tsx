@@ -42,6 +42,7 @@ export default function VerifyPhone({navigation, route}){
     // console.log("page on verify phone:"+page)
     const myContext = useContext(AppContext); 
     const {userId,CustomBackComponent,vID, globalPhoneNumber,setTempId} = myContext;
+    const [loading,setLoading] = useState(false); 
     // const {verificationId} = route.params; 
     useEffect(() => {
       navigation.setOptions({
@@ -64,6 +65,7 @@ export default function VerifyPhone({navigation, route}){
     console.log(verificationCode)
     useEffect(() => {
       if(verificationCode.length == 6){
+        setLoading(true)
         _checkVerification();   
       }
     }, [verificationCode])
@@ -187,6 +189,7 @@ export default function VerifyPhone({navigation, route}){
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
+  loading = {loading}
   // onPress = {() => { navigation.navigate('PhoneSuccess', {page})}}
 />
 <TouchableOpacity style = {{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}} onPress = {() => navigation.navigate('ResendCode')}>

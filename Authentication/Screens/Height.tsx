@@ -51,7 +51,7 @@ const _handleNavigation = () => {
 }
 
 return(
-<View style = {{flex:1,backgroundColor:'#ffffff'}}>
+<TouchableOpacity style = {{flex:1,backgroundColor:'#ffffff'}} onPress = {Keyboard.dismiss}>
 <View style = {{flex:0.2}}>
 
 </View>
@@ -193,6 +193,6 @@ return(
 </TouchableOpacity>
 </View>
 </View>
-</View>
+</TouchableOpacity>
 )
 }

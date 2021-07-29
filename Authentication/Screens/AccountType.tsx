@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, Keyboard} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
@@ -59,7 +59,7 @@ const gateGuard = man || woman ? false: true;
 
 
 return(
-<View style = {{flex:1,backgroundColor:'#ffffff'}}>
+<TouchableOpacity style = {{flex:1,backgroundColor:'#ffffff'}} onPress = {Keyboard.dismiss}>
 <View style = {{flex:0.2}}>
      
 </View>
@@ -129,6 +129,6 @@ onPress = {() => {setWoman(true), setMan(false)}}
 
 </TouchableOpacity>
 </View>
-</View>
+</TouchableOpacity>
 )
 }

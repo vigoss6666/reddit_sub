@@ -17,6 +17,7 @@ export default function EnableLocation({navigation}){
     const {userId, CustomBackComponent} = myContext;
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState("");
+    const [loading, setLoading] = useState(false); 
     useEffect(() => {
         Keyboard.dismiss(); 
         navigation.setOptions({
@@ -52,7 +53,7 @@ const handleLocation = async () => {
       
 }    
 return(
-<View style = {{flex:1,backgroundColor:'#ffffff'}}>
+<TouchableOpacity style = {{flex:1,backgroundColor:'#ffffff'}} onPress = {Keyboard.dismiss}>
 <View style = {{flex:0.2, }}>
 
 </View>
@@ -76,8 +77,9 @@ style = {{borderWidth:1, padding:20, backgroundColor:'black' }}>
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"bold"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  onPress = {() => {handleLocation()}}
+  onPress = {() => {setLoading(true), handleLocation()}}
   disabled = {false}
+  loading = {loading}
 />
 <TouchableOpacity 
 style = {{justifyContent:"center", alignItems:"center", marginTop:20, flexDirection:'row'}}
@@ -87,6 +89,6 @@ onPress = {() => {navigation.navigate('Tell')}}
     <AntDesign name="caretdown" size={10} color="black" />
 </TouchableOpacity>
 </View>
-</View>
+</TouchableOpacity>
 )
 }
