@@ -37,12 +37,12 @@ export default function Tell({navigation}){
     }
 return(
 <View style = {{flex:1,marginTop:30,backgroundColor:'white'}}>
-<View style = {{flex:0.3, marginTop:30}}>
+<View style = {{flex:0.2, marginTop:30}}>
 <TouchableOpacity onPress = {() => {navigation.goBack()}} style = {{alignSelf:'center'}}>
 <MaterialIcons name="keyboard-arrow-down" size={40} color="black" />
 </TouchableOpacity>
 </View>
-<View style = {{flex:0.5,alignItems:'center'}}>
+<View style = {{flex:0.6,alignItems:'center'}}>
  <Image source = {require('../../assets/kibla.png')} style = {{height:120, width:120}}/> 
 <Header text = {"Meet People Nearby"} style = {{marginTop:10}}/>
 <Text style = {{fontWeight:'bold',marginTop:10}}>Your location will be used to increase the quality</Text>

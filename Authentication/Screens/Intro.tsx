@@ -80,10 +80,10 @@ export default function Intro({navigation}){
             ))}
             
           </View>
-          <View style = {{flexDirection:'row', justifyContent:'space-around', flex:0.3, backgroundColor:"#ffffff"}}>
+          <View style = {{ flex:0.3, backgroundColor:"#ffffff"}}>
           
-          <Button containerStyle = {{ width: 100,  }} title = {"SignIn"} onPress = {() => navigation.navigate('SignIn')}/>
-          <Button containerStyle = {{ width: 100,  }} title = {"SignUp"} onPress = {() => navigation.navigate('Phone')}/>
+          <Button containerStyle = {{ marginLeft:30,marginRight:30,backgroundColor:'black'  }} title = {"Continue"} onPress = {() => navigation.navigate('SignIn')} type = {'outline'} titleStyle = {{color:'white', fontWeight:'bold'}}/>
+          
           
           </View>
           

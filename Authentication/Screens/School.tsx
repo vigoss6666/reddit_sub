@@ -1,6 +1,6 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
-import { Dimensions,View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, KeyboardAvoidingView} from 'react-native';
-import {Button} from 'react-native-elements'; 
+import { Platform,Dimensions,View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, KeyboardAvoidingView, Keyboard} from 'react-native';
+import {Button,Input} from 'react-native-elements'; 
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Header } from '../../src/common/Common';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -12,7 +12,7 @@ export default function School({navigation,route}){
     const [Email, setEmail] = useState("");
     const myContext = useContext(AppContext); 
     const {userId,CustomBackComponent} = myContext;
-    // const {page} = route.params; 
+    const {page} = route.params; 
     const [gate,setGate] = useState(true); 
     const [school, setSchool] = useState(null); 
 
@@ -44,7 +44,7 @@ export default function School({navigation,route}){
   }
     return(
       <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
-      <View style = {{flex:1,backgroundColor:'#ffffaa' }}>   
+      <View style = {{flex:1,backgroundColor:'white' }}>   
       <View style = {{flex:0.2}}>
       <TouchableOpacity onPress = {() => { _handlePage()}}>
       <Text style = {{marginTop:20, alignSelf:"flex-end", marginRight:30, color:"orange", fontWeight:"bold"}}>Skip</Text>   
@@ -62,12 +62,18 @@ export default function School({navigation,route}){
          value = {Email}
          onChangeText = {(text) => { setEmail(text)}}
         ></TextInput> */}
+        <TouchableWithoutFeedback onPress = {Keyboard.dismiss}>
         <GooglePlacesAutocomplete
               styles = {{container:{ marginTop:30,marginLeft:10, marginRight:20 }}}
               placeholder = {"UC Berkley"}
               fetchDetails = {true} 
+              textInputProps = {
+                {
+                  InputComp: Input,
+                }
+              }
               onPress={(data, details = null) => {
-                console.log(details.name)
+                // console.log(details.name)
                 setEmail(details.name)
                 
                 const state = ""; 
@@ -81,7 +87,12 @@ export default function School({navigation,route}){
               }}
               
         />  
-             <Button
+  </TouchableWithoutFeedback>
+        
+      </View>
+      <View style = {{flex:0.3,justifyContent:"center", }}>
+       {/* <Continue  onPress = {() => {_handleEmail(), mutateSettings({email:Email}) }}/>     */}
+       <Button
   title="Continue"
   type="outline"
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30,marginTop:100}}
@@ -90,11 +101,6 @@ export default function School({navigation,route}){
   disabled = {gate}
   onPress = {() => { _sendToServer(), _handlePage()}}
 />
-        
-      </View>
-      <View style = {{flex:0.3,justifyContent:"center", }}>
-       {/* <Continue  onPress = {() => {_handleEmail(), mutateSettings({email:Email}) }}/>     */}
-  
       </View>
       </View>
       </KeyboardAvoidingView>

@@ -15,6 +15,7 @@ const myContext = useContext(AppContext);
 const {userId, CustomBackComponent} = myContext; 
 const {page} = route.params; 
 useEffect(() => {
+   Keyboard.dismiss(); 
    navigation.setOptions({
      headerTitle:false, 
      headerLeft:() => <CustomBackComponent navigation = {navigation}/>

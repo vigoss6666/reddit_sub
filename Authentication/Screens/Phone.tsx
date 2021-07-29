@@ -125,7 +125,7 @@ export default function App({navigation}) {
         placeholder="123456"
         onChangeText={setVerificationCode}
       /> */}
-      <Button
+      {/* <Button
         title="Confirm Verification Code"
         disabled={!verificationId}
         onPress={async () => {
@@ -175,7 +175,7 @@ export default function App({navigation}) {
             showMessage({ text: `Error: ${err.message}`, color: 'red' });
           }
         }}
-      />
+      /> */}
       {message ? (
         <TouchableOpacity
           style={[

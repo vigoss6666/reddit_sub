@@ -61,7 +61,7 @@ export default function Posted({navigation}){
         })
       }, [])
 return(
-<View style = {{flex:1}}>
+<View style = {{flex:1,backgroundColor:'white'}}>
 
 <View style = {{flex:0.7, justifyContent:"center", alignItems:"center"}}>
 <MaterialCommunityIcons name="chat-processing" size={120} color="black" />

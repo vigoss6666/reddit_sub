@@ -638,7 +638,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Phone} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="ResendCode" component={ResendCode} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS}}/>
 <Stack.Screen name="AccountType" component={AccountType}/>
