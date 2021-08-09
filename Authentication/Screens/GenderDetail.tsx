@@ -52,7 +52,7 @@ const GenderDetail = ({navigation}) => {
   return (
     <View style={{flex:1,paddingTop:insets.top,backgroundColor:'white'}}>
       <TouchableOpacity onPress = {() => navigation.goBack()} style = {{alignItems:'center'}}>
-<MaterialIcons name="keyboard-arrow-down" size={40} color="black" />
+<MaterialIcons name="keyboard-arrow-up" size={40} color="black" />
 </TouchableOpacity> 
 <View style = {{marginLeft:30, marginRight:30,marginTop:50}}>
 <Text style = {{fontSize:25,fontWeight:'bold'}}>

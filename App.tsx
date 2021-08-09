@@ -172,7 +172,7 @@ const computeName = (obj) => {
 export default function App() {
 
   
-  console.disableYellowBox = true;
+  
   const [profileAuth, setProfilesAuth] = useState([{name:"zaid shaikh", phoneNumber:'+917208110384'}]); 
   const [xClient, setXClient] = useState({latitude:null, longitude:null});
   const [datingFlatList, setDatingFlatlist] = useState(1); 

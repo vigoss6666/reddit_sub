@@ -40,8 +40,9 @@ export default function LoadContacts({navigation}){
     
     let length = useRef().current; 
     useEffect(() => {
-     const gamer = setTimeout(() => {_uploadContacts()}, 5000); 
-     return () => gamer;    
+     _uploadContacts() 
+    //  const gamer = setTimeout(() => {_uploadContacts()}, 5000); 
+    //  return () => gamer;    
         
     }, [])
     useEffect(() => {
@@ -61,6 +62,10 @@ export default function LoadContacts({navigation}){
     // }, [])
 
     const transformPhoneNumber = (phoneNumber, countryCode) => {
+       if(phoneNumber == '535'){
+         console.log("country code is"+countryCode)
+
+       }
         const countryCoder = countryCode.toUpperCase();
         if(phoneNumber.includes("+")){
           return phoneNumber; 
@@ -79,22 +84,24 @@ export default function LoadContacts({navigation}){
               fields: [Contacts.Fields.PhoneNumbers],
             });
             if (data.length > 0) {
-              
+              const checker = data.filter(val => val.name == "David Boctor")
+              console.log('checker'); 
+              console.log(checker)
               const contact = data;
               const refined = contact.filter(val => val.phoneNumbers !== undefined); 
               console.log("chencking refined length"); 
-              console.log(refined.length); 
+              // console.log(refined); 
               const gamer = refined.map(val => {
                 
                  
                 
                 
                   return {
-                    name:val.name ? val.name:null , 
+                    name:val.name ? val.name:null, 
                     firstName:val.firstName ? val.firstName:null, 
                     lastName:val.lastName ? val.lastName:null,
-                    formattedPhoneNumber:val.phoneNumbers[0].number ? val.phoneNumbers[0].number:null, 
-                    phoneNumber:transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode)
+                    // formattedPhoneNumber:val.phoneNumbers[0].number ? val.phoneNumbers[0].number:null, 
+                    phoneNumber:val.phoneNumbers.length && val.phoneNumbers[0].countryCode ? transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode):val.phoneNumbers[0].digits
                 }
                 
                    
@@ -158,7 +165,7 @@ export default function LoadContacts({navigation}){
                   batch.set(ref, {...val, matchMaker:userId}, {merge:true})
              })
              batch.commit().then(() => {
-                navigation.navigate('Loader'); 
+                 navigation.navigate('Loader'); 
             });
 
              

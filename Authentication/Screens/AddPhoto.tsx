@@ -85,7 +85,8 @@ export default function School({navigation}){
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  disabled = {profilePicLocal ? false:true}
+  // disabled = {profilePicLocal ? false:true}
+  
   onPress = {() => { navigation.navigate('Posted', {page:'something'})}}
 />
       </View>

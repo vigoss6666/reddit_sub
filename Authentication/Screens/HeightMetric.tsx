@@ -55,7 +55,7 @@ return(
 <View style = {{flex:1,backgroundColor:'#ffffff',paddingTop:insets.top}}>
 <View style = {{flex:0.2,alignItems:'center'}}>
  <TouchableOpacity onPress = {() => navigation.navigate('Height', {page:'something',})}>
-<MaterialIcons name="keyboard-arrow-down" size={40} color="black" />
+<MaterialIcons name="keyboard-arrow-up" size={40} color="black" />
 </TouchableOpacity>   
 </View>
 <View style = {{flex:0.5, marginLeft:30}}>

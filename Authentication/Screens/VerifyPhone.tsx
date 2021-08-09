@@ -15,7 +15,7 @@ import {
   } from 'react-native-confirmation-code-field';
 import { gql } from 'apollo-boost';
 import { MaterialIcons } from '@expo/vector-icons';
-import { db } from 'Chat/Screens/MatchList';
+
   const styles = StyleSheet.create({
     root: {flex: 1, padding: 20},
     title: {textAlign: 'center', fontSize: 30},
@@ -41,7 +41,7 @@ export default function VerifyPhone({navigation, route}){
     // const {page} = route.params; 
     // console.log("page on verify phone:"+page)
     const myContext = useContext(AppContext); 
-    const {userId,CustomBackComponent,vID, globalPhoneNumber,setTempId} = myContext;
+    const {userId,CustomBackComponent,vID, globalPhoneNumber,setTempId,db,setId} = myContext;
     const [loading,setLoading] = useState(false); 
     // const {verificationId} = route.params; 
     useEffect(() => {
@@ -84,6 +84,12 @@ export default function VerifyPhone({navigation, route}){
             //      navigation.navigate('Homer'); 
             //    }
             //  })
+            // db.collection('user').doc(globalPhoneNumber).get().then(onDoc1 => {
+            //   if(onDoc1.exists){
+            //    setId(globalPhoneNumber);  
+            //     // navigation.navigate('Homer')
+            //   }
+            // })
               
               setTempId(globalPhoneNumber)
               navigation.navigate('FirstName'); 
@@ -132,15 +138,10 @@ export default function VerifyPhone({navigation, route}){
       setValue,
     });
     
-   const _handleResend = () => {
-        
-        resendPhone(); 
-   }
-   const _handleVerification = () => {
-       verifyPhoneCode({variables:{phoneCode:parseInt(value)}})  
-    }
+   
+   
   return(
-  <View style = {{flex:1, justifyContent:'center', }}>
+  <View style = {{flex:1, justifyContent:'center', backgroundColor:'white'}}>
   
   <View style = {{flex:0.4 }}>
   <Header text = {"Enter verification code "} style = {{alignSelf:"flex-start",marginLeft:30, marginRight:30,marginTop:30}}/>

@@ -52,7 +52,7 @@ export default function App({navigation}) {
   }, []) 
 
   return (
-    <View style={{ padding: 20, marginTop: 50 }}>
+    <View style={{ padding: 20, backgroundColor:'white' }}>
       
       <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
