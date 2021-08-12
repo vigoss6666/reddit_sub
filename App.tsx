@@ -247,7 +247,7 @@ export default function App() {
   })
   const [clientFilter, setClientFilter] = useState([]); 
   useEffect(() => {
-    // AsyncStorage.removeItem('user')
+    AsyncStorage.removeItem('user')
   }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
@@ -668,7 +668,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <Stack.Screen name="Tell" component={Tell} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}/>
 <Stack.Screen name="ProfileHidden" component={ProfileHidden}/>
 <Stack.Screen name="Loader" component={Loader} options = {{headerTitle:false, headerLeft:false}}/>
-<Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess} options = {{headerTitle:false, headerLeft:false}}/>
+<Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess}  options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}/>
 <Stack.Screen name="Contacts" component={Contacts} options = {{headerTitle:false, headerLeft:false}}/>
 <Stack.Screen name="ContactsAge" component={ContactsAge} options = {{headerTitle:false, headerLeft:false}}/>
 <Stack.Screen name="ContactsSex" component={ContactsSex} options = {{headerTitle:false, headerLeft:false}}/>

@@ -26,10 +26,12 @@ export default function EnableLocation({navigation}){
         })
       }, [])
 const handleLocation = async () => {
+    
     let { status } = await Location.requestPermissionsAsync();   
     if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied');
       }
+      navigation.navigate('LoadPermission');
       let location = await Location.getCurrentPositionAsync({});
       
         setLocation(location);
@@ -46,7 +48,7 @@ const handleLocation = async () => {
              // put the load contacts page right here, tomorrow, 
              
         })
-        navigation.navigate('LoadPermission'); 
+         
         
          
      

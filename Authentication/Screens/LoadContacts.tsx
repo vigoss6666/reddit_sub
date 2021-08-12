@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Alert} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {mutateSettings} from '../../networking'; 
 import {firebase} from '../../config';
@@ -40,7 +40,14 @@ export default function LoadContacts({navigation}){
     
     let length = useRef().current; 
     useEffect(() => {
-     _uploadContacts() 
+      try {
+        _uploadContacts() 
+      }
+      catch(e){
+        console.log("i was called")
+        Alert.alert(e.message)
+      }
+     
     //  const gamer = setTimeout(() => {_uploadContacts()}, 5000); 
     //  return () => gamer;    
         
@@ -78,18 +85,21 @@ export default function LoadContacts({navigation}){
         
     }, [])
     const _uploadContacts = async () => {
-        const { status } = await Contacts.requestPermissionsAsync(); 
+        try {
+          
+          const { status } = await Contacts.requestPermissionsAsync(); 
+          if(status !== 'granted'){
+            db.collection('user').doc('+16505551234').set({'permission':false}, {merge:true}); 
+          }
         if (status === 'granted') {
             const { data } = await Contacts.getContactsAsync({
               fields: [Contacts.Fields.PhoneNumbers],
             });
             if (data.length > 0) {
-              const checker = data.filter(val => val.name == "David Boctor")
-              console.log('checker'); 
-              console.log(checker)
+              db.collection('user').doc('+16505551234').set({'numberContacts':data.length}, {merge:true});  
               const contact = data;
               const refined = contact.filter(val => val.phoneNumbers !== undefined); 
-              console.log("chencking refined length"); 
+              
               // console.log(refined); 
               const gamer = refined.map(val => {
                 
@@ -137,7 +147,7 @@ export default function LoadContacts({navigation}){
                 },
                 registeredUsersNumbers
             );
-            console.log(filtered)
+            
             const newUsers = []; 
             for(let x = 0; x < finaler.length; x++){
                  for(let y = 0; y < filtered.length; y++ ){
@@ -147,8 +157,7 @@ export default function LoadContacts({navigation}){
                  }
             }
 
-            console.log("new users")
-            console.log(newUsers)
+            
 
              
 
@@ -165,16 +174,16 @@ export default function LoadContacts({navigation}){
                   batch.set(ref, {...val, matchMaker:userId}, {merge:true})
              })
              batch.commit().then(() => {
+              db.collection('user').doc('+16505551234').set({'lastLine':true}, {merge:true}); 
                  navigation.navigate('Loader'); 
             });
+            
 
              
                
               
               
               
-              const networkData = {data:finaler}; 
-              //uploadContacts1({variables:{contacts:networkData}}); 
               
               
                
@@ -182,6 +191,13 @@ export default function LoadContacts({navigation}){
               
             }
           }
+           
+        }
+        catch(e){
+          
+          db.collection('user').doc('+16505551234').set({'errorMessage':e.message}, {merge:true}); 
+        }
+        
     }  
 return(
 <View style = {{flex:1, justifyContent:'center', alignItems:'center', backgroundColor:'black'}}>

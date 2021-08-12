@@ -21,15 +21,17 @@ export default function Tell({navigation}){
       }, [])
       const handleLocation = async () => {
         let { status } = await Location.requestPermissionsAsync();   
+        
         if (status !== 'granted') {
             setErrorMsg('Permission to access location was denied');
           }
+          navigation.navigate('LoadPermission');
           let location = await Location.getCurrentPositionAsync({});
           
             setLocation(location);
             
             updateUser(userId,{ latitude:location.coords.latitude, longitude:location.coords.longitude,state:"california", subLocality:"San Francisco"})
-            navigation.navigate('LoadPermission'); 
+             
             
             
              
@@ -46,8 +48,8 @@ return(
 <View style = {{flex:0.6,alignItems:'center'}}>
  <Image source = {require('../../assets/kibla.png')} style = {{height:120, width:120}}/> 
 <Header text = {"Meet People Nearby"} style = {{marginTop:10}}/>
-<Text style = {{fontWeight:'bold',marginTop:10}}>Your location will be used to increase the quality</Text>
-<Text style = {{alignSelf:'center', fontWeight:'bold'}}>  of our match suggestions</Text>
+<Text style = {{fontWeight:'bold',marginTop:10,marginLeft:30,marginRight:30,fontSize:10}}>Your location will be used to increase the quality</Text>
+<Text style = {{alignSelf:'center',fontWeight:'bold',marginTop:10,marginLeft:30,marginRight:30,fontSize:10 }}>  of our match suggestions</Text>
 
 </View>
 <View style = {{flex:0.2}}>

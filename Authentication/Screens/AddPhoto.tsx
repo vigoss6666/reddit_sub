@@ -9,6 +9,7 @@ import * as ImagePicker from 'expo-image-picker';
 import AppContext from '../../AppContext';
 import {firebase} from '../../config';
 import {updateUser} from '../../networking';
+import * as ImageManipulator from 'expo-image-manipulator';
 export default function School({navigation}){
   const myContext = useContext(AppContext); 
     const {userId, CustomBackComponent,profilePicLocal,setProfilePicLocal} = myContext;
@@ -24,6 +25,7 @@ export default function School({navigation}){
           
       let pickerResult = await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.Images});
       setProfilePicLocal(pickerResult.uri) 
+      addProfilePicSmall(pickerResult.uri);  
       const response = await fetch(pickerResult.uri); 
       const blob = await response.blob(); 
       const namer = Math.random().toString(36).substring(2);
@@ -31,6 +33,7 @@ export default function School({navigation}){
       await ref.put(blob)
       const result1 = await ref.getDownloadURL()
       updateUser(userId, {profilePic:result1})
+      // addProfilePicSmall()
     }
     useEffect(() => {
       navigation.setOptions({
@@ -38,6 +41,24 @@ export default function School({navigation}){
         headerLeft:() => <CustomBackComponent navigation = {navigation}/>
       })
     }, [])
+
+    const addProfilePicSmall = async (uri:string) => {
+      
+      const manipResult = await ImageManipulator.manipulateAsync(
+        uri,
+        [{resize:{width:100, height:100}}], 
+        { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+      );
+      const response = await fetch(manipResult.uri); 
+      const blob = await response.blob(); 
+      const namer = Math.random().toString(36).substring(2);
+      const ref = firebase.storage().ref().child("images/"+ namer); 
+      await ref.put(blob)
+      const result1 = await ref.getDownloadURL()
+      updateUser(userId, {profilePicSmall:result1})
+
+      
+    }
 
     useEffect(() => {
       if(profilePicLocal){
@@ -85,7 +106,7 @@ export default function School({navigation}){
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  // disabled = {profilePicLocal ? false:true}
+  disabled = {profilePicLocal ? false:true}
   
   onPress = {() => { navigation.navigate('Posted', {page:'something'})}}
 />

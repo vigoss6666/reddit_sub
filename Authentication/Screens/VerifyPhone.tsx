@@ -1,5 +1,6 @@
 import  React, {useState,useRef,useEffect,useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Header, Continue } from '../../src/common/Common'; 
@@ -41,7 +42,7 @@ export default function VerifyPhone({navigation, route}){
     // const {page} = route.params; 
     // console.log("page on verify phone:"+page)
     const myContext = useContext(AppContext); 
-    const {userId,CustomBackComponent,vID, globalPhoneNumber,setTempId,db,setId} = myContext;
+    const {userId,CustomBackComponent,vID, globalPhoneNumber,setTempId,db,setId,setUser} = myContext;
     const [loading,setLoading] = useState(false); 
     // const {verificationId} = route.params; 
     useEffect(() => {
@@ -79,17 +80,24 @@ export default function VerifyPhone({navigation, route}){
 
         firebase.auth().signInWithCredential(credential).then(async onfulfilled => {
            if(onfulfilled.user){
-            //  db.collection('user').doc(globalPhoneNumber).get().then(onDoc => {
-            //    if(onDoc.exists){
-            //      navigation.navigate('Homer'); 
-            //    }
-            //  })
-            // db.collection('user').doc(globalPhoneNumber).get().then(onDoc1 => {
-            //   if(onDoc1.exists){
-            //    setId(globalPhoneNumber);  
-            //     // navigation.navigate('Homer')
+            // await db.collection('user').doc(phoneNumber).get().then(async onDoc => {
+            //   if(onDoc.exists){
+            //     setUser(onDoc.data())  
+            //     await AsyncStorage.setItem('user', phoneNumber); 
+            //    navigation.navigate('Homer');     
             //   }
-            // })
+            await db.collection('user').doc(globalPhoneNumber).get().then(async onDoc => {
+              if(onDoc.exists){
+                const user = onDoc.data(); 
+                if(user.appUser){
+                  setUser(onDoc.data())  
+                  await AsyncStorage.setItem('user', globalPhoneNumber); 
+                  navigation.navigate('Homer');     
+                }
+                
+              }
+              
+          })
               
               setTempId(globalPhoneNumber)
               navigation.navigate('FirstName'); 

@@ -50,7 +50,7 @@ export default function App({navigation}) {
   useEffect(() => {
    return () => Keyboard.dismiss() 
   }, []) 
-
+  
   return (
     <View style={{ padding: 20, backgroundColor:'white' }}>
       
