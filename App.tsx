@@ -125,7 +125,7 @@ import { ApolloProvider } from 'react-apollo';
 const localhost: string = 'http://192.168.43.7:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 import { gql } from 'apollo-boost'; 
-import { computePoints}  from './networking'; 
+import { computePoints, filterGamer}  from './networking'; 
 import {firebase} from './config'; 
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications'; 
@@ -214,7 +214,8 @@ export default function App() {
     }),
   });
  
-  
+
+
 
 
   

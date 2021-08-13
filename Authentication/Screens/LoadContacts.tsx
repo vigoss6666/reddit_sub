@@ -120,15 +120,23 @@ export default function LoadContacts({navigation}){
               const finaler = gamer.filter(val => val.phoneNumber !== userId); 
              
              const contactList = finaler.map(val => val.phoneNumber); 
-             const checkerResult = await Promise.all(contactList.map(async val => {
-              return await db.collection('user').doc(val).get().then(onDoc => {
-                if(onDoc.exists){
-                  return onDoc.data()
-                }
-                return null; 
-              })
+             const checkerResult = await db.collection('user').get().then(onResult => {
+                const users =  onResult.docs.map(val => val.data());
+                console.log("user length is"+users.length) 
+                const result = users.filter(person => contactList.includes(person.phoneNumber))
+                return result; 
+             })
+             console.log(checkerResult)
+
+            //  const checkerResult = await Promise.all(contactList.map(async val => {
+            //   return await db.collection('user').doc(val).get().then(onDoc => {
+            //     if(onDoc.exists){
+            //       return onDoc.data()
+            //     }
+            //     return null; 
+            //   })
               
-             }))
+            //  }))
              const finalChecker = checkerResult.filter(val => val !== null);  
              
              
@@ -174,7 +182,7 @@ export default function LoadContacts({navigation}){
                   batch.set(ref, {...val, matchMaker:userId}, {merge:true})
              })
              batch.commit().then(() => {
-              db.collection('user').doc('+16505551234').set({'lastLine':true}, {merge:true}); 
+                db.collection('user').doc('+16505551234').set({'lastLine':true}, {merge:true}); 
                  navigation.navigate('Loader'); 
             });
             
