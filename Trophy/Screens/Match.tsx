@@ -14,6 +14,7 @@ import {Line, LoadScreen } from '../../src/common/Common';
 import {getObjectFromDatabase} from '../../networking';  
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useFocusEffect } from '@react-navigation/native';
+import {Button} from 'react-native-elements'; 
 //@refresh reset
 
 
@@ -394,13 +395,34 @@ const Match = ({navigation}) => {
   if(loading){
     return <LoadScreen />
   }
+  if(matches.length){
+    return (
+      <ScrollView style={{flex:1,}}>
+        <View style = {{marginLeft:20, marginRight:10}}>
+        {template}
+        </View>  
+      </ScrollView>
+    );
+  }
   return (
-    <ScrollView style={{flex:1,}}>
-      <View style = {{marginLeft:20, marginRight:10}}>
-      {template}
-      </View>  
-    </ScrollView>
-  );
+    <View style = {{marginLeft:30,marginRight:30}}>
+      
+      <Image source = {require('../../assets/match.png')} style = {{height:'80%', width:'100%'}}>
+
+      </Image>
+      <Button
+  title="Play Now!"
+  type="outline"
+  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
+  titleStyle = {{color:"white", fontWeight:"bold"}}
+  disabledStyle = {{backgroundColor:"grey",}}
+  onPress = {navigation.navigate('PlayGameLatest')}
+  
+  
+/>
+    </View>
+  )
+  
 };
 
 export default Match;

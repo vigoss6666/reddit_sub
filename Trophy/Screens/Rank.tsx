@@ -7,6 +7,7 @@ import sub from 'date-fns/sub'
 import isAfter from 'date-fns/isAfter'
 import { filter } from 'underscore';
 import {SingleImageView} from '../../src/common/Common';
+import {Button} from 'react-native-elements'; 
 
 
 
@@ -18,6 +19,7 @@ const Rank = (props: RankProps) => {
     const [allTime, setAllTime] = useState(0); 
     const [monthly, setMonthly] = useState(0);
     const [templater, setTemplate] = useState([]); 
+    const [userPoints, setUserPoints] = useState(null); 
 
     
 
@@ -34,6 +36,8 @@ const Rank = (props: RankProps) => {
                })
                return {...val, aggregatePoint}
           })
+          const userPoints = transfromWithPoints.filter(val => val.phoneNumber == user.phoneNumber); 
+          setUserPoints(userPoints[0].aggregatePoint); 
           const transfromWithMonth = transfromWithPoints.map(val => {
               let monthlyPoints = 0; 
               const date =  sub(new Date(), {
@@ -63,6 +67,7 @@ const Rank = (props: RankProps) => {
           });
           const filterByZero = arrangedDescending.filter(val => val.aggregatePoint !== 0); 
           setTemplate(filterByZero); 
+          
           const index = arrangedDescending.findIndex(val => val.phoneNumber == userId); 
           
           setAllTime(index + 1); 
@@ -110,7 +115,7 @@ const Rank = (props: RankProps) => {
            </View>
            </View>
     })
-    return <View >
+    return (userPoints > 400 ? <View>
     <View style = {{justifyContent:"space-between", flexDirection:'row', marginLeft:30, marginRight:30}}>
     <View style = {{flexDirection:"row",  padding:10, alignItems:'center',marginBottom:20, }}>
                     <FontAwesome5 name="trophy" size={24} color="black" />
@@ -134,7 +139,18 @@ const Rank = (props: RankProps) => {
      </View>   
     <ScrollView>{template}
     </ScrollView>      
-    </View>
+    </View>:<View style = {{marginLeft:30, marginRight:30}}>
+      <Image source = {require('../../assets/unranked.png')} style = {{height:'80%', width:'100%'}}/>
+      <Button
+  title="Play Now!"
+  type="outline"
+  containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
+  titleStyle = {{color:"white", fontWeight:"bold"}}
+  disabledStyle = {{backgroundColor:"grey",}}
+  
+  
+/>
+    </View>)
 
 };
 

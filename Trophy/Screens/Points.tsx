@@ -11,12 +11,13 @@ import isPast from 'date-fns/isPast'
 import sub from 'date-fns/sub'
 import isAfter from 'date-fns/isAfter'
 import { filter } from 'underscore';
+import {Button} from 'react-native-elements'; 
 
 
 
 interface RankProps {}
 
-const Points = (props: RankProps) => {
+const Points = ({navigation}) => {
   const myContext = useContext(AppContext); 
   const [pointRefined, setPointRefined] = useState([]); 
   const { user,userId, selfFilter, setSelfFilter,computeName,db, firebase, stringifyNumber, } = myContext;
@@ -144,11 +145,32 @@ const Points = (props: RankProps) => {
       </View>
  }
     })
-    return <ScrollView>
+    if(pointRefined.length > 4){
+        return <ScrollView>
         <View style = {{marginLeft:30, marginRight:30}}>
         {template}
         </View>
         </ScrollView>; 
+    }
+    return (
+        <View style = {{marginLeft:30,marginRight:30}}>
+          
+          <Image source = {require('../../assets/point.png')} style = {{height:'80%', width:'100%'}}>
+    
+          </Image>
+          <Button
+      title="Play Now!"
+      type="outline"
+      containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
+      titleStyle = {{color:"white", fontWeight:"bold"}}
+      disabledStyle = {{backgroundColor:"grey",}}
+      onPress = {navigation.navigate('PlayGameLatest')}
+      
+      
+    />
+        </View>
+      )
+    
  };
     
 

@@ -314,6 +314,12 @@ useEffect(() => {
          
           
            setUser(user)
+          // Image.prefetch(user.profilePic) 
+          user.photos.map(val => {
+            if(val !== null){
+              Image.prefetch(val); 
+            }
+          }) 
           Asset.loadAsync(require('./assets/addedPhoto.png'))
            
            

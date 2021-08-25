@@ -14,6 +14,7 @@ import {updateUser} from '../../networking';
 import Rank from './Rank'; 
 import Points from './Points';
 import Match from './Match';
+import PointsError from './PointsError'; 
 
 
 const db = firebase.firestore(); 
@@ -252,7 +253,7 @@ const matchText = useMatchTemplate();
 
 
 return(
-<View style = {{flex:1, }}>
+<View style = {{flex:1, backgroundColor:'white'}}>
 <View style = {{flex:0.1}}> 
  
 
