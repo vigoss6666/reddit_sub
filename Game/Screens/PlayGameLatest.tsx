@@ -561,7 +561,7 @@ const handleGame = () => {
    
    
     return (
-        <View style={{flex:1, paddingBottom:insets.bottom, paddingTop:insets.top}}>
+        <View style={{flex:1, paddingBottom:user.dating == false ? 0 :insets.bottom, paddingTop:user.dating == false ? 0 :insets.top}}>
           
           
           <LinearGradient colors={[`rgba(${index},${index + 10},20,0.5)`, 'transparent']} style = {{flex:1}} start = {{x:0.1, y:0.3}}>
@@ -570,8 +570,8 @@ const handleGame = () => {
   
                 <View style = {{flex:0.3,}}>
                 <View style = {{flexDirection:'row', justifyContent:'space-between',marginTop:20}}>
-                <TouchableOpacity onPress = {() => {resetGame(),navigation.goBack()}} style = {{marginLeft:15}}>
-             <Text style = {{fontWeight:'bold', fontSize:17, color:'white'}}>Back</Text>  
+                 <TouchableOpacity onPress = {() => {resetGame(),navigation.goBack()}} style = {{marginLeft:15}}>
+             {user.dating == false ? null : <Text style = {{fontWeight:'bold', fontSize:17, color:'white'}}>Back</Text> } 
              </TouchableOpacity>
              <View style = {{flexDirection:'row'}}>
         <TouchableOpacity style = {{marginRight:20}} onPress = {() => flip()}>

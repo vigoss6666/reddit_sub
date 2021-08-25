@@ -15,6 +15,7 @@ import { pick } from 'underscore';
 import AppContext from '../../AppContext'; 
 
 import {updateUser} from '../../networking';
+import {DragSortableView} from 'react-native-drag-sort'; 
 
 
 

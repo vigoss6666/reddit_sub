@@ -75,6 +75,7 @@ import SettingsHome from './Account/Screens/SettingsHome';
 import AccountSettings from './Account/Screens/AccountSettings';
 import MapViewMainer from './Account/Screens/MapViewMainer';
 import Photos from './Account/Screens/Photos';
+import PhotosLatest from './Account/Screens/PhotosLatest';
 import ImageSlider from './Account/Screens/ImageSlider'; 
 import DetailsSettings from './Account/Screens/DetailsSettings'; 
 import Tester from './Account/Screens/Tester';
@@ -256,14 +257,14 @@ export default function App() {
   
   const [registeredUsers, setRegisteredUsers] = useState([]); 
   const [user, setUser] = useState({}); 
-  const [_id, setId] = useState(); 
+  const [_id, setId] = useState('+16505551234'); 
 useEffect(() => {
 async function namer(){
   const userGamer = await AsyncStorage.getItem('user'); 
   const user1 = "+917208110384"; 
   const user2 = "+919930815474";
   
-  setId(userGamer); 
+  //setId(userGamer); 
 }
 
 if(!Object.keys(user).length){
@@ -273,7 +274,7 @@ if(!Object.keys(user).length){
 },[])
 
 useEffect(() => {
-  // defaultUsers()
+  
 }, [])
 
   // useEffect(() => {
@@ -313,6 +314,8 @@ useEffect(() => {
          
           
            setUser(user)
+          Asset.loadAsync(require('./assets/addedPhoto.png'))
+           
            
            setLoader(false)
            
@@ -499,6 +502,7 @@ function stringifyNumber(n) {
 
 
 
+
 const customHeader = () => {
    const insets = useSafeAreaInsets();
    return ( 
@@ -521,6 +525,7 @@ const mainHome = () => {
           <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="MatchMakeGrand" component={MatchMakeGrand}/>
+          <Stack.Screen name="PhotosLatest" component={PhotosLatest}/>
           <Stack.Screen name="PointsRequired" component={PointsRequired}/>
           <Stack.Screen name="Sort" component={Sort} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS, headerShown:false }}/>
           <Stack.Screen name="SelfSort" component={SelfSort} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS ,headerShown:false}}/>
@@ -601,6 +606,7 @@ const mainHome = () => {
           <Stack.Screen name="BrowseSettings" component={BrowseSettings}/>
           <Stack.Screen name="SelfMatchView" component={SelfMatchView} options = {{headerTitle:false}}/>
           <Stack.Screen name="SelfGame" component={SelfGame} />
+          <Stack.Screen name="SelfView" component={SelfView} />
           <Stack.Screen name="BrowseMatchSettings" component={BrowseMatchSettings}/>
           <Stack.Screen name="MatchMakeLatest" component={MatchMakeLatest}/>
           <Stack.Screen name="MatchViewLatest" component={MatchViewLatest}/>
@@ -724,7 +730,7 @@ function Home(props){
     await Promise.all([...imageAssets]);
   }
   useEffect(() => {
-    
+   _loadAssetsAsync() 
   }, [])
   return (
     <SafeAreaProvider>
@@ -809,12 +815,12 @@ function Home(props){
           } 
           return <MaterialCommunityIcons name="account-circle" size={24} color="black" />;
         }
-        if(route.name === 'SelfView'){
-          if(focused) {
-            return user.profilePic ? <Image source = {{uri:user.profilePic}} style = {{height:30, width:30, borderRadius:15}}/>:<MaterialCommunityIcons name="account-circle" size={26} color="orange" />; 
-          } 
-          return user.profilePic ? <Image source = {{uri:user.profilePic}} style = {{height:30, width:30, borderRadius:15}}/>:<MaterialCommunityIcons name="account-circle" size={26} color="orange" />
-        }
+        // if(route.name === 'SelfView'){
+        //   if(focused) {
+        //     return user.profilePic ? <Image source = {{uri:user.profilePic}} style = {{height:30, width:30, borderRadius:15}}/>:<MaterialCommunityIcons name="account-circle" size={26} color="orange" />; 
+        //   } 
+        //   return user.profilePic ? <Image source = {{uri:user.profilePic}} style = {{height:30, width:30, borderRadius:15}}/>:<MaterialCommunityIcons name="account-circle" size={26} color="orange" />
+        // }
         
         
       },
@@ -824,8 +830,8 @@ function Home(props){
     
     >
         
-      <Tab.Screen name="SelfView" component={SelfView} /> 
-      <Tab.Screen name="Game" component={GameHomepage} />
+      {/* <Tab.Screen name="SelfView" component={SelfView} />  */}
+      <Tab.Screen name="Game" component={ user.dating ? GameHomepage:PlayGameLatest} />
       <Tab.Screen name="Trophy" component={Trophy} />
       <Tab.Screen name="ProfilePool" component={ProfilePool}  />
       <Tab.Screen name="MatchList" component={MatchList}  /> 

@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { firebase} from '../../config'; 
 import { gql } from 'apollo-boost';
 import { Ionicons } from '@expo/vector-icons';
+import DashedLine from 'react-native-dashed-line';
 const db = firebase.firestore(); 
 
 
@@ -53,7 +54,7 @@ const [maxAgePref, selectmaxAgePref] = useState();
 const slider = forwardRef; 
 useEffect(() => {
  navigation.setOptions({
-    headerTitle:'AccountSettings', 
+    headerTitle:'Account Settings', 
     headerLeft:false, 
     headerShown:false,
     headerRight:() => <TouchableOpacity onPress = {() => {_sendToServer(),navigation.navigate('Homer')}} style = {{marginRight:10}}>
@@ -155,12 +156,12 @@ const _sendToServer = () => {
 if(defaultDating || defaultDating == 0){
 
    return(
-      <View style = {{flex:1,marginLeft:30, marginRight:30,marginTop:Platform.OS == 'ios' ? insets.top:40}}>
+      <View style = {{flex:1, backgroundColor:'white'}}>
       
-      <View style = {{flex:1, }}>
+      <View style = {{flex:1,marginLeft:30, marginRight:30,marginTop:Platform.OS == 'ios' ? insets.top:40, }}>
       <View style = {{flexDirection:'row', justifyContent:'space-between',marginBottom:50}}>
        <Text></Text>
-       <Text style = {{fontWeight:'bold', fontSize:17}}>AccountSettings</Text>  
+       <Text style = {{fontWeight:'bold', fontSize:17,marginLeft:10}}>Account Settings</Text>  
        <TouchableOpacity onPress = {() => {_sendToServer(),setInitialRouteName('Settings'),navigation.navigate('Homer')}} style = {{marginRight:10}}>
           <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
           </TouchableOpacity>
@@ -182,14 +183,15 @@ if(defaultDating || defaultDating == 0){
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
          </TouchableOpacity>
       </View>
-      <View style={{
+      {/* <View style={{
           borderStyle: 'dotted',
-          borderWidth: 1,
+          borderWidth: 2,
           borderRadius: 10,
           borderColor:'grey',
           marginBottom:10,
           marginTop: 10,
-       }}/>
+       }}/> */}
+        <DashedLine dashLength={4} dashThickness={2} dashGap={5} style = {{marginTop:10}}/>
       
       
       <View style = {{flexDirection:"row", justifyContent:"space-between",marginTop:20, alignItems:"center"}}>
@@ -219,14 +221,7 @@ if(defaultDating || defaultDating == 0){
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
             </TouchableOpacity>
       </View>
-      <View style={{
-          borderStyle: 'dotted',
-          borderWidth: 1,
-          borderRadius: 10,
-          borderColor:'grey',
-          marginBottom:15,
-          marginTop: 10,
-       }}/>
+      <DashedLine dashLength={4} dashThickness={2} dashGap={5} style = {{marginTop:10,marginBottom:10}}/>
        <Text style = {{fontWeight:"bold",fontSize:15}}> MAX DISTANCE  {distancePreference} mi. </Text> 
        <Slider
           style={{width: Dimensions.get('window').width - 60, height: 40}}

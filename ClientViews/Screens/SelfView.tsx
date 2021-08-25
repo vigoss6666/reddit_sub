@@ -37,13 +37,19 @@ interface SelfViewProps {}
 
 
 
-const SelfView = (props: ClientViewProps) => {
+const SelfView = ({navigation}) => {
     const [selected, setSelected] = useState('traits');
     const myContext = useContext(AppContext);
-    const {user, userId} = myContext;  
+    const {user, userId, CustomBackComponent} = myContext;  
     const [captured, setCaptured] = useState(); 
 
+    useEffect(() => {
+      navigation.setOptions({
+        headerTitle:false, 
+        headerLeft:() => <CustomBackComponent navigation = {navigation}/>
 
+      })
+    }, [])
 
     const renderItem = () => {
       return <View style = {{marginLeft:30, marginRight:30}}>

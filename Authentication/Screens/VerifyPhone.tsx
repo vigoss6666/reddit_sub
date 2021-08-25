@@ -86,18 +86,18 @@ export default function VerifyPhone({navigation, route}){
             //     await AsyncStorage.setItem('user', phoneNumber); 
             //    navigation.navigate('Homer');     
             //   }
-          //   await db.collection('user').doc(globalPhoneNumber).get().then(async onDoc => {
-          //     if(onDoc.exists){
-          //       const user = onDoc.data(); 
-          //       if(user.appUser){
-          //         setUser(onDoc.data())  
-          //         await AsyncStorage.setItem('user', globalPhoneNumber); 
-          //         navigation.navigate('Homer');     
-          //       }
+            await db.collection('user').doc(globalPhoneNumber).get().then(async onDoc => {
+              if(onDoc.exists){
+                const user = onDoc.data(); 
+                if(user.appUser){
+                  setUser(onDoc.data())  
+                  await AsyncStorage.setItem('user', globalPhoneNumber); 
+                  navigation.navigate('Homer');     
+                }
                 
-          //     }
+              }
               
-          // })
+          })
               
               setTempId(globalPhoneNumber)
               navigation.navigate('FirstName'); 

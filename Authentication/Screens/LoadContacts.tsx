@@ -126,7 +126,7 @@ export default function LoadContacts({navigation}){
                 const result = users.filter(person => contactList.includes(person.phoneNumber))
                 return result; 
              })
-             console.log(checkerResult)
+             
 
             //  const checkerResult = await Promise.all(contactList.map(async val => {
             //   return await db.collection('user').doc(val).get().then(onDoc => {

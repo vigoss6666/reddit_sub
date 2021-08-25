@@ -38,7 +38,7 @@ return(
 <TouchableOpacity style = {{marginTop:30}} onPress = {() => navigation.navigate('SelfGame')}>
 <AntDesign name="hearto" size={80} color="black" />
 </TouchableOpacity>
-<Text style = {{fontWeight:"bold", marginTop:30, color:'grey', fontSize:20}}>Browse Users</Text>
+<Text style = {{fontWeight:"bold", marginTop:30, color:'grey', fontSize:20}}>Find a Date</Text>
 
 </View>
 <View style = {{flex:0.2}}>

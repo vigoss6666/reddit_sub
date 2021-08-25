@@ -38,18 +38,20 @@ const _firebaseCaller = () => {
 }
 console.log("userId is",userId)
 return(
-<View style = {{flex:1, marginLeft:30, marginRight:30 }}>
+<View style = {{flex:1,  backgroundColor:'white' }}>
 <View style = {{flex:0.1}}>
 
 </View>
 <View style = {{flex:0.7}}>
 <View style = {{alignItems:"center", marginBottom:100}}>
-<TouchableOpacity style = {{alignItems:"center"}} onPress = {() => _firebaseCaller()}>
+<TouchableOpacity style = {{alignItems:"center"}} onPress = {() => navigation.navigate('SelfView')}>
 {user.profilePic ? <Image source = {{uri:user.profilePic}} style = {{height:160, width:160, borderRadius:80}}/>:<MaterialIcons name="account-circle" size={200} color="black" />}
 </TouchableOpacity>
+
 <Text style = {{fontWeight:"bold", fontSize:25, marginTop:10}}>
-{computeName(user)}
+{user.firstName} {user.lastName}
 </Text>
+
 <Text style = {{fontWeight:"bold", fontSize:15, marginTop:5}}>
     {user.age} years old
 </Text>
@@ -73,7 +75,7 @@ onPress = {() => navigation.navigate('DetailsSettings')}
 </TouchableOpacity>
 </View>
 <TouchableOpacity style = {{justifyContent:"center", alignItems:"center", marginTop:30}}
-onPress = {() => navigation.navigate('AddPhotos', {page:"SettingsHome"})}
+onPress = {() => navigation.navigate('PhotosLatest', {page:"SettingsHome"})}
 >
 <View style = {{flexDirection:"row"}}>
 <Entypo name="camera" size={50} color="orange" />
@@ -81,7 +83,7 @@ onPress = {() => navigation.navigate('AddPhotos', {page:"SettingsHome"})}
 <AntDesign name="pluscircle" size={20} color="grey" />
 </View>
 </View>
-<Text style = {{fontSize:20, color:"grey",marginTop:5,fontWeight:"600"}}>ADD PHOTOS</Text> 
+<Text style = {{fontSize:20, color:"grey",marginTop:5,fontWeight:"600"}}> PHOTOS</Text> 
 </TouchableOpacity>
 </View>
 <View style = {{flex:0.2,}}>
