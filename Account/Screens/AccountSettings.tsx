@@ -114,17 +114,17 @@ const changeValue = (value) => {
 }
 
 
-const onMinChange = (value ) => {
- db.collection('user').doc('trialUser').set({minAgePref:value}, {merge:true})
+const onMinChange = (value) => {
+ db.collection('user').doc(userId).set({minAgePreference:value}, {merge:true})
  .then(() => console.log('min age set'))
     
 }
 const onMaxChange = (value) => {
-   db.collection('user').doc('trialUser').set({maxAgePref:value}, {merge:true})
+   db.collection('user').doc(userId).set({maxAgePreference:value}, {merge:true})
    .then(() => console.log('min age set'))   
 }
-const onSlidingComplete = () => {
-    db.collection('user').doc('trialUser').set({distancePreference:value}, {merge:true}).then(() => console.log("value added")).catch(() => console.log("netwrok error"))
+const onSlidingComplete = (value) => {
+    db.collection('user').doc(userId).set({distancePreference:parseInt(value)}, {merge:true}).then(() => console.log("value added")).catch(() => console.log("netwrok error"))
 }
 
 const handleGenderPreference = () => {
@@ -177,7 +177,7 @@ if(defaultDating || defaultDating == 0){
             MOBILE 
          </Text> 
          <Text style = {{fontWeight:"bold",fontSize:15}}>
-             {user.phoneNumber}
+             {user.formattedPhone}
          </Text>
          <TouchableOpacity onPress = {() => navigation.navigate('ChangeNumber', {page:"AccountSettings"})}>
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
@@ -205,7 +205,7 @@ if(defaultDating || defaultDating == 0){
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
          </TouchableOpacity>
       </View>
-      <Text style = {[styles.headerSection, {marginTop:20}]}>
+      <Text style = {[styles.headerSection, {marginTop:40}]}>
           DISCOVERY
       </Text>
       <View style = {{borderBottomWidth:2, marginTop:5 }}/>
@@ -222,15 +222,16 @@ if(defaultDating || defaultDating == 0){
             </TouchableOpacity>
       </View>
       <DashedLine dashLength={4} dashThickness={2} dashGap={5} style = {{marginTop:10,marginBottom:10}}/>
-       <Text style = {{fontWeight:"bold",fontSize:15}}> MAX DISTANCE  {distancePreference} mi. </Text> 
+       <Text style = {{fontWeight:"bold",fontSize:15,marginTop:20}}> MAX DISTANCE  {distancePreference} mi. </Text> 
        <Slider
           style={{width: Dimensions.get('window').width - 60, height: 40}}
           minimumValue={1}
-          maximumValue={40}
-          minimumTrackTintColor="#FFFFFF"
-          maximumTrackTintColor="#000000" 
-          onValueChange = {changeValue}
-          value = {defaultDistance} 
+          maximumValue={500}
+          minimumTrackTintColor="#a19b9a" 
+          maximumTrackTintColor="#a19b9a" 
+          onValueChange = {(value) => setDistancePreference(parseInt(value))}
+          value = {user.distancePreference} 
+          
           onSlidingComplete = {onSlidingComplete}
           
       

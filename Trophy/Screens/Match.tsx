@@ -416,7 +416,7 @@ const Match = ({navigation}) => {
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"bold"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  onPress = {navigation.navigate('PlayGameLatest')}
+  onPress = {() => navigation.navigate('PlayGameLatest')}
   
   
 />

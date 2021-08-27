@@ -154,6 +154,7 @@ import SignUp from './SignUp';
 import {cacheImages} from './networking'; 
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
+//CEXLNJVBAWAKRBMH
 
 
 
@@ -314,12 +315,9 @@ useEffect(() => {
          
           
            setUser(user)
+           
           // Image.prefetch(user.profilePic) 
-          user.photos.map(val => {
-            if(val !== null){
-              Image.prefetch(val); 
-            }
-          }) 
+           
           Asset.loadAsync(require('./assets/addedPhoto.png'))
            
            
@@ -726,18 +724,17 @@ function Home(props){
   const myContext = useContext(AppContext); 
   const {user, userId, countryCode, dialCode, chatNotification, chatterNotification, initialRouteName} = myContext;
   const insets = useSafeAreaInsets();
-  async function _loadAssetsAsync() {
-    const imageAssets = cacheImages([
-      user.profilePic,
-    ]);
+  async function _loadAssetsAsync(imageArray){
+    const imageAssets = cacheImages(imageArray);
 
     
 
     await Promise.all([...imageAssets]);
   }
   useEffect(() => {
-   _loadAssetsAsync() 
+   _loadAssetsAsync(user.photos) 
   }, [])
+  
   return (
     <SafeAreaProvider>
     <Tab.Navigator 
