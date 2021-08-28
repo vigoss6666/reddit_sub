@@ -2,7 +2,7 @@ import  React, {useState,useRef,useEffect,createRef, forwardRef, useContext} fro
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, NavigatorIOS, Platform} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import Slider from '@react-native-community/slider';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Foundation } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import SwitchSelector from "react-native-switch-selector";
 import AppContext from '../../AppContext'; 
@@ -74,6 +74,20 @@ setDefaultDating(user.dating ? 1:0)
 }, [user.distancePreference, user.minAgePreference, user.maxAgePreference, user.dating])
 console.log(userId)
 
+
+const _updateDistance = (value:string) => {
+   if(value == 'Metric'){
+      var miles = parseInt(user.distancePreference /  1.609);
+      updateUser(userId, {distancePreference:miles})
+      return; 
+   }
+   if(value == 'Imperial'){
+      var miles = parseInt(user.distancePreference *  1.609);
+      updateUser(userId, {distancePreference:miles})
+      return; 
+   }
+}
+
    //const {data, loading, error} = useQuery(GET_DETAILS);
    // if(data){
 
@@ -102,8 +116,8 @@ console.log(userId)
 
  
     const options = [
-        { label: "yes", value: true },
-        { label: "No", value: false },
+        { label: "", value: true,activeColor:'#4bf542' },
+        { label: "", value: false, activeColor:'grey' },
         
       ];
 
@@ -154,11 +168,13 @@ const _sendToServer = () => {
 
 
 if(defaultDating || defaultDating == 0){
-
-   return(
-      <View style = {{flex:1, backgroundColor:'white'}}>
+   return <FlatList
+   data={["1"]}
+   scrollIndicatorInsets={{ right: 1 }}
+   style = {{flex:1}}
+   renderItem={() => <View style = {{ backgroundColor:'white',flex:1,paddingLeft:30, paddingRight:30,paddingTop:50}}>
       
-      <View style = {{flex:1,marginLeft:30, marginRight:30,marginTop:Platform.OS == 'ios' ? insets.top:40, }}>
+      <View style = {{flex:1, }}>
       <View style = {{flexDirection:'row', justifyContent:'space-between',marginBottom:50}}>
        <Text></Text>
        <Text style = {{fontWeight:'bold', fontSize:17,marginLeft:10}}>Account Settings</Text>  
@@ -221,46 +237,34 @@ if(defaultDating || defaultDating == 0){
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
             </TouchableOpacity>
       </View>
-      <DashedLine dashLength={4} dashThickness={2} dashGap={5} style = {{marginTop:10,marginBottom:10}}/>
-       <Text style = {{fontWeight:"bold",fontSize:15,marginTop:20}}> MAX DISTANCE  {distancePreference} mi. </Text> 
+      <DashedLine dashLength={4} dashThickness={2} dashGap={5} style = {{marginTop:20,marginBottom:10}}/>
+       <Text style = {{fontWeight:"bold",fontSize:15,marginTop:20}}> MAX DISTANCE  {distancePreference} {user.measureSystem == 'Metric' ? 'mi':'km'} </Text> 
        <Slider
           style={{width: Dimensions.get('window').width - 60, height: 40}}
-          minimumValue={1}
-          maximumValue={500}
+          minimumValue={user.measureSystem == 'Metric' ? 1:1 }
+          maximumValue={user.measureSystem == 'Metric' ? 500:1000}
           minimumTrackTintColor="#a19b9a" 
           maximumTrackTintColor="#a19b9a" 
           onValueChange = {(value) => setDistancePreference(parseInt(value))}
-          value = {user.distancePreference} 
+          value = {distancePreference} 
           
           onSlidingComplete = {onSlidingComplete}
           
       
       
         />
-        <View style={{
-          borderStyle: 'dotted',
-          borderWidth: 1,
-          borderRadius: 10,
-          borderColor:'grey',
-          marginBottom:15,
-          marginTop: 10,
-       }}/>
-       {/* <View style = {{flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
+        <DashedLine dashLength={4} dashThickness={2} dashGap={5} style = {{marginTop:10,marginBottom:10}}/>
+       <View style = {{flexDirection:"row", justifyContent:"space-between", alignItems:"center",marginTop:20}}>
        <Text style = {{ fontWeight:"600"}}>SHOW ME</Text>
-       {handleGenderPreference()}
+       {/* {handleGenderPreference()} */}
+       {user.genderPreference == 'male' ? <FontAwesome name="male" size={24} color="blue" />:user.genderPreference == 'female' ? <FontAwesome name="female" size={24} color="maroon" />:<Foundation name="male-female" size={30} color="black" />}
        <TouchableOpacity onPress = {() => navigation.navigate('GenderPreference', {page:"AccountSettings"})}>
        <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
        </TouchableOpacity>
        
-       </View> */}
-       {/* <View style={{
-          borderStyle: 'dotted',
-          borderWidth: 1,
-          borderRadius: 10,
-          borderColor:'grey',
-          marginBottom:10,
-          marginTop: 10,
-       }}/> */}
+       </View>
+       <DashedLine dashLength={4} dashThickness={2} dashGap={5} style = {{marginTop:20,marginBottom:10}}/>
+       
        <Text style = {{fontWeight:"600", marginBottom:10, marginTop:10}}>AGE RANGE</Text> 
        <View style = {{flexDirection:"row", alignItems:"center", zIndex:600}}>
           
@@ -406,22 +410,316 @@ if(defaultDating || defaultDating == 0){
       />
       
        </View>
-       <View style={{
-          borderStyle: 'dotted',
-          borderWidth: 1,
-          borderRadius: 10,
-          borderColor:'grey',
-          marginBottom:15,
-          marginTop: 15,
-       }}/>
+       <DashedLine dashLength={4} dashThickness={2} dashGap={5} style = {{marginTop:20,marginBottom:20}}/>
        <View style = {{flexDirection:"row", alignItems:"center", justifyContent:"space-between", marginBottom:10}}>
        <Text style = {{fontWeight:'600'}}>Matchmaking Only, No Dating.</Text>
        
             <SwitchSelector
           options={options}
           initial={user.dating ? 1:0}
+          
           onPress={value => {updateUser(userId, {dating:value})}}
-          style = {{width:100}}
+          style = {{width:100,borderWidth:1,borderRadius:50,marginBottom:10}}
+          borderColor = {'black'}
+          
+          
+          
+        />
+        
+      
+       </View>
+       <Text style = {{fontWeight:"600",}}>
+       While turned on, your profile will not be matched with anyone. People you have already matched with may still see your profile, however. You can still see and chat with your matches. 
+       </Text>
+       <Text style = {[styles.headerSection, {marginTop:40}]}>
+          OTHER
+      </Text>
+      <View style = {{borderBottomWidth:2, marginTop:5 }}/> 
+      <View style = {{flexDirection:"row", alignItems:"center", justifyContent:"space-between", marginBottom:30,marginTop:20}}>
+      <Text style = {{fontWeight:'600'}}>UNITS</Text>
+       <Text style = {{fontWeight:'600'}}>{user.measureSystem}</Text>
+       
+            <SwitchSelector
+          options={[{label:'', value:'Metric',activeColor:'#4bf542'}, {label:'', value:'Imperial',activeColor:'grey'}]}
+          initial={user.measureSystem == 'Metric' ? 0:1}
+          
+          onPress={value => {updateUser(userId, {measureSystem:value}), _updateDistance(value)}}
+          style = {{width:100,borderWidth:1,borderRadius:50,marginBottom:10}}
+          borderColor = {'black'}
+          
+          
+          
+        />
+        
+      
+       </View>
+
+      
+      </View>
+
+      
+      </View>
+      
+      
+      </View>
+      }
+   keyExtractor={(item) => item}
+   
+   
+ />
+   return(
+      <View style = {{flex:1, backgroundColor:'white'}}>
+      
+      <View style = {{flex:1,marginLeft:30, marginRight:30,marginTop:Platform.OS == 'ios' ? insets.top:40, }}>
+      <View style = {{flexDirection:'row', justifyContent:'space-between',marginBottom:50}}>
+       <Text></Text>
+       <Text style = {{fontWeight:'bold', fontSize:17,marginLeft:10}}>Account Settings</Text>  
+       <TouchableOpacity onPress = {() => {_sendToServer(),setInitialRouteName('Settings'),navigation.navigate('Homer')}} style = {{marginRight:10}}>
+          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
+          </TouchableOpacity>
+      </View>   
+      
+      <View style = {{}}>
+      <Text style = {styles.headerSection}>
+          CONTACT INFO
+      </Text>
+      <View style = {{borderBottomWidth:2, marginTop:5 }}/>
+      <View style = {{flexDirection:"row", justifyContent:"space-between",marginTop:20, alignItems:"center"}}>
+         <Text style = {{fontWeight:"600"}}>
+            MOBILE 
+         </Text> 
+         <Text style = {{fontWeight:"bold",fontSize:15}}>
+             {user.formattedPhone}
+         </Text>
+         <TouchableOpacity onPress = {() => navigation.navigate('ChangeNumber', {page:"AccountSettings"})}>
+         <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
+         </TouchableOpacity>
+      </View>
+      {/* <View style={{
+          borderStyle: 'dotted',
+          borderWidth: 2,
+          borderRadius: 10,
+          borderColor:'grey',
+          marginBottom:10,
+          marginTop: 10,
+       }}/> */}
+        <DashedLine dashLength={4} dashThickness={2} dashGap={5} style = {{marginTop:10}}/>
+      
+      
+      <View style = {{flexDirection:"row", justifyContent:"space-between",marginTop:20, alignItems:"center"}}>
+         <Text style = {{fontWeight:"600"}}>
+            EMAIL 
+         </Text> 
+         <Text style = {{fontWeight:"bold",fontSize:15}}>
+             {user.email}
+         </Text>
+         <TouchableOpacity onPress = {() => navigation.navigate('Email',{page:'AccountSettings'})}>
+         <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
+         </TouchableOpacity>
+      </View>
+      <Text style = {[styles.headerSection, {marginTop:40}]}>
+          DISCOVERY
+      </Text>
+      <View style = {{borderBottomWidth:2, marginTop:5 }}/>
+      <View style = {{flexDirection:"row", justifyContent:"space-between",marginTop:20, alignItems:"center"}}>
+         <Text style = {{fontWeight:"600"}}>
+            LOCATION 
+         </Text> 
+         
+         <Text style = {{fontWeight:"bold",fontSize:15}}>
+           My Current Location
+         </Text>
+         <TouchableOpacity onPress = {() => navigation.navigate('MapViewMainer')}>
+         <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
+            </TouchableOpacity>
+      </View>
+      <DashedLine dashLength={4} dashThickness={2} dashGap={5} style = {{marginTop:20,marginBottom:10}}/>
+       <Text style = {{fontWeight:"bold",fontSize:15,marginTop:20}}> MAX DISTANCE  {distancePreference} mi. </Text> 
+       <Slider
+          style={{width: Dimensions.get('window').width - 60, height: 40}}
+          minimumValue={1}
+          maximumValue={500}
+          minimumTrackTintColor="#a19b9a" 
+          maximumTrackTintColor="#a19b9a" 
+          onValueChange = {(value) => setDistancePreference(parseInt(value))}
+          value = {user.distancePreference} 
+          
+          onSlidingComplete = {onSlidingComplete}
+          
+      
+      
+        />
+        <DashedLine dashLength={4} dashThickness={2} dashGap={5} style = {{marginTop:10,marginBottom:10}}/>
+       <View style = {{flexDirection:"row", justifyContent:"space-between", alignItems:"center",marginTop:20}}>
+       <Text style = {{ fontWeight:"600"}}>SHOW ME</Text>
+       {/* {handleGenderPreference()} */}
+       {user.genderPreference == 'male' ? <FontAwesome name="male" size={24} color="blue" />:user.genderPreference == 'female' ? <FontAwesome name="female" size={24} color="maroon" />:<Foundation name="male-female" size={30} color="black" />}
+       <TouchableOpacity onPress = {() => navigation.navigate('GenderPreference', {page:"AccountSettings"})}>
+       <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
+       </TouchableOpacity>
+       
+       </View>
+       <DashedLine dashLength={4} dashThickness={2} dashGap={5} style = {{marginTop:20,marginBottom:10}}/>
+       
+       <Text style = {{fontWeight:"600", marginBottom:10, marginTop:10}}>AGE RANGE</Text> 
+       <View style = {{flexDirection:"row", alignItems:"center", zIndex:600}}>
+          
+      
+       <Text style = {{fontWeight:"600", marginRight:20}}>MIN</Text>
+       <DropDownPicker
+          defaultValue = {minAgePreference}                
+          items={[
+              
+              {label: '15', value: 15, },
+              {label: '16', value: 16},
+              {label: '17', value: 17},
+              {label: '18', value: 18},
+              {label: '19', value: 19},
+              {label: '20', value: 20},
+              {label: '21', value: 21},
+              {label: '22', value: 22},
+              {label: '23', value: 23},
+              {label: '24', value:24},
+              {label: '25', value:25},
+              {label: '26', value:26},
+              {label: '27', value:27},
+              {label: '28', value:28},
+              {label: '29', value:29},
+              {label: '30', value:30},
+              {label: '31', value:31},
+              {label: '32', value:32},
+              {label: '33', value:33},
+              {label: '34', value:34},
+              {label: '35', value:35},
+              {label: '36', value:36},
+              {label: '37', value:37},
+              {label: '38', value:38},
+              {label: '39', value:39},
+              {label: '40', value:40},
+              {label: '41', value:41},
+              {label: '42', value:42},
+              {label: '43', value:43},
+              {label: '44', value:44},
+              {label: '45', value:45},
+              {label: '46', value:46},
+              {label: '47', value:47},
+              {label: '48', value:48},
+              {label: '49', value:49},
+              {label: '50', value:50},
+              {label: '51', value:51},
+              {label: '52', value:53},
+              {label: '53', value:53},
+              {label: '54', value:54},
+              {label: '55', value:55},
+              {label: '56', value:56},
+              {label: '57', value:57},
+              {label: '58', value:58},
+              {label: '59', value:59},
+              {label: '60', value:60},
+      
+              
+      
+            ]}
+          onPress = {() => {console.log("pressed")}}
+          containerStyle={{height: 40, width:100, }}
+          style={{}}
+          itemStyle={{
+              
+              backgroundColor:"white", 
+              fontColor:"white",
+              justifyContent: 'flex-start'
+          }}
+          dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
+          onChangeItem={item => selectMinAgePreference(item.value)}
+          
+      />
+      
+      <Text style = {{fontWeight:"600", marginRight:20, marginLeft:20}}>MAX</Text>
+      <DropDownPicker
+          defaultValue = {maxAgePreference}                
+          items={[
+              
+              {label: '15', value: 15, },
+              {label: '16', value: 16},
+              {label: '17', value: 17},
+              {label: '18', value: 18},
+              {label: '19', value: 19},
+              {label: '20', value: 20},
+              {label: '21', value: 21},
+              {label: '22', value: 22},
+              {label: '23', value: 23},
+              {label: '24', value:24},
+              {label: '25', value:25},
+              {label: '26', value:26},
+              {label: '27', value:27},
+              {label: '28', value:28},
+              {label: '29', value:29},
+              {label: '30', value:30},
+              {label: '31', value:31},
+              {label: '32', value:32},
+              {label: '33', value:33},
+              {label: '34', value:34},
+              {label: '35', value:35},
+              {label: '36', value:36},
+              {label: '37', value:37},
+              {label: '38', value:38},
+              {label: '39', value:39},
+              {label: '40', value:40},
+              {label: '41', value:41},
+              {label: '42', value:42},
+              {label: '43', value:43},
+              {label: '44', value:44},
+              {label: '45', value:45},
+              {label: '46', value:46},
+              {label: '47', value:47},
+              {label: '48', value:48},
+              {label: '49', value:49},
+              {label: '50', value:50},
+              {label: '51', value:51},
+              {label: '52', value:53},
+              {label: '53', value:53},
+              {label: '54', value:54},
+              {label: '55', value:55},
+              {label: '56', value:56},
+              {label: '57', value:57},
+              {label: '58', value:58},
+              {label: '59', value:59},
+              {label: '60', value:60},
+      
+              
+      
+            ]}
+          onPress = {() => {console.log("pressed")}}
+      
+          containerStyle={{height: 40, width:100, }}
+          style={{}}
+          itemStyle={{
+              
+              backgroundColor:"white", 
+              fontColor:"white",
+              justifyContent: 'flex-start',
+              fontWeight: '600',
+          }}
+          dropDownStyle={{backgroundColor: '#fafafa', zIndex:100}}
+          onChangeItem={item => selectMaxAgePreference(item.value)}
+          
+      />
+      
+       </View>
+       <DashedLine dashLength={4} dashThickness={2} dashGap={5} style = {{marginTop:20,marginBottom:20}}/>
+       <View style = {{flexDirection:"row", alignItems:"center", justifyContent:"space-between", marginBottom:10}}>
+       <Text style = {{fontWeight:'600'}}>Matchmaking Only, No Dating.</Text>
+       
+            <SwitchSelector
+          options={options}
+          initial={user.dating ? 1:0}
+          
+          onPress={value => {updateUser(userId, {dating:value})}}
+          style = {{width:100,borderWidth:1,borderRadius:50,marginBottom:10}}
+          borderColor = {'black'}
+          
+          
+          
         />
         
       

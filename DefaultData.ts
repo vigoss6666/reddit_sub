@@ -117,7 +117,7 @@ export const defaultDataObject:database = {
  matchMakers:[], 
  minAge:15, 
  maxAge:60, 
- 
+ measureSystem:'Metric',  
  month:0, 
  name:"", 
  phoneNumber:"", 
