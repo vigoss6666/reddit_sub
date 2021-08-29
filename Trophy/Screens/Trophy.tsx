@@ -274,7 +274,7 @@ return(
 
 </View>
 <View style = {{flex:0.8}}>
- {page == 'points' ? <Points />:page == 'match' ? <Match navigation = {navigation}/>:page == 'rank' ? <Rank />:page == 'intros'? introTemplate:null}
+ {page == 'points' ? <Points navigation = {navigation}/>:page == 'match' ? <Match navigation = {navigation}/>:page == 'rank' ? <Rank navigation = {navigation}/>:page == 'intros'? introTemplate:null}
 </View>
 </View>
 )

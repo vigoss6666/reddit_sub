@@ -13,7 +13,7 @@ import {Button} from 'react-native-elements';
 
 interface RankProps {}
 
-const Rank = (props: RankProps) => {
+const Rank = ({navigation}) => {
   const myContext = useContext(AppContext); 
   const { user,userId, selfFilter, setSelfFilter,computeName,db, firebase, stringifyNumber, } = myContext;
     const [allTime, setAllTime] = useState(0); 
@@ -148,6 +148,7 @@ const Rank = (props: RankProps) => {
   titleStyle = {{color:"white", fontWeight:"bold"}}
   disabledStyle = {{backgroundColor:"grey",}}
   
+  onPress = {() => navigation.navigate('PlayGameLatest')}
   
 />
     </View>)

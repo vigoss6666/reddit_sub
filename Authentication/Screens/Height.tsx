@@ -188,7 +188,7 @@ return(
   disabled = {gate}
 />
 <View style = {{justifyContent:'center', alignItems:'center'}}>
-<TouchableOpacity style = {{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}} onPress = {() => navigation.navigate('HeightMetric', {page:'DetailsSettings'})}>
+<TouchableOpacity style = {{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}} onPress = {() => navigation.navigate('HeightMetric', {page})}>
     <Text> USE METRIC SYSTEM </Text>
     <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
     

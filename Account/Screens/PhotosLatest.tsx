@@ -28,6 +28,24 @@ export default function PhotosLatest({navigation, route }){
     const insets = useSafeAreaInsets();
     const [camera,setCamera] = useState(); 
     const [profilePic, setProfilePic] = useState(); 
+    const [sortAllow, setSortAllow] = useState(true); 
+    const [fixedArray, setFixed] = useState([]); 
+    const [photos, setPhotos] = useState(user.photos)
+
+
+    useEffect(() => {
+      if(photos.length){
+        const result = photos.map((val,index) => {
+          if(val == null){
+            return index; 
+          }
+       })
+       const finaler = result.filter(val => val !== undefined); 
+       setFixed(finaler); 
+
+      }
+       
+    }, [photos])
     
     
     //const {page} = route.params; 
@@ -51,6 +69,7 @@ export default function PhotosLatest({navigation, route }){
       
       
       const response = await fetch(profilePic); 
+      
       const blob = await response.blob(); 
       const namer = Math.random().toString(36).substring(2);
       const ref = firebase.storage().ref().child("images/"+ namer); 
@@ -68,7 +87,7 @@ export default function PhotosLatest({navigation, route }){
       }, [navigation]);
     
     
-    const [photos, setPhotos] = useState(user.photos)
+    
     
     const loadProfilePic = async () => {
     let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
@@ -134,6 +153,19 @@ export default function PhotosLatest({navigation, route }){
       }) 
     
     }     
+
+    const _computeDifference = (arr1) => {
+
+      const nullIndex = arr1.findIndex(val => val == null); 
+      const strIndex = arr1.findIndex(val => typeof val == "string"); 
+      if(nullIndex !== -1 && nullIndex < strIndex){
+        return;  
+        }
+        setPhotos(arr1);  
+
+
+       
+    }
     
      
     
@@ -265,9 +297,12 @@ return(
 
 </View> */}
 <DragSortableView
-    onDataChange = {(data) => setPhotos(data)}
+    onDataChange = {(data) => _computeDifference(data) ? setPhotos(data):null}
+    onDragEnd = {() =>  setSortAllow(false)}
     dataSource={photos}
     parentWidth={400}
+    fixedItems = {fixedArray}
+    
     marginChildrenLeft = {10}
     marginChildrenTop = {10}
     childrenWidth= {75}

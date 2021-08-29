@@ -104,7 +104,7 @@ onPress = {() => {setWoman(true), setMan(false)}}
   disabled = {gateGuard}
   onPress = {() => {_handleServer(),_handlePage()}}
 />
-<TouchableOpacity style = {{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}} onPress = {() => navigation.navigate('GenderDetail', {page:'DetailsSettings'})}>
+<TouchableOpacity style = {{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}} onPress = {() => navigation.navigate('GenderDetail', {page})}>
     <Text> MORE </Text>
     <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
     
