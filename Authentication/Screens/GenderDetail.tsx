@@ -1,6 +1,6 @@
 import { Entypo, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import  React, {useState,useRef,useEffect, useContext} from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, TextInput, Keyboard } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';
@@ -9,13 +9,14 @@ import {Button} from 'react-native-elements';
 import Gender from './Gender';
 interface GenderDetailProps {}
 
-const GenderDetail = ({navigation}) => {
+const GenderDetail = ({navigation,route}) => {
     const myContext = useContext(AppContext); 
     const {userId} = myContext;
     const insets = useSafeAreaInsets();
     const [gender, setGender] = useState(null); 
     const [gate, setGate] = useState(true); 
     const [genderText, setGenderText] = useState(""); 
+    const {page} = route.params; 
 
 
     useEffect(() => {
@@ -26,6 +27,11 @@ const GenderDetail = ({navigation}) => {
 
     const _sendToServer = () => {
         updateUser(userId, {genderIncludeMe:gender, gender:genderText})
+        if(page == "DetailsSettings"){
+    
+          navigation.navigate("DetailsSettings")
+          return; 
+       }
         navigation.navigate('GenderPreference', {page:'something'})
     }    
 
@@ -42,15 +48,13 @@ const GenderDetail = ({navigation}) => {
         if(gender !== null && genderText.length > 0){
             setGate(false)
         }
-        if(gender == null && genderText.length > 0){
-            setGate(false)
-        }
+        
        
         
     }, [gender,genderText])
     console.log(genderText)
   return (
-    <View style={{flex:1,paddingTop:insets.top,backgroundColor:'white'}}>
+    <TouchableOpacity style={{flex:1,paddingTop:insets.top,backgroundColor:'white'}} onPress = {Keyboard.dismiss}>
       <TouchableOpacity onPress = {() => navigation.goBack()} style = {{alignItems:'center'}}>
 <MaterialIcons name="keyboard-arrow-up" size={40} color="black" />
 </TouchableOpacity> 
@@ -105,7 +109,7 @@ const GenderDetail = ({navigation}) => {
   onPress = {() => { _sendToServer()}}
 />
 
-    </View>
+    </TouchableOpacity>
   );
 };
 

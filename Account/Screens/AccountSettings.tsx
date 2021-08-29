@@ -416,10 +416,14 @@ if(defaultDating || defaultDating == 0){
        <Text style = {{fontWeight:'600'}}>Matchmaking Only, No Dating.</Text>
        
             <SwitchSelector
-          options={options}
+          options={[
+            { label: "", value: 0,activeColor:'#4bf542' },
+            { label: "", value:1, activeColor:'grey' },
+            
+          ]}
           initial={user.dating ? 1:0}
           
-          onPress={value => {updateUser(userId, {dating:value})}}
+          onPress={value => {updateUser(userId, {dating:value == 0 ? false:true})}}
           style = {{width:100,borderWidth:1,borderRadius:50,marginBottom:10}}
           borderColor = {'black'}
           

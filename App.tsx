@@ -596,7 +596,7 @@ const mainHome = () => {
           <Stack.Screen name="Trophy" component={Trophy}/>
           <Stack.Screen name="GameHomepage" component={GameHomepage}/>
           <Stack.Screen name="HeightMetric" component={HeightMetric} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS ,}}/>
-          
+          <Stack.Screen name="GenderDetail" component={GenderDetail} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS ,}}/> 
           <Stack.Screen name="MatchView" component={MatchView}/>
           <Stack.Screen name="Endorsement" component={Endorsement}/>
           <Stack.Screen name="NoMatch" component={NoMatch}/>

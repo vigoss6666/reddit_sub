@@ -1,7 +1,7 @@
 import  React, {useState,useRef,useEffect,useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 import { gql } from 'apollo-boost';
 import { firebase } from '../../config'; 
 import AppContext from '../../AppContext';
@@ -69,7 +69,8 @@ setMonth(d);
       <Text style = {{fontWeight:"600"}}>
           SEX
       </Text>
-      {user.gender == "male" ? <FontAwesome name="male" size={30} color="black" />:<FontAwesome name="female" size={30} color="black" />}
+      {user.gender == "male" ? <FontAwesome name="male" size={30} color="black" />:user.gender == 'female' ? <FontAwesome name="female" size={30} color="black" />: user.gender !== 'male' || user.gender !== 'female' ? <FontAwesome5 name="transgender" size={24} color="black" />:null}
+      
       
       <TouchableOpacity onPress= {() => navigation.navigate('Gender', {page:"DetailsSettings"})}>
       <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text> 
@@ -110,7 +111,7 @@ setMonth(d);
          </Text> 
          
          {user.measureSystem == 'Imperial' ? <Text style = {{fontWeight:"bold",fontSize:15}}>
-           {user.feet}' {user.inches ? user.inches:null}"
+           {user.feet}' {user.inches ? user.inches:null} 
          </Text> : <Text style = {{fontWeight:"bold",fontSize:15}}>
            {user.cms} cm
          </Text>}
