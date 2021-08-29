@@ -33,7 +33,10 @@ export default function Height({navigation,route}){
      
 
 const _sendToServer = () => {
-    updateUser(userId,{feet, inches} )
+    const computedInches = feet*12; 
+    const finalInches = computedInches + inches; 
+    const cms = parseInt(finalInches*2.54); 
+    updateUser(userId,{cms:cms, feet, inches})
 }     
 
 useEffect(() => {
@@ -185,7 +188,7 @@ return(
   disabled = {gate}
 />
 <View style = {{justifyContent:'center', alignItems:'center'}}>
-<TouchableOpacity style = {{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}} onPress = {() => navigation.navigate('HeightMetric')}>
+<TouchableOpacity style = {{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}} onPress = {() => navigation.navigate('HeightMetric', {page:'DetailsSettings'})}>
     <Text> USE METRIC SYSTEM </Text>
     <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
     

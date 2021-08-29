@@ -109,9 +109,11 @@ setMonth(d);
             HEIGHT
          </Text> 
          
-         <Text style = {{fontWeight:"bold",fontSize:15}}>
-           {user.feet}' {user.inches}"
-         </Text>
+         {user.measureSystem == 'Imperial' ? <Text style = {{fontWeight:"bold",fontSize:15}}>
+           {user.feet}' {user.inches ? user.inches:null}"
+         </Text> : <Text style = {{fontWeight:"bold",fontSize:15}}>
+           {user.cms} cm
+         </Text>}
          <TouchableOpacity onPress = {() => navigation.navigate('Height', {page:"DetailsSettings"})}>
          <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Edit</Text>
             </TouchableOpacity>

@@ -78,7 +78,8 @@ console.log(userId)
 const _updateDistance = (value:string) => {
    if(value == 'Metric'){
       var miles = parseInt(user.distancePreference /  1.609);
-      updateUser(userId, {distancePreference:miles})
+      const finaler = miles > 500 ? 500:miles; 
+      updateUser(userId, {distancePreference:finaler}); 
       return; 
    }
    if(value == 'Imperial'){

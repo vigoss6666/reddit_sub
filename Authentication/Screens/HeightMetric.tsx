@@ -16,6 +16,7 @@ export default function Height({navigation,route}){
     const myContext = useContext(AppContext); 
     const {userId, CustomBackComponent} = myContext;
     let [feet, setFeet] = useState(null); 
+    const { page } = route.params;
      
     const [gate, setGate] = useState(true); 
     // useEffect(() => {
@@ -41,11 +42,23 @@ export default function Height({navigation,route}){
      
 
 const _sendToServer = () => {
-    updateUser(userId,{cms:feet} )
+    const feet1 = feet/30.48;
+    const inches = parseFloat(feet1.toFixed(1));  
+    
+    var decPart = (inches+"").split(".")[1];
+    const finalInches = parseInt(decPart); 
+    const finalFeet = parseInt(feet1); 
+    updateUser(userId, {feet:finalFeet, inches:finalInches});     
+    updateUser(userId,{cms:feet})
 }     
 
       
 const _handleNavigation = () => {
+    if(page == "DetailsSettings"){
+        navigation.navigate("DetailsSettings")
+        return; 
+        
+   }
      
      navigation.navigate('AuthPhotos', {page:"something"})
 

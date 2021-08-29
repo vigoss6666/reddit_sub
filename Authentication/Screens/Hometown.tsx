@@ -13,7 +13,7 @@ export default function Hometown({navigation, route}){
   const {userId,CustomBackComponent} = myContext; 
   const [job, setJob] = useState("");
   const [gate, setGate] = useState(true); 
-  const page = "something"; 
+  const {page} = route.params; 
   useEffect(() => {
     if(job.length < 1){
       setGate(true)
