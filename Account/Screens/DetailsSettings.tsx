@@ -47,8 +47,8 @@ setMonth(d);
       <Text>
       
       </Text>
-      <Text style = {{fontSize:20, fontWeight:"600"}}>
-      Settings
+      <Text style = {{fontSize:20, fontWeight:"600",marginLeft:40}}>
+      Details
       </Text>
       <TouchableOpacity onPress = {() => {setInitialRouteName('Settings'),navigation.goBack()}}>
       <Text style = {{color:"orange", fontWeight:"600", fontSize:17}}>

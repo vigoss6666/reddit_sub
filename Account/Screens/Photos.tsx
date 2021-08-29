@@ -230,15 +230,19 @@ const row2 = <View style = {{flexDirection:"row",marginBottom:15, justifyContent
 return(
 <View style = {{flex:1,marginLeft:30, marginRight:30, paddingTop:insets.top}}>
 <View style = {{flex:0.2}}> 
-<TouchableOpacity onPress = {() => {updateProfilePicToServer(),uploadPhotosToServer(),  navigation.goBack()}} style = {{alignItems:'flex-end', marginTop:10}}>
+<View style = {{justifyContent:'space-between', marginLeft:20, marginRight:20}}>
+<Text></Text>
+<Text>Photos</Text>
+<TouchableOpacity onPress = {() => {updateProfilePicToServer(),uploadPhotosToServer(),  navigation.goBack()}} style = {{ marginTop:10}}>
    <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
    </TouchableOpacity>
+   </View>
    
 </View>
 <View style = {{flex:0.7}}>
 
 {profileTemplate}
-<Text style = {{alignSelf:"center", fontStyle:'italic', fontWeight:"bold", marginTop:30}}>Add Multiple Photos to increase your chances </Text>
+<Text style = {{alignSelf:"center", fontStyle:'italic', fontWeight:"bold", marginTop:30,color:'grey'}}>Add Multiple Photos to increase your chances </Text>
 <View style = {{borderBottomWidth:2, marginTop:30}}>
 
 </View>

@@ -445,7 +445,7 @@ if(defaultDating || defaultDating == 0){
        <Text style = {{fontWeight:'600'}}>{user.measureSystem}</Text>
        
             <SwitchSelector
-          options={[{label:'', value:'Metric',activeColor:'#4bf542'}, {label:'', value:'Imperial',activeColor:'grey'}]}
+          options={[{label:'', value:'Metric',activeColor:'#4bf542'}, {label:'', value:'Imperial',activeColor:'#34b7eb'}]}
           initial={user.measureSystem == 'Metric' ? 0:1}
           
           onPress={value => {updateUser(userId, {measureSystem:value}), _updateDistance(value)}}
