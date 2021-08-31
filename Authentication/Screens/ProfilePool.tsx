@@ -156,21 +156,27 @@ const useFetchContactPool = (navigation) => {
                               lastName:val.lastName ? val.lastName:null,
                               
                               // phoneNumber:transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode)
-                              phoneNumber:transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode)
+                              phoneNumber:val.phoneNumbers.length && val.phoneNumbers[0].countryCode ? transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode):val.phoneNumbers[0].digits
                           }
                      })
                      const finaler = gamer.filter(val => val.phoneNumber !== userId);
                    
                     const contactList = finaler.map(val => val.phoneNumber); 
-                    const checkerResult = await Promise.all(contactList.map(async val => {
-                         return await db.collection('user').doc(val).get().then(onDoc => {
-                           if(onDoc.exists){
-                             return onDoc.data()
-                           }
-                           return null; 
-                         })
+                    // const checkerResult = await Promise.all(contactList.map(async val => {
+                    //      return await db.collection('user').doc(val).get().then(onDoc => {
+                    //        if(onDoc.exists){
+                    //          return onDoc.data()
+                    //        }
+                    //        return null; 
+                    //      })
                          
-                        }))
+                    //     }))
+                    const checkerResult = await db.collection('user').get().then(onResult => {
+                         const users =  onResult.docs.map(val => val.data());
+                         console.log("user length is"+users.length) 
+                         const result = users.filter(person => contactList.includes(person.phoneNumber))
+                         return result; 
+                      })
                     const finalChecker = checkerResult.filter(val => val !== null);  
                     // const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', contactList).get().catch(error => console.log(error.message))
                     // const registeredUsers = onResult.docs.map(val =>  val.data());

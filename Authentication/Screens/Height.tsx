@@ -49,7 +49,7 @@ const _handleNavigation = () => {
           return; 
           
      }
-     navigation.navigate('AuthPhotos', {page:"something"})
+     navigation.navigate('AuthPhotosLatest', {page:"something"})
 
 }
 

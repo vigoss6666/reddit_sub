@@ -47,6 +47,7 @@ import PhoneSuccess from './Authentication/Screens/PhoneSuccess';
 import LoadContacts from './Authentication/Screens/LoadContacts'; 
 import Try from './Authentication/Screens/Try'; 
 import Contacts from './Authentication/Screens/Contacts'; 
+import AuthPhotosLatest from './Authentication/Screens/AuthPhotosLatest'; 
 import AuthPhotos from './Authentication/Screens/AuthPhotos';
 import ContactsSex from './Authentication/Screens/ContactsSex'; 
 import ContactsMenu from './Authentication/Screens/ContactsMenu'; 
@@ -191,7 +192,7 @@ export default function App() {
   const [singleContact, setSingleContact] = useState();  
   const [notification, setNotification] = useState(false);
   const [sentFromBrowse, setSentFromBrowse] = useState(null); 
-  const [tempId, setTempId] = useState('+917208110384'); 
+  const [tempId, setTempId] = useState(); 
   const responseListener = useRef();
   const notificationListener = useRef();
   const [profilePicLocal, setProfilePicLocal] = useState(null); 
@@ -250,7 +251,7 @@ export default function App() {
   })
   const [clientFilter, setClientFilter] = useState([]); 
   useEffect(() => {
-    AsyncStorage.removeItem('user')
+    // AsyncStorage.removeItem('user')
   }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
@@ -258,14 +259,14 @@ export default function App() {
   
   const [registeredUsers, setRegisteredUsers] = useState([]); 
   const [user, setUser] = useState({}); 
-  const [_id, setId] = useState('+16505551234'); 
+  const [_id, setId] = useState(); 
 useEffect(() => {
 async function namer(){
   const userGamer = await AsyncStorage.getItem('user'); 
   const user1 = "+917208110384"; 
   const user2 = "+919930815474";
   
-  //setId(userGamer); 
+  setId(userGamer); 
 }
 
 if(!Object.keys(user).length){
@@ -529,11 +530,12 @@ const mainHome = () => {
           <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="MatchMakeGrand" component={MatchMakeGrand}/>
-          <Stack.Screen name="PhotosLatest" component={PhotosLatest}/>
+          
           <Stack.Screen name="PointsRequired" component={PointsRequired}/>
           <Stack.Screen name="Sort" component={Sort} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS, headerShown:false }}/>
           <Stack.Screen name="SelfSort" component={SelfSort} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS ,headerShown:false}}/>
           <Stack.Screen name="Birthday" component={BirthDay}/>
+          <Stack.Screen name="AuthPhotosLatest" component={AuthPhotosLatest}/>
           <Stack.Screen name="NewContactLocation" component={NewContactLocation}/>
           <Stack.Screen name="Gender" component={Gender}/>
           <Stack.Screen name="GenderPreference" component={GenderPreference}/>
@@ -591,6 +593,7 @@ const mainHome = () => {
           <Stack.Screen name="School" component={School}/>
           <Stack.Screen name="Job" component={Job}/>
           <Stack.Screen name="Hometown" component={Hometown}/>
+          <Stack.Screen name="PhotosLatest" component={PhotosLatest}/>
           <Stack.Screen name="AddPhoto" component={AddPhoto}/>
           <Stack.Screen name="Loader" component={Loader} options = {{headerTitle:false, headerLeft:false}}/>
           <Stack.Screen name="Trophy" component={Trophy}/>
@@ -661,6 +664,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <Stack.Screen name="LastName" component={LastName}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>
+<Stack.Screen name="AuthPhotosLatest" component={AuthPhotosLatest}/>
 <Stack.Screen name="Birthday" component={BirthDay}/>
 <Stack.Screen name="CountryCodes" component={CountryCodes} options = {{headerTitle:false}}/> 
 <Stack.Screen name="Gender" component={Gender}/>

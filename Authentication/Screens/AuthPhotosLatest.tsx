@@ -11,17 +11,17 @@ import {firebase} from '../../config';
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
 //@refresh reset
-import SettingsHome from './SettingsHome';
+
 import { pick } from 'underscore';
 import AppContext from '../../AppContext'; 
 
 import {updateUser} from '../../networking';
 import {DragSortableView} from 'react-native-drag-sort'; 
-import { FadeOutToBottomAndroidSpec } from '@react-navigation/stack/lib/typescript/src/TransitionConfigs/TransitionSpecs';
 
 
 
-export default function PhotosLatest({navigation, route }){
+
+export default function AuthPhotosLatest({navigation, route }){
   const myContext = useContext(AppContext); 
     
     const {user, userId,db, setUser} = myContext;     
@@ -30,7 +30,16 @@ export default function PhotosLatest({navigation, route }){
     const [profilePic, setProfilePic] = useState(); 
     const [sortAllow, setSortAllow] = useState(true); 
     const [fixedArray, setFixed] = useState([]); 
-    const [photos, setPhotos] = useState(user.photos !== undefined ? user.photos:[null, null,null,null,null,null,null,null,null,null,null,null])
+    const [photos, setPhotos] = useState([null, null,null,null,null,null,null,null,null,null,null,null]); 
+
+
+
+    useEffect(() => {
+    db.collection('user').doc(userId).get().then(onResult => {
+         const data = onResult.data(); 
+         setProfilePic(data.profilePic)
+    })    
+    }, [])
 
 
     useEffect(() => {
@@ -204,10 +213,10 @@ export default function PhotosLatest({navigation, route }){
     
  }
 
- const profileTemplate = user.profilePic ? 
+ const profileTemplate = profilePic ? 
  <TouchableOpacity onPress = {() => loadProfilePic()} style = {{justifyContent:"center", alignItems:"center"}}>
    <View>
-   <Image source = {{uri:user.profilePic}} style = {{height:160, width:160, borderRadius:80}}/>
+   <Image source = {{uri:profilePic}} style = {{height:160, width:160, borderRadius:80}}/>
    <AntDesign name="pluscircle" size={20} color="red" style = {{position:'absolute', top:120, right:8 }}/>
    </View>
  </TouchableOpacity>
@@ -277,7 +286,7 @@ return(
 <Text></Text>  
 <Text style = {{fontWeight:'bold',fontSize:20,marginLeft:40}}>Photos</Text>  
 
-<TouchableOpacity onPress = {() => {updateProfilePicToServer(),uploadPhotosToServer(),  navigation.goBack()}} >
+<TouchableOpacity onPress = {() => {updateProfilePicToServer(),uploadPhotosToServer(),  navigation.navigate('School', {page:'something'})}}>
    <Text style = {{color:"orange", fontSize:15, fontWeight:"bold"}}>Done</Text>
    </TouchableOpacity>
    </View>   
