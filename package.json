@@ -11,6 +11,7 @@
     "@expo/vector-icons": "^12.0.0",
     "@firebase/firestore-types": "^2.1.0",
     "@motify/skeleton": "^0.11.0",
+    "@qualdesk/firestore-big-batch": "0.0.2",
     "@react-native-async-storage/async-storage": "~1.15.0",
     "@react-native-community/datetimepicker": "3.5.2",
     "@react-native-community/masked-view": "0.1.10",
@@ -47,7 +48,9 @@
     "expo-permissions": "~12.1.1",
     "expo-print": "~10.2.1",
     "expo-sharing": "~9.2.1",
+    "expo-splash-screen": "~0.11.2",
     "expo-status-bar": "~1.0.4",
+    "expo-updates": "~0.8.1",
     "expo-video-player": "^1.6.1",
     "expo-video-thumbnails": "~5.2.1",
     "firebase": "8.2.3",
@@ -96,6 +99,7 @@
     "react-native-slider": "^0.11.0",
     "react-native-switch-selector": "^2.0.6",
     "react-native-tab-view": "^2.15.2",
+    "react-native-unimodules": "~0.14.5",
     "react-native-view-shot": "3.1.2",
     "react-native-walkthrough-tooltip": "^1.2.0",
     "react-native-web": "~0.13.12",
@@ -105,10 +109,7 @@
     "searchable-flatlist": "^0.0.4",
     "underscore": "^1.11.0",
     "unimodules-permissions-interface": "~6.1.0",
-    "uuid": "^8.3.1",
-    "expo-splash-screen": "~0.11.2",
-    "expo-updates": "~0.8.1",
-    "react-native-unimodules": "~0.14.5"
+    "uuid": "^8.3.1"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",

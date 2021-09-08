@@ -205,6 +205,7 @@ export default function App() {
   const [mainId, setMainId] = useState()
   const [globalPhoneNumber, setGlobalPhoneNumber] = useState(null); 
   const [vID, setVID] = useState(null);
+  const [contactsL, setContactsL] = useState([]); 
   
    
 
@@ -251,7 +252,7 @@ export default function App() {
   })
   const [clientFilter, setClientFilter] = useState([]); 
   useEffect(() => {
-    // AsyncStorage.removeItem('user')
+    AsyncStorage.removeItem('user')
   }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
@@ -365,7 +366,8 @@ function stringifyNumber(n) {
     setGlobalPhoneNumber, 
     vID, 
     setVID,
-
+    contactsL, 
+    setContactsL,
     _id,
     setId,
     profileAuth, 

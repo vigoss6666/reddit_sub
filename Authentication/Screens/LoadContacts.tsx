@@ -5,7 +5,7 @@ import {mutateSettings} from '../../networking';
 import {firebase} from '../../config';
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';  
-
+import { BigBatch } from '@qualdesk/firestore-big-batch'
 const db = firebase.firestore(); 
 let batch = db.batch();
 let userRef = db.collection('user');
@@ -35,7 +35,7 @@ import { gql } from 'apollo-boost';
 import { filter } from 'underscore';
 export default function LoadContacts({navigation}){
     const myContext = useContext(AppContext); 
-    const {userId,registeredUsers, setRegisteredUsers} = myContext;
+    const {userId,registeredUsers, setRegisteredUsers,setContactsL} = myContext;
     
     
     let length = useRef().current; 
@@ -101,21 +101,33 @@ export default function LoadContacts({navigation}){
               const refined = contact.filter(val => val.phoneNumbers !== undefined); 
               
               // console.log(refined); 
-              const gamer = refined.map(val => {
+              // const gamer = refined.map(val => {
                 
                  
                 
                 
-                  return {
-                    name:val.name ? val.name:null, 
-                    firstName:val.firstName ? val.firstName:null, 
-                    lastName:val.lastName ? val.lastName:null,
-                    // formattedPhoneNumber:val.phoneNumbers[0].number ? val.phoneNumbers[0].number:null, 
-                    phoneNumber:val.phoneNumbers.length && val.phoneNumbers[0].countryCode ? transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode):val.phoneNumbers[0].digits
-                }
+              //     return {
+              //       name:val.name ? val.name:null, 
+              //       firstName:val.firstName ? val.firstName:null, 
+              //       lastName:val.lastName ? val.lastName:null,
+              //       // formattedPhoneNumber:val.phoneNumbers[0].number ? val.phoneNumbers[0].number:null, 
+              //       phoneNumber:val.phoneNumbers.length && val.phoneNumbers[0].countryCode ? transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode):val.phoneNumbers[0].digits
+              //   }
                 
                    
-              })
+              // })
+const arr = new Array(5000).fill(1) 
+
+const arr1 = arr.map((val,index) => index); 
+
+
+const gamer = arr1.map(val => {
+ return {
+  name:val, 
+  phoneNumber:val.toString(), 
+  
+ }
+})
 
               const finaler = gamer.filter(val => val.phoneNumber !== userId); 
              
@@ -138,6 +150,7 @@ export default function LoadContacts({navigation}){
               
             //  }))
              const finalChecker = checkerResult.filter(val => val !== null);  
+             setContactsL(finalChecker); 
              
              
              
@@ -176,7 +189,8 @@ export default function LoadContacts({navigation}){
             
              
              db.collection('user').doc(userId).update({contactList}); 
-             var batch = db.batch();
+              const batch = new BigBatch({ firestore: db })
+
              newUsers.map(val => {
                   const ref = db.collection('user').doc(val.phoneNumber)
                   batch.set(ref, {...val, matchMaker:userId}, {merge:true})

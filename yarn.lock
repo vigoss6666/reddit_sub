@@ -3115,6 +3115,11 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
+"@qualdesk/firestore-big-batch@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@qualdesk/firestore-big-batch/-/firestore-big-batch-0.0.2.tgz#ae8a788df2d7c9d8216cb2e54942c52e4e22d6a5"
+  integrity sha512-3Fte7gigmTcxSt3ouLYUOQh7hXOCV5S69L5RH7za/K/Jf/LI6PdmhNVKBzhsduE3F/xgrFrdfgac5XdJDpJjpQ==
+
 "@react-native-async-storage/async-storage@~1.15.0":
   version "1.15.5"
   resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.15.5.tgz#0d221a5ef1cd7a6494a42fcaad43136d68379afb"

@@ -24,7 +24,7 @@ function MainGun({length}){
 function Contacts({navigation,route}){
    
 const myContext = useContext(AppContext); 
-const { userId,defaultDataObject,setUser,computeName, setId} = myContext;
+const { userId,defaultDataObject,setUser,computeName, setId,contactsL} = myContext;
 
 const db = firebase.firestore(); 
 // const [indexer,setIndexer] = useState([]); 
@@ -74,20 +74,34 @@ const forceUpdate = React.useCallback(() => updateState({}), []);
 
 useEffect(() => {
    async function namer(){
-     setLoading(true); 
-    const checkerResult = await Promise.all(user.contactList.map(async val => {
-      return await db.collection('user').doc(val).get().then(onDoc => {
-        if(onDoc.exists){
-          return onDoc.data()
-        }
-        return null; 
-      })
+     setLoading(true);
+     const checkerResult = await db.collection('user').get().then(onResult => {
+      const users =  onResult.docs.map(val => val.data());
+      console.log("user length is"+users.length) 
+      const result = users.filter(person => user.contactList.includes(person.phoneNumber))
+      return result; 
+   }) 
+    // const checkerResult = await Promise.all(user.contactList.map(async val => {
+    //   return await db.collection('user').doc(val).get().then(onDoc => {
+    //     if(onDoc.exists){
+    //       return onDoc.data()
+    //     }
+    //     return null; 
+    //   })
       
-     }))
+    //  }))
+  //   const checkerResult = await db.collection('user').get().then(onResult => {
+  //     const users =  onResult.docs.map(val => val.data());
+  //     console.log("user length is"+users.length) 
+  //     const result = users.filter(person => contactList.includes(person.phoneNumber))
+  //     return result; 
+  //  })
      const finalChecker = checkerResult.filter(val => val !== null);
     //const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.contactList).get();
     // const users = onResult.docs.map(val => val.data()); 
-    const users = finalChecker; 
+    // const users = finalChecker;
+    
+    const users = finalChecker;  
     const regUsers = users.filter(val => val.latitude);
     const nonReg = users.filter(val => !val.latitude); 
     const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
