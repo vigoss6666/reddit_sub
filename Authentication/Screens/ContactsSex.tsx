@@ -170,7 +170,7 @@ const ContactView = ({item, index}) => {
     // onPress = {() => { addArray(index)}}
     >
         <View style = {{flexDirection:'row', alignItems:'center', flex:0.9}}>
-        {item.profilePic ? <Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
+        {item.profilePicSmall ? <Image source = {{uri:item.profilePicSmall}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
         <Text style = {{marginLeft:10,maxWidth:100,maxHeight:50}} numberOfLines = {2}>{computeName(item)}</Text>
 
         </View>

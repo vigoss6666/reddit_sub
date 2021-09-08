@@ -60,7 +60,7 @@ const _handleNavigation = () => {
         
    }
      
-     navigation.navigate('AuthPhotos', {page:"something"})
+     navigation.navigate('AuthPhotosLatest', {page:"something"})
 
 }
 

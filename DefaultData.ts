@@ -23,6 +23,24 @@ interface vote {
 }
 
 
+interface match {
+  client1:string, 
+  client2:string, 
+  createdAt:Date, 
+  discoveredBy:string, 
+  endorsements:[string], 
+  chatted:boolean   
+}
+
+interface introduction {
+   client1:string, 
+   client2:string, 
+   createdAt:Date, 
+   discoveredBy:string, 
+   match:true 
+}
+
+
 interface database {
  age:number, 
  
@@ -164,8 +182,8 @@ result.map(val => {
 
 export async function preload(user){
     
-        await addPoints(user); 
-        await generateIntro(user); 
+        // await addPoints(user); 
+        // await generateIntro(user); 
     
     
     

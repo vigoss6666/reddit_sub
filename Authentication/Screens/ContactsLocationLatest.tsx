@@ -209,7 +209,7 @@ const handleInit = async () => {
     <View style={{ width,  height,}} key = {val.phoneNumber}>
     <View style = {{ alignItems:"center",marginBottom:10}}>
     
-    {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:80, width:80, borderRadius:40}}/>:<MaterialIcons name="account-circle" size={75} color="black" />}
+    {val.profilePicSmall ? <Image source = {{uri:val.profilePicSmall}} style = {{height:80, width:80, borderRadius:40}}/>:<MaterialIcons name="account-circle" size={75} color="black" />}
     <Text style = {{fontWeight:"bold", marginTop:10}}>{ computeName(val) }'s location</Text>
     
     </View>
@@ -291,7 +291,8 @@ onScroll={(event: any) => {
 {sliderTemplate}
 </ScrollView>
 <View style = {{marginTop:40, marginLeft:30, marginRight:30 }}>
-<Button title = {"Done"} disabled = {gate} onPress = {() => {handleServerLocation()}} />
+
+<Button title = {'Continue'} containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} disabled = {gate} onPress = {() => {handleServerLocation()}}></Button>   
 </View>
 </View>
 

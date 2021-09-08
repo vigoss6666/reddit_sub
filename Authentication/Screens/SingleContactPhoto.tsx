@@ -65,7 +65,7 @@ const SingleContactPhoto = ({navigation}) => {
         const blob = await response.blob(); 
         const namer = Math.random().toString(36).substring(2);
         const ref = firebase.storage().ref().child("images/"+ namer); 
-        await ref.put(blob)
+        await ref.put(blob,{cacheControl:'max-age=31536000', contentType:'image/png'})
         const result1 = await ref.getDownloadURL();
         
         const serverObject = {

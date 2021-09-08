@@ -184,7 +184,7 @@ useEffect(() => {
            profiles.map((val,index) => {
                 return <View style = {{flexDirection: 'row',borderWidth:1, justifyContent:'space-between',marginRight:20, borderRightWidth:0, borderLeftWidth:0, marginLeft:20, height:100, alignItems:'center', zIndex:val.zIndex}} key = {index.toString()}>
                     <View style = {{flexDirection:'row',alignItems:'center',}}>
-                    {val.profilePic ? <Image source = {{uri:val.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
+                    {val.profilePicSmall ? <Image source = {{uri:val.profilePicSmall}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
 
                     <Text style = {{marginLeft:10, fontWeight:'bold', maxWidth:100,maxHeight:50}}>{computeName(val)}</Text>
                     </View>

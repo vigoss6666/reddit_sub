@@ -117,6 +117,8 @@ export function MatchChats({navigation, setChatNotification}) {
       const filterByUnmatched = filterByReported.filter(val => val.unMatched !== true);
       const transformedWithUsers = await Promise.all(filterByUnmatched.map(async (val) => {
           return await db.collection('user').doc(val.client2).get().then(async (result) => {
+            console.log("result is")
+            console.log(result.data())
             return await db.collection('messages').doc(createChatThread(userId, result.data().phoneNumber)).collection('messages').orderBy('createdAt', 'desc').limit(1).get().then(onChatResult => {
               const lastNamer = onChatResult.docs.map(val => val.data());
               return Object.assign({}, val, { clientUser: result.data(), lastMessage: lastNamer[0] });

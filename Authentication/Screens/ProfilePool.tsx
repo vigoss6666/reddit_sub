@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
-import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
+import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, Keyboard} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import {Button, SearchBar,Text,Avatar} from 'react-native-elements'; 
@@ -326,7 +326,7 @@ const useFetchContactPool = (navigation) => {
             <FlatList
         data={filteredEmails}
         renderItem={renderItem}
-        keyExtractor={(item) => item.phoneNumber}
+        keyExtractor={(item,index) => item.phoneNumber+index.toString()}
         extraData={namer}
         contentInset = {{bottom:200}}
       />  
@@ -847,7 +847,7 @@ onChangeItem={namer => addAge(item, namer)}
             <FlatList
         data={filteredEmails}
         renderItem={renderItem}
-        keyExtractor={(item) => item.phoneNumber}
+        keyExtractor={(item,index) => item.phoneNumber+index.toString()}
      //    contentInset={{  top: 0, left: 0, bottom: 200 }}
 
         //extraData={inviteToPlay}
@@ -907,7 +907,7 @@ const _uploadContacts = async () => {
 const insets = useSafeAreaInsets();
 
 return(
-<View style = {{flex:1,paddingTop:insets.top}}>
+<View style = {{flex:1,paddingTop:insets.top}} onPress = {Keyboard.dismiss}>
 <View style = {{flex:1}}>
 <View style = {{flexDirection:"row",marginLeft:20,justifyContent:'center', marginTop:20}}>
 

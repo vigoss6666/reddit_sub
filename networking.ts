@@ -10,6 +10,7 @@ import {defaultDataObject} from './DefaultData';
 
 
 
+
 const localhost: string = 'http://192.168.1.15:3000/graphql';
 const production: string = 'https://zabardast.herokuapp.com/graphql'; 
 async function getId(){
@@ -623,6 +624,9 @@ export function cacheImages(images) {
     } 
   });
 }
+
+
+
 
 
 

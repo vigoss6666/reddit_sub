@@ -1,6 +1,6 @@
 import  React, {useState,useRef,useEffect, useContext, useCallback, useMemo, memo} from 'react';
 
-import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, KeyboardAvoidingView} from 'react-native';
+import { View, StyleSheet,  TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, KeyboardAvoidingView, Keyboard} from 'react-native';
 import { Divider,Header,Text, SearchBar,Avatar,Icon,Button,CheckBox} from 'react-native-elements';
 import { createFilter } from 'react-native-search-filter';
 import { firebase } from '../../config'; 
@@ -278,7 +278,7 @@ const ContactView = ({item,adder}) => {
     >
       
         <View style = {{flexDirection:'row', alignItems:'center', marginTop:5, marginBottom:5}}>
-        {item.profilePic ? <Image source = {{uri:item.profilePic}} style = {{height:60, width:60, borderRadius:30, }}/>:<MaterialIcons name="account-circle" size={60} color="black" />}  
+        {item.profilePicSmall ? <Image source = {{uri:item.profilePicSmall}} style = {{height:60, width:60, borderRadius:30, }}/>:<MaterialIcons name="account-circle" size={60} color="black" />}  
         <Text style = {{marginLeft:10, fontSize:17,maxWidth:100,maxHeight:100}}>{computeName(item)}</Text>
         <Text style = {{marginLeft:20}}>{item.latitude ? <Text style = {{fontWeight:'bold', fontSize:25}}> R </Text>:null}</Text>
         
@@ -322,7 +322,7 @@ const renderItem = ({ item }) => {
    }
    return(
      
-        <View style = {{flex:1, }}>
+        <TouchableOpacity style = {{flex:1, }} onPress = {Keyboard.dismiss}>
         <View style = {{flex:0.1}}>
                         
         </View>
@@ -382,7 +382,7 @@ const renderItem = ({ item }) => {
             </Button>
                
         </View>
-        </View>
+        </TouchableOpacity>
         
         )
 

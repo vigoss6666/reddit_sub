@@ -37,7 +37,7 @@ export default function AuthPhotosLatest({navigation, route }){
     useEffect(() => {
     db.collection('user').doc(userId).get().then(onResult => {
          const data = onResult.data(); 
-         setProfilePic(data.profilePic)
+         setProfilePic(data.profilePicSmall)
     })    
     }, [])
 

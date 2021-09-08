@@ -16,7 +16,7 @@ export default function School({navigation}){
     const [openGate, setOpenGate] = useState(true); 
     const [Email, setEmail] = useState();
     const loadProfilePic = async () => {
-      let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
+      let permissionResult = await ImagePicker.requestCameraPermissionsAsync();
           
           if (permissionResult.granted === false) {
             alert("Permission to access camera roll is required!");
@@ -46,14 +46,14 @@ export default function School({navigation}){
       
       const manipResult = await ImageManipulator.manipulateAsync(
         uri,
-        [{resize:{width:100, height:100}}], 
+        [{resize:{width:40, height:40}}], 
         { compress: 1, format: ImageManipulator.SaveFormat.PNG }
       );
       const response = await fetch(manipResult.uri); 
       const blob = await response.blob(); 
       const namer = Math.random().toString(36).substring(2);
       const ref = firebase.storage().ref().child("images/"+ namer); 
-      await ref.put(blob)
+      await ref.put(blob,{cacheControl:'max-age=31536000', contentType:'image/png'})
       const result1 = await ref.getDownloadURL()
       updateUser(userId, {profilePicSmall:result1})
 
