@@ -68,16 +68,24 @@ const useFetchContactPool = (navigation) => {
           function applyToIncluded(val){
                return {...val, invitationSent:true}
          }
-     const checkerResult = await Promise.all(user.contactList.map(async val => {
-          return await db.collection('user').doc(val).get().then(onDoc => {
-            if(onDoc.exists){
-              return onDoc.data()
-            }
-            return null; 
-          })
+     // const checkerResult = await Promise.all(user.contactList.map(async val => {
+     //      return await db.collection('user').doc(val).get().then(onDoc => {
+     //        if(onDoc.exists){
+     //          return onDoc.data()
+     //        }
+     //        return null; 
+     //      })
           
-         }))
-         const finalChecker = checkerResult.filter(val => val !== null);  
+     //     }))
+     //     const finalChecker = checkerResult.filter(val => val !== null);  
+
+     const checkerResult = await db.collection('user').get().then(onResult => {
+          const users =  onResult.docs.map(val => val.data());
+          console.log("user length is"+users.length) 
+          const result = users.filter(person => user.contactList.includes(person.phoneNumber))
+          return result; 
+       }) 
+           const finalChecker = checkerResult.filter(val => val !== null); 
          //const result = filterGamer(data, 'phoneNumber', user.invitations, null,applyToIncluded)
  
  

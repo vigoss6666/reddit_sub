@@ -101,33 +101,33 @@ export default function LoadContacts({navigation}){
               const refined = contact.filter(val => val.phoneNumbers !== undefined); 
               
               // console.log(refined); 
-              // const gamer = refined.map(val => {
+              const gamer = refined.map(val => {
                 
                  
                 
                 
-              //     return {
-              //       name:val.name ? val.name:null, 
-              //       firstName:val.firstName ? val.firstName:null, 
-              //       lastName:val.lastName ? val.lastName:null,
-              //       // formattedPhoneNumber:val.phoneNumbers[0].number ? val.phoneNumbers[0].number:null, 
-              //       phoneNumber:val.phoneNumbers.length && val.phoneNumbers[0].countryCode ? transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode):val.phoneNumbers[0].digits
-              //   }
+                  return {
+                    name:val.name ? val.name:null, 
+                    firstName:val.firstName ? val.firstName:null, 
+                    lastName:val.lastName ? val.lastName:null,
+                    // formattedPhoneNumber:val.phoneNumbers[0].number ? val.phoneNumbers[0].number:null, 
+                    phoneNumber:val.phoneNumbers.length && val.phoneNumbers[0].countryCode ? transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode):val.phoneNumbers[0].digits
+                }
                 
                    
-              // })
-const arr = new Array(5000).fill(1) 
+              })
+// const arr = new Array(5000).fill(1) 
 
-const arr1 = arr.map((val,index) => index); 
+// const arr1 = arr.map((val,index) => index); 
 
 
-const gamer = arr1.map(val => {
- return {
-  name:val, 
-  phoneNumber:val.toString(), 
+// const gamer = arr1.map(val => {
+//  return {
+//   name:val, 
+//   phoneNumber:val.toString(), 
   
- }
-})
+//  }
+// })
 
               const finaler = gamer.filter(val => val.phoneNumber !== userId); 
              
