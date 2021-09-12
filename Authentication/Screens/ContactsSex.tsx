@@ -250,7 +250,7 @@ keyExtractor={item => item.phoneNumber}
             </ScrollView>  */}
     </View>
     <View style = {{flex:0.2, justifyContent:'center',marginTop:10 }}>
-    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { updateGender(), navigation.navigate('ContactsPhotos')}} disabled = {gate}></Button>   
+    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { updateGender(), navigation.navigate('ContactsLocationLatest')}} disabled = {gate}></Button>   
 
     </View>
     </View>

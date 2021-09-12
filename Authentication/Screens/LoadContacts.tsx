@@ -200,26 +200,35 @@ export default function LoadContacts({navigation}){
              
              db.collection('user').doc(userId).update({contactList}); 
               const batch = new BigBatch({ firestore: db })
+              const batch1 = new BigBatch({ firestore: db })
+              
 
              newUsers.map(val => {
-                  const ref = db.collection('user').doc(val.phoneNumber)
+              const ref = db.collection('user').doc(val.phoneNumber)
+                  
+                  
                   batch.set(ref, {...val, matchMaker:userId}, {merge:true})
              })
+             
              batch.commit().then(() => {
-      db.collection('user').doc('+16505551234').set({'lastLine':true}, {merge:true});
-      const profilePilesWithThumb = newUsers.filter(val => val.profilePicSmall !== ""); 
-      profilePilesWithThumb.map(async val => {
-      const response =  await fetch(val.profilePicSmall); 
-      const blob =  await response.blob(); 
-      const namer = Math.random().toString(36).substring(2);
-      const ref = firebase.storage().ref().child("images/"+ namer); 
-      await ref.put(blob,{cacheControl:'max-age=31536000', contentType:'image/png'})
-      const result1 =  await ref.getDownloadURL()
-      updateUser(val.phoneNumber, {profilePicSmall:result1})
-                   
-                }) 
+             db.collection('user').doc('+16505551234').set({'lastLine':true}, {merge:true});
+             const profilePilesWithThumb = newUsers.filter(val => val.profilePicSmall !== ""); 
+             profilePilesWithThumb.map(async val => {
+              const response =  await fetch(val.profilePicSmall); 
+              const blob =  await response.blob(); 
+              const namer = Math.random().toString(36).substring(2);
+              const ref = firebase.storage().ref().child("images/"+ namer); 
+              await ref.put(blob,{cacheControl:'max-age=31536000', contentType:'image/png'})
+              const result1 =  await ref.getDownloadURL()
+              updateUser(val.phoneNumber, {profilePicSmall:result1})
+                        })
+                
                  navigation.navigate('Loader'); 
+                 
             });
+      
+      
+                
             
 
              

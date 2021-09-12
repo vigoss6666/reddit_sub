@@ -22,7 +22,7 @@ const ContactsLocationLatest = ({navigation, route}) => {
   const myContext = useContext(AppContext); 
   const { userId,computeName,CustomBackComponent,setUser,defaultDataObject,setProfilesAuth, setId} = myContext;
   const [finalUser, setFinalUser] = useState({}); 
-  
+  const [pager, setPager] = useState(0); 
   
   const [flatListChanged, setFlatListChanged] = useState(1)
   const [profiles, setProfiles] = useState([]);  
@@ -33,6 +33,8 @@ const ContactsLocationLatest = ({navigation, route}) => {
   const [gate, setGate] = useState(true); 
   const [user,setUser1] = useState({}); 
   const [loading, setLoading] = useState(true); 
+  const [textFlex, setTextFlex] = useState(0.1); 
+  const [mapFlex, setMapFlex] = useState(0.9)
   
    
   useEffect(() => {
@@ -138,6 +140,13 @@ const handleInit = async () => {
  }
 
 
+ const handlePager = () => {
+   if(pager < profiles.length -1){
+     setPager(pager + 1); 
+   }
+ }
+
+
   useEffect(() => {
     if(profiles.length > 0){
     const filter = markers.map(val => val.client.phoneNumber); 
@@ -214,14 +223,44 @@ const handleInit = async () => {
     
     </View>
 
+
+    <GooglePlacesAutocomplete
+              styles = {{container:{flex:textFlex, }}}
+              placeholder = {"Type location"}
+              keyboardShouldPersistTaps = {'always'}
+              fetchDetails = {true} 
+              textInputProps = {{onFocus:() => {setTextFlex(0.7), setMapFlex(0.3)}}}
+              onPress={(data, details = null) => {
+                setTextFlex(0.1),
+                 setMapFlex(0.9) 
+                setX({latitude:details?.geometry.location.lat, longitude:details?.geometry.location.lng})
+                const state = ""; 
+                const result = details?.address_components.map(val => {
+                   return val.types.map(val1 => {
+                      if(val1 == 'administrative_area_level_1'){
+                         
+                         setLocation({state: val.long_name, address:data.description})
+                      }
+                   })
+                   setFlatListChanged(flatListChanged+1)
+                })
+                 
+                
+              }}
+              query={{
+                key: 'AIzaSyBxsuj6tm1D5d3hEfG2ASfleUBIRREl15Y',
+                language: 'en',
+              }}
+        />
+
   
 
 
 <MapView
-     style = {{width: Dimensions.get('window').width,
-     height: Dimensions.get('window').height, }} 
+     style = {{flex:mapFlex
+      }} 
      mapType = "standard"
-     onPress={(e) => handleMarker({latlng: e.nativeEvent.coordinate, client:profiles[sliderState.currentPage] })}
+     onPress={(e) => {handleMarker({latlng: e.nativeEvent.coordinate, client:profiles[sliderState.currentPage] }), handlePager()}}
      
      region={{
       latitude: x.latitude,
@@ -241,32 +280,7 @@ const handleInit = async () => {
         </Marker>)}
      
   
-        <GooglePlacesAutocomplete
-              styles = {{container:{flex:1 }}}
-              placeholder = {"Type location"}
-              keyboardShouldPersistTaps = {'always'}
-              fetchDetails = {true} 
-              onPress={(data, details = null) => {
-                
-                setX({latitude:details?.geometry.location.lat, longitude:details?.geometry.location.lng})
-                const state = ""; 
-                const result = details?.address_components.map(val => {
-                   return val.types.map(val1 => {
-                      if(val1 == 'administrative_area_level_1'){
-                         
-                         setLocation({state: val.long_name, address:data.description})
-                      }
-                   })
-                   setFlatListChanged(flatListChanged+1)
-                })
-                 
-                
-              }}
-              query={{
-                key: 'AIzaSyBxsuj6tm1D5d3hEfG2ASfleUBIRREl15Y',
-                language: 'en',
-              }}
-        />  
+          
     </MapView>
   
     </View>
@@ -279,7 +293,7 @@ const handleInit = async () => {
       <View style = {{flex:1, paddingBottom:insets.bottom}}>
       <ScrollView
       keyboardShouldPersistTaps = {'always'}
-
+contentOffset = {{x:440*pager,y:0 }}
 style = {{flex:1, paddingTop:insets.top }} 
 horizontal = {true}
 pagingEnabled = {true}
