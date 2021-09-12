@@ -52,6 +52,10 @@ const PlayGameLatest = ({navigation}) => {
   const [pageFocused, setPageFocused] = useState(false); 
   const [preview, setPreview] = useState()
   const colors = ['green', 'blue', 'red']
+  const [loading, setLoading] = useState(true); 
+  const [_update,setUpdate] = useState(0); 
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
   
   
   const [questions, setQuestions] = useState([]); 
@@ -67,10 +71,18 @@ const PlayGameLatest = ({navigation}) => {
   namer()
   
   }, [])
-
+console.log(" iwas rendered in the game")
+console.log("mainX value checking"+mainX)
   useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      // The screen is focused
+      // Call any action
+      console.log("namer is the best gamer"); 
+      // forceUpdate()
+      setMainX(90)
+    });
     navigation.setOptions({
-      didFocus:() => console.log("I was chaddi"), 
+      
       headerShown:false, 
       headerTitle:false, 
       headerLeft:() => { 
@@ -107,7 +119,7 @@ const resetGame = () => {
   //   })
   // }, [])
   useEffect(() => {
-    console.log(user.userSet)
+    console.log("checking useEffcts called"+user.userSet)
     db.collection('dimensionQuestions').doc(user.userSet).get().then(onResult => {
       if(onResult.exists){
         
@@ -136,7 +148,7 @@ const resetGame = () => {
   //        console.log(result)
   //        db.collection('dimensionQuestions').doc('0').set({questions:result})
   //   }) 
-  }, [])
+  }, [_update])
   useEffect(() => {
     console.log("i was called")
     setQuestionsIndex(0)
@@ -251,18 +263,27 @@ const namer =  [
     async function namer(){
       if(user.datingPoolList.length >= 2){
   
-        const checkerResult = await Promise.all(user.datingPoolList.map(async val => {
-         return await db.collection('user').doc(val).get().then(onDoc => {
-           if(onDoc.exists){
-             return onDoc.data()
-           }
-           return null; 
-         })
+        // const checkerResult = await Promise.all(user.datingPoolList.map(async val => {
+        //  return await db.collection('user').doc(val).get().then(onDoc => {
+        //    if(onDoc.exists){
+        //      return onDoc.data()
+        //    }
+        //    return null; 
+        //  })
          
-        }))
-        const finalChecker = checkerResult.filter(val => val !== null);  
+        // }))
+        // const finalChecker = checkerResult.filter(val => val !== null);  
+        // setLoading(true)
+        const checkerResult = await db.collection('user').get().then(onResult => {
+          const users =  onResult.docs.map(val => val.data());
+          console.log("user length is"+users.length) 
+          const result = users.filter(person => user.datingPoolList.includes(person.phoneNumber))
+          return result; 
+       }) 
+         const finalChecker = checkerResult.filter(val => val !== null);
         
         setDemo(finalChecker); 
+        // setLoading(false); 
          }
     }
     namer()
@@ -270,20 +291,45 @@ const namer =  [
   }, [])
   
   useLayoutEffect(() => {
-    if(mailer.current){
+    console.log("layout effect called")
+    if(mailer.current ){
         mailer.current.measure((x,y, height, width, px, py) => {
         setContainerHeight(height);
         })
     }
     if(mainView.current){
             mainView.current.measure((x,y, height, width, px, py) => {
-            setMainX(px); 
+            console.log("x is "+px); 
+            console.log("y is "+py);   
+            console.log("height is"+ height); 
+            setMainX(90); 
             setMainWidth(width); 
             setMainY(py); 
             setMainHeight(height);
             })
     }
-  }, [mainHeight, mainX, mainY, mainWidth, ])
+  }, [mainHeight, mainX, mainY, mainWidth,_update ])
+
+
+  function computeSections(){
+    if(mailer.current ){
+      mailer.current.measure((x,y, height, width, px, py) => {
+      setContainerHeight(height);
+      })
+  }
+  if(mainView.current ){
+          mainView.current.measure((x,y, height, width, px, py) => {
+          console.log("x is "+px); 
+          console.log("y is "+py);   
+          console.log("height is"+ height); 
+          setMainX(px); 
+          setMainWidth(width); 
+          setMainY(py); 
+          setMainHeight(height);
+          })
+  }
+
+  }
 
   const addPoints = () => {
       if(client == 'first'){
@@ -550,6 +596,10 @@ const handleGame = () => {
   }
   
    
+
+  // if(loading){
+  //   return <LoadScreen/>
+  // }
   
    if(user.datingPoolList.length < 2){
      return <View style = {{flex:1, backgroundColor:'black', justifyContent:'center', alignItems:'center',  }}>

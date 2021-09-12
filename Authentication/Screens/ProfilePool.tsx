@@ -408,16 +408,23 @@ const useFetchDatingPool = (navigation) => {
 async function namer12(){
      console.log("namer was called")
      if(user.datingPoolList.length > 0){
-          const checkerResult = await Promise.all(user.datingPoolList.map(async val => {
-               return await db.collection('user').doc(val).get().then(onDoc => {
-                 if(onDoc.exists){
-                   return onDoc.data()
-                 }
-                 return null; 
-               })
+          // const checkerResult = await Promise.all(user.datingPoolList.map(async val => {
+          //      return await db.collection('user').doc(val).get().then(onDoc => {
+          //        if(onDoc.exists){
+          //          return onDoc.data()
+          //        }
+          //        return null; 
+          //      })
                
-              }))
-              const finalChecker = checkerResult.filter(val => val !== null); 
+          //     }))
+          //     const finalChecker = checkerResult.filter(val => val !== null); 
+          const checkerResult = await db.collection('user').get().then(onResult => {
+               const users =  onResult.docs.map(val => val.data());
+               console.log("user length is"+users.length) 
+               const result = users.filter(person => user.datingPoolList.includes(person.phoneNumber))
+               return result; 
+            }) 
+              const finalChecker = checkerResult.filter(val => val !== null);
               setDatingPoolList(finalChecker)     
          
      // const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get().then(async onResult => {

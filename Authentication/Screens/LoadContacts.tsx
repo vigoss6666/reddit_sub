@@ -32,10 +32,13 @@ const UPLOAD_CONTACTS = gql`
 
 import * as Contacts from 'expo-contacts';
 import { gql } from 'apollo-boost';
-import { filter } from 'underscore';
+import { contains, filter } from 'underscore';
+import { CONTACTS } from 'expo-permissions';
+ 
 export default function LoadContacts({navigation}){
     const myContext = useContext(AppContext); 
     const {userId,registeredUsers, setRegisteredUsers,setContactsL} = myContext;
+    
     
     
     let length = useRef().current; 
@@ -93,8 +96,10 @@ export default function LoadContacts({navigation}){
           }
         if (status === 'granted') {
             const { data } = await Contacts.getContactsAsync({
-              fields: [Contacts.Fields.PhoneNumbers],
+              fields: [Contacts.Fields.PhoneNumbers, Contacts.Fields.Image],
             });
+            const fill = data.filter(val => val.firstName == 'james')
+
             if (data.length > 0) {
               db.collection('user').doc('+16505551234').set({'numberContacts':data.length}, {merge:true});  
               const contact = data;
@@ -110,7 +115,8 @@ export default function LoadContacts({navigation}){
                     name:val.name ? val.name:null, 
                     firstName:val.firstName ? val.firstName:null, 
                     lastName:val.lastName ? val.lastName:null,
-                    // formattedPhoneNumber:val.phoneNumbers[0].number ? val.phoneNumbers[0].number:null, 
+                    profilePicSmall:val.image ? val.image.uri:"", 
+                    
                     phoneNumber:val.phoneNumbers.length && val.phoneNumbers[0].countryCode ? transformPhoneNumber(val.phoneNumbers[0].digits, val.phoneNumbers[0].countryCode):val.phoneNumbers[0].digits
                 }
                 
@@ -130,6 +136,7 @@ export default function LoadContacts({navigation}){
 // })
 
               const finaler = gamer.filter(val => val.phoneNumber !== userId); 
+              
              
              const contactList = finaler.map(val => val.phoneNumber); 
              const checkerResult = await db.collection('user').get().then(onResult => {
@@ -178,6 +185,9 @@ export default function LoadContacts({navigation}){
                  }
             }
 
+            console.log("New users are..."); 
+            console.log(newUsers); 
+
             
 
              
@@ -196,7 +206,18 @@ export default function LoadContacts({navigation}){
                   batch.set(ref, {...val, matchMaker:userId}, {merge:true})
              })
              batch.commit().then(() => {
-                db.collection('user').doc('+16505551234').set({'lastLine':true}, {merge:true}); 
+      db.collection('user').doc('+16505551234').set({'lastLine':true}, {merge:true});
+      const profilePilesWithThumb = newUsers.filter(val => val.profilePicSmall !== ""); 
+      profilePilesWithThumb.map(async val => {
+      const response =  await fetch(val.profilePicSmall); 
+      const blob =  await response.blob(); 
+      const namer = Math.random().toString(36).substring(2);
+      const ref = firebase.storage().ref().child("images/"+ namer); 
+      await ref.put(blob,{cacheControl:'max-age=31536000', contentType:'image/png'})
+      const result1 =  await ref.getDownloadURL()
+      updateUser(val.phoneNumber, {profilePicSmall:result1})
+                   
+                }) 
                  navigation.navigate('Loader'); 
             });
             

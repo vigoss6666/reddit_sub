@@ -252,7 +252,7 @@ export default function App() {
   })
   const [clientFilter, setClientFilter] = useState([]); 
   useEffect(() => {
-    AsyncStorage.removeItem('user')
+    // AsyncStorage.removeItem('user')
   }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
@@ -746,6 +746,7 @@ function Home(props){
     <SafeAreaProvider>
     <Tab.Navigator 
       style = {{paddingTop:insets.top, paddingRight:insets.right, paddingLeft:insets.left}} 
+      animationEnableb = {false}
       initialRouteName = {initialRouteName}
       tabBarOptions={{
       activeTintColor: 'tomato',
@@ -841,7 +842,7 @@ function Home(props){
     >
         
       {/* <Tab.Screen name="SelfView" component={SelfView} />  */}
-      <Tab.Screen name="Game" component={ user.dating ? GameHomepage:PlayGameLatest} />
+      <Tab.Screen name="Game" component={ user.dating ? GameHomepage:PlayGameLatest} options={{ lazy: true }}/>
       <Tab.Screen name="Trophy" component={Trophy} />
       <Tab.Screen name="ProfilePool" component={ProfilePool}  />
       <Tab.Screen name="MatchList" component={MatchList}  /> 

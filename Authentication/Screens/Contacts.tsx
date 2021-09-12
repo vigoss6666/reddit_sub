@@ -67,9 +67,15 @@ useEffect(() => {
 // }
 const [, updateState] = React.useState();
 const forceUpdate = React.useCallback(() => updateState({}), []);
+const [once, setOnce] = useState(1); 
+
+useEffect(() => {
+Keyboard.dismiss()
+}, [])
+
 
  useEffect(() => {
-  console.log(" checker effect was called")
+  Keyboard.dismiss()
  }, [checker])
 
 useEffect(() => {
@@ -116,6 +122,7 @@ useEffect(() => {
     }))
     const finalUsers = [...regUsers, ...nonReg]
     setProfiles(finalUsers);
+    Keyboard.dismiss()
     setLoading(false);  
 
    }

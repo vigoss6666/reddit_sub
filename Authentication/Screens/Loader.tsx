@@ -11,9 +11,16 @@ export default function Loader({navigation,route}){
     const arr = [0,1,2,3,4,5]; 
     const {userId,registeredUsers, setRegisteredUsers,computeName} = myContext;
     
+
+    useEffect(() => {
+     Keyboard.dismiss()
+    }, [])
+
+    
     useEffect(() => {
          if(registeredUsers.length == 0){
               navigation.navigate('ContactLoadSuccess'); 
+              Keyboard.dismiss()
          }
     },[])
     const others = registeredUsers.length > 5 ? <Text style = {{fontWeight:'bold', fontSize:20, marginTop:30, fontStyle:'italic'}}>...and {registeredUsers.length -5} others </Text>:null

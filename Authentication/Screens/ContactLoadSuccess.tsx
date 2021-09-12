@@ -26,6 +26,7 @@ export default function ContactLoadSuccess({navigation,route}){
     useEffect(() => {
         db.collection('user').doc(userId).get().then(onDoc => {
             setUser(onDoc.data())
+            Keyboard.dismiss()
         })
     }, []) 
         
