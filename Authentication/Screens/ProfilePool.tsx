@@ -841,10 +841,15 @@ onChangeItem={namer => addAge(item, namer)}
           
                return (
                     <View style = {{flex:1,}}>
-                    <View style = {{flex:0.3}}>      
+                    <View style = {{flex:0.3}}>
+               <View style = {{flexDirection:'row', marginLeft:50, alignItems:'center'}}>
               <Text style = {{alignSelf:'center',  marginTop:30, fontWeight:'bold', marginBottom:20, fontSize:17 }}>
                   Click to View a friends Profile
               </Text>
+              <TouchableOpacity onPress = {() => navigation.navigate('BulkInvite')}>
+              <Entypo name="mail-with-circle" size={24} color="black" style = {{marginLeft:20, marginTop:5}}/>
+              </TouchableOpacity>
+              </View>                
               <SearchBar
               lightTheme
               round

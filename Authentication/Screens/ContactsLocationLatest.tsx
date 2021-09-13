@@ -48,18 +48,25 @@ const ContactsLocationLatest = ({navigation, route}) => {
 
   useEffect(() => {
     async function namer(){
-      const checkerResult = await Promise.all(user.datingPoolList.map(async val => {
-        return await db.collection('user').doc(val).get().then(onDoc => {
-          if(onDoc.exists){
-            return onDoc.data()
-          }
-          return null; 
-        })
+  //     const checkerResult = await Promise.all(user.datingPoolList.map(async val => {
+  //       return await db.collection('user').doc(val).get().then(onDoc => {
+  //         if(onDoc.exists){
+  //           return onDoc.data()
+  //         }
+  //         return null; 
+  //       })
         
-       }))
-   const finalChecker = checkerResult.filter(val => val !== null);
+  //      }))
+  //  const finalChecker = checkerResult.filter(val => val !== null);
     //  const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
     //  const users = onResult.docs.map(val => val.data()); 
+    const checkerResult = await db.collection('user').get().then(onResult => {
+      const users =  onResult.docs.map(val => val.data());
+      console.log("user length is"+users.length) 
+      const result = users.filter(person => user.datingPoolList.includes(person.phoneNumber))
+      return result; 
+   }) 
+     const finalChecker = checkerResult.filter(val => val !== null);
      
      const finalTransformed = finalChecker.map((val, index) => ( {...val, zIndex:index}));
      finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
@@ -76,6 +83,9 @@ const ContactsLocationLatest = ({navigation, route}) => {
     
     
  }, [user])
+
+
+ profiles.map((val, index) => console.log(val.name+ index ))
 
   useEffect(() => {
     navigation.setOptions({
@@ -112,10 +122,10 @@ const ContactsLocationLatest = ({navigation, route}) => {
 
 
 const handleMarker = async (marker) => {
-    console.log(marker)  
+      
     const copy = markers.concat(); 
     const index = copy.findIndex(val => val.client.phoneNumber == marker.client.phoneNumber); 
-    console.log("index"+index)
+    
     if(index !== -1){
       copy[index] = marker; 
       await setMarkers(copy); 
@@ -126,9 +136,9 @@ const handleMarker = async (marker) => {
     
     
 }
-console.log(markers)
+
 const handleInit = async () => {
-  console.log(user); 
+  
   const userInit = Object.assign({}, {...defaultDataObject},{phoneNumber:userId}, {...user}, {appUser:true}) 
   db.collection('user').doc(userId).set(userInit,{merge:true});
   setFinalUser(userInit)
@@ -214,12 +224,12 @@ const handleInit = async () => {
     }
   };
   
-  const sliderTemplate = profiles !== undefined ? profiles.map(val => (
-    <View style={{ width,  height,}} key = {val.phoneNumber}>
+  const sliderTemplate = profiles !== undefined ? profiles.map((val, index) => (
+    <View style={{ width,  height,}} key = {val.phoneNumber + index.toString()}>
     <View style = {{ alignItems:"center",marginBottom:10}}>
     
     {val.profilePicSmall ? <Image source = {{uri:val.profilePicSmall}} style = {{height:80, width:80, borderRadius:40}}/>:<MaterialIcons name="account-circle" size={75} color="black" />}
-    <Text style = {{fontWeight:"bold", marginTop:10}}>{ computeName(val) }'s location</Text>
+    <Text style = {{fontWeight:"bold", marginTop:10}}>{ computeName(val)}'s location</Text>
     
     </View>
 
@@ -293,11 +303,14 @@ const handleInit = async () => {
       <View style = {{flex:1, paddingBottom:insets.bottom}}>
       <ScrollView
       keyboardShouldPersistTaps = {'always'}
-contentOffset = {{x:440*pager,y:0 }}
+contentOffset = {{x:400*pager,y:0 }}
+disableIntervalMomentum = {true}
+bounces = {false}
 style = {{flex:1, paddingTop:insets.top }} 
 horizontal = {true}
+showsVerticalScrollIndicator = {true}
 pagingEnabled = {true}
-scrollEventThrottle={8}
+scrollEventThrottle={16}
 onScroll={(event: any) => {
   setSliderPage(event);
 }}

@@ -12,6 +12,7 @@ import TT  from './TT';
 import { NavigationContainer, BaseRouter } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Name from './Authentication/Screens/Name';
+import BulkInvite from './Authentication/Screens/BulkInvite';
 import FirstName from './Authentication/Screens/FirstName';
 import LastName from './Authentication/Screens/LastName';
 import BirthDay from './Authentication/Screens/BirthDay';  
@@ -531,6 +532,7 @@ const mainHome = () => {
         <Stack.Navigator>
           <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
+          <Stack.Screen name="BulkInvite" component={BulkInvite} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS, headerShown:false }}/>
           <Stack.Screen name="MatchMakeGrand" component={MatchMakeGrand}/>
           
           <Stack.Screen name="PointsRequired" component={PointsRequired}/>
