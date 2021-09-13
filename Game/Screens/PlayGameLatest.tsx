@@ -120,7 +120,7 @@ const resetGame = () => {
   // }, [])
   useEffect(() => {
     console.log("checking useEffcts called"+user.userSet)
-    db.collection('dimensionQuestions').doc(user.userSet).get().then(onResult => {
+    db.collection('dimensionQuestions').doc("0").get().then(onResult => {
       if(onResult.exists){
         
         const data = parseInt(user.userSet); 
