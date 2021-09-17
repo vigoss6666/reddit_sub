@@ -84,7 +84,7 @@ export default function App({navigation}) {
         autoCompleteType="tel"
         keyboardType="phone-pad"
         textContentType="telephoneNumber"
-        onChangeText={phoneNumber => setPhoneNumber(dialCode+phoneNumber)}
+        onChangeText={phoneNumber => setPhoneNumber(dialCode+phoneNumber.replaceAll(/\s/g,''))}
         
       />
       </View>

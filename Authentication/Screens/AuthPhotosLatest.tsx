@@ -24,7 +24,7 @@ import {DragSortableView} from 'react-native-drag-sort';
 export default function AuthPhotosLatest({navigation, route }){
   const myContext = useContext(AppContext); 
     
-    const {user, userId,db, setUser} = myContext;     
+    const {user, userId,db, setUser,profilePicLocal} = myContext;     
     const insets = useSafeAreaInsets();
     const [camera,setCamera] = useState(); 
     const [profilePic, setProfilePic] = useState(); 
@@ -35,10 +35,7 @@ export default function AuthPhotosLatest({navigation, route }){
 
 
     useEffect(() => {
-    db.collection('user').doc(userId).get().then(onResult => {
-         const data = onResult.data(); 
-         setProfilePic(data.profilePic)
-    })    
+    setProfilePic(profilePicLocal)    
     }, [])
 
 

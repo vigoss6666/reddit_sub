@@ -71,11 +71,13 @@ const [once, setOnce] = useState(1);
 
 useEffect(() => {
 Keyboard.dismiss()
+Keyboard.removeAllListeners('keyboardDidShow'); 
 }, [])
 
 
  useEffect(() => {
-  Keyboard.dismiss()
+  Keyboard.dismiss(); 
+  
  }, [checker])
 
 useEffect(() => {
