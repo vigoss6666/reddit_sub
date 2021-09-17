@@ -300,10 +300,10 @@ const handleInit = async () => {
    return <LoadScreen />
  }
   return (
-      <View style = {{flex:1, paddingBottom:insets.bottom}}>
+      <View style = {{flex:1, paddingBottom:insets.bottom,}}>
       <ScrollView
       keyboardShouldPersistTaps = {'always'}
-contentOffset = {{x:400*pager,y:0 }}
+contentOffset = {{x:Dimensions.get('window').width*pager,y:0 }}
 disableIntervalMomentum = {true}
 bounces = {false}
 style = {{flex:1, paddingTop:insets.top }} 

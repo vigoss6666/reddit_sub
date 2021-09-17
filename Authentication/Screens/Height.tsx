@@ -40,8 +40,12 @@ const _sendToServer = () => {
 }     
 
 useEffect(() => {
-Keyboard.dismiss()
-},[])
+    const subscribe = Keyboard.addListener('keyboardDidShow', () => {
+       Keyboard.dismiss()
+    })
+    return () => Keyboard.removeAllListeners('keyboardDidHide'); 
+    
+ }, [])
       
 const _handleNavigation = () => {
      if(page == "DetailsSettings"){

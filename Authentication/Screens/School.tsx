@@ -15,6 +15,10 @@ export default function School({navigation,route}){
     const {page} = route.params; 
     const [gate,setGate] = useState(true); 
     const [school, setSchool] = useState(null); 
+    
+    useEffect(() => {
+      Keyboard.removeAllListeners('keyboardDidShow')
+    }, [])
 
     useEffect(() => {
       if(Email.length < 1){

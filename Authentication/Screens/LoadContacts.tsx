@@ -167,7 +167,9 @@ export default function LoadContacts({navigation}){
             //  const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', contactList).get().catch(error => console.log(error.message))
              //const registeredUsers = finalChecker.length ? finalChecker.docs.map(val =>  val.data()):[]; 
              const registeredUsersNumbers = finalChecker.length ? finalChecker.map(val => val.phoneNumber):[];  
-             setRegisteredUsers(finalChecker) 
+              
+             const appUsers = finalChecker.filter(val => val.appUser == true); 
+             setRegisteredUsers(appUsers)
              
              var filtered = contactList.filter(
                 function(e) {

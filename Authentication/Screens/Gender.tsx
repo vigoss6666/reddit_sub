@@ -22,9 +22,14 @@ useEffect(() => {
    })
  }, [])  
 
- useEffect(() => {
-   Keyboard.dismiss()
-   },[])
+ 
+   useEffect(() => {
+      const subscribe = Keyboard.addListener('keyboardDidShow', () => {
+         Keyboard.dismiss()
+      })
+      return () => Keyboard.removeAllListeners('keyboardDidHide'); 
+      
+   }, [])
 
 const _handlePage = () => {
  if(page == "DetailsSettings"){

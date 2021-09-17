@@ -25,6 +25,13 @@ export default function EnableLocation({navigation}){
           headerLeft:() => <CustomBackComponent navigation = {navigation}/>
         })
       }, [])
+      useEffect(() => {
+        const subscribe = Keyboard.addListener('keyboardDidShow', () => {
+           Keyboard.dismiss()
+        })
+        return () => Keyboard.removeAllListeners('keyboardDidHide'); 
+        
+     }, [])
 const handleLocation = async () => {
     
     let { status } = await Location.requestPermissionsAsync();   

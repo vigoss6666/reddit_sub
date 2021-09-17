@@ -1,13 +1,14 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, Keyboard} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
 import { Button } from 'react-native-elements'; 
 import {Header,Continue} from '../../src/common/Common'; 
 import { GET_DETAILS } from '../../Account/Screens/DetailsSettings';
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking'; 
+import { useFocusEffect } from '@react-navigation/native';
 
 
 export default function Gender({navigation, route}){
@@ -16,10 +17,23 @@ const {userId, CustomBackComponent} = myContext;
 const {page} = route.params; 
 useEffect(() => {
    navigation.setOptions({
+     didFocus:() => console.log('i am nainer called'), 
      headerTitle:false, 
      headerLeft:() => <CustomBackComponent navigation = {navigation}/>
    })
  }, [])  
+
+ useFocusEffect(() => {
+  console.log("focus effect called");  
+  Keyboard.dismiss(); 
+ })
+ useEffect(() => {
+    const subscribe = Keyboard.addListener('keyboardDidShow', () => {
+       Keyboard.dismiss()
+    })
+    return () => Keyboard.removeAllListeners('keyboardDidHide'); 
+    
+ }, [])
 
 const _handlePage = () => {
  if(page == "DetailsSettings"){
@@ -121,11 +135,12 @@ onPress = {() => {setWoman(true), setMan(false)}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
   disabled = {gateGuard}
-  onPress = {() => {_handleServer(),_handlePage()}}
+  onPress = {() => {_handleServer(),_handlePage(), Keyboard.removeAllListeners('keyboardDidShow')}}
 />
 <TouchableOpacity style = {{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}} onPress = {() => navigation.navigate('AccountTypeDetail')}>
     <Text style = {{fontWeight:'700'}}> MATCHMAKING ONLY </Text>
-    <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
+    {/* <MaterialIcons name="keyboard-arrow-down" size={24} color="black" /> */}
+    <FontAwesome name="chevron-down" size={10} color="black" />
 
 </TouchableOpacity>
 </View>

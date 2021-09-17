@@ -17,7 +17,7 @@ export default function BirthDay({navigation, route}){
     })
   }, [])
   
-  const [date, setDate] = useState(new Date(1598051730000));
+  const [date, setDate] = useState(new Date(2006, 0, 0));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [error, showError] = useState(false); 

@@ -43,8 +43,9 @@ const gateGuard = man || woman ? false: true;
 return(
 <View style = {{flex:1,backgroundColor:'#ffffff',paddingTop:insets.top}}>
 <View style = {{flex:0.2,justifyContent:'center', alignItems:'center'}}>
-<TouchableOpacity onPress = {() => navigation.goBack()} style = {{marginBottom:20}}>
-<MaterialIcons name="keyboard-arrow-up" size={40} color="black" />
+<TouchableOpacity onPress = {() => navigation.navigate('AccountType')} style = {{marginBottom:20}}>
+{/* <MaterialIcons name="keyboard-arrow-up" size={40} color="black" /> */}
+<FontAwesome name="chevron-up" size={22} color="black" />
 </TouchableOpacity>   
 <Text style = {{fontStyle:'italic', fontWeight:'bold', fontSize:30}}>Matchmake only</Text>
 <Text>Select this option if you do not want to be </Text>
