@@ -97,6 +97,7 @@ const ContactsLocationLatest = ({navigation, route}) => {
   
   
   const handleServerLocation = async () => {
+    
      const marker1 = Array.from(markers);  
      const batch = db.batch(); 
      const copy = profiles.concat()

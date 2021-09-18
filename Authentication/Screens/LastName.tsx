@@ -94,7 +94,7 @@ return(
 
 </TextInput> */}
 <TextInput style = {{fontSize:35, borderBottomWidth:1, borderColor:"black",width:Dimensions.get('window').width -60, marginLeft:30, marginTop:30 }} placeholder = {"Last Name"} onChange = {(text) => {handleLastNameChange(text)} } autoCorrect = {false} value = {lastName}></TextInput>
-<Text style = {{alignSelf:"flex-start", marginLeft:30,marginTop:10,color:'grey',marginRight:30 }}>Your last name won't be shared with others </Text>
+<Text style = {{alignSelf:"flex-start", marginLeft:30,marginTop:10,color:'grey',marginRight:30 }}>Your last name won't be shared with people you don't know </Text>
 <View style = {{borderBottomWidth:1, borderBottomColor:'grey',marginLeft:30, marginRight:30, marginTop:50}}/>
 
 

@@ -78,8 +78,8 @@ return(
      
 </View>
 <View style = {{flex:0.5, marginLeft:50, marginRight:50}}>
-<Header text = {"I'm looking for..."}/>
-<Text style = {{marginTop:5}}>Who do you want to be matched with?</Text>
+<Header text = {"Chose a role"}/>
+<Text style = {{marginTop:5}}>How do you want to use this app?</Text>
 <View  style = {{borderBottomWidth:0.5, width:Dimensions.get('window').width - 60,marginTop:20}}/>
 <View style = {{flexDirection:"row", justifyContent:"space-around",marginTop:40 }}>
 <View style = {{alignItems:'center'}}>

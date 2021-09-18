@@ -51,7 +51,7 @@ export default function ContactLoadSuccess({navigation,route}){
                 Contacts Loaded!
                 </Text>
                 <Text style = {{alignSelf:'center'}}>
-                    Awesome {user.contactList.length} contacts loaded
+                    Awesome,  {user.contactList.length} contacts loaded
                 </Text>
                 <Text style = {{alignSelf:'center', marginBottom:30}}>
                     Happy Matchmaking!
@@ -59,7 +59,7 @@ export default function ContactLoadSuccess({navigation,route}){
                 <View style = {{borderBottomWidth:3, marginLeft:30, marginRight:20, marginBottom:20,borderColor:"grey"}}/>
                 </View>
                 <View style = {{flex:0.2}}>
-                <Button title = "Start Matchmaking" containerStyle = {{marginLeft:30, marginRight:30, backgroundColor:'black'}} buttonStyle = {{backgroundColor:'black'}} titleStyle = {{fontWeight:'bold', fontStyle:'italic'}} onPress = {() => {navigation.navigate('Contacts')}}/>
+                <Button title = "Start Matchmaking" containerStyle = {{marginLeft:30, marginRight:30, backgroundColor:'black'}} buttonStyle = {{backgroundColor:'black'}} titleStyle = {{fontWeight:'bold', }} onPress = {() => {navigation.navigate('Contacts')}}/>
                 </View>
                 </TouchableOpacity>
                 )

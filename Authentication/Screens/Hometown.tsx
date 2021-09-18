@@ -24,7 +24,11 @@ export default function Hometown({navigation, route}){
   useEffect(() => {
     navigation.setOptions({
       headerTitle:false, 
-      headerLeft:() => <CustomBackComponent navigation = {navigation}/>
+      headerLeft:() => <CustomBackComponent navigation = {navigation}/>, 
+      headerRight:() => <TouchableOpacity onPress = {() => _handlePage()}>
+      <Text style = {{ alignSelf:"flex-end", marginRight:30, color:"orange", fontWeight:"bold"}}>Skip</Text>   
+      </TouchableOpacity>
+
     })
   }, [])
     // const {page} = route.params; 
@@ -47,9 +51,9 @@ export default function Hometown({navigation, route}){
       <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
       <View style = {{flex:1, backgroundColor:'#ffffff'}}>   
       <View style = {{flex:0.2}}>
-      <TouchableOpacity onPress = {() => _handlePage()}>
+      {/* <TouchableOpacity onPress = {() => _handlePage()}>
       <Text style = {{marginTop:20, alignSelf:"flex-end", marginRight:30, color:"orange", fontWeight:"bold"}}>Skip</Text>   
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       </View>
       <View style = {{flex:0.5, marginLeft:30}}>
       <Text style = {{fontWeight:"bold", fontSize:23, }}> Where are you from?</Text>

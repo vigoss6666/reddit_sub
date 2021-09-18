@@ -8,6 +8,7 @@ import SwitchSelector from "react-native-switch-selector";
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 //import { mutateSettings } from '../../networking';
 // @refresh reset
 import { firebase} from '../../config'; 
@@ -41,7 +42,7 @@ const [matchmaking, setMatchmaking] = useState();
 const [value, setValue] = useState(1);
 const [email, setEmail] = useState();
 const myContext = useContext(AppContext);
-const {user, userId,setInitialRouteName} = myContext;
+const {user, userId,setInitialRouteName,setId,setAppRestart} = myContext;
 const [defaultDistance, setDefaultDistance] = useState(40)
 const [distancePreference, setDistancePreference] = useState(40);  
 const [minAgePreference, selectMinAgePreference] = useState(); 
@@ -62,6 +63,21 @@ useEffect(() => {
     </TouchableOpacity>
    })
 }, [])
+
+
+const _deleteAccount = () => {
+    AsyncStorage.removeItem('user'); 
+    db.collection('user').doc(userId).delete(); 
+    setId(null)
+    setAppRestart(1 + 1); 
+   //  navigation.navigate('Intro')
+    
+    
+    
+}
+
+
+
 useEffect(() => {
 
 setDefaultDistance(user.distancePreference); 
@@ -458,6 +474,12 @@ if(defaultDating || defaultDating == 0){
         
       
        </View>
+       
+        
+       {/* <TouchableOpacity onPress = {() => _deleteAccount()} style = {{alignSelf:'flex-end',marginLeft:10,marginBottom:50}}>
+          <Text style = {{fontWeight:'bold', color:'red'}}>Delete account</Text>
+       </TouchableOpacity> */}
+       
 
       
       </View>

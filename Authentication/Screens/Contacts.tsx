@@ -24,7 +24,7 @@ function MainGun({length}){
 function Contacts({navigation,route}){
    
 const myContext = useContext(AppContext); 
-const { userId,defaultDataObject,setUser,computeName, setId,contactsL} = myContext;
+const { userId,defaultDataObject,setUser,computeName, setId,contactsL,sortNames} = myContext;
 
 const db = firebase.firestore(); 
 // const [indexer,setIndexer] = useState([]); 
@@ -53,6 +53,13 @@ useEffect(() => {
   db.collection('user').doc(userId).get().then(onDoc => {
       setUser1(onDoc.data())
   })
+}, [])
+
+
+useEffect(() => {
+navigation.setOptions({
+  headerShown:false
+})
 }, [])
 
 // const WrapperComponent = () => {
@@ -122,8 +129,10 @@ useEffect(() => {
       }
       return {...val, matchMakerPic:null}
     }))
-    const finalUsers = [...regUsers, ...nonReg]
-    setProfiles(finalUsers);
+    const finalUsers = [...regUsers, ...nonReg];
+    const gamer = sortNames(finalUsers); 
+
+    setProfiles(gamer);
     Keyboard.dismiss()
     setLoading(false);  
 
@@ -148,26 +157,29 @@ const sendToServer = async () => {
    const finalChecker = checkerResult.filter(val => val !== null); 
    const filterByApp = finalChecker.filter(val => !val.appUser);
    const filterBySetter = filterByApp.filter(val => !val.latitude);
-   if(filterBySetter.length < 1){
-    const userInit = Object.assign({}, {...defaultDataObject},{phoneNumber:userId},{...user}, {appUser:true}) 
-    db.collection('user').doc(userId).set(userInit, {merge:true});
+  //  if(filterBySetter.length < 1){
+  //   const userInit = Object.assign({}, {...defaultDataObject},{phoneNumber:userId},{...user}, {appUser:true}) 
+  //   db.collection('user').doc(userId).set(userInit, {merge:true});
 
-    var filteredIntros = user.contactList.filter(
-      function(e) {
+  //   var filteredIntros = user.contactList.filter(
+  //     function(e) {
   
-        return this.indexOf(e) < 0;
-      },
-     checker
-  );
+  //       return this.indexOf(e) < 0;
+  //     },
+  //    checker
+  // );
   
   
         
-  updateUser(userId, {contactList:filteredIntros})
-  await db.collection('user').doc(userId).set({datingPoolList:checker}, {merge:true}); 
-  await AsyncStorage.setItem('user', userId);  
-  setId(userId);
-  return;    
-  }
+  // updateUser(userId, {contactList:filteredIntros})
+  // await db.collection('user').doc(userId).set({datingPoolList:checker}, {merge:true}); 
+  // // await AsyncStorage.setItem('user', userId);  
+  // // setId(userId)
+  // AsyncStorage.setItem('user', userId)
+  // setId(userId)
+  // navigation.reset({index:0, routes:[{name:"Homer"}]})
+  // return;    
+  // }
   var filteredIntros = user.contactList.filter(
     function(e) {
 
@@ -345,12 +357,12 @@ const renderItem = ({ item }) => {
    }
    return(
      
-        <TouchableOpacity style = {{flex:1, }} onPress = {Keyboard.dismiss}>
+        <TouchableOpacity style = {{flex:1,backgroundColor:'white',marginBottom:35 }} onPress = {Keyboard.dismiss}>
         <View style = {{flex:0.1}}>
                         
         </View>
         <View style = {{flex:0.2}}>
-        <Text h2 style = {{alignSelf:'center'}}> Dating Pool</Text>
+        <Text h4 style = {{alignSelf:'center',fontWeight:'bold'}}> FRIENDS LIST</Text>
         <Text h6 style = {{alignSelf:'center',fontWeight:'600', marginTop:10,marginBottom:20}}> Select the friends you want to match</Text>
         <SearchBar
           lightTheme
@@ -362,7 +374,7 @@ const renderItem = ({ item }) => {
           value={search}
         />
         </View>
-          <View style = {{marginTop:10,flex:0.5, marginTop:40}}>
+          <View style = {{marginTop:10,flex:0.6, marginTop:40}}>
           
           {Memo}  
           {/* <FlatList
@@ -397,10 +409,10 @@ const renderItem = ({ item }) => {
 
         
         </View>
-        <View style = {{flex:0.2,marginTop:20}}>
+        <View style = {{flex:0.1,marginTop:20}}>
           
             <Text style = {{alignSelf:'center', marginBottom:20, color:'black', fontWeight:"600", marginTop:10}}>{checker.length} Friends selected</Text>
-            <Button buttonStyle = {{backgroundColor:'black'}} title = {"Done"} containerStyle = {{marginLeft:20, marginRight:20}} disabledStyle = {{backgroundColor:'grey', }} disabled = {checker.length > 0 ? false:true} onPress = {() => {sendToServer()}}>
+            <Button buttonStyle = {{backgroundColor:'black'}} title = {"I'm Done"} containerStyle = {{marginLeft:20, marginRight:20}} disabledStyle = {{backgroundColor:'grey', }} titleStyle = {{fontWeight:'bold'}} disabled = {checker.length > 0 ? false:true} onPress = {() => {sendToServer()}}>
                 
             </Button>
                

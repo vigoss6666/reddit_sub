@@ -172,6 +172,25 @@ const computeName = (obj) => {
   }
   return obj.firstName
 }
+const sortNames = (finalUsers) => {
+  const checkNull = finalUsers.filter(val => computeName(val) !== null);  
+    const gamer = checkNull.filter(val => computeName(val).length > 0); 
+    gamer.sort((a, b) => {
+      
+      let fa = computeName(a).toLowerCase(),
+          fb = computeName(b).toLowerCase();
+  
+      if (fa < fb) {
+          return -1;
+      }
+      if (fa > fb) {
+          return 1;
+      }
+      return 0;
+  });
+  return gamer; 
+
+}
 
 export default function App() {
 
@@ -207,6 +226,7 @@ export default function App() {
   const [globalPhoneNumber, setGlobalPhoneNumber] = useState(null); 
   const [vID, setVID] = useState(null);
   const [contactsL, setContactsL] = useState([]); 
+  const [appRestart, setAppRestart] = useState(1); 
   
    
 
@@ -381,6 +401,7 @@ function stringifyNumber(n) {
     setRegisteredUsers,
     registeredUsers,
     computeName,
+    sortNames, 
     db,
     setCurrentUser,
     setUser,
@@ -394,6 +415,8 @@ function stringifyNumber(n) {
   }
   
   const globalObject = {
+    setAppRestart, 
+    setId,
     setUser, 
     generatedMatchSelf, 
     setGeneratedMatchSelf, 
@@ -530,6 +553,7 @@ const mainHome = () => {
         <NavigationContainer>
          
         <Stack.Navigator>
+        
           <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="BulkInvite" component={BulkInvite} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS, headerShown:false }}/>
@@ -556,7 +580,7 @@ const mainHome = () => {
           <Stack.Screen name="ProfileHidden" component={ProfileHidden}/>
           <Stack.Screen name="Phone" component={Phone}/>
           <Stack.Screen name="CountryCodes" component={CountryCodes}/>
-          <Stack.Screen name="Intro" component={Intro}/>
+          <Stack.Screen name="Intro" component={Intro} options = {{headerShown:false}}/>
           <Stack.Screen name="Intro2" component={Intro2}/>
           <Stack.Screen name="Intro3" component={Intro3}/>
           <Stack.Screen name="Intro4" component={Intro4}/>

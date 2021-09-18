@@ -96,7 +96,7 @@ return(
     />
     <View style = {{marginLeft:30,borderBottomColor:"black", borderBottomWidth:2, width:Dimensions.get('window').width - 60,opacity:0.3,marginTop:10}}/>
     
-{error ?<Text style = {{marginTop:15, marginLeft:30,color:'red', fontSize:17,fontWeight:'bold'}}>Sorry, you must be at least 15 to play.</Text>:null}
+{error ?<Text style = {{marginTop:15, marginLeft:30,color:'red', fontSize:17,fontWeight:'bold'}}>Sorry, you must be at least 15 to play.</Text>:<Text style = {{marginTop:15, marginLeft:30,color:'grey', fontSize:17,fontWeight:'bold'}}>Your age will be public</Text>}
 </View>
 <View style = {{flex:0.3, justifyContent:'center' }}>
  {/* <Continue onPress = {() => {_sendToServer(), navigation.navigate('Gender')}} />     */}

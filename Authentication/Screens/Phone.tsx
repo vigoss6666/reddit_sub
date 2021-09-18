@@ -32,6 +32,9 @@ export default function App({navigation}) {
       headerLeft:() => <CustomBackComponent navigation = {navigation}/>
     })
   }, []) 
+  useEffect(() => {
+    Keyboard.removeAllListeners('keyboardDidShow'); 
+  }, [])
   const [phoneNumber, setPhoneNumber] = React.useState();
   const [verificationId, setVerificationId] = React.useState();
   const [verificationCode, setVerificationCode] = React.useState();
