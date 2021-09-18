@@ -29,7 +29,7 @@ mutation namer($userInputList:userInputList1!){
 
 export default function ContactsAge({navigation,route}){
     const myContext = useContext(AppContext); 
-    const { userId, setProfilesAuth,computeName} = myContext;
+    const { userId, setProfilesAuth,computeName,sortNames} = myContext;
     const [loading, setLoading] = useState(true); 
     const [user,setUser] = useState({});
 useEffect(() => {
@@ -52,6 +52,13 @@ useEffect(() => {
 
 
      useEffect(() => {
+        navigation.setOptions({
+         headerShown:false, 
+        })
+     }, [])
+
+
+     useEffect(() => {
         async function namer(){
             const checkerResult = await Promise.all(user.datingPoolList.map(async val => {
                 return await db.collection('user').doc(val).get().then(onDoc => {
@@ -65,12 +72,29 @@ useEffect(() => {
            const finalChecker = checkerResult.filter(val => val !== null);   
         //  const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
         //  const users = onResult.docs.map(val => val.data()); 
+         const gamer = sortNames(finalChecker)
+         gamer.sort((a, b) => {
+      
+            let fa = computeName(a).toLowerCase(),
+                fb = computeName(b).toLowerCase();
+        
+            if (fa < fb) {
+                return 1;
+            }
+            if (fa > fb) {
+                return -1;
+            }
+            return 0;
+        });
          
-         const finalTransformed = finalChecker.map((val, index) => ( {...val, zIndex:index}));
+         const finalTransformed = gamer.map((val, index) => ( {...val, zIndex:index }));
+         const gamerChecker = sortNames(gamer); 
+         
          finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
          const filterByApp = finalTransformed.filter(val => !val.appUser );
          const filterBySetter = filterByApp.filter(val => !val.latitude );
          setProfilesAuth(filterBySetter) 
+         
          setProfiles(filterBySetter);
          setLoading(false) 
      
@@ -202,7 +226,7 @@ useEffect(() => {
     
     onPress = {() => {console.log("pressed")}}
     containerStyle={{height: 40, width:200, }}
-    placeholder = {"20 - 25 years"}
+    placeholder = {"Select Age"}
     style={{}}
     itemStyle={{
         backgroundColor:"white", 
@@ -225,7 +249,7 @@ useEffect(() => {
         </ScrollView>        
         </View>
         <View style = {{flex:0.2, justifyContent:'center',marginTop:10}}>
-         <Button title = "Save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {updateToServer(), navigation.navigate('ContactsSex')}} disabled = {gate}></Button>   
+         <Button title = "I'm Done" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} titleStyle = {{fontWeight:'bold'}} onPress = {() => {updateToServer(), navigation.navigate('ContactsSex')}} disabled = {gate}></Button>   
         </View>
         </SafeAreaView>
         )    

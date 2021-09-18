@@ -191,6 +191,9 @@ const sortNames = (finalUsers) => {
   return gamer; 
 
 }
+const sortNamesReverse = (finalUsers) => {
+
+}
 
 export default function App() {
 

@@ -261,7 +261,9 @@ const addArray = (phoneNumber:string) => {
          return; 
   }
   checker.push(phoneNumber)
+  
   forceUpdate()
+  
   console.log(checker)
 }
 const [, setForceUpdate] = useState(Date.now());
@@ -326,6 +328,12 @@ const ContactView = ({item,adder}) => {
 }
 
 console.log(indexer)
+
+
+const searchAction = () => {
+  setSearch(''); 
+  
+}
 
 
 
