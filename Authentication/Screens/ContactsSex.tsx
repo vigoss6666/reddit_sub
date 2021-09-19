@@ -87,6 +87,11 @@ const genderComponent  = () => {
    
 }
 
+useEffect(() => {
+navigation.setOptions({
+  headerShown:false, 
+})
+}, [])
 
 
 const updateToServer = () => {
@@ -153,6 +158,8 @@ checkGate(false)
 
 
 
+
+
 const _sendToServer = () => {
  const finaler = profiles.map(val => {
     return {_id:val.phoneNumber, gender:val.gender}
@@ -176,10 +183,10 @@ const ContactView = ({item, index}) => {
         </View>
         <View style = {{alignItems:'center', justifyContent:'space-between', marginRight:10, flexDirection:'row',flex:0.2}}>
            <TouchableOpacity onPress = {() => {addGenderGamer({client:item.phoneNumber, gender:'male'}), setSelected('male')}} style = {{}}> 
-           <FontAwesome name="male" size={34} color={selected == 'male' ? 'green':'black' || item.gender} />
+           <FontAwesome name="male" size={40} color={selected == 'male' ? 'blue':'black' || item.gender} />
            </TouchableOpacity>
            <TouchableOpacity onPress = {() => {addGenderGamer({client:item.phoneNumber, gender:'female'}),setSelected('female')}}>
-           <FontAwesome5 name="female" size={34} color={selected == 'female' ? 'green':'black'} />
+           <FontAwesome5 name="female" size={40} color={selected == 'female' ? 'pink':'black'} />
            </TouchableOpacity>
 
         </View>
@@ -215,8 +222,8 @@ keyExtractor={item => item.phoneNumber}
     <View style = {{flex:0.1, }}>
     
     </View>
-    <View style = {{flex:0.1}}>
-    <Text h4 style = {{alignSelf:'center', fontWeight:"600"}}>Tel us about your friends</Text>
+    <View style = {{flex:0.1,marginTop:20}}>
+    <Text h4 style = {{alignSelf:'center', fontWeight:"600"}}>Tell us about your friends</Text>
     <Text h5 style = {{alignSelf:'center', fontWeight:"600"}}>Confirm the gender of each friend</Text>
    
     </View>
@@ -250,7 +257,8 @@ keyExtractor={item => item.phoneNumber}
             </ScrollView>  */}
     </View>
     <View style = {{flex:0.2, justifyContent:'center',marginTop:10 }}>
-    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { updateGender(), navigation.navigate('ContactsLocationLatest')}} disabled = {gate}></Button>   
+    <Text style = {{alignSelf:'center', marginBottom:20, color:'black', fontWeight:"600", marginTop:10,fontStyle:'italic'}}>{profileAuth.length - checker.length } friend remaining </Text>
+    <Button title = "I'm Done" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { updateGender(), navigation.navigate('ContactsLocationLatest')}} disabled = {gate}></Button>   
 
     </View>
     </View>

@@ -102,6 +102,7 @@ const ContactsLocationLatest = ({navigation, route}) => {
      const batch = db.batch(); 
      const copy = profiles.concat()
      const lamer = firebase.functions().httpsCallable('batman');
+     setLoading(true); 
      await Promise.all(markers.map(async val => {
           
           const index = copy.findIndex(val1 => val1.phoneNumber == val.client.phoneNumber); 
@@ -117,7 +118,10 @@ const ContactsLocationLatest = ({navigation, route}) => {
           batch.set(ref, {latitude:val.latlng.latitude, longitude:val.latlng.longitude,state:result.data.state, subLocality:result.data.sublocality}, {merge:true}); 
      }))
      setProfiles(copy); 
+     
+     
      batch.commit().then(() => handleInit())
+     
      
   }
 
@@ -144,9 +148,11 @@ const handleInit = async () => {
   db.collection('user').doc(userId).set(userInit,{merge:true});
   setFinalUser(userInit)
   await addUsers(profiles, userId);
-  AsyncStorage.setItem('user', userId)
-  setId(userId)
-  navigation.reset({index:0, routes:[{name:"Homer"}]})
+  navigation.navigate('SignUpComplete')
+  
+  // AsyncStorage.setItem('user', userId)
+  // setId(userId)
+  // navigation.reset({index:0, routes:[{name:"Homer"}]})
 
  }
 
@@ -301,7 +307,7 @@ const handleInit = async () => {
    return <LoadScreen />
  }
   return (
-      <View style = {{flex:1, paddingBottom:insets.bottom,}}>
+      <View style = {{flex:1, paddingBottom:insets.bottom,backgroundColor:'white'}}>
       <ScrollView
       keyboardShouldPersistTaps = {'always'}
 contentOffset = {{x:Dimensions.get('window').width*pager,y:0 }}
@@ -319,8 +325,10 @@ onScroll={(event: any) => {
 {sliderTemplate}
 </ScrollView>
 <View style = {{marginTop:40, marginLeft:30, marginRight:30 }}>
+<Text style = {{alignSelf:'center', marginBottom:20, color:'black', fontWeight:"600", marginTop:10,fontStyle:'italic'}}>{profiles.length - markers.length} friend remaining</Text>
+<Button title = {"I'm Done"} containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} disabled = {gate} onPress = {() => {handleServerLocation()}}
 
-<Button title = {'Continue'} containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} disabled = {gate} onPress = {() => {handleServerLocation()}}></Button>   
+></Button>   
 </View>
 </View>
 

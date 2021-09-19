@@ -19,7 +19,12 @@ const GamePreview = ({navigation}) => {
     const {user, userId, computeName} = myContext;
     const handleGame = () => {
         updateUser(userId, {gamePreview:true});
-        navigation.navigate('PlayGameLatest')
+        if(user.dating == true){
+          navigation.navigate('PlayGameLatest')
+          return;   
+        }
+        
+        
          
       }
   return (

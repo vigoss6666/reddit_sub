@@ -249,7 +249,7 @@ useEffect(() => {
         </ScrollView>        
         </View>
         <View style = {{flex:0.2, justifyContent:'center',marginTop:10}}>
-        <Text style = {{alignSelf:'center', marginBottom:20, color:'black', fontWeight:"600", marginTop:10}}>{country.length} Friends selected</Text>   
+        <Text style = {{alignSelf:'center', marginBottom:20, color:'black', fontWeight:"600", marginTop:10,fontStyle:'italic'}}>{profiles.length - country.length} friend remaining</Text>   
          <Button title = "I'm Done" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} titleStyle = {{fontWeight:'bold'}} onPress = {() => {updateToServer(), navigation.navigate('ContactsSex')}} disabled = {gate}></Button>   
         </View>
         </SafeAreaView>

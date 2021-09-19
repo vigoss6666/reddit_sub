@@ -17,6 +17,7 @@ import FirstName from './Authentication/Screens/FirstName';
 import LastName from './Authentication/Screens/LastName';
 import BirthDay from './Authentication/Screens/BirthDay';  
 import Gender from './Authentication/Screens/Gender';  
+import SignUpComplete from './Authentication/Screens/SignUpComplete'; 
 import GenderDetail from './Authentication/Screens/GenderDetail'; 
 import GenderPreference from './Authentication/Screens/GenderPreference'; 
 import Height from './Authentication/Screens/Height';  
@@ -686,6 +687,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
  <Stack.Navigator> 
 <Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
+<Stack.Screen name="SignUpComplete" component={SignUpComplete}/>
 <Stack.Screen name="ResendCode" component={ResendCode} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS}}/>
 <Stack.Screen name="AccountType" component={AccountType}/>
 <Stack.Screen name="VerifyPhone" component={VerifyPhone}/>
@@ -756,7 +758,7 @@ const HeaderLeft = () => (
     <FontAwesome name="trophy" size={24} color="black" />
    </View>
 )
-function Home(props){
+function Home({navigation}){
   const myContext = useContext(AppContext); 
   const {user, userId, countryCode, dialCode, chatNotification, chatterNotification, initialRouteName} = myContext;
   const insets = useSafeAreaInsets();
@@ -768,6 +770,13 @@ function Home(props){
     await Promise.all([...imageAssets]);
   }
   useEffect(() => {
+  if(user.dating){
+    navigation.navigate('PlayGameLatest')    
+    return; 
+  }  
+  
+  }, [])
+  useEffect(() => {
    _loadAssetsAsync(user.photos) 
   }, [])
   
@@ -776,7 +785,7 @@ function Home(props){
     <Tab.Navigator 
       style = {{paddingTop:insets.top, paddingRight:insets.right, paddingLeft:insets.left}} 
       animationEnableb = {false}
-      initialRouteName = {initialRouteName}
+      initialRouteName = {'Game'}
       tabBarOptions={{
       activeTintColor: 'tomato',
       inactiveTintColor: 'gray',
@@ -871,7 +880,7 @@ function Home(props){
     >
         
       {/* <Tab.Screen name="SelfView" component={SelfView} />  */}
-      <Tab.Screen name="Game" component={ user.dating ? GameHomepage:PlayGameLatest} options={{ lazy: true }}/>
+      <Tab.Screen name="Game" component={ !user.gamePreview ? GamePreview :user.dating ? GameHomepage:PlayGameLatest}/>
       <Tab.Screen name="Trophy" component={Trophy} />
       <Tab.Screen name="ProfilePool" component={ProfilePool}  />
       <Tab.Screen name="MatchList" component={MatchList}  /> 
