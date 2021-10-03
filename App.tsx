@@ -770,10 +770,11 @@ function Home({navigation}){
     await Promise.all([...imageAssets]);
   }
   useEffect(() => {
-  if(user.dating){
-    navigation.navigate('PlayGameLatest')    
-    return; 
-  }  
+  // if(user.dating && user.gamePreview){
+  //   navigation.navigate('PlayGameLatest')    
+  //   return; 
+  // }
+  // navigation.navigate('GamePreview')  
   
   }, [])
   useEffect(() => {

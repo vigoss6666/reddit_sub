@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect, useContext, useLayoutEffect, useCallback, forwardRef, createRef} from 'react';
-import { Text, View, StyleSheet,Dimensions, Animated, Image } from 'react-native';
+import { Text, View, StyleSheet,Dimensions, Animated, Image, Keyboard } from 'react-native';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import AppContext from '../../AppContext'; 
 import {createChatThread, updateUser} from '../../networking';
@@ -35,6 +35,7 @@ const PlayGameLatest = ({navigation}) => {
   const [bar, setBar] = useState(0);
   const [client, setClient] = useState(); 
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const mainBackGround = useRef(new Animated.Value(1)).current;
   const backFade = useRef(new Animated.Value(0)).current;
   const fadeOpac = useRef(new Animated.Value(0)).current;
   const [questionsIndex, setQuestionsIndex] = useState(0); 
@@ -56,6 +57,7 @@ const PlayGameLatest = ({navigation}) => {
   const [_update,setUpdate] = useState(0); 
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
+  const [timerCoundown, setTimerCountdown] = useState(1); 
   
   
   const [questions, setQuestions] = useState([]); 
@@ -71,6 +73,9 @@ const PlayGameLatest = ({navigation}) => {
   namer()
   
   }, [])
+  useEffect(() => {
+    Keyboard.dismiss()
+  }, [])
 console.log(" iwas rendered in the game")
 console.log("mainX value checking"+mainX)
   useEffect(() => {
@@ -85,11 +90,11 @@ console.log("mainX value checking"+mainX)
       
       headerShown:false, 
       headerTitle:false, 
-      headerLeft:() => { 
-         return  <TouchableOpacity onPress = {() => {resetGame(),navigation.goBack()}} style = {{marginLeft:15}}>
-             <Text style = {{fontWeight:'bold', fontSize:17, color:'blue'}}>Back</Text>  
-             </TouchableOpacity>
-      }, 
+      // headerLeft:() => { 
+      //    return  <TouchableOpacity onPress = {() => {resetGame(),navigation.goBack()}} style = {{marginLeft:15}}>
+      //        <Text style = {{fontWeight:'bold', fontSize:17, color:'blue'}}>Back</Text>  
+      //        </TouchableOpacity>
+      // }, 
       headerRight:() => <View style = {{flexDirection:'row'}}>
         <TouchableOpacity style = {{marginRight:20}} onPress = {() => flip()}>
         {/* <FontAwesome name="refresh" size={24} color="black" /> */}
@@ -118,6 +123,7 @@ const resetGame = () => {
   //        setQuestions(result); 
   //   })
   // }, [])
+  
   useEffect(() => {
     console.log("checking useEffcts called"+user.userSet)
     db.collection('dimensionQuestions').doc("0").get().then(onResult => {
@@ -196,6 +202,24 @@ const namer =  [
       duration:1
     }).start()
   }
+  
+  const mainFader = () => {
+    // Will change fadeAnim value to 1 in 5 seconds
+    
+    Animated.sequence([
+      Animated.timing(mainBackGround, {
+        toValue: 0,
+        useNativeDriver:false,
+        duration: 1
+      }),
+      Animated.timing(mainBackGround, {
+        useNativeDriver:false,
+        toValue: 1,
+        duration: 3000
+      }),
+      
+    ]).start()
+  }; 
 
   const fadeOp = () => {
     // Will change fadeAnim value to 1 in 5 seconds
@@ -283,6 +307,7 @@ const namer =  [
          const finalChecker = checkerResult.filter(val => val !== null);
         
         setDemo(finalChecker); 
+        
         // setLoading(false); 
          }
     }
@@ -520,6 +545,10 @@ const handleGame = () => {
   inputRange:[0,1,2,3],
   outputRange:['red','green', 'blue', 'yellow'], 
 })
+const mainer = mainBackGround.interpolate({
+  inputRange:[0,1],
+  outputRange:[1,0], 
+})
 
   function measureMain(gesture){
     
@@ -533,24 +562,24 @@ const handleGame = () => {
 
   const firstTemplate = () => {
        if(demo.length){
-         return <View>
+         return <Animated.View style = {{opacity:mainBackGround}}>
          
            {demo[index].profilePic ? <Image source = {{uri:demo[index].profilePic}} style = {{height:80, width:80, borderRadius:40}}/>:<MaterialIcons name="account-circle" size={80} color="black" />} 
          
          <Text style = {{alignSelf:'center', fontWeight:'bold', fontSize:11, marginTop:5, marginLeft:-10}}>{computeName(demo[index])}</Text>
          
-         </View>
+         </Animated.View>
        }
   }
   const secondTemplate = () => {
        if(demo.length){
-        return <View>
+        return <Animated.View style = {{opacity:mainBackGround}}>
          
         {demo[index + 1].profilePic ? <Image source = {{uri:demo[index + 1].profilePic}} style = {{height:80, width:80, borderRadius:40}}/>:<MaterialIcons name="person" size={80} color="black" />} 
       
       <Text style = {{alignSelf:'center', fontWeight:'bold', fontSize:11, marginTop:5, }}>{computeName(demo[index + 1])}</Text>
       
-      </View>
+      </Animated.View>
        }
   }
   const incrementIndex = () => {
@@ -568,12 +597,30 @@ const handleGame = () => {
       } 
   }
 
+  useLayoutEffect(() => {
+    
+  }, [])
+
+  // useEffect(() => {
+  //     if(bar < 0.9){
+  //       setTimeout(flip, 3000)
+  //     }
+      
+    
+    
+  //   return () => clearTimeout()
+  // }, [bar])
+
+  
+  
+
   const flip = () => {
        incrementIndex();   
        questionsIndexIncrement(); 
        
        setBar(bar + 0.05)
   }
+  
 
   const onDragRelease = (gesture) => {
     
@@ -584,6 +631,7 @@ const handleGame = () => {
        suggestMatches() 
        fadeIn()
        backFader()
+       mainFader()
        incrementIndex();   
        questionsIndexIncrement(); 
        
@@ -611,22 +659,22 @@ const handleGame = () => {
    
    
     return (
-        <View style={{flex:1, paddingBottom:user.dating == false ? 0 :insets.bottom, paddingTop:user.dating == false ? 0 :insets.top}}>
+        <Animated.View style={{flex:1, paddingBottom:user.dating == false ? 0 :insets.bottom, paddingTop:user.dating == false ? 0 :insets.top,}}>
           
           
-          <LinearGradient colors={[`rgba(${index},${index + 10},20,0.5)`, 'transparent']} style = {{flex:1}} start = {{x:0.1, y:0.3}}>
+          <LinearGradient colors={[`rgba(${0},${0},0.4,0.4)`, 'transparent']} style = {{flex:1}} start = {{x:0.1, y:0.3}}>
           
           
   
                 <View style = {{flex:0.3,}}>
                 <View style = {{flexDirection:'row', justifyContent:'space-between',marginTop:20}}>
-                 <TouchableOpacity onPress = {() => {resetGame(),navigation.goBack()}} style = {{marginLeft:15}}>
-             {user.dating == false ? null : <Text style = {{fontWeight:'bold', fontSize:17, color:'white'}}>Back</Text> } 
+                 <TouchableOpacity onPress = {() => {navigation.navigate('Homer')}} style = {{marginLeft:15}}>
+             {user.dating == false ? null : <Text style = {{fontWeight:'bold', fontSize:17, color:'white'}}>Back</Text>} 
              </TouchableOpacity>
              <View style = {{flexDirection:'row'}}>
         <TouchableOpacity style = {{marginRight:20}} onPress = {() => flip()}>
         {/* <FontAwesome name="refresh" size={24} color="black" /> */}
-        <Text style = {{color:'white', fontWeight:'bold'}}>Flip</Text>
+        <Text style = {{color:'white', fontWeight:'bold'}}>{timerCoundown}</Text>
       </TouchableOpacity>
       <TouchableOpacity style = {{marginRight:20}} onPress = {onRefresh}>
         <FontAwesome name="refresh" size={24} color="white" />
@@ -637,7 +685,7 @@ const handleGame = () => {
                 <Text style = {{alignSelf:'flex-end', marginBottom:10}}> {questionsIndex}/{questions.length -1}</Text>    
                 
                 <Progress.Bar progress={bar} width={Dimensions.get('window').width -60   } height = {20} />
-                <Text style = {{marginTop:30,  marginBottom:10,fontSize:15, fontWeight:'bold',color:'white'}} numberOfLines = {3} textBreakStrategy = {'highQuality'}> {questions.length ? questions[questionsIndex].question:null} </Text>
+                <Text style = {{marginTop:30,  marginBottom:10,fontSize:20, fontWeight:'bold',color:'white'}} numberOfLines = {3} textBreakStrategy = {'highQuality'}> {questions.length ? questions[questionsIndex].question:null} </Text>
                 </View>    
                 
                 </View>
@@ -666,7 +714,7 @@ const handleGame = () => {
               </LinearGradient >
               
               
-        </View>
+        </Animated.View>
       )
   
   

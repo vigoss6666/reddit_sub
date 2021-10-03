@@ -11,7 +11,7 @@ interface GamePreviewProps {}
 const GamePreview = ({navigation}) => {
     useEffect(() => {
       navigation.setOptions({
-          headerTitle:false, 
+          headerShown:false, 
       })  
     }, [])
     
@@ -23,6 +23,7 @@ const GamePreview = ({navigation}) => {
           navigation.navigate('PlayGameLatest')
           return;   
         }
+        navigation.navigate('Homer'); 
         
         
          
