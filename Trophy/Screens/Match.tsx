@@ -123,7 +123,7 @@ const Match = ({navigation}) => {
   const [client2Template, setClient2Template] = useState([]); 
   const [matches,setMatches] = useState([]); 
   const [loading, setLoading] = useState(false); 
-  const { user,userId, selfFilter, setSelfFilter,computeName,db, firebase, stringifyNumber, } = myContext;
+  const { user,userId, selfFilter, setSelfFilter,computeName,db, firebase, stringifyNumber, setInitialRouteName } = myContext;
 
   const handleTouch = (matchInstance) => {
     db.collection('user').doc(userId).set({seenClientMatches:firebase.firestore.FieldValue.arrayUnion(matchInstance._id)}, {merge:true}); 
@@ -388,6 +388,16 @@ const Match = ({navigation}) => {
 
   // }, [])
 
+
+  const conditionalNav = () => {
+     if(user.dating == true){
+        navigation.navigate('PlayGameLatest')
+        return; 
+     }
+    //  setInitialRouteName('Game')
+     navigation.reset({index:0, routes:[{name:"Homer"}]})
+  }
+
   const template = matches.map(val => {
       
       return <MatchFactory match = {val} key = {val._id} computeName = {computeName} handleTouch = {handleTouch}/>
@@ -416,7 +426,7 @@ const Match = ({navigation}) => {
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"bold"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  onPress = {() => navigation.navigate('PlayGameLatest')}
+  onPress = {() => conditionalNav()}
   
   
 />

@@ -13,7 +13,8 @@ export default function Hometown({navigation, route}){
   const {userId,CustomBackComponent} = myContext; 
   const [job, setJob] = useState("");
   const [gate, setGate] = useState(true); 
-  const {page} = route.params; 
+  const {page} = route.params;
+  console.log("userId is"+userId) 
   useEffect(() => {
     if(job.length < 1){
       setGate(true)
@@ -44,8 +45,12 @@ export default function Hometown({navigation, route}){
        }
        navigation.navigate('EnableLocation')
        
-    } 
+    }
+    useEffect(() => {
        
+        Keyboard.removeAllListeners('keyboardDidShow');
+   }, []) 
+   
     console.log(job)
     return(
       <KeyboardAvoidingView style = {{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
@@ -106,7 +111,7 @@ export default function Hometown({navigation, route}){
   disabled = {gate}
   onPress = {() => { _sendToServer() , _handlePage()}}
 />
-       {/* <Continue  onPress = {() => {_handleEmail(), mutateSettings({email:Email}) }}/>     */}
+       
   
       </View>
       </View>

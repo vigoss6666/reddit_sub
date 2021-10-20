@@ -64,6 +64,7 @@ import Playgame from './Game/Screens/Playgame';
 import GamePreview from './Game/Screens/GamePreview'; 
 
 import PlayGameLatest from './Game/Screens/PlayGameLatest';
+import HalfRound from './Game/Screens/HalfRound';
 import MapViewClientGame from './Game/Screens/MapViewClientGame';
 import MapViewSelfGame from './Game/Screens/MapViewSelfGame';
 import Play20 from './Game/Screens/Play20';
@@ -212,7 +213,7 @@ export default function App() {
   const [introNotification, setIntroNotification] = useState(); 
   const [chatNotification, setChatNotification] = useState(true);  
   const [chatterNotification, setChatterNotification] = useState(false);
-  const [initialRouteName, setInitialRouteName] = useState('ProfilePool');  
+  const [initialRouteName, setInitialRouteName] = useState('Game');  
   const [singleContact, setSingleContact] = useState();  
   const [notification, setNotification] = useState(false);
   const [sentFromBrowse, setSentFromBrowse] = useState(null); 
@@ -558,7 +559,7 @@ const mainHome = () => {
          
         <Stack.Navigator>
         
-          <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>
+          <Stack.Screen name="Home" component={Home} options = {{headerShown:false}}/>  
           <Stack.Screen name="Name" component={Name}/>
           <Stack.Screen name="BulkInvite" component={BulkInvite} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS, headerShown:false }}/>
           <Stack.Screen name="MatchMakeGrand" component={MatchMakeGrand}/>
@@ -607,6 +608,7 @@ const mainHome = () => {
         <Stack.Screen name="PlayGameLatest" component={PlayGameLatest} options={{
           animationEnabled: false,
         }}/>
+          <Stack.Screen name="HalfRound" component={HalfRound}/>
           <Stack.Screen name="GamePreview" component={GamePreview}/>
           <Stack.Screen name="Play20" component={Play20} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS, headerShown:false }}/>
           <Stack.Screen name="MapViewClientGame" component={MapViewClientGame}/>
@@ -631,7 +633,7 @@ const mainHome = () => {
           <Stack.Screen name="Trophy" component={Trophy}/>
           <Stack.Screen name="GameHomepage" component={GameHomepage}/>
           <Stack.Screen name="HeightMetric" component={HeightMetric} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS ,}}/>
-          <Stack.Screen name="GenderDetail" component={GenderDetail} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS ,}}/> 
+          <Stack.Screen name="GenderDetail" component={GenderDetail} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS ,}}/> 
           <Stack.Screen name="MatchView" component={MatchView}/>
           <Stack.Screen name="Endorsement" component={Endorsement}/>
           <Stack.Screen name="NoMatch" component={NoMatch}/>
@@ -786,7 +788,7 @@ function Home({navigation}){
     <Tab.Navigator 
       style = {{paddingTop:insets.top, paddingRight:insets.right, paddingLeft:insets.left}} 
       animationEnableb = {false}
-      initialRouteName = {'Game'}
+      initialRouteName = {initialRouteName}
       tabBarOptions={{
       activeTintColor: 'tomato',
       inactiveTintColor: 'gray',
@@ -881,6 +883,7 @@ function Home({navigation}){
     >
         
       {/* <Tab.Screen name="SelfView" component={SelfView} />  */}
+     
       <Tab.Screen name="Game" component={ !user.gamePreview ? GamePreview :user.dating ? GameHomepage:PlayGameLatest}/>
       <Tab.Screen name="Trophy" component={Trophy} />
       <Tab.Screen name="ProfilePool" component={ProfilePool}  />

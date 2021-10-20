@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect,createRef, forwardRef, useContext} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, NavigatorIOS, Platform} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, Button,FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, NavigatorIOS, Platform, Alert} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import Slider from '@react-native-community/slider';
 import { FontAwesome, Foundation } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import AppContext from '../../AppContext';
 import {updateUser} from '../../networking';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BigBatch } from '@qualdesk/firestore-big-batch'
 //import { mutateSettings } from '../../networking';
 // @refresh reset
 import { firebase} from '../../config'; 
@@ -42,7 +43,7 @@ const [matchmaking, setMatchmaking] = useState();
 const [value, setValue] = useState(1);
 const [email, setEmail] = useState();
 const myContext = useContext(AppContext);
-const {user, userId,setInitialRouteName,setId,setAppRestart} = myContext;
+const {user, userId,setInitialRouteName,setId,setAppRestart,setUser} = myContext;
 const [defaultDistance, setDefaultDistance] = useState(40)
 const [distancePreference, setDistancePreference] = useState(40);  
 const [minAgePreference, selectMinAgePreference] = useState(); 
@@ -65,11 +66,15 @@ useEffect(() => {
 }, [])
 
 
-const _deleteAccount = () => {
-    AsyncStorage.removeItem('user'); 
-    db.collection('user').doc(userId).delete(); 
-    setId(null)
-    setAppRestart(1 + 1); 
+const _deleteAccount = async () => {
+    const batch = new BigBatch({ firestore: db }) 
+    await AsyncStorage.removeItem('user'); 
+    await db.collection('user').doc(userId).delete(); 
+    setId(null); 
+    Alert.alert('Your account has been Deleted, click on the whatsapp link to start again')
+    
+   
+    
    //  navigation.navigate('Intro')
     
     
@@ -472,8 +477,12 @@ if(defaultDating || defaultDating == 0){
           
         />
         
+        
       
        </View>
+       <TouchableOpacity style = {{alignSelf:'flex-end',marginBottom:50}} onPress = {() => _deleteAccount()}>
+           <Text style = {{color:'red',fontWeight:'bold'}}>Delete Account</Text>
+        </TouchableOpacity>
        
         
        {/* <TouchableOpacity onPress = {() => _deleteAccount()} style = {{alignSelf:'flex-end',marginLeft:10,marginBottom:50}}>

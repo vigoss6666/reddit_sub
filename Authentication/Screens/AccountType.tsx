@@ -25,13 +25,14 @@ useEffect(() => {
 
  useFocusEffect(() => {
   console.log("focus effect called");  
+
   Keyboard.dismiss(); 
  })
  useEffect(() => {
     const subscribe = Keyboard.addListener('keyboardDidShow', () => {
        Keyboard.dismiss()
     })
-    return () => Keyboard.removeAllListeners('keyboardDidHide'); 
+     
     
  }, [])
 

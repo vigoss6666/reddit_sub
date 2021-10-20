@@ -67,7 +67,7 @@ const _handleNavigation = () => {
 return(
 <View style = {{flex:1,backgroundColor:'#ffffff',paddingTop:insets.top}}>
 <View style = {{flex:0.2,alignItems:'center'}}>
- <TouchableOpacity onPress = {() => navigation.navigate('Height', {page:'something',})}>
+ <TouchableOpacity onPress = {() => navigation.goBack()}>
 <MaterialIcons name="keyboard-arrow-up" size={40} color="black" />
 </TouchableOpacity>   
 </View>

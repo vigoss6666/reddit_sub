@@ -88,11 +88,11 @@ export default function VerifyPhone({navigation, route}){
             //   }
             await db.collection('user').doc(globalPhoneNumber).get().then(async onDoc => {
               if(onDoc.exists){
-                const user = onDoc.data(); 
+                const user = await onDoc.data(); 
                 if(user.appUser){
-                  setUser(onDoc.data())  
+                  setId(globalPhoneNumber)  
                   await AsyncStorage.setItem('user', globalPhoneNumber); 
-                  navigation.navigate('Homer');     
+                  navigation.reset({index:0, routes:[{name:"Homer"}]})
                 }
                 
               }

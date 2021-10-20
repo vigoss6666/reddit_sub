@@ -1,5 +1,5 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
-import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions} from 'react-native';
+import { View, StyleSheet, Text, TextInput,TouchableOpacity,ScrollView,Image, FlatList,Picker,PanResponder,Animated, TouchableWithoutFeedback, SafeAreaView, Dimensions, Keyboard} from 'react-native';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
@@ -29,6 +29,9 @@ const _handlePage = () => {
 const _handleServer = () => {
       updateUser(userId, {dating:false})  
 }
+useEffect(() => {
+ 
+}, [])
 
 
 const [man,setMan] = useState(false);

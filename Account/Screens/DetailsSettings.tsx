@@ -33,6 +33,10 @@ const db = firebase.firestore();
 const myContext = useContext(AppContext); 
 const {user, userId,setInitialRouteName} = myContext; 
 
+console.log("In details Settings"); 
+console.log(user.hometown)
+
+
 useEffect(() => {
 const d = format(new Date(user.timeStamp), 'MMM'); 
 setMonth(d); 
@@ -50,7 +54,7 @@ setMonth(d);
       <Text style = {{fontSize:20, fontWeight:"600",marginLeft:40}}>
       Details
       </Text>
-      <TouchableOpacity onPress = {() => {setInitialRouteName('Settings'),navigation.goBack()}}>
+      <TouchableOpacity onPress = {() => {navigation.goBack()}}>
       <Text style = {{color:"orange", fontWeight:"600", fontSize:17}}>
           Done
       </Text>

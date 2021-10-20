@@ -46,7 +46,7 @@ export default function School({navigation}){
       
       const manipResult = await ImageManipulator.manipulateAsync(
         uri,
-        [{resize:{width:40, height:40}}], 
+        [{resize:{width:80, height:80}}], 
         { compress: 1, format: ImageManipulator.SaveFormat.PNG }
       );
       const response = await fetch(manipResult.uri); 

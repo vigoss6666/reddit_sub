@@ -8,6 +8,7 @@ import {Header,Continue} from '../../src/common/Common';
 import { GET_DETAILS } from '../../Account/Screens/DetailsSettings';
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking'; 
+import { useFocusEffect } from '@react-navigation/native';
 
 
 export default function Gender({navigation, route}){
@@ -15,21 +16,25 @@ const myContext = useContext(AppContext);
 const {userId, CustomBackComponent} = myContext; 
 const {page} = route.params; 
 useEffect(() => {
-   Keyboard.dismiss(); 
+   
    navigation.setOptions({
      headerTitle:false, 
      headerLeft:() => <CustomBackComponent navigation = {navigation}/>
    })
  }, [])  
 
+ useFocusEffect(() => {
+   console.log("focus effect in gender called");  
  
-   useEffect(() => {
-      const subscribe = Keyboard.addListener('keyboardDidShow', () => {
-         Keyboard.dismiss()
-      })
-      return () => Keyboard.removeAllListeners('keyboardDidHide'); 
+   Keyboard.dismiss(); 
+  })
+  useEffect(() => {
+     const subscribe = Keyboard.addListener('keyboardDidShow', () => {
+        Keyboard.dismiss()
+     })
       
-   }, [])
+     
+  }, [])
 
 const _handlePage = () => {
  if(page == "DetailsSettings"){
@@ -61,7 +66,7 @@ const gateGuard = man || woman ? false: true;
 
 
 return(
-<View style = {{flex:1,backgroundColor:'#ffffff'}}>
+<TouchableOpacity style = {{flex:1,backgroundColor:'#ffffff'}} onPress = {() => Keyboard.dismiss()}>
 <View style = {{flex:0.2}}>
      
 </View>
@@ -116,6 +121,6 @@ onPress = {() => {setWoman(true), setMan(false)}}
 
 </TouchableOpacity>
 </View>
-</View>
+</TouchableOpacity>
 )
 }

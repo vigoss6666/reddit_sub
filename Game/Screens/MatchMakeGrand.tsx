@@ -1,7 +1,7 @@
 //@refresh reset
 import React, { useState, useEffect, useRef, createContext, useContext, useCallback  } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { Text, View, StyleSheet,TouchableOpacity, Dimensions, Image,ScrollView,SectionList, FlatList } from 'react-native';
+import { Alert,Text, View, StyleSheet,TouchableOpacity, Dimensions, Image,ScrollView,SectionList, FlatList } from 'react-native';
 import {Entypo, Feather, FontAwesome, FontAwesome5, Foundation, MaterialIcons} from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {firebase} from '../../config'; 
@@ -24,6 +24,8 @@ async function applyFilters(filter:any,arr:any,client, createChatThread):serverD
     }
     console.log("client outside")
    console.log(client.phoneNumber)
+   
+
     
     const finalObject:any = [];     
       await Promise.all(arr.map(async val => {
@@ -93,6 +95,8 @@ const MatchMakeFinal = ({navigation, route}) => {
     
     const [flat, setFlat] = useState(null)
 
+    
+
 
     useEffect(() => {
       navigation.setOptions({
@@ -105,6 +109,40 @@ const MatchMakeFinal = ({navigation, route}) => {
     useEffect(() => {
       console.log("SOmething changed forFilters")
     }, [forFilters])
+
+
+   const _handleMapGo = () => {
+    // console.log(userDisplay[sliderState.currentPage])
+    const selectedUser = profiles[sliderState.currentPage];
+    const index = userDisplay.findIndex(val => val.client.phoneNumber == selectedUser.phoneNumber); 
+    if(index == -1 ){
+       Alert.alert("Not enough Users for the map View"); 
+
+    } 
+    if(index !== -1){
+          navigation.navigate('MapViewClientGame',{client:profiles[sliderState.currentPage], pageData:userDisplay})   
+    }
+    //  if(userDisplay.length == 0){
+    //      Alert.alert('Not Enough Contacts for MapView')
+    //      return; 
+         
+    //  }
+    //  if(userDisplay.length){
+       
+    //    if (userDisplay[sliderState.currentPage].data.length == 0){
+    //     Alert.alert('Not Enough Contacts for MapView')
+    //     return;  
+    //    }
+    //    if (userDisplay[sliderState.currentPage].data.length){
+    //       navigation.navigate('MapViewClientGame',{client:profiles[sliderState.currentPage], pageData:userDisplay})      
+    //    }
+      
+
+       
+    //  }
+
+    
+   }
   
     
     useEffect(() => {
@@ -425,6 +463,10 @@ const MatchMakeFinal = ({navigation, route}) => {
       
       
   }, [])
+
+
+
+  
     
     
         
@@ -499,6 +541,9 @@ const MatchMakeFinal = ({navigation, route}) => {
          
     }
 
+
+    
+
  if(loader == false && sectionData.length){
      
       return (
@@ -508,7 +553,12 @@ const MatchMakeFinal = ({navigation, route}) => {
             <Entypo name="controller-play" size={35} style = {{marginLeft:20}} />                    
             </TouchableOpacity>
             <View style = {{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-            <TouchableOpacity onPress = {() => navigation.navigate('MapViewClientGame',{client:profiles[sliderState.currentPage], pageData:userDisplay})} style = {{marginRight:15}}>
+            <TouchableOpacity 
+            // onPress = {() => navigation.navigate('MapViewClientGame',{client:profiles[sliderState.currentPage], pageData:userDisplay})} style = {{marginRight:15}}
+            onPress = {() => _handleMapGo()} style = {{marginRight:15}}
+
+            
+            >
             <Foundation name="map" size={24} color="black" />
             </TouchableOpacity>
             <TouchableOpacity onPress = {() => navigation.navigate('Sort',{client:profiles[sliderState.currentPage]})} style = {{marginRight:15}}>

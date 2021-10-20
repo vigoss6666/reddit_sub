@@ -30,7 +30,23 @@ export default function Photos({navigation, route }){
     const [profilePic,setProfilePic] = useState(null);
     
     
-    
+    const addProfilePicSmall = async (uri:string) => {
+      
+      const manipResult = await ImageManipulator.manipulateAsync(
+        uri,
+        [{resize:{width:80, height:80}}], 
+        { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+      );
+      const response = await fetch(manipResult.uri); 
+      const blob = await response.blob(); 
+      const namer = Math.random().toString(36).substring(2);
+      const ref = firebase.storage().ref().child("images/"+ namer); 
+      await ref.put(blob,{cacheControl:'max-age=31536000', contentType:'image/png'})
+      const result1 = await ref.getDownloadURL()
+      updateUser(userId, {profilePicSmall:result1})
+
+      
+    }
     
     
     async function updateProfilePicToServer(){
@@ -39,6 +55,7 @@ export default function Photos({navigation, route }){
     //   const result = profilePic.match(pattern); 
       
       setProfilePicLocal(profilePic)
+      addProfilePicSmall(profilePicLocal);
       const response = await fetch(profilePicLocal); 
       
       const blob = await response.blob(); 

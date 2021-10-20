@@ -157,29 +157,30 @@ const sendToServer = async () => {
    const finalChecker = checkerResult.filter(val => val !== null); 
    const filterByApp = finalChecker.filter(val => !val.appUser);
    const filterBySetter = filterByApp.filter(val => !val.latitude);
-  //  if(filterBySetter.length < 1){
-  //   const userInit = Object.assign({}, {...defaultDataObject},{phoneNumber:userId},{...user}, {appUser:true}) 
-  //   db.collection('user').doc(userId).set(userInit, {merge:true});
+   if(filterBySetter.length < 1){
+    const userInit = Object.assign({}, {...defaultDataObject},{phoneNumber:userId},{...user}, {appUser:true}) 
+    db.collection('user').doc(userId).set(userInit, {merge:true});
 
-  //   var filteredIntros = user.contactList.filter(
-  //     function(e) {
+    var filteredIntros = user.contactList.filter(
+      function(e) {
   
-  //       return this.indexOf(e) < 0;
-  //     },
-  //    checker
-  // );
+        return this.indexOf(e) < 0;
+      },
+     checker
+  );
   
   
         
-  // updateUser(userId, {contactList:filteredIntros})
-  // await db.collection('user').doc(userId).set({datingPoolList:checker}, {merge:true}); 
-  // // await AsyncStorage.setItem('user', userId);  
-  // // setId(userId)
+  updateUser(userId, {contactList:filteredIntros})
+  await db.collection('user').doc(userId).set({datingPoolList:checker}, {merge:true}); 
+  // await AsyncStorage.setItem('user', userId);  
+  // setId(userId)
   // AsyncStorage.setItem('user', userId)
   // setId(userId)
   // navigation.reset({index:0, routes:[{name:"Homer"}]})
-  // return;    
-  // }
+  navigation.navigate('SignUpComplete')
+  return;    
+  }
   var filteredIntros = user.contactList.filter(
     function(e) {
 

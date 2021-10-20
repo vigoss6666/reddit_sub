@@ -20,6 +20,13 @@ const Rank = ({navigation}) => {
     const [monthly, setMonthly] = useState(0);
     const [templater, setTemplate] = useState([]); 
     const [userPoints, setUserPoints] = useState(null); 
+    const conditionalNav = () => {
+      if(user.dating == true){
+         navigation.navigate('PlayGameLatest')
+         return; 
+      }
+      navigation.reset({index:0, routes:[{name:"Homer"}]})
+   }
 
     
 
@@ -148,7 +155,7 @@ const Rank = ({navigation}) => {
   titleStyle = {{color:"white", fontWeight:"bold"}}
   disabledStyle = {{backgroundColor:"grey",}}
   
-  onPress = {() => navigation.navigate('PlayGameLatest')}
+  onPress = {() => conditionalNav()}
   
 />
     </View>)

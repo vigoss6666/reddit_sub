@@ -38,7 +38,7 @@ title = {"Play Again"}
 containerStyle = {{marginBottom:10,marginLeft:30, marginRight:30}}
  buttonStyle = {{backgroundColor:'grey'}} 
  titleStyle = {{color:'black', fontWeight:'900'}}
- onPress = {() => navigation.navigate('PlayGameLatest')}
+ onPress = {() => navigation.pop(2)}
  />
 </View>
 

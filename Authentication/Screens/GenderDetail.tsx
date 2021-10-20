@@ -4,6 +4,7 @@ import { Text, View, StyleSheet, TouchableOpacity, TextInput, Keyboard } from 'r
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppContext from '../../AppContext'; 
 import {updateUser} from '../../networking';
+import { useFocusEffect } from '@react-navigation/native';
 
 import {Button} from 'react-native-elements'; 
 import Gender from './Gender';
@@ -23,6 +24,12 @@ const GenderDetail = ({navigation,route}) => {
       navigation.setOptions({
           headerShown:false
       })  
+    }, [])
+    useEffect(() => {
+      Keyboard.removeAllListeners('keyboardDidShow')
+      // return () => Keyboard.addListener('keyboardWillShow', () => {
+      //    Keyboard.dismiss()
+      // })
     }, [])
 
     const _sendToServer = () => {
@@ -54,8 +61,8 @@ const GenderDetail = ({navigation,route}) => {
     }, [gender,genderText])
     console.log(genderText)
   return (
-    <TouchableOpacity style={{flex:1,paddingTop:insets.top,backgroundColor:'white'}} onPress = {Keyboard.dismiss}>
-      <TouchableOpacity onPress = {() => navigation.goBack()} style = {{alignItems:'center'}}>
+    <TouchableOpacity style={{flex:1,paddingTop:insets.top,backgroundColor:'white'}} onPress = {() => Keyboard.dismiss()}>
+      <TouchableOpacity onPress = {() => navigation.navigate('Gender')} style = {{alignItems:'center'}}>
 <MaterialIcons name="keyboard-arrow-up" size={40} color="black" />
 </TouchableOpacity> 
 <View style = {{marginLeft:30, marginRight:30,marginTop:50}}>

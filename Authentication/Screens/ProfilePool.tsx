@@ -260,7 +260,7 @@ const useFetchContactPool = (navigation) => {
                     <View style = {{flexDirection:"row", justifyContent:'space-between', marginBottom:5, marginTop:5}}>
                     <View style = {{flexDirection:"row", alignItems:"center"}}>
                                                       
-                   {item.profilePic ? <SingleImageView image = {item.profilePic} style = {{marginRight:10}} />:<MaterialIcons name="account-circle" size={30} color="black" />}
+                   {item.profilePicSmall ? <SingleImageView image = {item.profilePicSmall} style = {{marginRight:10}} />:<MaterialIcons name="account-circle" size={30} color="black" />}
                     <Text style = {{marginLeft:10, marginBottom:5, fontWeight:"bold", maxWidth:100}} >{computeName(item)}</Text>
                     </View>
                     {   
@@ -731,7 +731,7 @@ onChangeItem={namer => addAge(item, namer)}
           
           <View style = {{flexDirection:"row", justifyContent:'space-between',marginBottom:20}}>
           <View style = {{flexDirection:"row", alignItems:"center"}}>
-          {item.profilePic ?<SingleImageView image = {item.profilePic} style = {{marginRight:10}} />:<MaterialIcons name="account-circle" size={30} color="black" />}
+          {item.profilePicSmall ?<SingleImageView image = {item.profilePicSmall} style = {{marginRight:10}} />:<MaterialIcons name="account-circle" size={30} color="black" />}
           <Text style = {{marginLeft:10,marginBottom:10,fontWeight:"bold",maxWidth:100,}} numberOfLines = {2}>{computeName(item)}</Text>
           
           </View>

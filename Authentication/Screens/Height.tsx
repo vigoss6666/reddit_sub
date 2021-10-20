@@ -43,16 +43,18 @@ useEffect(() => {
     const subscribe = Keyboard.addListener('keyboardDidShow', () => {
        Keyboard.dismiss()
     })
-    return () => Keyboard.removeAllListeners('keyboardDidHide'); 
+    return () => Keyboard.removeAllListeners('keyboardDidShow'); 
     
  }, [])
       
 const _handleNavigation = () => {
      if(page == "DetailsSettings"){
+        
           navigation.navigate("DetailsSettings")
           return; 
           
      }
+     
      navigation.navigate('AuthPhotosLatest', {page:"something"})
 
 }

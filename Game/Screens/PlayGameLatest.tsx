@@ -64,6 +64,10 @@ const PlayGameLatest = ({navigation}) => {
   const element = createRef();
   const [matchFound, setMatchFound] = useState(false); 
 
+  const handleBack = () => {
+    navigation.reset({index:2, routes:[{name:"Homer"}]}) 
+  }
+
   useEffect(() => {
   async function namer(){
     const result = await AsyncStorage.getItem('preview'); 
@@ -171,6 +175,20 @@ const resetGame = () => {
     })
     resetGame(); 
     navigation.navigate('Play20', {matchFound:matchFound})
+  }  
+
+ }, [questionsIndex])  
+ useEffect(() => {
+  if(questionsIndex == 9){
+    db.collection('user').doc(userId).update({
+      points:firebase.firestore.FieldValue.arrayUnion({
+        pointFor:'roundCompleted', 
+        point:10, 
+        createdAt:new Date()
+      })
+    })
+    // resetGame(); 
+    navigation.navigate('HalfRound', {matchFound:matchFound})
   }  
 
  }, [questionsIndex])  
@@ -533,6 +551,9 @@ const handleGame = () => {
   navigation.navigate('PlayGameLatest')
    
 }
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
  
  
 
@@ -564,7 +585,7 @@ const mainer = mainBackGround.interpolate({
        if(demo.length){
          return <Animated.View style = {{opacity:mainBackGround}}>
          
-           {demo[index].profilePic ? <Image source = {{uri:demo[index].profilePic}} style = {{height:80, width:80, borderRadius:40}}/>:<MaterialIcons name="account-circle" size={80} color="black" />} 
+           {demo[index].profilePicSmall ? <Image source = {{uri:demo[index].profilePicSmall}} style = {{height:80, width:80, borderRadius:40}}/>:<MaterialIcons name="account-circle" size={80} color="black" />} 
          
          <Text style = {{alignSelf:'center', fontWeight:'bold', fontSize:11, marginTop:5, marginLeft:-10}}>{computeName(demo[index])}</Text>
          
@@ -573,11 +594,17 @@ const mainer = mainBackGround.interpolate({
   }
   const secondTemplate = () => {
        if(demo.length){
+        
+        const newArr = JSON.parse(JSON.stringify(demo)); 
+        newArr.splice(index,1); 
+        const random = getRandomInt(newArr.length); 
+        
+        
         return <Animated.View style = {{opacity:mainBackGround}}>
          
-        {demo[index + 1].profilePic ? <Image source = {{uri:demo[index + 1].profilePic}} style = {{height:80, width:80, borderRadius:40}}/>:<MaterialIcons name="person" size={80} color="black" />} 
+        {newArr[random].profilePicSmall ? <Image source = {{uri:newArr[random].profilePicSmall}} style = {{height:80, width:80, borderRadius:40}}/>:<MaterialIcons name="person" size={80} color="black" />} 
       
-      <Text style = {{alignSelf:'center', fontWeight:'bold', fontSize:11, marginTop:5, }}>{computeName(demo[index + 1])}</Text>
+      <Text style = {{alignSelf:'center', fontWeight:'bold', fontSize:11, marginTop:5, }}>{computeName(newArr[random])}</Text>
       
       </Animated.View>
        }
@@ -651,6 +678,9 @@ const mainer = mainBackGround.interpolate({
   
    if(user.datingPoolList.length < 2){
      return <View style = {{flex:1, backgroundColor:'black', justifyContent:'center', alignItems:'center',  }}>
+       <TouchableOpacity>
+         <Text style = {{color:'red', fontWeight:'bold'}}> Back</Text>
+       </TouchableOpacity>
        <Text style = {{color:'white', fontSize:40, fontWeight:'bold'}}>Not enough contacts</Text>
        <Text style = {{color:'white', fontStyle:'italic'}}>Please add some contacts in your dating pool list to play the game</Text>
      </View>
@@ -668,13 +698,13 @@ const mainer = mainBackGround.interpolate({
   
                 <View style = {{flex:0.3,}}>
                 <View style = {{flexDirection:'row', justifyContent:'space-between',marginTop:20}}>
-                 <TouchableOpacity onPress = {() => {navigation.navigate('Homer')}} style = {{marginLeft:15}}>
+                 <TouchableOpacity onPress = {() => {navigation.goBack()}} style = {{marginLeft:15}}>
              {user.dating == false ? null : <Text style = {{fontWeight:'bold', fontSize:17, color:'white'}}>Back</Text>} 
              </TouchableOpacity>
              <View style = {{flexDirection:'row'}}>
         <TouchableOpacity style = {{marginRight:20}} onPress = {() => flip()}>
         {/* <FontAwesome name="refresh" size={24} color="black" /> */}
-        <Text style = {{color:'white', fontWeight:'bold'}}>{timerCoundown}</Text>
+        {/* <Text style = {{color:'white', fontWeight:'bold'}}>{timerCoundown}</Text> */}
       </TouchableOpacity>
       <TouchableOpacity style = {{marginRight:20}} onPress = {onRefresh}>
         <FontAwesome name="refresh" size={24} color="white" />
@@ -682,7 +712,7 @@ const mainer = mainBackGround.interpolate({
       </View>
                 </View>  
                 <View style = {{marginTop:10, marginLeft:30, marginRight:30}}>
-                <Text style = {{alignSelf:'flex-end', marginBottom:10}}> {questionsIndex}/{questions.length -1}</Text>    
+                <Text style = {{alignSelf:'flex-end', marginBottom:10}}> {questionsIndex + 1}/{questions.length }</Text>    
                 
                 <Progress.Bar progress={bar} width={Dimensions.get('window').width -60   } height = {20} />
                 <Text style = {{marginTop:30,  marginBottom:10,fontSize:20, fontWeight:'bold',color:'white'}} numberOfLines = {3} textBreakStrategy = {'highQuality'}> {questions.length ? questions[questionsIndex].question:null} </Text>
