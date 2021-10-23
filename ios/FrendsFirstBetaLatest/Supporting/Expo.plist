@@ -9,7 +9,7 @@
 	<key>EXUpdatesLaunchWaitMs</key>
 	<integer>0</integer>
 	<key>EXUpdatesReleaseChannel</key>
-	<string>updatesv2</string>
+	<string>prodvv1</string>
 	<key>EXUpdatesSDKVersion</key>
 	<string>42.0.0</string>
 	<key>EXUpdatesURL</key>

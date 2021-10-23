@@ -250,7 +250,7 @@ const sendToServer = async () => {
 //      setIndexer([...indexer, phoneNumber]);
 // }
 const addArray = (phoneNumber:string) => {
-  console.log(" iwas called")
+  
   
   if(checker.includes(phoneNumber)){
      const index = checker.findIndex(val => val == phoneNumber);
@@ -339,7 +339,7 @@ const searchAction = () => {
 
 
 const renderItem = ({ item }) => {
-  console.log(" iwas rendered")
+  console.log(" iwas rendered in contacts")
   return (
     <ContactView item = {item} adder = {addArray}/>
   ) 

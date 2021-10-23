@@ -7,7 +7,8 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import {firebase} from '../../config';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Input, Text } from 'react-native-elements';
-import {Jailer} from '../../src/common/Common'; 
+import {Jailer, LoadScreen} from '../../src/common/Common'; 
+import { Entypo } from '@expo/vector-icons';
 
 const db = firebase.firestore();  
 
@@ -22,11 +23,23 @@ const ContactsLocation = ({navigation}) => {
     const [location, setLocation] = useState([]);  
     const myContext = useContext(AppContext); 
     const [flatListChanged, setFlatListChanged] = useState(1)
-    const { userId, computeName} = myContext; 
-    const [profiles, setProfiles] = useState([]);  
+    const { userId, computeName,profiles, setProfiles} = myContext; 
+    const [loading, setLoading] = useState(false); 
+      
     const [state, setState] = useState(); 
-    const [gate, checkGate] = useState(true);
+    const [gate, setGate] = useState(true);
     const [user,setUser] = useState({}); 
+
+
+    useEffect(() => {
+     profiles.map(val => {
+        if(!val.localityName){
+           setGate(true)
+           return; 
+        }
+        setGate(false) 
+     }) 
+    }, [profiles])
     
 
     useEffect(() => {
@@ -34,6 +47,7 @@ const ContactsLocation = ({navigation}) => {
           setUser(onDoc.data())
       })
     }, [])
+   
     
    //  const updateToServer  = () => { 
    //    const batch = db.batch(); 
@@ -45,52 +59,43 @@ const ContactsLocation = ({navigation}) => {
    //       navigation.navigate('ContactsPhotos') 
    //    }) 
    //  }
+   
     const updateToServer  = () => { 
       const batch = db.batch(); 
       profiles.map(val => {
          const ref = db.collection('user').doc(val.phoneNumber); 
-         batch.set(ref, {state:'california', address:'bay area', latitude:32.735487, longitude:-117.149025 }, {merge:true})
+         batch.set(ref, {state:val.state, subLocality:val.subLocality, localityName:val.localityName }, {merge:true})
       })
       batch.commit().then(() => {
-         navigation.navigate('ContactsPhotos') 
+         navigation.navigate('SignUpComplete') 
       }) 
     }
     
     
      const renderItem = ({ item }) => (
-        <View style = {{flex:1, }}>
-               <View style = {{flexDirection:'row', alignItems:'center', flex:0.9, marginBottom:10}}>
-                      {item.profilePic ? <Image source = {{uri:item.profilePic}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={30} color="black" />}
-                      <Text style = {{marginLeft:10,maxHeight:50, maxWidth:100}} numberOfLines = {2}>{computeName(item)}</Text>
+        <View style = {{flex:1, marginTop:10 }}>
+               <View style = {{flexDirection:'row', alignItems:'center', flex:1, marginBottom:10,justifyContent:'space-between'}}>
+                      <View style = {{flexDirection:'row',alignItems:'center'}}>
+                      {item.profilePicSmall ? <Image source = {{uri:item.profilePicSmall}} style = {{height:40, width:40, borderRadius:20}}/>:<MaterialIcons name="account-circle" size={40} color="black" />}
+                      <View>
+                      <Text style = {{marginLeft:10,maxHeight:50, maxWidth:100,marginBottom:10}} numberOfLines = {1}>{computeName(item)}</Text>
+                      <Text style = {{fontWeight:'bold', fontSize:10,marginLeft:10,fontStyle:'italic',}}>{item.localityName}</Text> 
+                      </View>
+                      </View>
+                      {item.localityName ?<TouchableOpacity onPress = {() => navigation.navigate('ContactsLocationSingular', {item})}><Entypo name="location" size={24} color="black" /></TouchableOpacity> : <TouchableOpacity style = {{justifyContent:'flex-end'}} onPress = {() => navigation.navigate('ContactsLocationSingular', {item})}>
+<Text style = {{fontStyle:'italic', fontWeight:'bold', fontSize:12}}> Select Location </Text>
+</TouchableOpacity>}
+                   
 
                       </View>  
-              <GooglePlacesAutocomplete
-              key = {item.phoneNumber}
-              styles = {{container:{ }}}
-              placeholder = {"Type location"}
-              fetchDetails = {true} 
-              onPress={(data, details = null) => {
-                const state = ""; 
-                const result = details?.address_components.map(val => {
-                   return val.types.map(val1 => {
-                      if(val1 == 'administrative_area_level_1'){
-                         setLocation([...location, { state: val.long_name, address:data.description, phoneNumber:item.phoneNumber }])
-                      }
-                   })
-                })
-                 
-                setFlatListChanged(flatListChanged+1)
-              }}
-              query={{
-                key: 'AIzaSyBxsuj6tm1D5d3hEfG2ASfleUBIRREl15Y',
-                language: 'en',
-              }}
-        />  
+                      {/* <Text style = {{fontWeight:'bold', fontSize:10,marginLeft:40,marginBottom:10,fontStyle:'italic'}}>{item.localityName}</Text> */}
+            
         </View>
       );
     
 useEffect(() => {
    async function namer(){
+    setLoading(true) 
     const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
     const users = onResult.docs.map(val => val.data()); 
     const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
@@ -99,14 +104,18 @@ useEffect(() => {
     const finalTransformed = profilesWithMatchMaker.map((val, index) => ( {...val, zIndex:index}));
     finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
     setProfiles(finalTransformed); 
+    setLoading(false); 
 
    }
-   if(Object.keys(user).length){
+   if(Object.keys(user).length && !profiles.length){
       namer()
   }
    
    
-}, [user])
+}, [])
+
+
+console.log(profiles)
 
     const homePlace = {
         description: 'Home',
@@ -116,23 +125,29 @@ useEffect(() => {
         description: 'Work',
         geometry: { location: { lat: 48.8496818, lng: 2.2940881 } },
       };
+     if(loading){
+        return (
+           <LoadScreen />
+        )
+     } 
+
   return (
-    <View style = {{flex:1,marginLeft:20, marginRight:20 }}>
-    <View style = {{flex:0.1, }}>
+    <View style = {{flex:1, backgroundColor:'white' }}>
     
-    </View>
-    <View style = {{flex:0.1}}>
+    <View style = {{flex:0.1,marginTop:20}}>
     <Text h4 style = {{alignSelf:'center', fontWeight:"600"}}>Tell us about your friends</Text>
     <Text h5 style = {{alignSelf:'center', fontWeight:"600"}}>Confirm the location of each friend</Text>
    
     </View>
-    <View style = {{flex:0.6}}>
+    <View style = {{flex:0.7,marginLeft:20, marginRight:20,}}>
     <FlatList
         data={profiles}
         renderItem={renderItem}
         keyExtractor={item => item.phoneNumber}
-        extraData = {flatListChanged}
-        keyboardShouldPersistTaps = {true}
+        // extraData = {profiles}
+        
+        ItemSeparatorComponent = {() => <View style = {{borderBottomWidth:1}}/>}
+        
 
         style = {{ }}
         
@@ -146,7 +161,7 @@ useEffect(() => {
     </View>
     <View style = {{flex:0.2, justifyContent:'center',marginTop:10 }}>
     {/* <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { updateToServer(), navigation.navigate('ContactsPhotos')}} disabled = {profiles.length !== location.length ? true:false}></Button>    */}
-    <Button title = "save" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => { updateToServer()}} ></Button>   
+    <Button title = "I'm Done" containerStyle = {{marginLeft:30, marginRight:30,}} buttonStyle = {{backgroundColor:'black'}} disabled = {gate} onPress = {() => { updateToServer()}} ></Button>   
 
     </View>
     </View>

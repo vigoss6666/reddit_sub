@@ -57,6 +57,8 @@ import ContactsPhotos from './Authentication/Screens/ContactsPhotos';
 import ContactsAge from './Authentication/Screens/ContactsAge'; 
 import ContactsLocation from './Authentication/Screens/ContactsLocation';
 import ContactsLocationLatest from './Authentication/Screens/ContactsLocationLatest';
+import ContactsLocationSingular from './Authentication/Screens/ContactsLocationSingular';
+
 import NewContact from './Authentication/Screens/NewContact'; 
 import NewContactLocation from './Authentication/Screens/NewContactLocation';
 import ContactLoadSuccess from './Authentication/Screens/ContactLoadSuccess';
@@ -217,7 +219,7 @@ export default function App() {
   const [singleContact, setSingleContact] = useState();  
   const [notification, setNotification] = useState(false);
   const [sentFromBrowse, setSentFromBrowse] = useState(null); 
-  const [tempId, setTempId] = useState(); 
+  const [tempId, setTempId] = useState('+16505551234'); 
   const responseListener = useRef();
   const notificationListener = useRef();
   const [profilePicLocal, setProfilePicLocal] = useState(null); 
@@ -232,6 +234,7 @@ export default function App() {
   const [vID, setVID] = useState(null);
   const [contactsL, setContactsL] = useState([]); 
   const [appRestart, setAppRestart] = useState(1); 
+  const [profiles, setProfiles] = useState([]);
   
    
 
@@ -311,14 +314,25 @@ useEffect(() => {
   useEffect(() => {
     // setLoader(!loader)
   }, [_id])
-  
+ 
   function cacheImages(images) {
     return images.map(image => {
       if (typeof image === 'string') {
         return Image.prefetch(image);
-      } 
+      } else {
+        return Asset.fromModule(image).downloadAsync();
+      }
     });
   }
+
+  useEffect(() => {
+    const imageAssets = cacheImages([
+     
+      require('./assets/halfround.png'),
+    ]); 
+    Promise.all([...imageAssets]); 
+  }, [])
+ 
   async function ensureDirExists(location) {
     const dirInfo = await FileSystem.getInfoAsync(location);
     if (!dirInfo.exists) {
@@ -388,6 +402,8 @@ function stringifyNumber(n) {
 
 
   const tempObject = {
+    profiles, 
+    setProfiles, 
     globalPhoneNumber, 
     setGlobalPhoneNumber, 
     vID, 
@@ -596,7 +612,7 @@ const mainHome = () => {
           <Stack.Screen name="LoadContacts" component={LoadContacts}/>
           <Stack.Screen name="ContactsSex" component={ContactsSex} options = {{headerTitle:false, headerLeft:false}}/>
           <Stack.Screen name="ContactsAge" component={ContactsAge} options = {{headerTitle:false, headerLeft:false}}/>
-          <Stack.Screen name="ContactsLocation" component={ContactsLocation} options = {{headerTitle:false, headerLeft:false}}/>
+          <Stack.Screen name="ContactsLocation" component={ContactsLocation} />
           {/* <Stack.Screen name="ContactsPhotos" component={ContactsPhotos} options = {{headerTitle:false, headerLeft:false}}/> */}
           <Stack.Screen name="Contacts" component={Contacts} options = {{headerTitle:false, headerLeft:false}}/>
           <Stack.Screen name="ContactLoadSuccess" component={ContactLoadSuccess} options = {{headerTitle:false, headerLeft:false}}/>
@@ -687,7 +703,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={ContactsLocation} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="SignUpComplete" component={SignUpComplete}/>
 <Stack.Screen name="ResendCode" component={ResendCode} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS}}/>
@@ -705,6 +721,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <Stack.Screen name="Gender" component={Gender}/>
 <Stack.Screen name="GenderDetail" component={GenderDetail} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS ,}}/>
 <Stack.Screen name="ContactsLocationLatest" component={ContactsLocationLatest}/>
+<Stack.Screen name="ContactsLocationSingular" component={ContactsLocationSingular} options = {{cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}/>
 <Stack.Screen name="GenderPreference" component={GenderPreference}/>
 <Stack.Screen name="Height" component={Height}/>
 <Stack.Screen name="HeightMetric" component={HeightMetric} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS ,}}/>
@@ -723,7 +740,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <Stack.Screen name="Contacts" component={Contacts} options = {{headerTitle:false, headerLeft:false}}/>
 <Stack.Screen name="ContactsAge" component={ContactsAge} options = {{headerTitle:false, headerLeft:false}}/>
 <Stack.Screen name="ContactsSex" component={ContactsSex} options = {{headerTitle:false, headerLeft:false}}/>
-<Stack.Screen name="ContactsLocation" component={ContactsLocation} options = {{headerTitle:false, headerLeft:false}}/>
+<Stack.Screen name="ContactsLocation" component={ContactsLocation} options = {{headerTitle:false, headerLeft:false}} />
 <Stack.Screen name="ContactsPhotos" component={ContactsPhotos} options = {{headerTitle:false, }}/>
 <Stack.Screen name="Homer" component={mainHome}/>
 
