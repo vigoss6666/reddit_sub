@@ -16,6 +16,14 @@ export default function Loader({navigation,route}){
      Keyboard.dismiss()
     }, [])
 
+    useEffect(() => {
+       Keyboard.addListener('keyboardDidShow', () => {
+            console.log('keyboard was shown in loader')
+          //    Keyboard.dismiss(); 
+       })    
+
+    }, [])
+
     
     useEffect(() => {
          if(registeredUsers.length == 0){
@@ -64,12 +72,12 @@ return(
 {others}
 </View>
 <View style = {{flex:0.2}}>
-<Button title = "Start Matchmaking" containerStyle = {{marginLeft:30, marginRight:30, backgroundColor:'black'}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {navigation.navigate('Contacts')}} titleStyle = {{fontWeight:"bold",fontStyle:'italic'}}/>
+<Button title = "Start Matchmaking" containerStyle = {{marginLeft:30, marginRight:30, backgroundColor:'black'}} buttonStyle = {{backgroundColor:'black'}} onPress = {() => {navigation.navigate('ContactsLatest')}} titleStyle = {{fontWeight:"bold",fontStyle:'italic'}}/>
 <View style = {{justifyContent:'center', alignItems:'center'}}>
-<TouchableOpacity style = {{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}} onPress = {() => navigation.navigate('ContactLoadSuccess')}>
+{/* <TouchableOpacity style = {{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}} onPress = {() => navigation.navigate('ContactLoadSuccess')}>
     <Text style = {{fontWeight:'500'}}> LEARN MORE  </Text>
     <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
-    </TouchableOpacity>
+    </TouchableOpacity> */}
 </View>
 
 </View>

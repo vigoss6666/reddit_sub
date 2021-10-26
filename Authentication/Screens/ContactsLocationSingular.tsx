@@ -9,9 +9,9 @@ interface ContactsLocationSingularProps {}
 
 const ContactsLocationSingular = ({navigation,route}) => {
     const myContext = useContext(AppContext); 
-    const { userId,computeName,CustomBackComponent,setUser,defaultDataObject,setProfilesAuth, setId, profiles, setProfiles} = myContext;
+    const { userId,computeName,CustomBackComponent,setUser,defaultDataObject,setProfilesAuth, setId, profiler, setProfiler} = myContext;
     const {item} = route.params; 
-    const ref = useRef();
+    
 
     useEffect(() => {
         console.log(' waid caleld')
@@ -25,17 +25,18 @@ const ContactsLocationSingular = ({navigation,route}) => {
     //     if(ref.current){
     //         ref.current.clear()
     //    }
-       const copy = profiles;  
+       const copy = profiler;  
        const index = copy.findIndex(val => val.phoneNumber == item.phoneNumber); 
        console.log("index is"+index)
        copy[index].localityName = location.localityName; 
        copy[index].subLocality = location.subLocality; 
        copy[index].state = location.state; 
-       await setProfiles(copy); 
+      await setProfiler(copy); 
     
-    
-     
-       navigation.navigate('ContactsLocation')
+        
+      navigation.reset({index:0, routes:[{name:"ContactsLocation"}]})
+
+    //    navigation.navigate('ContactsLocation')
          
     }
 
@@ -57,7 +58,7 @@ const ContactsLocationSingular = ({navigation,route}) => {
       <GooglePlacesAutocomplete
               styles = {{container:{ marginTop:30,marginLeft:10, marginRight:20 }}}
               
-              ref = {ref}
+              
               placeholder = {"Leon Valley"}
               fetchDetails = {true} 
               textInputProps = {
@@ -67,11 +68,7 @@ const ContactsLocationSingular = ({navigation,route}) => {
                 }
               }
               onPress={(data, details = null) => {
-                // console.log(details.name)
-                //setJob(details.name)
-                //console.log(details)
                 
-                // navigation.goBack()
                 console.log(details?.name)
                 const subLocality = details.address_components.filter(val => val.types.includes('administrative_area_level_2')); 
                 const state = details.address_components.filter(val => val.types.includes('administrative_area_level_1')); 

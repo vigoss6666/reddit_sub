@@ -195,7 +195,7 @@ const resetGame = () => {
 
   
 
-
+console.log("matchfound monkey"+matchFound)
 
 useEffect(() => {
 const namer =  [
@@ -655,7 +655,10 @@ const mainer = mainBackGround.interpolate({
     if(measured){
        fadeOp()
        addPoints()
-       suggestMatches() 
+       if(questionsIndex == 20){
+        suggestMatches() 
+       }
+       
        fadeIn()
        backFader()
        mainFader()

@@ -9,6 +9,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Input, Text } from 'react-native-elements';
 import {Jailer, LoadScreen} from '../../src/common/Common'; 
 import { Entypo } from '@expo/vector-icons';
+import {addUsers} from '../../networking';
 
 const db = firebase.firestore();  
 
@@ -23,23 +24,28 @@ const ContactsLocation = ({navigation}) => {
     const [location, setLocation] = useState([]);  
     const myContext = useContext(AppContext); 
     const [flatListChanged, setFlatListChanged] = useState(1)
-    const { userId, computeName,profiles, setProfiles} = myContext; 
+    const { userId, computeName,profiler, setProfiler,  defaultDataObject} = myContext; 
     const [loading, setLoading] = useState(false); 
       
     const [state, setState] = useState(); 
     const [gate, setGate] = useState(true);
     const [user,setUser] = useState({}); 
+    const [finalUser, setFinalUser] = useState({}); 
 
 
     useEffect(() => {
-     profiles.map(val => {
+     if(profiler !== undefined) {
+      profiler.map(val => {
         if(!val.localityName){
            setGate(true)
            return; 
         }
         setGate(false) 
-     }) 
-    }, [profiles])
+     })
+        
+     } 
+      
+    }, [profiler])
     
 
     useEffect(() => {
@@ -47,30 +53,62 @@ const ContactsLocation = ({navigation}) => {
           setUser(onDoc.data())
       })
     }, [])
+    useEffect(() => {
+      console.log("greatly rendered")
+      async function namer(){
+       console.log(' iwas called');  
+       setLoading(true) 
+       const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
+       const users = onResult.docs.map(val => val.data()); 
+       const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
+       const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
+       const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker]; 
+       const finalTransformed = profilesWithMatchMaker.map((val, index) => ( {...val, zIndex:index}));
+       finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
+       const filterByApp = finalTransformed.filter(val => !val.appUser );
+       const filterBySetter = filterByApp.filter(val => !val.state);
+       setProfiler(filterBySetter); 
+       setLoading(false); 
+   
+      }
+      if(Object.keys(user).length && !profiler.length){
+         namer()
+     }
+      
+      
+   }, [user])
+   console.log("profiles is...");  
+   console.log(profiler)
+   
    
     
-   //  const updateToServer  = () => { 
-   //    const batch = db.batch(); 
-   //    location.map(val => {
-   //       const ref = db.collection('user').doc(val.phoneNumber); 
-   //       batch.set(ref, {state:val.state, address:val.address }, {merge:true})
-   //    })
-   //    batch.commit().then(() => {
-   //       navigation.navigate('ContactsPhotos') 
-   //    }) 
-   //  }
-   
+    
+    const handleInit = async () => {
+  
+      const userInit = Object.assign({}, {...defaultDataObject},{phoneNumber:userId}, {...user}, {appUser:true}) 
+      db.collection('user').doc(userId).set(userInit,{merge:true});
+      setFinalUser(userInit)
+      await addUsers(profiler, userId);
+      navigation.navigate('SignUpComplete')
+      
+      // AsyncStorage.setItem('user', userId)
+      // setId(userId)
+      // navigation.reset({index:0, routes:[{name:"Homer"}]})
+    
+     }
     const updateToServer  = () => { 
+      // handleInit()
       const batch = db.batch(); 
-      profiles.map(val => {
+      profiler.map(val => {
          const ref = db.collection('user').doc(val.phoneNumber); 
-         batch.set(ref, {state:val.state, subLocality:val.subLocality, localityName:val.localityName }, {merge:true})
+         batch.set(ref, {state:val.state ? val.state:null, subLocality:val.subLocality ? val.subLocality:null, localityName:val.localityName ? val.localityName:null }, {merge:true})
       })
       batch.commit().then(() => {
-         navigation.navigate('SignUpComplete') 
+         handleInit()
+         
       }) 
     }
-    
+ 
     
      const renderItem = ({ item }) => (
         <View style = {{flex:1, marginTop:10 }}>
@@ -93,29 +131,10 @@ const ContactsLocation = ({navigation}) => {
         </View>
       );
     
-useEffect(() => {
-   async function namer(){
-    setLoading(true) 
-    const onResult = await db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get();
-    const users = onResult.docs.map(val => val.data()); 
-    const profilesWithMatchMaker = users.filter(val => val.matchMaker == userId); 
-    const profilesWithoutMatchmaker = users.filter(val => val.matchMaker !== userId); 
-    const finalUsers = [...profilesWithoutMatchmaker, ...profilesWithMatchMaker]; 
-    const finalTransformed = profilesWithMatchMaker.map((val, index) => ( {...val, zIndex:index}));
-    finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
-    setProfiles(finalTransformed); 
-    setLoading(false); 
-
-   }
-   if(Object.keys(user).length && !profiles.length){
-      namer()
-  }
-   
-   
-}, [])
 
 
-console.log(profiles)
+
+
 
     const homePlace = {
         description: 'Home',
@@ -130,6 +149,9 @@ console.log(profiles)
            <LoadScreen />
         )
      } 
+  // return <View>
+  //   <Text>Hello world</Text>
+  // </View>
 
   return (
     <View style = {{flex:1, backgroundColor:'white' }}>
@@ -141,7 +163,7 @@ console.log(profiles)
     </View>
     <View style = {{flex:0.7,marginLeft:20, marginRight:20,}}>
     <FlatList
-        data={profiles}
+        data={profiler}
         renderItem={renderItem}
         keyExtractor={item => item.phoneNumber}
         // extraData = {profiles}

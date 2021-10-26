@@ -21,7 +21,7 @@ function MainGun({length}){
 
 
 
-function Contacts({navigation,route}){
+ export default function ContactsLatest({navigation,route}){
    
 const myContext = useContext(AppContext); 
 const { userId,defaultDataObject,setUser,computeName, setId,contactsL,sortNames} = myContext;
@@ -82,32 +82,38 @@ const clearTextInput = () => {
 // function moviePropsAreEqual(prevMovie, nextMovie) {
 //   return true
 // }
-const [, updateState] = React.useState();
-const forceUpdate = React.useCallback(() => updateState({}), []);
-const [once, setOnce] = useState(1); 
+//const [, updateState] = React.useState();
+// const forceUpdate = React.useCallback(() => updateState({}), []);
+// const [once, setOnce] = useState(1); 
 
 useEffect(() => {
-Keyboard.dismiss()
-Keyboard.removeAllListeners('keyboardDidShow'); 
+
+Keyboard.addListener('keyboardDidShow', () => {
+    Keyboard.dismiss() 
+}); 
 }, [])
 
 
- useEffect(() => {
-  Keyboard.dismiss(); 
+//  useEffect(() => {
+//   Keyboard.dismiss(); 
   
- }, [checker])
+//  }, [checker])
 
 
  const addToProfiles = (phoneNumber:string) => {
    const copy = profiles.concat();
    const index = copy.findIndex(val => val.phoneNumber == phoneNumber); 
    console.log(index)
+//    copy[index].isClicked = true; 
+   if(copy[index].isClicked){
+     copy[index].isClicked = false; 
+     setProfiles(copy)
+     return; 
+     
+   } 
    copy[index].isClicked = true; 
-  //  if(copy[index].isClicked){
-  //    copy[index].isClicked = false; 
-  //  } 
-  //  copy[index].isClicked = true; 
    setProfiles(copy)
+   
 
  }
 
@@ -157,6 +163,7 @@ useEffect(() => {
     const gamer = sortNames(finalUsers); 
 
     setProfiles(gamer);
+    Keyboard.removeAllListeners('keyboardDidShow'); 
     Keyboard.dismiss()
     setLoading(false);  
 
@@ -180,7 +187,7 @@ const sendToServer = async () => {
    }))
    const finalChecker = checkerResult.filter(val => val !== null); 
    const filterByApp = finalChecker.filter(val => !val.appUser);
-   const filterBySetter = filterByApp.filter(val => !val.state);
+   const filterBySetter = filterByApp.filter(val => !val.latitude);
    if(filterBySetter.length < 1){
     const userInit = Object.assign({}, {...defaultDataObject},{phoneNumber:userId},{...user}, {appUser:true}) 
     db.collection('user').doc(userId).set(userInit, {merge:true});
@@ -281,13 +288,13 @@ const addArray = (phoneNumber:string) => {
           const result = checker.splice(index, 1);
          
          console.log(checker)
-         forceUpdate()
+         //forceUpdate()
          
          return; 
   }
   checker.push(phoneNumber)
   
-  forceUpdate()
+  //forceUpdate()
   
   console.log(checker)
 }
@@ -305,7 +312,7 @@ function checkerProps(prev, next){
 }
 // const BottomTemplate2 = memo(BottomTemplate, checkerProps)
 
-
+console.log("hello world")
 
 
 // const gamerBoy = useCallback((phoneNumber:string) => {
@@ -330,18 +337,20 @@ function checkerProps(prev, next){
 // }
 
 const checkClicked = (item, isClicked) => {
-  if(item.isCLicked || isClicked){
+  
+
+  if( isClicked || item.isClicked){
      return true; 
   } 
   return false; 
 }
 
 const ContactView = ({item,adder}) => {
-  const [isClicked, setIsClicked] = useState(false);  
+  const [isClicked, setIsClicked] = useState(item.isClicked);  
   return (
     <TouchableOpacity  
     style = {{borderWidth:1, flexDirection:"row",  justifyContent:'space-between', marginLeft:20, marginRight:20, borderLeftWidth:0, borderRightWidth:0,}}
-    onPress = {() => { setIsClicked(!isClicked), adder(item.phoneNumber), addToProfiles(item.phoneNumber)}}
+    onPress = {() => { setIsClicked(!isClicked), adder(item.phoneNumber),  addToProfiles(item.phoneNumber), clearTextInput()}}
     >
       
         <View style = {{flexDirection:'row', alignItems:'center', marginTop:5, marginBottom:5}}>
@@ -357,13 +366,17 @@ const ContactView = ({item,adder}) => {
   )
 }
 
-console.log(indexer)
+
 
 
 const searchAction = () => {
   setSearch(''); 
   
 }
+
+useEffect(() => {
+   //Keyboard.removeAllListeners('keyboardWillShow')  
+}, [])
 
 
 
@@ -374,9 +387,7 @@ const renderItem = ({ item }) => {
   ) 
 }
  
-  const result = useMemo(() => {
-    console.log("Memo called")
-  }, [checker])
+  
 
     
    const filteredEmails = profiles.filter(createFilter(search, KEYS_TO_FILTERS))
@@ -386,16 +397,17 @@ const renderItem = ({ item }) => {
   data = {filteredEmails}
   renderItem = {renderItem}
   keyExtractor={item => item.phoneNumber}
-  extraData = {filteredEmails}
+  keyboardShouldPersistTaps={'handled'}
+//   extraData = {filteredEmails}
   />  
-  }, [profiles, filteredEmails.length])
+  }, [ filteredEmails.length])
    
    if(loading){
      return <LoadScreen />
    }
    return(
      
-        <TouchableOpacity style = {{flex:1,backgroundColor:'white',marginBottom:35 }} onPress = {() => Keyboard.dismiss}>
+        <TouchableOpacity style = {{flex:1,backgroundColor:'white',marginBottom:35 }}>
         <View style = {{flex:0.1}}>
                         
         </View>
@@ -415,7 +427,7 @@ const renderItem = ({ item }) => {
         </View>
           <View style = {{marginTop:10,flex:0.6, marginTop:40}}>
           
-          {Memo}  
+    {Memo}
           {/* <FlatList
   data = {filteredEmails}
   renderItem = {renderItem}
@@ -463,8 +475,8 @@ const renderItem = ({ item }) => {
 }
 
 
- const Memed = React.memo(Contacts)
- export default Memed; 
+//  const Memed = React.memo(ContactsLatest)
+//  export default Memed; 
 
 
 const styles = StyleSheet.create({

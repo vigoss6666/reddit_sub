@@ -49,6 +49,7 @@ import PhoneSuccess from './Authentication/Screens/PhoneSuccess';
 import LoadContacts from './Authentication/Screens/LoadContacts'; 
 import Try from './Authentication/Screens/Try'; 
 import Contacts from './Authentication/Screens/Contacts'; 
+import ContactsLatest from './Authentication/Screens/ContactsLatest';
 import AuthPhotosLatest from './Authentication/Screens/AuthPhotosLatest'; 
 import AuthPhotos from './Authentication/Screens/AuthPhotos';
 import ContactsSex from './Authentication/Screens/ContactsSex'; 
@@ -234,7 +235,7 @@ export default function App() {
   const [vID, setVID] = useState(null);
   const [contactsL, setContactsL] = useState([]); 
   const [appRestart, setAppRestart] = useState(1); 
-  const [profiles, setProfiles] = useState([]);
+  const [profiler, setProfiler] = useState([]);
   
    
 
@@ -402,8 +403,8 @@ function stringifyNumber(n) {
 
 
   const tempObject = {
-    profiles, 
-    setProfiles, 
+    profiler, 
+    setProfiler, 
     globalPhoneNumber, 
     setGlobalPhoneNumber, 
     vID, 
@@ -703,7 +704,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <SafeAreaProvider>
 <NavigationContainer>
  <Stack.Navigator> 
-<Stack.Screen name="Home" component={ContactsLocation} options = {{headerShown:false}}/>
+<Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
 <Stack.Screen name="SignUpComplete" component={SignUpComplete}/>
 <Stack.Screen name="ResendCode" component={ResendCode} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS}}/>
@@ -715,6 +716,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
 <Stack.Screen name="LastName" component={LastName}/>
 <Stack.Screen name="SignIn" component={SignIn}/>
 <Stack.Screen name="Name" component={Name}/>
+<Stack.Screen name="ContactsLatest" component={ContactsLatest}/>
 <Stack.Screen name="AuthPhotosLatest" component={AuthPhotosLatest}/>
 <Stack.Screen name="Birthday" component={BirthDay}/>
 <Stack.Screen name="CountryCodes" component={CountryCodes} options = {{headerTitle:false}}/> 

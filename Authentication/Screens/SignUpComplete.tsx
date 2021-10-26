@@ -16,10 +16,10 @@ const SignUpComplete = ({navigation}) => {
         })
     }, [])
 
-    const _handleGamer = () => {
+  const _handleGamer = () => {
   AsyncStorage.setItem('user', userId)
   setId(userId)
-//   navigation.navigate('Homer', {screen:'Game'})
+  // navigation.navigate('Homer', {screen:'Game'})
   navigation.reset({index:0, routes:[{name:"Homer"}]})
     }
     useEffect(() => {

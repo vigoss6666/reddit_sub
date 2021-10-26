@@ -92,7 +92,7 @@ useEffect(() => {
          
          finalTransformed.sort(function(a,b) { return b.zIndex - a.zIndex})
          const filterByApp = finalTransformed.filter(val => !val.appUser );
-         const filterBySetter = filterByApp.filter(val => !val.latitude );
+         const filterBySetter = filterByApp.filter(val => !val.state );
          setProfilesAuth(filterBySetter) 
          
          setProfiles(filterBySetter);
