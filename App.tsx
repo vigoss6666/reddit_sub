@@ -67,6 +67,7 @@ import Playgame from './Game/Screens/Playgame';
 import GamePreview from './Game/Screens/GamePreview'; 
 
 import PlayGameLatest from './Game/Screens/PlayGameLatest';
+import PlayGameLatest10 from './Game/Screens/PlayGameLatest10';
 import HalfRound from './Game/Screens/HalfRound';
 import MapViewClientGame from './Game/Screens/MapViewClientGame';
 import MapViewSelfGame from './Game/Screens/MapViewSelfGame';
@@ -156,7 +157,7 @@ import MatchMakeLatest from './Game/Screens/MatchMakeLatest';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from './AppContext'; 
 import GameEngine from './GameEngine'; 
-import {defaultDataObject, defaultUsers, preload} from './DefaultData'; 
+import {defaultDataObject, defaultUsers, preload, dimensionQuestions10} from './DefaultData'; 
 import SignUp from './SignUp'; 
 import {cacheImages} from './networking'; 
 import * as FileSystem from 'expo-file-system';
@@ -236,6 +237,11 @@ export default function App() {
   const [contactsL, setContactsL] = useState([]); 
   const [appRestart, setAppRestart] = useState(1); 
   const [profiler, setProfiler] = useState([]);
+  const [demo, setDemo] = useState([]); 
+  const [questions20, setQuestions20] = useState([]); 
+  const [questions10, setQuestions10] = useState([]); 
+  const [gameLoader, setGameLoader] = useState(true); 
+  const [suggestedClient, setSuggestedClient] = useState([])
   
    
 
@@ -248,6 +254,12 @@ export default function App() {
     }),
   });
  
+useEffect(() => {
+ console.log("Update function caller") 
+//  dimensionQuestions10()
+}, [])
+
+
 
 
 
@@ -282,7 +294,7 @@ export default function App() {
   })
   const [clientFilter, setClientFilter] = useState([]); 
   useEffect(() => {
-    AsyncStorage.removeItem('user')
+    // AsyncStorage.removeItem('user')
   }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
@@ -341,6 +353,102 @@ useEffect(() => {
       await FileSystem.makeDirectoryAsync(location, { intermediates: true });
     }
   }
+  useEffect(() => {
+    async function namer(){
+   
+       const checkerResult = await db.collection('user').get().then(onResult => {
+         const users =  onResult.docs.map(val => val.data());
+         console.log("user length is"+users.length) 
+         const result = users.filter(person => user.datingPoolList.includes(person.phoneNumber))
+         return result; 
+      }) 
+        const finalChecker = checkerResult.filter(val => val !== null);
+        setDemo(finalChecker); 
+        setSuggestedClient(finalChecker)
+        setGameLoader(false); 
+         
+      }
+      if(Object.keys(user).length){
+        namer()
+      } 
+      
+   }, [user])
+
+
+   useEffect(() => {
+     db.collection('user').doc('+15303217868').get().then(onResult => {
+        const result = onResult.data(); 
+        db.collection('user').where('phoneNumber', 'in', result.datingPoolList).get().then(onResult1 => {
+           const result1 = onResult1.docs.map(val => val.data()); 
+           console.log("david")
+           console.log(result1)
+        })
+     }) 
+   }, [])
+   
+   
+   useEffect(() => {
+    function namer(){
+      db.collection('dimensionQuestions').doc("0").get().then(onResult => {
+        if(onResult.exists){
+          
+          const data = parseInt(user.userSet); 
+          const increment = data + 1; 
+          const finalIncremnent = increment.toString(); 
+          //db.collection('user').doc(userId).set({userSet:finalIncremnent},{merge:true})
+          const result = onResult.data(); 
+          console.log("bhima"); 
+          console.log(result.questions)
+          setQuestions10(result.questions); 
+          return; 
+        }
+        const int = parseInt(user.userSet);
+        const finalInt = int - 1; 
+        const finalString = finalInt.toString();   
+        // db.collection('dimensionQuestions10').doc(finalString).get().then(onResult1 => {
+        //   const result1 = onResult1.data();
+          
+        //   setQuestions20(result1.questions); 
+        //   db.collection('user').doc(userId).set({userSet:"0"},{merge:true}) 
+        // })
+        
+   })
+      db.collection('dimensionQuestions10').doc("0").get().then(onResult => {
+        if(onResult.exists){
+          
+          const data = parseInt(user.userSet); 
+          const increment = data + 1; 
+          const finalIncremnent = increment.toString(); 
+          //db.collection('user').doc(userId).set({userSet:finalIncremnent},{merge:true})
+          const result = onResult.data(); 
+          console.log("bhima"); 
+          console.log(result.questions)
+          setQuestions20(result.questions); 
+          return; 
+        }
+        const int = parseInt(user.userSet);
+        const finalInt = int - 1; 
+        const finalString = finalInt.toString();   
+        // db.collection('dimensionQuestions10').doc(finalString).get().then(onResult1 => {
+        //   const result1 = onResult1.data();
+          
+        //   setQuestions20(result1.questions); 
+        //   db.collection('user').doc(userId).set({userSet:"0"},{merge:true}) 
+        // })
+        
+   })
+    }
+    if(!questions20.length && !questions10.length){
+      namer()
+    }
+   
+  // db.collection('questions').get().then(onResult => {
+  //        const result = onResult.docs.map(val => val.data()); 
+  //        //setQuestions(result); 
+  //        console.log(result)
+  //        db.collection('dimensionQuestions').doc('0').set({questions:result})
+  //   }) 
+  }, [])
   
   useEffect(() => {
      
@@ -437,6 +545,11 @@ function stringifyNumber(n) {
   }
   
   const globalObject = {
+    suggestedClient,
+    setSuggestedClient, 
+    questions10, 
+    questions20, 
+    demo, 
     setAppRestart, 
     setId,
     setUser, 
@@ -623,6 +736,9 @@ const mainHome = () => {
           animationEnabled: false,
         }}/>
         <Stack.Screen name="PlayGameLatest" component={PlayGameLatest} options={{
+          animationEnabled: false,
+        }}/>
+        <Stack.Screen name="PlayGameLatest10" component={PlayGameLatest10} options={{
           animationEnabled: false,
         }}/>
           <Stack.Screen name="HalfRound" component={HalfRound}/>

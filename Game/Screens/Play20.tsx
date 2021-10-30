@@ -7,15 +7,18 @@ import { selectPrinterAsync } from 'expo-print';
 
 export default function Play20({navigation, route}){
 
-const {matchFound} = route.params; 
+const {matchFound, matchFoundObj} = route.params; 
 
 useEffect(() => {
- if(matchFound){
-    return
- }
- setTimeout(() => {
-  navigation.navigate('NoMatch')
- }, 3000)
+//  if(matchFound){
+//     return
+//  }
+//  setTimeout(() => {
+//   navigation.navigate('NoMatch', {matchFound})
+//  }, 3000)
+setTimeout(() => {
+    navigation.navigate('PlayGameLatest10', {matchFound, matchFoundObj})
+   }, 3000)
  
 }, [])
 
@@ -31,7 +34,7 @@ return(
 </Image>
 </View>
 <View style = {{flex:0.2, justifyContent:"center", }}>
-<Button 
+{/* <Button 
 disabled = {matchFound ? false : true}
 onPress = {() => navigation.navigate('PlayGameLatest')}
 title = "Play again" containerStyle = {{marginLeft:30, marginRight:30}} buttonStyle = {{backgroundColor:"black"}} icon={
@@ -50,7 +53,7 @@ onPress = {() => navigation.navigate('Homer')}
 title = "Maybe Not" containerStyle = {{marginLeft:30, marginRight:30, marginTop:10}} buttonStyle = {{backgroundColor:"black"}} 
   >
 
-</Button>
+</Button> */}
  </View>   
 </View>
 )

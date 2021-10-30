@@ -22,6 +22,7 @@ function computeName(obj) {
 
 
 export default function Endorsement({navigation, route}){
+  console.log('Endorsement in the page clled'); 
   const myContext = useContext(AppContext); 
   const { userId} = myContext;
   console.log("user id is ")
@@ -35,6 +36,11 @@ export default function Endorsement({navigation, route}){
     }
   }
   const {client, user} = route.params; 
+
+  console.log("client is"); 
+  console.log(client)
+  console.log('user is ..'); 
+  console.log(user)
   const endorse = () => {
       const chat = createChatThread(client.phoneNumber, user.phoneNumber); 
       
@@ -77,12 +83,12 @@ export default function Endorsement({navigation, route}){
          <Text style = {{color:"white", fontWeight:"bold", fontSize:35, fontStyle:"italic", alignSelf:'center'}}> It's a Match ! </Text>
          <View style = {{flexDirection:"row",marginTop:50, justifyContent:'space-around', alignItems:'center'  }}>
          <View style = {{alignItems:"center",}}>
-         {client.profilePic ? <Image source = {{uri:client.profilePic}} style = {{height:100, width:100, borderRadius:50}}/>:
+         {client.profilePicSmall ? <Image source = {{uri:client.profilePicSmall}} style = {{height:100, width:100, borderRadius:50}}/>:
          <MaterialIcons name="account-circle" size={100} color="blue" />}
          <Text style = {{color:"white", fontWeight:"bold",fontSize:20, marginTop:10}}>{computeName(client)} </Text>
          </View>
          <View style = {{alignItems:"center", }}>
-         {user.profilePic ? <Image source = {{uri:user.profilePic}} style = {{height:100, width:100, borderRadius:50}}/>:
+         {user.profilePicSmall ? <Image source = {{uri:user.profilePicSmall}} style = {{height:100, width:100, borderRadius:50}}/>:
          <MaterialIcons name="account-circle" size={100} color="blue" />}
          <Text style = {{color:"white", fontWeight:"bold",fontSize:20, marginTop:10}}>{computeName(user)} </Text>
          </View>
@@ -106,12 +112,12 @@ export default function Endorsement({navigation, route}){
             
           }
         //   onPress = {() => setIndexWrapper()}
-        onPress = {() => { endorse() ,navigation.navigate('PlayGameLatest')}}
+        onPress = {() => { endorse() ,navigation.pop(4)}}
           >
          
         </Button>
         <Button title = "Maybe Not" buttonStyle = {{backgroundColor:"#6e6b65",}} titleStyle = {{color:"white", fontWeight:"bold"}} containerStyle = {{marginLeft:30, marginRight:30, marginTop:30}}
-        onPress = {() => navigation.goBack()}
+        onPress = {() => navigation.navigate('MatchMakeGrand')}
         >
         </Button>
         

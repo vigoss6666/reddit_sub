@@ -84,6 +84,7 @@ interface database {
  points:[point], 
  posted:boolean, 
  profilePic:null, 
+ profilePicSmall:null, 
  school:string, 
  seenChats:[], 
  seen:[], 
@@ -96,6 +97,111 @@ interface database {
  timeStamp:Date, 
  votes:[], 
  year:number
+
+}
+
+export async function dimensionQuestions10(){
+   const arr = [ 
+       {
+      dimension:'wealthy', 
+      question:"Will go on exotic vacations"  
+      }, 
+      {
+        dimension:'status', 
+        question:"Likely to have a political friend"  
+        },
+        {
+            dimension:'narcissism', 
+            question:"Will check instagram every 5 mins"  
+            },
+            {
+                dimension:'empathetic', 
+                question:"Will listen to your breakup stories"  
+                },
+                {
+                    dimension:'creative', 
+                    question:"Will paint you a gift card"  
+                    },
+                    
+                        {
+                            dimension:'honest', 
+                            question:"Will give you a honest opinion"  
+                            },
+                            {
+                                dimension:'charisma', 
+                                question:"Will influence others by developing mutual liking and respect"  
+                                },
+                                {
+                                    dimension:'humor', 
+                                    question:"Will you make you smile in the most serious situations"  
+                                    },
+                                    {
+                                        dimension:'looks', 
+                                        question:"Will turn eyeballs in vegas"  
+                                        },
+                                        {
+                                            dimension:'wealthy', 
+                                            question:"Will travel by a private plane"  
+                                            },
+                                            {
+                                                dimension:'wealthy', 
+                                                question:"Will go on exotic vacations"  
+                                                }, 
+                                                {
+                                                  dimension:'status', 
+                                                  question:"Likely to have a political friend"  
+                                                  },
+                                                  {
+                                                      dimension:'narcissism', 
+                                                      question:"Will check instagram every 5 mins"  
+                                                      },
+                                                      {
+                                                          dimension:'empathetic', 
+                                                          question:"Will listen to your breakup stories"  
+                                                          },
+                                                          {
+                                                              dimension:'creative', 
+                                                              question:"Will paint you a gift card"  
+                                                              },
+                                                              
+                                                                  {
+                                                                      dimension:'honest', 
+                                                                      question:"Will give you a honest opinion"  
+                                                                      },
+                                                                      {
+                                                                          dimension:'charisma', 
+                                                                          question:"Will influence others by developing mutual liking and respect"  
+                                                                          },
+                                                                          {
+                                                                              dimension:'humor', 
+                                                                              question:"Will you make you smile in the most serious situations"  
+                                                                              },
+                                                                              {
+                                                                                  dimension:'looks', 
+                                                                                  question:"Will turn eyeballs in vegas"  
+                                                                                  },
+                                                                                  {
+                                                                                      dimension:'wealthy', 
+                                                                                      question:"Will travel by a private plane"  
+                                                                                      },
+                                    
+
+
+]  
+const db = firebase.firestore();
+db.collection('namer123').doc("0").set({name:"zaid"})
+//db.collection('dimensionQuestions10').doc("0").set({questions:arr})
+
+arr.map(async val  => {
+    return await db.collection('dimensionQuestions').doc("0").set({ 
+         questions:firebase.firestore.FieldValue.arrayUnion(val) 
+     }, {merge:true})
+})
+// arr.map(val => {
+//     db.collection('dimensionQuestions').doc("0").set({ 
+//         questions:firebase.firestore.FieldValue.arrayUnion(val) 
+//     }, {merge:true})
+// })
 
 }
 
@@ -144,6 +250,7 @@ export const defaultDataObject:database = {
 
  posted:false, 
  profilePic:null, 
+ profilePicSmall:null, 
  school:"", 
  seenChats:[], 
  seen:[], 
