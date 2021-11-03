@@ -600,19 +600,16 @@ export async function clientSort(users, sortedArray){
     return users; 
   }
   users.map(val => {
-     console.log(val.phoneNumber)
-     console.log(val.simDimension)
+     
   })
-  console.log("checking filter")
-  console.log(sortedArray)
+  
   
   const finalResult = []
   sortedArray.map(val => {
      const result = users.filter(val1 => val1.simDimension == val)
      finalResult.push(...result); 
   })
-  console.log("finalLength")
-  console.log(finalResult.length)
+  
   return finalResult; 
 }
 

@@ -646,6 +646,7 @@ items={[
 {label: '40 to 44 years', value: {minAge:40, maxAge:44},selected:item.minAge == 40 && item.maxAge == 44 ? true : false}, 
 {label: '45 to 49 years', value: {minAge:45, maxAge:49},selected:item.minAge == 45 && item.maxAge == 49 ? true : false},
 {label: '50 to 54 years', value: {minAge:50, maxAge:54}, selected:item.minAge == 50 && item.maxAge == 54 ? true : false},
+{label: '55 to 59 years', value: {minAge:55, maxAge:59}, selected:item.minAge == 55 && item.maxAge == 59 ? true : false},
 
 ]}
 onPress = {() => {console.log("pressed")}}
@@ -752,6 +753,35 @@ onChangeItem={namer => addAge(item, namer)}
           </View>
          
      )
+     const checkAgeSet = (minAge:number, maxAge:number) => {
+          if(minAge >= 15 && maxAge <= 19){
+               return 0; 
+          }
+          if(minAge >= 20 && maxAge <= 24){
+             return 1; 
+          }
+          if(minAge >= 25 && maxAge <= 29){
+             return 2; 
+          }
+          if(minAge >= 30 && maxAge <= 34){
+             return 3; 
+          }
+          if(minAge >= 35 && maxAge <= 39){
+             return 4; 
+          }
+          if(minAge >= 40 && maxAge <= 44){
+             return 5; 
+          }
+          if(minAge >= 45 && maxAge <= 49){
+             return 6; 
+          }
+          if(minAge >= 50 && maxAge <= 54){
+             return 7; 
+          }
+          if(minAge >= 55 && maxAge <= 59){
+             return 8; 
+          }
+     }
      
      const [namer, setNamer] = useState(1)
      
@@ -835,7 +865,8 @@ onChangeItem={namer => addAge(item, namer)}
                      data[index].minAge = item.value.minAge; 
                      data[index].maxAge = item.value.maxAge; 
                      const age = (item.value.maxAge + item.value.minAge)/2; 
-                     db.collection('user').doc(obj.phoneNumber).update({minAge:item.value.minAge, maxAge:item.value.maxAge,age})
+                     const ageSet = checkAgeSet(item.value.minAge,item.value.maxAge)
+                     db.collection('user').doc(obj.phoneNumber).update({minAge:item.value.minAge, maxAge:item.value.maxAge,age, ageSet})
                      
                })
           

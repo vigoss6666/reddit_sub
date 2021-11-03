@@ -127,7 +127,35 @@ const changeArray = (arr, obj) => {
 return arr; 
 
 }
-
+const checkAgeSet = (minAge:number, maxAge:number) => {
+     if(minAge >= 15 && maxAge <= 19){
+          return 0; 
+     }
+     if(minAge >= 20 && maxAge <= 24){
+        return 1; 
+     }
+     if(minAge >= 25 && maxAge <= 29){
+        return 2; 
+     }
+     if(minAge >= 30 && maxAge <= 34){
+        return 3; 
+     }
+     if(minAge >= 35 && maxAge <= 39){
+        return 4; 
+     }
+     if(minAge >= 40 && maxAge <= 44){
+        return 5; 
+     }
+     if(minAge >= 45 && maxAge <= 49){
+        return 6; 
+     }
+     if(minAge >= 50 && maxAge <= 54){
+        return 7; 
+     }
+     if(minAge >= 55 && maxAge <= 59){
+        return 8; 
+     }
+}
 
 
 useEffect(() => {
@@ -138,10 +166,12 @@ useEffect(() => {
  const updateToServer = () => {
      const batch  = db.batch(); 
      country.map(val => {
+
           const ref = db.collection('user').doc(val._id); 
           batch.set(ref, {minAge:val.minAge}, {merge:true}); 
           batch.set(ref, {maxAge:val.maxAge}, {merge:true});
           batch.set(ref, {age:parseInt((val.maxAge + val.minAge)/2)}, {merge:true});
+          batch.set(ref, {ageSet:checkAgeSet(val.minAge, val.maxAge)}, {merge:true});
      })
      batch.commit().then(() => console.log("documents have been added successfully"))
      
@@ -214,13 +244,14 @@ useEffect(() => {
                     </View>
                     <DropDownPicker
                     items={[
-                        {label: '15 - 20 years', value: {minAge:15,maxAge:20}, },
-                        {label: '20 - 25 years', value: {minAge:20,maxAge:25} },
-                        {label: '25 - 30 years', value: {minAge:25,maxAge:30} },
-                        {label: '30 - 35 years', value: {minAge:30,maxAge:35} },
-                        {label: '35 - 40 years', value: {minAge:35,maxAge:40}, },
-                        {label: '40 - 45 years', value: {minAge:40,maxAge:45}, },
-                        {label: '45 - 50 years', value: {minAge:45,maxAge:50}, },
+                        {label: '15 - 19 years', value: {minAge:15,maxAge:19},},
+                        {label: '20 - 24 years', value: {minAge:20,maxAge:24}},
+                        {label: '25 - 29 years', value: {minAge:25,maxAge:29}},
+                        {label: '30 - 34 years', value: {minAge:30,maxAge:34}},
+                        {label: '35 - 39 years', value: {minAge:35,maxAge:39},},
+                        {label: '40 - 44 years', value: {minAge:40,maxAge:44},},
+                        {label: '45 - 49 years', value: {minAge:45,maxAge:49},},
+                        {label: '50 - 54 years', value: {minAge:50,maxAge:54},},
                     ]}
                     
     

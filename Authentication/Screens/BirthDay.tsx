@@ -32,6 +32,35 @@ export default function BirthDay({navigation, route}){
      navigation.navigate('AddPhoto', {page:"something"})
      
   }
+  const checkAgeSet = (age:number) => {
+   if(age >= 15 && age <= 19){
+      return 0; 
+   }      
+   if(age >= 20 && age <= 24){
+    return 1; 
+   }
+   if(age >= 25 && age <= 29){
+    return 2; 
+   }
+   if(age >= 30 && age <= 34){
+    return 3; 
+   }
+   if(age >= 35 && age <= 39){
+    return 4; 
+   }
+   if(age >= 40 && age <= 44){
+    return 5; 
+   }
+   if(age >= 45 && age <= 49){
+    return 6; 
+   }
+   if(age >= 50 && age <= 54){
+    return 7; 
+   }
+   if(age >= 55 && age <= 60){
+    return 8; 
+   }
+  }
 
   const onChange = (event, selectedDate) => {
     
@@ -61,7 +90,9 @@ export default function BirthDay({navigation, route}){
     const day = d.getDate(); 
     const namer = new Date(); 
     const age = namer.getFullYear() - year; 
-    updateUser(userId, { month,year,timeStamp,day, age}); 
+    const ageSet = checkAgeSet(age); 
+    console.log(ageSet); 
+    updateUser(userId, { month,year,timeStamp,day, age, ageSet}); 
   }
 
   const showMode = (currentMode) => {
@@ -106,7 +137,7 @@ return(
   containerStyle = {{backgroundColor:"black",marginLeft:30, marginRight:30}}
   titleStyle = {{color:"white", fontWeight:"700"}}
   disabledStyle = {{backgroundColor:"grey",}}
-  onPress = {() => {_sendToServer(), _handlePage() }}
+  onPress = {() => {_sendToServer(), _handlePage()}}
   disabled = {error}
 />
 </View>

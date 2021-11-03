@@ -63,7 +63,7 @@ const PlayGameLatest = ({navigation}) => {
   
   // const [questions, setQuestions] = useState([]); 
   const element = createRef();
-  const [matchFound, setMatchFound] = useState(true); 
+  const [matchFound, setMatchFound] = useState(false); 
   const [matchFoundObj, setMatchFoundObj] = useState({}); 
 
 
@@ -89,13 +89,12 @@ const PlayGameLatest = ({navigation}) => {
   useEffect(() => {
     Keyboard.dismiss()
   }, [])
-console.log(" iwas rendered in the game")
-console.log("mainX value checking"+mainX)
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       // The screen is focused
       // Call any action
-      console.log("namer is the best gamer"); 
+      
       // forceUpdate()
       setMainX(90)
     });
@@ -142,8 +141,7 @@ const resetGame = () => {
     const db = firebase.firestore(); 
     db.collection('namer123').doc("0").get().then(async onResult => {
        const result = await onResult.data(); 
-       console.log("kama result...")
-      console.log(result)
+       
     }) 
   }, [])
   
@@ -184,7 +182,7 @@ const resetGame = () => {
 //   //   }) 
 //   }, [_update])
   useEffect(() => {
-    console.log("i was called")
+    
     setQuestionsIndex(0)
   }, [])
 
@@ -358,7 +356,7 @@ const namer =  [
   // }, [])
   
   useLayoutEffect(() => {
-    console.log("layout effect called")
+    
     if(mailer.current ){
         mailer.current.measure((x,y, height, width, px, py) => {
         setContainerHeight(height);
@@ -366,9 +364,7 @@ const namer =  [
     }
     if(mainView.current){
             mainView.current.measure((x,y, height, width, px, py) => {
-            console.log("x is "+px); 
-            console.log("y is "+py);   
-            console.log("height is"+ height); 
+            
             setMainX(90); 
             setMainWidth(width); 
             setMainY(py); 
@@ -386,9 +382,7 @@ const namer =  [
   }
   if(mainView.current ){
           mainView.current.measure((x,y, height, width, px, py) => {
-          console.log("x is "+px); 
-          console.log("y is "+py);   
-          console.log("height is"+ height); 
+          
           setMainX(px); 
           setMainWidth(width); 
           setMainY(py); 
@@ -470,24 +464,107 @@ const namer =  [
 //   }, [])
 
  const popClient = () => {
-    const copy = JSON.stringify(JSON.parse(suggestedClient)); 
-    copy.pop(); 
+    if(suggestedClient.length == 0){
+     setSuggestedClient(demo);   
+     return; 
+    }
+    const copy = JSON.parse(JSON.stringify(suggestedClient)) 
+    copy.shift(); 
     setSuggestedClient(copy); 
  }  
+
+ console.log("sugar")
+ console.log(questionsIndex)
+
+ const getGenderClass = (genderClass) => {
+  if(genderClass == 'MM'){
+     return ['MM']
+  }
+  if(genderClass == 'MF'){
+    return ['FM']
+ }
+ if(genderClass == 'ME'){
+  return ['FE', 'TE', 'TM', 'FM']
+ }
+ if(genderClass == 'FE'){
+  return ['ME', 'TE', 'TF', 'MF']
+ }
+ if(genderClass == 'FF'){
+  return ['FF']
+}
+if(genderClass == 'FM'){
+return ['MF']
+}
+if(genderClass == 'TM'){
+return ['ME']
+}
+if(genderClass == 'TF'){
+return ['FE']
+}
+if(genderClass == 'TE'){
+return ['TE', 'FE', 'ME']
+}
+}
+const getGenderClassAge = (age,genderClass) => {
+  if(genderClass == 'MM'){
+     return [age, age + 1]
+  }
+  if(genderClass == 'MF'){
+     return [age, age - 1] 
+ }
+ if(genderClass == 'ME'){
+   return [age, age + 1, age - 1]
+ }
+ if(genderClass == 'FE'){
+   return [age, age + 1, age - 1]
+ }
+ if(genderClass == 'FF'){
+  return [age, age + 1]
+}
+if(genderClass == 'FM'){
+return [age, age + 1]
+}
+if(genderClass == 'TM'){
+return [age, age + 1, age - 1]
+}
+if(genderClass == 'TF'){
+ return [age, age + 1, age - 1]
+}
+if(genderClass == 'TE'){
+return [age, age + 1, age - 1]
+}
+}
+ 
   
   const suggestMatches = () => {
-   
+
+
     const client = suggestedClient[0];
           db.collection('user').where('state', '==', client.state).get().then(async onResult => {
-          const users = onResult.docs.map(val =>val.data()); 
+          const users = onResult.docs.map(val =>val.data());
+          console.log('clientName')
+          console.log(suggestedClient[0].name)
+          
+          console.log(users.length) 
           const usersLogged = logTen(users); 
           const clientLogged = logTen(client)
           const filterBySelf = filterGamer(usersLogged, 'phoneNumber', [client.phoneNumber], null, null);
+          const clientGender = client.genderClass; 
+          const genderChecker = getGenderClass(clientGender) 
+
+          const filterByGender  = filterBySelf.excludedObjects.filter(val => genderChecker?.includes(val.genderClass)) 
+          const genderAgeFilter = getGenderClassAge(client.ageSet, client.genderClass); 
+          const filterByAge = filterByGender.filter(val => genderAgeFilter.includes(val.ageSet)); 
+          //const filterByGenderPrefence = filterByGender.filter(val => val.genderPreference == client.gender)
+
           let counter = 0; 
-          filterBySelf.excludedObjects.some(async val => {
+          console.log("jantar")
+          
+          filterByAge.some(async val => {
                const gender = val.gender; 
-               const genderChecker = client.gender == 'male' ? 'female':'male';  
-              if(val.gender == genderChecker){
+               
+              if(val.appUser && val.subLocality == client.subLocality){
+
                   
                    const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
                    return db.collection('introductions').doc(_id).get().then(onDoc => {
@@ -495,11 +572,53 @@ const namer =  [
                      if(onDoc.exists == false){
                       setMatchFound(true);
                       setMatchFoundObj({client:clientLogged, user:val});
+                      popClient()
 
                       return true;      
                      }
                    })
                  }
+                 if(val.subLocality == client.subLocality){
+                  const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
+                   return db.collection('introductions').doc(_id).get().then(onDoc => {
+                    
+                     if(onDoc.exists == false){
+                      setMatchFound(true);
+                      setMatchFoundObj({client:clientLogged, user:val});
+                      popClient()
+
+                      return true;      
+                     }
+                   })
+                  
+                 }
+                 if(val.appUser){
+                  const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
+                   return db.collection('introductions').doc(_id).get().then(onDoc => {
+                    
+                     if(onDoc.exists == false){
+                      setMatchFound(true);
+                      setMatchFoundObj({client:clientLogged, user:val});
+                      popClient()
+
+                      return true;      
+                     }
+                   })
+                 }
+                 const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
+                   return db.collection('introductions').doc(_id).get().then(onDoc => {
+                    
+                     if(onDoc.exists == false){
+                      setMatchFound(true);
+                      setMatchFoundObj({client:clientLogged, user:val});
+                      popClient()
+
+                      return true;      
+                     }
+                   })
+                   
+
+                 
                 //  if(!val.appUser && val.gender == genderChecker && val.subLocality == client.subLocality){
                   
                 //   const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
@@ -798,7 +917,7 @@ const mainer = mainBackGround.interpolate({
   // }, [bar])
 
   
-  
+  console.log(matchFoundObj)
 
   const flip = () => {
        incrementIndex();   
@@ -814,9 +933,11 @@ const mainer = mainBackGround.interpolate({
     if(measured){
        fadeOp()
        addPoints()
-       if(questionsIndex == 15){
-          suggestMatches(); 
-       }
+          if(questionsIndex > 1){
+            suggestMatches();   
+          }
+          
+       
        
        fadeIn()
        backFader()

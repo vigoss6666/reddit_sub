@@ -33,8 +33,7 @@ const db = firebase.firestore();
 const myContext = useContext(AppContext); 
 const {user, userId,setInitialRouteName} = myContext; 
 
-console.log("In details Settings"); 
-console.log(user.hometown)
+
 
 
 useEffect(() => {

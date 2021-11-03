@@ -93,7 +93,7 @@ setDefaultDating(user.dating ? 1:0)
 
 
 }, [user.distancePreference, user.minAgePreference, user.maxAgePreference, user.dating])
-console.log(userId)
+
 
 
 const _updateDistance = (value:string) => {

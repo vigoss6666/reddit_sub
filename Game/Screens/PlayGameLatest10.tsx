@@ -81,13 +81,12 @@ const PlayGameLatest10 = ({navigation,route}) => {
   useEffect(() => {
     Keyboard.dismiss()
   }, [])
-console.log(" iwas rendered in the game")
-console.log("mainX value checking"+mainX)
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       // The screen is focused
       // Call any action
-      console.log("namer is the best gamer"); 
+      
       // forceUpdate()
       setMainX(90)
     });
@@ -161,7 +160,7 @@ const resetGame = () => {
 //   //   }) 
 //   }, [_update])
   useEffect(() => {
-    console.log("i was called")
+    
     setQuestionsIndex(0)
   }, [])
 
@@ -338,7 +337,7 @@ useEffect(() => {
   }, [questions10])
   
   useLayoutEffect(() => {
-    console.log("layout effect called")
+    
     if(mailer.current ){
         mailer.current.measure((x,y, height, width, px, py) => {
         setContainerHeight(height);
@@ -346,9 +345,7 @@ useEffect(() => {
     }
     if(mainView.current){
             mainView.current.measure((x,y, height, width, px, py) => {
-            console.log("x is "+px); 
-            console.log("y is "+py);   
-            console.log("height is"+ height); 
+            
             setMainX(90); 
             setMainWidth(width); 
             setMainY(py); 
@@ -366,9 +363,7 @@ useEffect(() => {
   }
   if(mainView.current ){
           mainView.current.measure((x,y, height, width, px, py) => {
-          console.log("x is "+px); 
-          console.log("y is "+py);   
-          console.log("height is"+ height); 
+          
           setMainX(px); 
           setMainWidth(width); 
           setMainY(py); 
@@ -421,7 +416,7 @@ useEffect(() => {
   
   
   const suggestMatches = () => {
-   console.log("hello world")  
+   
     
     if(client == 'first'){
         
@@ -502,8 +497,7 @@ useEffect(() => {
    }
    if(client == 'second'){
     const client = demo[index + 1]; 
-    console.log('clienter')
-    console.log(client.phoneNumber); 
+    
     db.collection('user').where('state', '==', demo[index + 1].state).get().then(async onResult => {
       const users = onResult.docs.map(val =>val.data()); 
       const usersLogged = logTen(users); 

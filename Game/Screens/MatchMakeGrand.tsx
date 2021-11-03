@@ -549,7 +549,7 @@ const MatchMakeFinal = ({navigation, route}) => {
       return (
         <View style={{flex:1, paddingTop:insets.top}}>
           <View style = {{flexDirection:'row', justifyContent:'space-between',alignItems:'center', backgroundColor:'grey',flex:'6%'}}>
-             <TouchableOpacity onPress = {() => { navigation.navigate('Homer')}}>
+             <TouchableOpacity onPress = {() => {  navigation.reset({index:0, routes:[{name:"Homer"}]})}}>
             <Entypo name="controller-play" size={35} style = {{marginLeft:20}} />                    
             </TouchableOpacity>
             <View style = {{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>

@@ -255,7 +255,7 @@ export default function App() {
   });
  
 useEffect(() => {
- console.log("Update function caller") 
+ 
 //  dimensionQuestions10()
 }, [])
 
@@ -349,7 +349,7 @@ useEffect(() => {
   async function ensureDirExists(location) {
     const dirInfo = await FileSystem.getInfoAsync(location);
     if (!dirInfo.exists) {
-      console.log("Gif directory doesn't exist, creating...");
+      
       await FileSystem.makeDirectoryAsync(location, { intermediates: true });
     }
   }
@@ -358,13 +358,16 @@ useEffect(() => {
    
        const checkerResult = await db.collection('user').get().then(onResult => {
          const users =  onResult.docs.map(val => val.data());
-         console.log("user length is"+users.length) 
+         
          const result = users.filter(person => user.datingPoolList.includes(person.phoneNumber))
          return result; 
       }) 
         const finalChecker = checkerResult.filter(val => val !== null);
-        setDemo(finalChecker); 
-        setSuggestedClient(finalChecker)
+        setDemo(finalChecker);
+        if(suggestedClient.length == 0){
+          setSuggestedClient(finalChecker)          
+        } 
+        
         setGameLoader(false); 
          
       }
@@ -380,8 +383,7 @@ useEffect(() => {
         const result = onResult.data(); 
         db.collection('user').where('phoneNumber', 'in', result.datingPoolList).get().then(onResult1 => {
            const result1 = onResult1.docs.map(val => val.data()); 
-           console.log("david")
-           console.log(result1)
+           
         })
      }) 
    }, [])
@@ -397,8 +399,7 @@ useEffect(() => {
           const finalIncremnent = increment.toString(); 
           //db.collection('user').doc(userId).set({userSet:finalIncremnent},{merge:true})
           const result = onResult.data(); 
-          console.log("bhima"); 
-          console.log(result.questions)
+          
           setQuestions10(result.questions); 
           return; 
         }
@@ -421,8 +422,7 @@ useEffect(() => {
           const finalIncremnent = increment.toString(); 
           //db.collection('user').doc(userId).set({userSet:finalIncremnent},{merge:true})
           const result = onResult.data(); 
-          console.log("bhima"); 
-          console.log(result.questions)
+          
           setQuestions20(result.questions); 
           return; 
         }
@@ -606,7 +606,7 @@ function stringifyNumber(n) {
     
   }
   useEffect(() => {
-    console.log(createChatThread('+917506425060', '+917391827998'))
+    
   }, []) 
   
   const getUserData = async (value) => {

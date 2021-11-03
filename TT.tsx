@@ -6,7 +6,7 @@ interface TTProps {}
 
 function Namer({name}){
   const jumper = useMemo(() => {
-    console.log("memo called")
+    
     return <Text>Hello world</Text>
   }, [])
   
