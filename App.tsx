@@ -294,7 +294,7 @@ useEffect(() => {
   })
   const [clientFilter, setClientFilter] = useState([]); 
   useEffect(() => {
-    // AsyncStorage.removeItem('user')
+    AsyncStorage.removeItem('user')
   }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
@@ -355,6 +355,8 @@ useEffect(() => {
   }
   useEffect(() => {
     async function namer(){
+
+      console.log("gianter called")
    
        const checkerResult = await db.collection('user').get().then(onResult => {
          const users =  onResult.docs.map(val => val.data());
@@ -371,7 +373,7 @@ useEffect(() => {
         setGameLoader(false); 
          
       }
-      if(Object.keys(user).length){
+      if(Object.keys(user).length && !demo.length){
         namer()
       } 
       

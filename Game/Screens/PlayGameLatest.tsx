@@ -50,7 +50,10 @@ const PlayGameLatest = ({navigation}) => {
   const [index, setIndex] = useState(0); 
   const [profiles,setProfiles] = useState([])
   const myContext = useContext(AppContext); 
-  const {user, userId, computeName, demo, questions20, suggestedClient,setSuggestedClient} = myContext;
+  const {user, userId, computeName, demo, questions20,suggestedClient,setSuggestedClient} = myContext;
+  // let suggestedClient = useRef(demo).current; 
+  // const [suggestedClient, setSuggestedClient] = useState(demo)
+  
   const [pageFocused, setPageFocused] = useState(false); 
   const [preview, setPreview] = useState()
   const colors = ['green', 'blue', 'red']
@@ -65,6 +68,9 @@ const PlayGameLatest = ({navigation}) => {
   const element = createRef();
   const [matchFound, setMatchFound] = useState(false); 
   const [matchFoundObj, setMatchFoundObj] = useState({}); 
+
+
+  
 
 
   // useEffect(() => {
@@ -464,17 +470,25 @@ const namer =  [
 //   }, [])
 
  const popClient = () => {
-    if(suggestedClient.length == 0){
-     setSuggestedClient(demo);   
+    if(suggestedClient.length == 1){
+     setSuggestedClient(demo)    
      return; 
     }
-    const copy = JSON.parse(JSON.stringify(suggestedClient)) 
+    // suggestedClient.shift()
+    const copy = suggestedClient.concat() 
     copy.shift(); 
-    setSuggestedClient(copy); 
- }  
+    setSuggestedClient(copy)
+ }
 
- console.log("sugar")
- console.log(questionsIndex)
+const asyncSome = async (arr, predicate) => {
+	for (let e of arr) {
+		if (await predicate(e)) return true;
+	}
+	return false;
+};
+ 
+
+ 
 
  const getGenderClass = (genderClass) => {
   if(genderClass == 'MM'){
@@ -535,40 +549,57 @@ return [age, age + 1, age - 1]
 }
 }
  
+console.log("suggester")
+suggestedClient.map(val => console.log(val.name))
+console.log("demo")
+demo.map(val => console.log(val.name))
   
-  const suggestMatches = () => {
+  const suggestMatches = async () => {
 
 
-    const client = suggestedClient[0];
-          db.collection('user').where('state', '==', client.state).get().then(async onResult => {
-          const users = onResult.docs.map(val =>val.data());
-          console.log('clientName')
-          console.log(suggestedClient[0].name)
+         
           
-          console.log(users.length) 
+          db.collection('user').where('state', '==', suggestedClient[0].state).where('matchMaker', '==', '+919930815474').get().then(async onResult => {
+          const users = onResult.docs.map(val =>val.data());
+          // users.map(val => console.log(val.genderClass == typeof undefined))
+          
+          
+          // console.log('clientcc')
+          // console.log(suggestedClient[0].genderClass) 
           const usersLogged = logTen(users); 
-          const clientLogged = logTen(client)
-          const filterBySelf = filterGamer(usersLogged, 'phoneNumber', [client.phoneNumber], null, null);
-          const clientGender = client.genderClass; 
-          const genderChecker = getGenderClass(clientGender) 
+          const clientLogged = logTen(suggestedClient[0])
+          const filterBySelf = filterGamer(usersLogged, 'phoneNumber', [suggestedClient[0].phoneNumber], null, null);
+          const clientGender = suggestedClient[0].genderClass; 
+          const genderChecker = getGenderClass(suggestedClient[0].genderClass)
+          
+          
+          
 
-          const filterByGender  = filterBySelf.excludedObjects.filter(val => genderChecker?.includes(val.genderClass)) 
-          const genderAgeFilter = getGenderClassAge(client.ageSet, client.genderClass); 
+          const filterByGender  = filterBySelf.excludedObjects.filter(val => genderChecker.includes(val.genderClass)) 
+          const genderAgeFilter = getGenderClassAge(suggestedClient[0].ageSet, suggestedClient[0].genderClass); 
+          console.log('gendercc'); 
+          console.log(genderAgeFilter)
           const filterByAge = filterByGender.filter(val => genderAgeFilter.includes(val.ageSet)); 
           //const filterByGenderPrefence = filterByGender.filter(val => val.genderPreference == client.gender)
 
-          let counter = 0; 
-          console.log("jantar")
+          console.log("ager"); 
+          console.log(filterByAge.length)
+
           
-          filterByAge.some(async val => {
+          
+          filterByAge.length ? asyncSome(filterByAge, async val => {
                const gender = val.gender; 
+               console.log("caller count")
+               console.log("valer")
+               console.log(val.firstName)
                
-              if(val.appUser && val.subLocality == client.subLocality){
+              if(val.appUser && val.subLocality == suggestedClient[0].subLocality){
 
                   
-                   const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
+                   const _id = createChatThread(suggestedClient[0].phoneNumber, val.phoneNumber); 
                    return db.collection('introductions').doc(_id).get().then(onDoc => {
-                    
+                     console.log('doccer')
+                     console.log(onDoc.exists)
                      if(onDoc.exists == false){
                       setMatchFound(true);
                       setMatchFoundObj({client:clientLogged, user:val});
@@ -576,12 +607,14 @@ return [age, age + 1, age - 1]
 
                       return true;      
                      }
+                     return false; 
                    })
                  }
-                 if(val.subLocality == client.subLocality){
-                  const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
+                 if(val.subLocality == suggestedClient[0].subLocality){
+                  const _id = createChatThread(suggestedClient[0].phoneNumber, val.phoneNumber); 
                    return db.collection('introductions').doc(_id).get().then(onDoc => {
-                    
+                    console.log('doccer')
+                    console.log(onDoc.exists) 
                      if(onDoc.exists == false){
                       setMatchFound(true);
                       setMatchFoundObj({client:clientLogged, user:val});
@@ -589,25 +622,34 @@ return [age, age + 1, age - 1]
 
                       return true;      
                      }
+                     return false; 
                    })
                   
                  }
                  if(val.appUser){
-                  const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
-                   return db.collection('introductions').doc(_id).get().then(onDoc => {
-                    
+                  const _id = createChatThread(suggestedClient[0].phoneNumber, val.phoneNumber); 
+                  console.log()
+                    return await db.collection('introductions').doc(_id).get().then(onDoc => {
+                    console.log('doccer')
+                     console.log(onDoc.exists)
                      if(onDoc.exists == false){
+                       console.log({client:clientLogged, user:val})
                       setMatchFound(true);
                       setMatchFoundObj({client:clientLogged, user:val});
                       popClient()
 
                       return true;      
                      }
+                     return false; 
+                     
+                      
                    })
+                   
                  }
-                 const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
+                 const _id = createChatThread(suggestedClient[0].phoneNumber, val.phoneNumber); 
                    return db.collection('introductions').doc(_id).get().then(onDoc => {
-                    
+                    console.log('doccer')
+                     console.log(onDoc.exists)
                      if(onDoc.exists == false){
                       setMatchFound(true);
                       setMatchFoundObj({client:clientLogged, user:val});
@@ -615,210 +657,16 @@ return [age, age + 1, age - 1]
 
                       return true;      
                      }
+                     return false; 
                    })
-                   
-
-                 
-                //  if(!val.appUser && val.gender == genderChecker && val.subLocality == client.subLocality){
-                  
-                //   const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
-                //   return db.collection('introductions').doc(_id).get().then(onDoc => {
-                   
-                //     if(onDoc.exists == false){
-                //      setMatchFound(true);
-                //      setMatchFoundObj({client:clientLogged, user:val});   
-                //      return true;      
-                //     }
-                //   })
-                // }
-                // if(val.appUser && val.gender == genderChecker && val.subLocality !== client.subLocality) {
-                  
-                //   const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
-                //   return db.collection('introductions').doc(_id).get().then(onDoc => {
-                   
-                //     if(onDoc.exists == false){
-                //      setMatchFound(true);
-                //      setMatchFoundObj({client:clientLogged, user:val});   
-                //      return true;      
-                //     }
-                //   })
-                // }
               
-          })
+          }):popClient()
            
         })
 
 
     
-  //   if(client == 'first'){
-        
-        
-  //       const client = demo[index]; 
-  //       db.collection('user').where('state', '==', demo[index].state).get().then(async onResult => {
-  //         const users = onResult.docs.map(val =>val.data()); 
-  //         const usersLogged = logTen(users); 
-  //         const clientLogged = logTen(client)
-
-  //         // const datingFilter = filterGamer(usersLogged, 'phoneNumber', user.datingPoolList, null, null); 
-
-          
-  //         // let matchObject; 
-          
-  //         // const filterBySuggestions = filterGamer(datingFilter.excludedObjects, 'phoneNumber', user.suggestedMatches, null, null);
-  //         const filterBySelf = filterGamer(usersLogged, 'phoneNumber', [client.phoneNumber], null, null);
-  //         let counter = 0; 
-  //         filterBySelf.excludedObjects.some(async val => {
-               
-
-               
-  //              const gender = val.gender; 
-  //             //  const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude);
-  //              const genderChecker = client.gender == 'male' ? 'female':'male';  
-  //             //  if( distance < client.distancePreference && val.gender == genderChecker && (client.minAgePreference <= val.age && client.maxAgePreference >= val.age ) && (val.charisma == client.charisma || val.creativity == client.creativity || val.empathetic == client.empathetic 
-  //             //   || val.honest == client.honest || val.humor == client.humor || val.looks == client.looks || val.status || val.wealthy == client.wealthy)
-  //             //  ) {
-  //             //  if( val.gender == genderChecker && (val.charisma == client.charisma || val.creativity == client.creativity || val.empathetic == client.empathetic 
-  //             //    || val.honest == client.honest || val.humor == client.humor || val.looks == client.looks || val.status || val.wealthy == client.wealthy)
-  //             //   ) {
-                
-  //             //    const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
-  //             //    return db.collection('introductions').doc(_id).get().then(onDoc => {
-                  
-  //             //      if(onDoc.exists == false){
-  //             //       setMatchFound(true);
-  //             //       setMatchFoundObj({client:clientLogged, user:val});   
-  //             //       //db.collection('user').doc(userId).set({suggestedMatches:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}, {merge:true})
-  //             //       // navigation.navigate('Endorsement', {client:clientLogged,user:val })
-
-  //             //       return true;      
-  //             //      }
-  //             //    })
-  //             //  }
-  //             if( val.appUser && val.gender == genderChecker && val.subLocality == client.subLocality) {
-                  
-  //                  const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
-  //                  return db.collection('introductions').doc(_id).get().then(onDoc => {
-                    
-  //                    if(onDoc.exists == false){
-  //                     setMatchFound(true);
-  //                     setMatchFoundObj({client:clientLogged, user:val});   
-  //                     //db.collection('user').doc(userId).set({suggestedMatches:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}, {merge:true})
-  //                     // navigation.navigate('Endorsement', {client:clientLogged,user:val })
-  
-  //                     return true;      
-  //                    }
-  //                  })
-  //                }
-  //                if(!val.appUser && val.gender == genderChecker && val.subLocality == client.subLocality){
-                  
-  //                 const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
-  //                 return db.collection('introductions').doc(_id).get().then(onDoc => {
-                   
-  //                   if(onDoc.exists == false){
-  //                    setMatchFound(true);
-  //                    setMatchFoundObj({client:clientLogged, user:val});   
-  //                    //db.collection('user').doc(userId).set({suggestedMatches:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}, {merge:true})
-  //                    // navigation.navigate('Endorsement', {client:clientLogged,user:val })
- 
-  //                    return true;      
-  //                   }
-  //                 })
-  //               }
-  //               if(val.appUser && val.gender == genderChecker && val.subLocality !== client.subLocality) {
-                  
-  //                 const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
-  //                 return db.collection('introductions').doc(_id).get().then(onDoc => {
-                   
-  //                   if(onDoc.exists == false){
-  //                    setMatchFound(true);
-  //                    setMatchFoundObj({client:clientLogged, user:val});   
-  //                    //db.collection('user').doc(userId).set({suggestedMatches:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}, {merge:true})
-  //                    // navigation.navigate('Endorsement', {client:clientLogged,user:val })
- 
-  //                    return true;      
-  //                   }
-  //                 })
-  //               }
-              
-  //         })
-
-  //       // for(let x = 0;  x < filterBySelf.excludedObjects.length; x++ ){
-  //       //   const gender = filterBySelf.excludedObjects[x].gender; 
-  //       //        const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude);
-  //       //        const genderChecker = client.gender == 'male' ? 'female':'male';  
-  //       //       //  if( distance < client.distancePreference && val.gender == genderChecker && (client.minAgePreference <= val.age && client.maxAgePreference >= val.age ) && (val.charisma == client.charisma || val.creativity == client.creativity || val.empathetic == client.empathetic 
-  //       //       //   || val.honest == client.honest || val.humor == client.humor || val.looks == client.looks || val.status || val.wealthy == client.wealthy)
-  //       //       //  ) {
-                
-  //       //        if( filterBySelf.excludedObjects[x].gender == genderChecker && (filterBySelf.excludedObjects[x].charisma == client.charisma || filterBySelf.excludedObjects[x].creativity == client.creativity || filterBySelf.excludedObjects[x].empathetic == client.empathetic 
-  //       //          || filterBySelf.excludedObjects[x].honest == client.honest || filterBySelf.excludedObjects[x].humor == client.humor || filterBySelf.excludedObjects[x].looks == client.looks || filterBySelf.excludedObjects[x].status == client.status || filterBySelf.excludedObjects[x].wealthy == client.wealthy)
-  //       //         ) {
-                
-  //       //          const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
-  //       //          db.collection('introductions').doc(_id).get().then(onDoc => {
-                  
-  //       //            if(onDoc.exists == false){
-  //       //             setMatchFound(true);  
-  //       //             db.collection('user').doc(userId).set({suggestedMatches:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}, {merge:true})
-                    
-  //       //             navigation.navigate('Endorsement', {client:clientLogged,user:val })
-                    
-                    
-  //       //            }
-  //       //          })
-  //       //        }
-
-  //       // }
-          
-           
-  //       })
-        
-  //  }
-//    if(client == 'second'){
-//     const client = demo[index + 1]; 
-//     console.log('clienter')
-//     console.log(client.phoneNumber); 
-//     db.collection('user').where('state', '==', demo[index + 1].state).get().then(async onResult => {
-//       const users = onResult.docs.map(val =>val.data()); 
-//       const usersLogged = logTen(users); 
-//       const clientLogged = logTen(client)
-//       const datingFilter = filterGamer(usersLogged, 'phoneNumber', user.datingPoolList, null, null); 
-      
-//       let matchObject; 
-      
-//       const filterBySuggestions = filterGamer(datingFilter.excludedObjects, 'phoneNumber', user.suggestedMatches, null, null);
-//       const filterBySelf = filterGamer(filterBySuggestions.excludedObjects, 'phoneNumber', [client.phoneNumber], null, null);
-      
-//       filterBySelf.excludedObjects.some(async val => {
-//            const gender = val.gender; 
-//            const distance = getDistanceFromLatLonInKm(val.latitude, val.longitude, client.latitude, client.longitude);
-//            const genderChecker = client.gender == 'male' ? 'female':'male';  
-//           //  if( distance < client.distancePreference && val.gender == genderChecker && (client.minAgePreference <= val.age && client.maxAgePreference >= val.age ) && (val.charisma == client.charisma || val.creativity == client.creativity || val.empathetic == client.empathetic 
-//           //    || val.honest == client.honest || val.humor == client.humor || val.looks == client.looks || val.status || val.wealthy == client.wealthy)
-//           //   ) {
-//             if( val.gender == genderChecker && (val.charisma == client.charisma || val.creativity == client.creativity || val.empathetic == client.empathetic 
-//               || val.honest == client.honest || val.humor == client.humor || val.looks == client.looks || val.status || val.wealthy == client.wealthy)
-//              ) {
-              
-//              const _id = createChatThread(client.phoneNumber, val.phoneNumber); 
-//              return db.collection('introductions').doc(_id).get().then(onDoc => {
-              
-//                if(onDoc.exists == false){
-//                 db.collection('user').doc(userId).set({suggestedMatches:firebase.firestore.FieldValue.arrayUnion(val.phoneNumber)}, {merge:true})
-//                 navigation.navigate('Endorsement', {client:clientLogged,user:val })   
-//                 return true; 
-//                }
-//              })
-//            }
-//       })
-      
-       
-//     })  
-    
-     
-     
-      
-// } 
+   
 }
 const onRefresh = () => {
 db.collection('user').doc(userId).set({suggestedMatches:[]}, {merge:true}) 
@@ -917,7 +765,13 @@ const mainer = mainBackGround.interpolate({
   // }, [bar])
 
   
-  console.log(matchFoundObj)
+ if(Object.keys(matchFoundObj).length){
+    console.log("match")
+    console.log(computeName(matchFoundObj.user))
+    console.log("client"); 
+    console.log(computeName(matchFoundObj.client))
+
+ }
 
   const flip = () => {
        incrementIndex();   
@@ -933,7 +787,7 @@ const mainer = mainBackGround.interpolate({
     if(measured){
        fadeOp()
        addPoints()
-          if(questionsIndex > 1){
+          if(questionsIndex == 15){
             suggestMatches();   
           }
           

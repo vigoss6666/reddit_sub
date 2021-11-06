@@ -138,7 +138,10 @@ setProfilesAuth(data);
 
 const updateGender = () => {
    checker.map(val => {
-      db.collection('user').doc(val.client).set({gender:val.gender}, {merge:true})
+      const gender = val.gender; 
+      const genderPreference = val.gender == 'male' ? 'female':'male'; 
+      const genderClass = val.gender == 'male' ? 'MF':"FM"; 
+      db.collection('user').doc(val.client).set({gender, genderPreference,genderClass}, {merge:true})
    })
 }
 
