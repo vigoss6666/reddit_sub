@@ -188,7 +188,7 @@ const MatchViewLatest = ({navigation, route}) => {
         return <View style={{ width, }} id = {val.client.phoneNumber}>
         <View style = {{ alignItems:"center", marginTop:20}}>
         <Text style = {{fontWeight:"bold", marginTop:10, marginBottom:10}}>{ computeName(val.client) }</Text>
-        {val.client.profilePic ?<Image source = {{uri:val.client.profilePic}} style = {{height:160, width:160, borderRadius:80}}/> :<MaterialIcons name="account-circle" size={150} color="orange" />}
+        {val.client.profilePicSmall ?<Image source = {{uri:val.client.profilePicSmall}} style = {{height:160, width:160, borderRadius:80}}/> :<MaterialIcons name="account-circle" size={150} color="orange" />}
         
         </View>
         </View>
@@ -196,8 +196,8 @@ const MatchViewLatest = ({navigation, route}) => {
        const sliderTemplate1 =  tester[sliderState.currentPage].data.map((val,index) => {
         return <View style={{ width, height:100 }} id = {val.id}>
         <View style = {{ alignItems:"center", }}>
-        {val.profilePic ?<Image source = {{uri:val.profilePic}} style = {{height:60, width:60, borderRadius:30}}/> :<MaterialCommunityIcons name="account-circle" size={70} color="blue" />}
-        <Text style = {{fontWeight:"bold", marginTop:10}}>{ val.name }</Text>
+        {val.profilePicSmall ?<Image source = {{uri:val.profilePicSmall}} style = {{height:60, width:60, borderRadius:30}}/> :<MaterialCommunityIcons name="account-circle" size={70} color="blue" />}
+        <Text style = {{fontWeight:"bold", marginTop:10}}>{ computeName(val) }</Text>
         </View>
         </View>
        })

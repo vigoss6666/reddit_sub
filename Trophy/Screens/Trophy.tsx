@@ -16,6 +16,7 @@ import Points from './Points';
 import Match from './Match';
 import PointsError from './PointsError'; 
 
+import * as Font from 'expo-font';
 
 const db = firebase.firestore(); 
 const computeName = (obj) => {
@@ -232,6 +233,23 @@ const useIntroTemplate = () => {
 
 export default function Trophy({navigation}){
 const [page, setPage] = useState('match');   
+const [loaded, setLoadder] = useState(false);  
+  
+  
+  async function loadFonts() {
+    await Font.loadAsync({
+      // Load a font `Montserrat` from a static resource
+      Montserrat: require('../../assets/hey.ttf'),
+
+      // Any string can be used as the fontFamily name. Here we use an object to provide more control
+      'Montserrat-SemiBold': {
+        uri: require('../../assets/hey.ttf'),
+        display: Font.FontDisplay.FALLBACK,
+      },
+    });
+    setLoadder(true);
+  }
+
 
 const pushToken = 'ExponentPushToken[FrneiUBwFvVhNI161d99is]'; 
 
@@ -253,20 +271,23 @@ const matchText = useMatchTemplate();
 
 
 return(
-<View style = {{flex:1, backgroundColor:'white'}}>
+<View style = {{flex:1, backgroundColor:'#521810'}}>
 <View style = {{flex:0.1}}> 
  
 
 </View>
 <View style = {{ flex:0.1,}}>
     <View style = {{flexDirection:"row" ,justifyContent:'space-around', borderWidth:1, marginLeft:30, marginRight:30, height:40}}>
-    <TouchableOpacity style = {[styles.touchBar, {backgroundColor:page == 'rank' ? '#add1ed':'white'}]} onPress = {() => setPage('rank')}>
+    {/* <TouchableOpacity style = {[styles.touchBar, {backgroundColor:page == 'rank' ? '#add1ed':'white'}]} onPress = {() => setPage('rank')}>
+    <Text style = {styles.touchBarFont}>Rank</Text>    
+    </TouchableOpacity> */}
+    <TouchableOpacity style = {[styles.touchBar, {backgroundColor:page == 'rank' ? '#6a3218':'#521810'}]} onPress = {() => setPage('rank')}>
     <Text style = {styles.touchBarFont}>Rank</Text>    
     </TouchableOpacity>
-    <TouchableOpacity style = {[styles.touchBar,{backgroundColor:page == 'match' ? '#add1ed':'white'}]} onPress = {() => setPage('match')}>
+    <TouchableOpacity style = {[styles.touchBar,{backgroundColor:page == 'match' ? '#6a3218':'#521810'}]} onPress = {() => setPage('match')}>
     <Text style = {styles.touchBarFont}>Matches</Text>     
     </TouchableOpacity>
-    <TouchableOpacity style = {[styles.touchBar,{backgroundColor:page == 'points' ? '#add1ed':'white'}]} onPress = {() => setPage('points')}>
+    <TouchableOpacity style = {[styles.touchBar,{backgroundColor:page == 'points' ? '#6a3218':'#521810'}]} onPress = {() => setPage('points')}>
     <Text style = {styles.touchBarFont}>Points</Text>    
     </TouchableOpacity>
     
@@ -294,7 +315,10 @@ const styles = StyleSheet.create({
           
      }, 
      touchBarFont:{
-         fontWeight:'bold' 
+         fontWeight:'bold', 
+         color:'white', 
+         fontFamily: 'Montserrat',
+
      }, 
      onPressStyle:{
         backgroundColor:'blue'  

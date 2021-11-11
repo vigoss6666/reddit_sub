@@ -16,7 +16,7 @@ import {updateUser} from '../../networking';
 
 export default function GenderPreference({navigation,route}){
 const myContext = useContext(AppContext); 
-const {userId, CustomBackComponent} = myContext; 
+const {userId, CustomBackComponent, globalGender} = myContext; 
 const {page} = route.params;     
 const [man,setMan] = useState(false);
 const [woman, setWoman] = useState(false);
@@ -33,6 +33,35 @@ useEffect(() => {
        headerLeft:() => <CustomBackComponent navigation = {navigation}/>
      })
    }, [])  
+function getGenderClass(gender, genderPreference){
+      if(gender == 'male' && genderPreference == 'male'){
+            return 'MM'; 
+      }
+      if(gender == 'male' && genderPreference == 'female'){
+          return 'MF'; 
+      }
+      if(gender == 'male' && genderPreference == 'both'){
+          return 'ME'; 
+      }
+      if(gender == 'female' && genderPreference == 'female'){
+          return 'FF'; 
+      }
+      if(gender == 'female' && genderPreference == 'male'){
+          return 'FM'; 
+      }
+      if(gender == 'female' && genderPreference == 'both'){
+          return 'FE'; 
+      }
+      if(gender == 'trans' && genderPreference == 'male'){
+          return 'TM'; 
+      }
+      if(gender == 'trans' && genderPreference == 'female'){
+          return 'TF'; 
+      }
+      if(gender == 'trans' && genderPreference == 'both'){
+          return 'TE'; 
+      }
+}   
 useEffect(() => {
      
      Keyboard.dismiss() 
@@ -50,14 +79,14 @@ const _handlePage = () => {
 }
 const _sendToServer = () => {
      if(man){
-          updateUser(userId, {genderPreference:"male"})
+          updateUser(userId, {genderPreference:"male", genderClass:getGenderClass(globalGender, 'male')})
      }
      else if(woman){
-          updateUser(userId, {genderPreference:"female"})     
+          updateUser(userId, {genderPreference:"female",genderClass:getGenderClass(globalGender, 'female')})     
     
      }
      else if(both){
-          updateUser(userId, {genderPreference:"both"})
+          updateUser(userId, {genderPreference:"both",genderClass:getGenderClass(globalGender, 'both')})
     
      }
 }

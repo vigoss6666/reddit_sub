@@ -12,6 +12,7 @@ import sub from 'date-fns/sub'
 import isAfter from 'date-fns/isAfter'
 import { filter } from 'underscore';
 import {Button} from 'react-native-elements'; 
+import { LinearGradient } from 'expo-linear-gradient';
 
 
 
@@ -85,23 +86,64 @@ const Points = ({navigation}) => {
      const sliced = finaler.slice(0,20)    
      const template = sliced.map(val => {
          if(val.pointFor == 'roundCompleted'){
-              return <View style = {{flexDirection:"row",  padding:10, alignItems:'center',marginBottom:20, borderBottomWidth:2}}>
-                  <FontAwesome5 name="trophy" size={24} color="black" />
+              return <View style = {{backgroundColor:'#c56033',flexDirection:"row",  padding:10, alignItems:'center',marginBottom:20, borderBottomWidth:2, shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.5,
+              shadowRadius: 2,
+              elevation: 2,}}>
+                  {/* <FontAwesome5 name="trophy" size={24} color="black" /> */}
+                  <Image source = {require('../../assets/ttr.png')} style = {{height:40, width:40,shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.5,
+  shadowRadius: 2,
+  elevation: 2,}}/>
                   <View style = {{marginLeft:10}}>   
-                  <Text style = {{fontWeight:"bold", }}>+{val.point} pts</Text>
-                  <Text style = {{fontWeight:"bold", }}>Round Completed</Text>
+                  <Text style = {{color:'white',fontWeight:"bold", shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.5,
+  shadowRadius: 2,
+  elevation: 2, }}>+{val.point} pts</Text>
+                  <Text style = {{fontWeight:"bold", shadowColor: '#000',color:'white',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.5,
+  shadowRadius: 2,
+  elevation: 2, }}>Round Completed</Text>
                   </View>
               </View>
          }
          if(val.pointFor == 'matchDiscovered'){
-             return <View style = {{flexDirection:"row",  padding:10, borderBottomWidth:2, alignItems:'center',marginBottom:20}}>
-                  <MaterialIcons name="people" size={30} color="black" />
-                  <View style = {{marginLeft:10}}>   
-                  <Text style = {{fontWeight:"bold", }}>+{val.point} pts</Text>
-                  <Text style = {{fontWeight:"bold", }}>Match discovered</Text>
-                  </View>
-                  {val.clientPhoto ? <SingleImageView image = {val.clientPhoto} style = {{marginLeft:20}}/>:null}
+            //  return <View style = {{flexDirection:"row",  padding:10, borderBottomWidth:2, alignItems:'center',marginBottom:20}}>
+            //       <MaterialIcons name="people" size={30} color="black" />
+            //       <View style = {{marginLeft:10}}>   
+            //       <Text style = {{fontWeight:"bold", }}>+{val.point} pts</Text>
+            //       <Text style = {{fontWeight:"bold", }}>Match discovered</Text>
+            //       </View>
+            //       {val.clientPhoto ? <SingleImageView image = {val.clientPhoto} style = {{marginLeft:20}}/>:null}
+            //   </View>
+              return <LinearGradient colors={[ 'rgba(255,255,255,0.1) 50%', 'rgba(188,90,49,1) 100%' ]} style = {{backgroundColor:'#c56033',flexDirection:"row",  padding:10, alignItems:'center',marginBottom:20, borderBottomWidth:2, shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.5,
+              shadowRadius: 2,
+              elevation: 2,}}>
+              <Image source = {require('../../assets/ppo.png')} style = {{height:40, width:40,shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.5,
+  shadowRadius: 2,
+  elevation: 2,}}/>
+              <View style = {{marginLeft:10}}>   
+              <Text style = {{color:'white',fontWeight:"bold", shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.5,
+  shadowRadius: 2,
+  elevation: 2, }}>+{val.point} pts</Text>
+              <Text style = {{color:'white',fontWeight:"bold", shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.5,
+  shadowRadius: 2,
+  elevation: 2, }}>Match discovered</Text>
               </View>
+              {val.clientPhoto ? <SingleImageView image = {val.clientPhoto} style = {{marginLeft:20}}/>:null}
+          </LinearGradient>
         }
         if(val.pointFor == 'matchEndorsed'){
          return <View style = {{flexDirection:"row",  padding:10, borderBottomWidth:2, alignItems:'center',marginBottom:20}}>

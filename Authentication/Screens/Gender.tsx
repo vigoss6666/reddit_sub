@@ -13,7 +13,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 export default function Gender({navigation, route}){
 const myContext = useContext(AppContext); 
-const {userId, CustomBackComponent} = myContext; 
+const {userId, CustomBackComponent, setGlobalPhoneGender} = myContext; 
 const {page} = route.params; 
 useEffect(() => {
    
@@ -48,10 +48,12 @@ const _handlePage = () => {
 const _handleServer = () => {
    if(man){
    updateUser(userId, {gender:"male",genderPreference:"female"})  
+   setGlobalPhoneGender('male')
       
    }
    else if(woman){
       updateUser(userId, {gender:"female", genderPreference:"male"})  
+      setGlobalPhoneGender('female'); 
    }
 }
 

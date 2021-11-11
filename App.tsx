@@ -241,7 +241,8 @@ export default function App() {
   const [questions20, setQuestions20] = useState([]); 
   const [questions10, setQuestions10] = useState([]); 
   const [gameLoader, setGameLoader] = useState(true); 
-  const [suggestedClient, setSuggestedClient] = useState([])
+  const [suggestedClient, setSuggestedClient] = useState([]); 
+  const [globalGender, setGlobalPhoneGender] = useState([]); 
   
    
 
@@ -294,7 +295,7 @@ useEffect(() => {
   })
   const [clientFilter, setClientFilter] = useState([]); 
   useEffect(() => {
-    AsyncStorage.removeItem('user')
+    // AsyncStorage.removeItem('user')
   }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
@@ -309,10 +310,18 @@ async function namer(){
   const user1 = "+917208110384"; 
   const user2 = "+919930815474";
   
-  setId(userGamer); 
+  setId("+16505551234"); 
 }
 
 if(!Object.keys(user).length){
+  Asset.loadAsync(require('./assets/addedPhoto.png'))
+  Asset.loadAsync(require('./assets/addPhoto.png'))
+  Asset.loadAsync(require('./assets/date.png'))
+  Asset.loadAsync(require('./assets/matchmake.png'))
+  Asset.loadAsync(require('./assets/location.png'))
+  Asset.loadAsync(require('./assets/kibla.png'))
+  
+
   namer()
 }
 
@@ -365,6 +374,7 @@ useEffect(() => {
          return result; 
       }) 
         const finalChecker = checkerResult.filter(val => val !== null);
+        finalChecker.map(val => Image.prefetch(val.profilePicSmall))
         setDemo(finalChecker);
         if(suggestedClient.length == 0){
           setSuggestedClient(finalChecker)          
@@ -472,6 +482,7 @@ useEffect(() => {
           // Image.prefetch(user.profilePic) 
            
           Asset.loadAsync(require('./assets/addedPhoto.png'))
+          Asset.loadAsync(require('./assets/addPhoto.png'))
            
            
            setLoader(false)
@@ -513,6 +524,8 @@ function stringifyNumber(n) {
 
 
   const tempObject = {
+    globalGender,
+    setGlobalPhoneGender, 
     profiler, 
     setProfiler, 
     globalPhoneNumber, 
@@ -547,6 +560,8 @@ function stringifyNumber(n) {
   }
   
   const globalObject = {
+    globalGender, 
+    setGlobalPhoneGender, 
     suggestedClient,
     setSuggestedClient, 
     questions10, 
@@ -640,20 +655,20 @@ function stringifyNumber(n) {
   });
   
   const [chatNotify,setChatNotify] = useState(true); 
-  useEffect(() => {
-    const unsubscribe = db.collection("matches").doc("UJ4u7q4oHqlj3n6nrBv9").collection("users").onSnapshot(snap => {
-      const data1 = snap.docs.map(doc => doc.data())
+  // useEffect(() => {
+  //   const unsubscribe = db.collection("matches").doc("UJ4u7q4oHqlj3n6nrBv9").collection("users").onSnapshot(snap => {
+  //     const data1 = snap.docs.map(doc => doc.data())
       
-      const result = data1.map(val => {
+  //     const result = data1.map(val => {
         
-        if(val.seen == false){
-           setChatNotify(false); 
-        }
+  //       if(val.seen == false){
+  //          setChatNotify(false); 
+  //       }
        
-      })
-    });
+  //     })
+  //   });
 
-  },[])
+  // },[])
 
 
 

@@ -117,9 +117,17 @@ const MatchMakeFinal = ({navigation, route}) => {
     const index = userDisplay.findIndex(val => val.client.phoneNumber == selectedUser.phoneNumber); 
     if(index == -1 ){
        Alert.alert("Not enough Users for the map View"); 
+       return; 
 
     } 
+    
     if(index !== -1){
+          const lat = userDisplay[index].client.appUser ? true:false; 
+          if(!lat){
+            Alert.alert("Client is not a app user");     
+            return;   
+          }
+
           navigation.navigate('MapViewClientGame',{client:profiles[sliderState.currentPage], pageData:userDisplay})   
     }
     //  if(userDisplay.length == 0){
@@ -476,7 +484,7 @@ const MatchMakeFinal = ({navigation, route}) => {
     const sliderTemplate =  profiles.map((val,index) => {
         return <View style={{ width}} id = {val.phoneNumber}>
         <View style = {{ alignItems:"center", marginTop:20}}>
-        {val.profilePic ?<Image source = {{uri:val.profilePic}} style = {{height:60, width:60, borderRadius:30}}/> :<MaterialIcons name="account-circle" size={75} color="black" />}
+        {val.profilePicSmall ?<Image source = {{uri:val.profilePicSmall}} style = {{height:60, width:60, borderRadius:30}}/> :<MaterialIcons name="account-circle" size={75} color="black" />}
         <Text style = {{fontWeight:"bold", marginTop:10}}>{ computeName(val) }</Text>
         </View>
         </View>

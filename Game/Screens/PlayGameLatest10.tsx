@@ -33,7 +33,8 @@ interface PlayGameLatestProps {}
 
 const PlayGameLatest10 = ({navigation,route}) => {
   const [bar, setBar] = useState(0);
-  const [client, setClient] = useState(); 
+  let client = useRef().current; 
+  // const [client, setClient] = useState(); 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const mainBackGround = useRef(new Animated.Value(1)).current;
   const backFade = useRef(new Animated.Value(0)).current;
@@ -663,7 +664,7 @@ const mainer = mainBackGround.interpolate({
        incrementIndex();   
        questionsIndexIncrement(); 
        
-       setBar(bar + 0.05)
+       setBar(bar + 0.10)
        
     }
     
@@ -733,11 +734,11 @@ const mainer = mainBackGround.interpolate({
                 </View>
                 
                 <View style = {{flex:0.4, }} ref = {mailer}>
-               <Draggable x={30} y={containerHeight - 250} isCircle  onDragRelease = {(gesture) => onDragRelease( gesture)} shouldReverse = {true} onPressIn = {() => setClient('first')}>
+               <Draggable x={30} y={containerHeight - 250} isCircle  onDragRelease = {(gesture) => onDragRelease( gesture)} shouldReverse = {true} onPressIn = {() => {client = 'first'}}>
                    {firstTemplate()}
                </Draggable>    
                
-               <Draggable x={width - 130} y={containerHeight - 250}  isCircle  onDragRelease = {( gesture) => {onDragRelease( gesture)}} onPressIn = {() => setClient('second')} shouldReverse>
+               <Draggable x={width - 130} y={containerHeight - 250}  isCircle  onDragRelease = {( gesture) => {onDragRelease( gesture)}} onPressIn = {() => {client = 'second'}} shouldReverse>
                    {secondTemplate()}
                </Draggable>    
                </View> 

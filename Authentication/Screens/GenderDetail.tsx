@@ -12,7 +12,7 @@ interface GenderDetailProps {}
 
 const GenderDetail = ({navigation,route}) => {
     const myContext = useContext(AppContext); 
-    const {userId} = myContext;
+    const {userId,setGlobalPhoneGender} = myContext;
     const insets = useSafeAreaInsets();
     const [gender, setGender] = useState(null); 
     const [gate, setGate] = useState(true); 
@@ -33,7 +33,8 @@ const GenderDetail = ({navigation,route}) => {
     }, [])
 
     const _sendToServer = () => {
-        updateUser(userId, {genderIncludeMe:gender, gender:genderText})
+        updateUser(userId, {genderIncludeMe:gender, genderText:genderText,gender:'trans'})
+        setGlobalPhoneGender('trans'); 
         if(page == "DetailsSettings"){
     
           navigation.navigate("DetailsSettings")
