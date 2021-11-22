@@ -295,7 +295,7 @@ useEffect(() => {
   })
   const [clientFilter, setClientFilter] = useState([]); 
   useEffect(() => {
-    // AsyncStorage.removeItem('user')
+    AsyncStorage.removeItem('user')
   }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
@@ -310,7 +310,7 @@ async function namer(){
   const user1 = "+917208110384"; 
   const user2 = "+919930815474";
   
-  setId("+16505551234"); 
+  setId(userGamer); 
 }
 
 if(!Object.keys(user).length){
@@ -390,15 +390,15 @@ useEffect(() => {
    }, [user])
 
 
-   useEffect(() => {
-     db.collection('user').doc('+15303217868').get().then(onResult => {
-        const result = onResult.data(); 
-        db.collection('user').where('phoneNumber', 'in', result.datingPoolList).get().then(onResult1 => {
-           const result1 = onResult1.docs.map(val => val.data()); 
+  //  useEffect(() => {
+  //    db.collection('user').doc('+15303217868').get().then(onResult => {
+  //       const result = onResult.data(); 
+  //       db.collection('user').where('phoneNumber', 'in', result.datingPoolList).get().then(onResult1 => {
+  //          const result1 = onResult1.docs.map(val => val.data()); 
            
-        })
-     }) 
-   }, [])
+  //       })
+  //    }) 
+  //  }, [])
    
    
    useEffect(() => {
@@ -450,7 +450,7 @@ useEffect(() => {
         
    })
     }
-    if(!questions20.length && !questions10.length){
+    if(!questions20.length && !questions10.length && Object.keys(user).length){
       namer()
     }
    

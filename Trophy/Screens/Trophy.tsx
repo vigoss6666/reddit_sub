@@ -232,7 +232,7 @@ const useIntroTemplate = () => {
 }
 
 export default function Trophy({navigation}){
-const [page, setPage] = useState('match');   
+const [page, setPage] = useState('points');   
 const [loaded, setLoadder] = useState(false);  
   
   

@@ -368,7 +368,7 @@ const searchAction = () => {
 
 
 const renderItem = ({ item }) => {
-  console.log(" iwas rendered in contacts")
+  // console.log(" iwas rendered in contacts")
   return (
     <ContactView item = {item} adder = {addArray}/>
   ) 
@@ -386,6 +386,7 @@ const renderItem = ({ item }) => {
   data = {filteredEmails}
   renderItem = {renderItem}
   keyExtractor={item => item.phoneNumber}
+  keyboardShouldPersistTaps = {'always'}
   extraData = {filteredEmails}
   />  
   }, [profiles, filteredEmails.length])
