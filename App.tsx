@@ -67,6 +67,8 @@ import Playgame from './Game/Screens/Playgame';
 import GamePreview from './Game/Screens/GamePreview'; 
 
 import PlayGameLatest from './Game/Screens/PlayGameLatest';
+import Test from './Game/Screens/Test';
+
 import PlayGameLatest10 from './Game/Screens/PlayGameLatest10';
 import HalfRound from './Game/Screens/HalfRound';
 import MapViewClientGame from './Game/Screens/MapViewClientGame';
@@ -200,6 +202,12 @@ const sortNames = (finalUsers) => {
 const sortNamesReverse = (finalUsers) => {
 
 }
+const _generateList = (userId:string) => {
+  return db.collection('user').where('matchMakers', 'array-contains-any', [userId]).get().then(onResult => {
+     const data = onResult.docs.map(val => val.data()); 
+     return data; 
+  })
+}
 
 export default function App() {
 
@@ -295,7 +303,7 @@ useEffect(() => {
   })
   const [clientFilter, setClientFilter] = useState([]); 
   useEffect(() => {
-    AsyncStorage.removeItem('user')
+    // AsyncStorage.removeItem('user')
   }, [])
   // const [clientFilter, setClientFilter] = useState([]); 
 
@@ -402,6 +410,7 @@ useEffect(() => {
    
    
    useEffect(() => {
+     console.log("Dimensions questions called")
     function namer(){
       db.collection('dimensionQuestions').doc("0").get().then(onResult => {
         if(onResult.exists){
@@ -415,9 +424,9 @@ useEffect(() => {
           setQuestions10(result.questions); 
           return; 
         }
-        const int = parseInt(user.userSet);
-        const finalInt = int - 1; 
-        const finalString = finalInt.toString();   
+        // const int = parseInt(user.userSet);
+        // const finalInt = int - 1; 
+        // const finalString = finalInt.toString();   
         // db.collection('dimensionQuestions10').doc(finalString).get().then(onResult1 => {
         //   const result1 = onResult1.data();
           
@@ -436,11 +445,13 @@ useEffect(() => {
           const result = onResult.data(); 
           
           setQuestions20(result.questions); 
+          console.log("questions20 app")
+          console.log(questions20)
           return; 
         }
-        const int = parseInt(user.userSet);
-        const finalInt = int - 1; 
-        const finalString = finalInt.toString();   
+        // const int = parseInt(user.userSet);
+        // const finalInt = int - 1; 
+        // const finalString = finalInt.toString();   
         // db.collection('dimensionQuestions10').doc(finalString).get().then(onResult1 => {
         //   const result1 = onResult1.data();
           
@@ -450,7 +461,7 @@ useEffect(() => {
         
    })
     }
-    if(!questions20.length && !questions10.length && Object.keys(user).length){
+    if(!questions10.length  && !questions20.length){
       namer()
     }
    
@@ -560,6 +571,7 @@ function stringifyNumber(n) {
   }
   
   const globalObject = {
+    _generateList, 
     globalGender, 
     setGlobalPhoneGender, 
     suggestedClient,
@@ -839,6 +851,8 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
  <Stack.Navigator> 
 <Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
+<Stack.Screen name="Test" component={Test}/>
+
 <Stack.Screen name="SignUpComplete" component={SignUpComplete}/>
 <Stack.Screen name="ResendCode" component={ResendCode} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS}}/>
 <Stack.Screen name="AccountType" component={AccountType}/>

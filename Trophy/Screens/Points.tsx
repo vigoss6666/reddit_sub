@@ -1,7 +1,7 @@
 import  React, {useState,useRef,useEffect, useContext} from 'react';
 import { Text, View, StyleSheet, Image, ScrollView } from 'react-native';
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
-import {SingleImageView} from '../../src/common/Common'; 
+import {LoadScreen, SingleImageView} from '../../src/common/Common'; 
 
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,7 +21,9 @@ interface RankProps {}
 const Points = ({navigation}) => {
   const myContext = useContext(AppContext); 
   const [pointRefined, setPointRefined] = useState([]); 
+  const [loading, setLoading] = useState(true); 
   const { user,userId, selfFilter, setSelfFilter,computeName,db, firebase, stringifyNumber, } = myContext;
+  console.log(user)
     const data = [
         {
            type:'roundCompleted'  
@@ -52,17 +54,17 @@ const Points = ({navigation}) => {
         const result = await Promise.all(user.points.map(async val => {
            if(val.pointFor == 'invitationAccepted'){
               return await db.collection('user').doc(val.client).get().then(onDoc => {
-                  return Object.assign({}, {...val},{clientPhoto:onDoc.data().profilePic})
+                  return Object.assign({}, {...val},{clientPhoto:onDoc.data().profilePicSmall})
               }) 
            } 
            if(val.pointFor == 'matchAccepted'){
             return await db.collection('user').doc(val.client).get().then(onDoc => {
-                return Object.assign({}, {...val},{clientPhoto:onDoc.data().profilePic})
+                return Object.assign({}, {...val},{clientPhoto:onDoc.data().profilePicSmall})
             }) 
          }
          if(val.pointFor == 'matchEndorsed'){
             return await db.collection('user').doc(val.client).get().then(onDoc => {
-                return Object.assign({}, {...val},{clientPhoto:onDoc.data().profilePic})
+                return Object.assign({}, {...val},{clientPhoto:onDoc.data().profilePicSmall})
             }) 
          }
          if(val.pointFor == 'roundCompleted'){
@@ -70,12 +72,13 @@ const Points = ({navigation}) => {
          }
          if(val.pointFor == 'matchDiscovered'){
             return await db.collection('user').doc(val.client).get().then(onDoc => {
-                return Object.assign({}, {...val},{clientPhoto:onDoc.data().profilePic})
+                return Object.assign({}, {...val},{clientPhoto:onDoc.data().profilePicSmall})
             })
         }
            return val;      
         }))
         setPointRefined(result)
+        setLoading(false); 
      }
      namer()   
     }, [user.points])
@@ -187,7 +190,10 @@ const Points = ({navigation}) => {
       </View>
  }
     })
-    if(pointRefined.length > 4){
+    if(loading){
+         return <LoadScreen />
+    }
+    if(pointRefined.length > 0){
         return <ScrollView>
         <View style = {{marginLeft:30, marginRight:30}}>
         {template}

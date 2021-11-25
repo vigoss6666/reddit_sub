@@ -330,6 +330,8 @@ const namer =  [
     );
     return filtered;  
   }
+  console.log("questions20")
+  console.log(questions20)
   // useEffect(() => {
   //   async function namer(){
   //     if(user.datingPoolList.length >= 2){

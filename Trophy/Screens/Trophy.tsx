@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
      touchBarFont:{
          fontWeight:'bold', 
          color:'white', 
-         fontFamily: 'Montserrat',
+
 
      }, 
      onPressStyle:{
