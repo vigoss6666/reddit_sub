@@ -59,14 +59,14 @@ useEffect(() => {
       </Animatable.View>    
       <Animatable.View>
       {user.profilePicSmall ? <Animatable.Image animation="zoomInUp" source = {{uri:user.profilePicSmall}} style = {{height:80, width:80,borderRadius:40}} />:
-         <MaterialIcons name="account-circle" size={100} color="blue" />}
+         <MaterialIcons name="account-circle" size={80} color="blue" />}
       
       <Animatable.Text animation="zoomInUp" style = {{color:'white',marginTop:20}}>{computeName(user)}</Animatable.Text>
       </Animatable.View>
       
 
       </Animatable.View>  
-      <Animatable.Text style = {{color:'yellow',fontSize:30,alignSelf:'center', marginTop:40,fontStyle:'italic', fontWeight:'bold'}}  animation = "zoomInUp" easing = "ease-in-cubic" onAnimationEnd = {(endState) => endState.finished ? setTimeout(() => navigation.pop(2)):null} useNativeDriver = {true}>
+      <Animatable.Text style = {{color:'yellow',fontSize:30,alignSelf:'center', marginTop:40,fontStyle:'italic', fontWeight:'bold'}}  animation = "zoomInUp" easing = "ease-in-cubic" onAnimationEnd = {(endState) => endState.finished ? setTimeout(() => navigation.pop(2),1000):null} useNativeDriver = {true}>
         Match Discovered!!
       </Animatable.Text>
       
