@@ -351,7 +351,7 @@ const useFetchDatingPool = (navigation) => {
      //const {data,loading,error} = useQuery(GET_DATING_POOL); 
      //const [removeDating] = useMutation(REMOVE_FROM_DATING); 
      const myContext = useContext(AppContext); 
-     const {user, userId, contactList, setContactList,computePoints,datingFlatList,setDatingFlatlist,inviteToPlay} = myContext;
+     const {user, userId, contactList, setContactList,computePoints,datingFlatList,setDatingFlatlist,inviteToPlay, _generateList} = myContext;
      
      const [currentUser, setCurrentUser] = useState(''); 
      const [visible, setVisible] = useState(false); 
@@ -418,14 +418,15 @@ async function namer12(){
                
           //     }))
           //     const finalChecker = checkerResult.filter(val => val !== null); 
-          const checkerResult = await db.collection('user').get().then(onResult => {
-               const users =  onResult.docs.map(val => val.data());
-               console.log("user length is"+users.length) 
-               const result = users.filter(person => user.datingPoolList.includes(person.phoneNumber))
-               return result; 
-            }) 
-              const finalChecker = checkerResult.filter(val => val !== null);
-              setDatingPoolList(finalChecker)     
+          // const checkerResult = await db.collection('user').get().then(onResult => {
+          //      const users =  onResult.docs.map(val => val.data());
+          //      console.log("user length is"+users.length) 
+          //      const result = users.filter(person => user.datingPoolList.includes(person.phoneNumber))
+          //      return result; 
+          //   }) 
+          //     const finalChecker = checkerResult.filter(val => val !== null);
+          const result = await _generateList(userId); 
+          setDatingPoolList(result)     
          
      // const onResult = db.collection('user').where(firebase.firestore.FieldPath.documentId(), 'in', user.datingPoolList).get().then(async onResult => {
      //    const data = await onResult.docs.map(val => val.data());

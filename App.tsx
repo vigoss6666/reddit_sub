@@ -154,6 +154,7 @@ import AttributeFilter from './Game/Screens/AttributeFilter';
 import AttributeFilterClient from './Game/Screens/AttributeFilterClient';
 import SelfGame from './Game/Screens/SelfGame'; 
 import SelfMatchView from './Game/Screens/SelfMatchView';
+import MatchEndorsed from './MatchEvents/Screens/MatchEndorsed'; 
 import Gamer from './Game/Screens/Try'; 
 import MatchMakeLatest from './Game/Screens/MatchMakeLatest'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -375,12 +376,13 @@ useEffect(() => {
 
       console.log("gianter called")
    
-       const checkerResult = await db.collection('user').get().then(onResult => {
-         const users =  onResult.docs.map(val => val.data());
+      //  const checkerResult = await db.collection('user').get().then(onResult => {
+      //    const users =  onResult.docs.map(val => val.data());
          
-         const result = users.filter(person => user.datingPoolList.includes(person.phoneNumber))
-         return result; 
-      }) 
+      //    const result = users.filter(person => user.datingPoolList.includes(person.phoneNumber))
+      //    return result; 
+      // }) 
+       const checkerResult = await _generateList(user.phoneNumber)
         const finalChecker = checkerResult.filter(val => val !== null);
         finalChecker.map(val => Image.prefetch(val.profilePicSmall))
         setDemo(finalChecker);
@@ -851,7 +853,7 @@ const basicAuthStack = <AppContext.Provider value={tempObject}>
  <Stack.Navigator> 
 <Stack.Screen name="Home" component={Intro} options = {{headerShown:false}}/>
 <Stack.Screen name="Phone" component={Phone}/>
-<Stack.Screen name="Test" component={Test}/>
+<Stack.Screen name="Test" component={MatchEndorsed}/>
 
 <Stack.Screen name="SignUpComplete" component={SignUpComplete}/>
 <Stack.Screen name="ResendCode" component={ResendCode} options = {{cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS}}/>

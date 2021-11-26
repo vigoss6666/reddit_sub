@@ -25,6 +25,7 @@ const MatchViewLatest = ({navigation, route}) => {
     console.log("userIndex"+userIndex) 
     const [sliderState, setSliderState] = useState({ currentPage: clientIndex });
     const [sliderState1, setSliderState1] = useState({ currentPage: userIndex });
+    console.log(tester[clientIndex].data[userIndex].firstName)
 
     
 
@@ -222,10 +223,11 @@ onScroll={(event: any) => {
 </ScrollView>
 
 <ScrollView
-contentOffset = {{x:414*userIndex, y:0}}
+contentOffset = {{x:390*userIndex, y:0}}
 showsVerticalScrollIndicator={false}
 showsHorizontalScrollIndicator={false}
 style = {{position:'absolute', top:150, left:50, zIndex:2000}} 
+
 horizontal = {true}
 pagingEnabled = {true}
 scrollEventThrottle={400}
