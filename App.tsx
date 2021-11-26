@@ -385,6 +385,7 @@ useEffect(() => {
        const checkerResult = await _generateList(user.phoneNumber)
         const finalChecker = checkerResult.filter(val => val !== null);
         finalChecker.map(val => Image.prefetch(val.profilePicSmall))
+        Image.prefetch('https://media1.giphy.com/media/jIRyzncqRWzM3GYaQm/200w.webp?cid=ecf05e4794i8r2y4pn7rz4q07079kp70edvf3074yzak89dd&rid=200w.webp&ct=g')
         setDemo(finalChecker);
         if(suggestedClient.length == 0){
           setSuggestedClient(finalChecker)          
@@ -772,6 +773,7 @@ const mainHome = () => {
         <Stack.Screen name="PlayGameLatest10" component={PlayGameLatest10} options={{
           animationEnabled: false,
         }}/>
+          <Stack.Screen name="MatchEndorsed" component={MatchEndorsed}/>
           <Stack.Screen name="HalfRound" component={HalfRound}/>
           <Stack.Screen name="GamePreview" component={GamePreview}/>
           <Stack.Screen name="Play20" component={Play20} options = {{cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS, headerShown:false }}/>

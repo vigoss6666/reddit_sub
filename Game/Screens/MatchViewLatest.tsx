@@ -301,7 +301,7 @@ onScroll={(event: any) => {
            
            </ScrollView>
            <View style = {{marginTop:10, marginLeft:30, marginRight:30, flex:0.1, marginBottom:15, justifyContent:"center", }}>
-           <Button title = "Generate Match" buttonStyle = {{backgroundColor:"#afd968"}} titleStyle = {{color:"black", fontWeight:'bold'}} onPress = {() => {setEvent() }}/>
+           <Button title = "Generate Match" buttonStyle = {{backgroundColor:"#afd968"}} titleStyle = {{color:"black", fontWeight:'bold'}} onPress = {() => {navigation.navigate('MatchEndorsed', {client:tester[sliderState.currentPage].client, user:tester[sliderState.currentPage].data[sliderState1.currentPage]})}}/>
            </View>
          </View>
      )
