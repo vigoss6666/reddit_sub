@@ -29,7 +29,7 @@ export default function NewContactLocation({navigation, route}){
     xClient, 
     setXClient, datingFlatList,setDatingFlatlist} = myContext; 
   const [x, setX] = useState({latitude:client.latitude, longitude:client.longitude});
-  const [markers, setMarkers] = useState({latlng:{}});  
+  // const [markers, setMarkers] = useState({latlng:{}});  
   const [location, setLocation] = useState({}); 
   
   console.log("gamer is")
@@ -37,13 +37,13 @@ export default function NewContactLocation({navigation, route}){
   
 
   const handleServerLocation = async () => {
-    const lamer = firebase.functions().httpsCallable('batman');
-     if(Object.keys(markers.latlng) == 0){
-       navigation.goBack()  
-       return; 
-     }
-     const result = await lamer({lat:markers.latlng.latitude, lon:markers.latlng.longitude });       
-     setDatingFlatlist({client:client.phoneNumber, state:result.data.state, subLocality:result.data.sublocality});    
+    // const lamer = firebase.functions().httpsCallable('batman');
+    //  if(Object.keys(markers.latlng) == 0){
+    //    navigation.goBack()  
+    //    return; 
+    //  }
+     //const result = await lamer({lat:markers.latlng.latitude, lon:markers.latlng.longitude });       
+     setDatingFlatlist({client:client.phoneNumber, state:state, subLocality:subLocality});    
      
      db.collection('user').doc(client.phoneNumber).set({latitude:markers.latlng.latitude, longitude:markers.latlng.longitude,state:result.data.state, subLocality:result.data.sublocality}, {merge:true})
       .then(() => console.log("location added")).then(() => navigation.goBack())
@@ -67,13 +67,13 @@ return(
   <Text>
     Select a Location
   </Text>
-  <TouchableOpacity onPress = {() => {handleServerLocation() }}>
+  <TouchableOpacity onPress = {() => {handleServerLocation()}}>
     <Text style = {{color:'orange', marginRight:10}}>Done</Text>
   </TouchableOpacity>
   
   </View>  
   
-<MapView
+{/* <MapView
      style = {{width: Dimensions.get('window').width,
      height: Dimensions.get('window').height, }} 
      mapType = "standard"
@@ -87,7 +87,7 @@ return(
   >
   
      
-         <Marker  coordinate = {markers.latlng}></Marker>
+         <Marker  coordinate = {markers.latlng}></Marker> */}
      
   
         <GooglePlacesAutocomplete
@@ -96,14 +96,14 @@ return(
               fetchDetails = {true} 
               onPress={(data, details = null) => {
                 
-                setX({latitude:details?.geometry.location.lat, longitude:details?.geometry.location.lng})
+                // setX({latitude:details?.geometry.location.lat, longitude:details?.geometry.location.lng})
                 const state = ""; 
                 const result = details?.address_components.map(val => {
                    return val.types.map(val1 => {
                       if(val1 == 'administrative_area_level_1'){
                          
                          
-                         //setState(val.long_name)
+                         setState(val.long_name)
                       }
                       if(val1 == 'administrative_area_level_2'){
                         
@@ -122,7 +122,7 @@ return(
         />  
 
   
-  </MapView>
+  {/* </MapView> */}
   </View>
   
 

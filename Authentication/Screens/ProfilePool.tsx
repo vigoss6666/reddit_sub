@@ -492,13 +492,13 @@ const updateInvitation = () => {
    }
    
 
-// useFocusEffect(
-//      React.useCallback(() => {
-//        console.log("i was called")   
-//        updateLocationList()
-//        updateInvitation()
-//      }, [datingFlatList,inviteToPlay])
-//    );
+useFocusEffect(
+     React.useCallback(() => {
+       console.log("i was called")   
+       updateLocationList()
+       updateInvitation()
+     }, [datingFlatList,inviteToPlay])
+   );
 
 
 

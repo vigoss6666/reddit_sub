@@ -5,6 +5,7 @@ import AppContext from '../../AppContext';
 import DraggableFlatList, {
     RenderItemParams,
   } from 'react-native-draggable-flatlist'; 
+import { FontAwesome } from '@expo/vector-icons';
 
 
 interface SortProps {}
@@ -125,8 +126,10 @@ const SelfSort = ({navigation, route}) => {
     const renderItem = useCallback(
       ({ item, index, drag, isActive }: RenderItemParams<Item>) => {
         return (
+          <View style = {{flexDirection:'row',backgroundColor: isActive ? 'red' : item.backgroundColor}}>
           <TouchableOpacity
             style={{
+              flex:0.9,
               height: 100,
               backgroundColor: isActive ? 'red' : item.backgroundColor,
               alignItems: 'center',
@@ -142,6 +145,8 @@ const SelfSort = ({navigation, route}) => {
               {item.label}
             </Text>
           </TouchableOpacity>
+          <FontAwesome name="sort" size={24} color={isActive ? 'red' : 'white'} style = {{alignSelf:'center'}} />
+          </View>
         );
       },
       []
